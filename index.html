@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ODISHA SIMULATOR: AMA GADI, AMA RASTA (FightKaro × Benglooru × Delhi Metro 3D)</title>
+  <title>ODISHA SIMULATOR: GRAND THEFT AMA GADI (GTA Bhubaneswar 3D)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;600;700;800&family=Tiro+Odia:ital@0;1&display=swap" rel="stylesheet">
@@ -48,25 +48,20 @@
       position: relative;
     }
 
-    /* 3D WebGL Canvas Layer */
     #webgl-canvas {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0; width: 100%; height: 100%;
       z-index: 1;
     }
 
-    /* Retro CRT Scanlines */
     .crt-overlay {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
       pointer-events: none;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.24) 50%);
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.22) 50%);
       background-size: 100% 3px;
       z-index: 10;
-      opacity: 0.65;
+      opacity: 0.6;
     }
 
     .vignette-overlay {
@@ -77,7 +72,6 @@
       z-index: 11;
     }
 
-    /* UI Layer on Top of 3D Canvas */
     #ui-layer {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -89,7 +83,6 @@
       padding: 8px 12px;
     }
 
-    /* Top Navigation Header */
     header {
       width: 100%;
       display: flex;
@@ -111,12 +104,6 @@
       display: flex;
       align-items: center;
       gap: 6px;
-    }
-
-    .brand-sub {
-      font-family: var(--font-odia);
-      font-size: 0.78rem;
-      color: var(--accent-saffron);
     }
 
     .mode-switch-group {
@@ -165,10 +152,9 @@
       font-size: 0.52rem;
       border-radius: 4px;
       cursor: pointer;
-      transition: all 0.16s ease;
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       pointer-events: auto;
     }
 
@@ -177,56 +163,10 @@
       color: var(--accent-teal);
     }
 
-    /* Benglooru-style Soundboard Strip */
-    .soundboard-strip {
-      width: 100%;
-      max-width: 950px;
-      margin: 4px auto 0;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(9, 14, 20, 0.85);
-      border: 1px solid #1a2736;
-      border-radius: 6px;
-      padding: 4px 8px;
-      backdrop-filter: blur(6px);
-      pointer-events: auto;
-      overflow-x: auto;
-    }
-
-    .sb-label {
-      font-family: var(--font-pixel);
-      font-size: 0.48rem;
-      color: var(--accent-turmeric);
-      white-space: nowrap;
-      margin-right: 2px;
-    }
-
-    .sb-btn {
-      background: #121a24;
-      border: 1px solid #233446;
-      color: #cad8e6;
-      font-size: 0.62rem;
-      padding: 3px 6px;
-      border-radius: 3px;
-      cursor: pointer;
-      white-space: nowrap;
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      transition: all 0.12s ease;
-    }
-
-    .sb-btn:hover {
-      background: #1b2636;
-      border-color: var(--accent-gold);
-      color: #fff;
-    }
-
     /* ==========================================================================
-       MODE 1: FIGHTKARO 1V1 COMBAT HUD
+       GTA BHUBANESWAR HUD (RADAR, WANTED STARS, HEALTH, WEAPON)
        ========================================================================== */
-    #fightkaro-ui {
+    #gta-ui {
       display: flex;
       flex-direction: column;
       flex: 1;
@@ -234,551 +174,296 @@
       pointer-events: none;
     }
 
-    .arcade-hud-row {
-      width: 100%;
-      max-width: 950px;
-      margin: 4px auto 0;
-      display: grid;
-      grid-template-columns: 1fr 50px 1fr;
-      align-items: center;
-      gap: 10px;
-      background: rgba(10, 15, 22, 0.88);
-      border: 2px solid #213244;
-      border-radius: 8px;
-      padding: 6px 12px;
-      backdrop-filter: blur(8px);
-      pointer-events: auto;
+    /* GTA Top Right Status (Health, Cash, Wanted Stars) */
+    .gta-top-hud {
+      align-self: flex-end;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      margin-top: 6px;
     }
 
-    .fighter-hp-track {
+    .gta-cash-box {
+      font-family: var(--font-pixel);
+      font-size: 1.1rem;
+      color: var(--accent-green);
+      text-shadow: 2px 2px 0 #000;
+      letter-spacing: 1px;
+    }
+
+    .gta-bars-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: 160px;
+    }
+
+    .gta-hp-track {
       width: 100%;
-      height: 12px;
-      background: #06090e;
-      border: 1px solid #33485e;
-      border-radius: 3px;
+      height: 10px;
+      background: #000;
+      border: 1px solid #333;
+      border-radius: 2px;
       overflow: hidden;
-      position: relative;
     }
 
-    .fighter-hp-fill {
+    .gta-hp-fill {
       height: 100%;
-      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 100%;
+      background: #00e676;
     }
 
-    .fill-player-hp { background: linear-gradient(90deg, #00b0ff, #00e676); }
-    .fill-boss-hp { background: linear-gradient(90deg, #d50000, #ff1744); }
-
-    .fighter-hp-text {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: var(--font-pixel);
-      font-size: 0.5rem;
-      color: #fff;
-      text-shadow: 1px 1px 2px #000;
+    .gta-wanted-stars {
+      font-size: 1.1rem;
+      color: #333;
+      letter-spacing: 2px;
+      text-shadow: 1px 1px 0 #000;
     }
 
-    .arcade-vs-box {
+    .gta-wanted-stars .active-star {
+      color: #ffd600;
+      text-shadow: 0 0 8px #ffd600;
+    }
+
+    /* GTA Weapon / Vehicle Card */
+    .gta-weapon-card {
+      background: rgba(14, 21, 30, 0.88);
+      border: 1px solid #233549;
+      border-radius: 6px;
+      padding: 6px 12px;
       font-family: var(--font-pixel);
-      font-size: 1rem;
+      font-size: 0.58rem;
       color: var(--accent-gold);
-      text-align: center;
-      text-shadow: 0 0 10px rgba(255, 214, 0, 0.7);
-      background: #172230;
-      border: 1px solid var(--accent-saffron);
-      border-radius: 4px;
-      padding: 3px 5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .middle-stage {
+    /* Bottom Row (GTA Minimap Radar & Prompt) */
+    .gta-bottom-row {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      padding: 8px 0;
-      pointer-events: none;
+      width: 100%;
     }
 
-    .act-narrative-card {
-      background: rgba(13, 19, 28, 0.90);
-      border: 2px solid var(--card-border);
-      border-left: 4px solid var(--accent-saffron);
-      border-radius: 8px;
-      padding: 10px 14px;
-      max-width: 400px;
-      backdrop-filter: blur(8px);
+    /* Circular GTA Radar Minimap */
+    .gta-radar-wrap {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      border: 3px solid #24364a;
+      background: rgba(8, 12, 17, 0.92);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+      position: relative;
+      overflow: hidden;
       pointer-events: auto;
     }
 
-    .boss-shout-card {
-      background: rgba(26, 12, 18, 0.92);
-      border: 2px solid #571626;
-      border-right: 4px solid #ff1744;
-      border-radius: 8px;
-      padding: 10px 14px;
-      max-width: 360px;
-      text-align: right;
-      backdrop-filter: blur(8px);
+    #gta-radar-canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .gta-location-tag {
+      position: absolute;
+      bottom: 6px;
+      left: 145px;
+      background: rgba(10, 16, 24, 0.85);
+      border-left: 3px solid var(--accent-gold);
+      padding: 4px 10px;
+      border-radius: 0 4px 4px 0;
+      font-family: var(--font-pixel);
+      font-size: 0.52rem;
+      color: #fff;
+    }
+
+    /* Drive / Steal Interaction Prompt */
+    .gta-prompt-box {
+      background: rgba(12, 18, 26, 0.92);
+      border: 2px solid var(--accent-gold);
+      border-radius: 6px;
+      padding: 10px 18px;
+      text-align: center;
+      font-family: var(--font-pixel);
+      font-size: 0.65rem;
+      color: #fff;
+      animation: alertPulse 1.5s infinite alternate;
+      max-width: 420px;
+      margin: 0 auto 10px;
       pointer-events: auto;
     }
 
-    .boss-shout-text {
-      background: #2b0811;
-      border: 1px dashed #ff5252;
-      padding: 5px 8px;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      color: #ff80ab;
-      font-style: italic;
-    }
-
-    .action-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
+    /* Touch Controls for GTA Mobile */
+    .gta-touch-controls {
+      display: none;
+      grid-template-columns: repeat(3, 1fr);
       gap: 6px;
       pointer-events: auto;
+      max-width: 320px;
     }
 
-    .action-btn {
-      background: rgba(18, 26, 36, 0.94);
-      border: 2px solid #233549;
-      border-radius: 6px;
-      padding: 8px 10px;
-      color: #fff;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      text-align: left;
-      transition: all 0.16s ease;
-    }
-
-    .action-btn:hover:not(:disabled) {
-      background: #1c2c3e;
-      border-color: var(--accent-teal);
-      transform: translateY(-2px);
-    }
-
-    .action-btn.super-btn {
-      border-color: var(--accent-purple);
-      box-shadow: 0 0 10px rgba(179, 136, 255, 0.35);
-    }
-
-    /* ==========================================================================
-       MODE 2: DELHI METRO STYLE MO BUS 3D TRANSIT SURVIVAL HUD
-       ========================================================================== */
-    #runner-ui {
-      display: none;
-      flex-direction: column;
-      flex: 1;
-      justify-content: space-between;
-      pointer-events: none;
-    }
-
-    .runner-top-hud {
-      width: 100%;
-      max-width: 950px;
-      margin: 4px auto 0;
-      display: flex;
-      justify-content: space-between;
-      background: rgba(10, 16, 24, 0.90);
-      border: 2px solid var(--accent-green);
-      border-radius: 8px;
-      padding: 8px 16px;
-      backdrop-filter: blur(8px);
-      pointer-events: auto;
-      box-shadow: 0 0 20px rgba(0, 230, 118, 0.25);
-    }
-
-    .runner-stat {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .runner-stat-label {
-      font-family: var(--font-pixel);
-      font-size: 0.5rem;
-      color: var(--accent-turmeric);
-    }
-
-    .runner-stat-val {
-      font-family: var(--font-pixel);
-      font-size: 0.9rem;
-      color: #fff;
-    }
-
-    .runner-prompt-box {
-      align-self: center;
-      background: rgba(16, 26, 38, 0.92);
-      border: 2px solid var(--accent-gold);
-      border-radius: 8px;
-      padding: 12px 24px;
-      text-align: center;
-      backdrop-filter: blur(8px);
-      animation: alertPulse 1.5s infinite alternate;
-    }
-
-    .runner-touch-controls {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-      max-width: 480px;
-      margin: 0 auto;
-      pointer-events: auto;
-      width: 100%;
-    }
-
-    .btn-run-ctrl {
-      background: rgba(22, 34, 48, 0.9);
-      border: 2px solid #36506c;
+    .btn-touch {
+      background: rgba(20, 30, 42, 0.9);
+      border: 1px solid #36506c;
       color: #fff;
       font-family: var(--font-pixel);
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       padding: 12px;
-      border-radius: 6px;
-      cursor: pointer;
+      border-radius: 4px;
       text-align: center;
     }
 
-    .btn-run-ctrl:active {
+    .btn-touch:active {
       background: var(--accent-teal);
       color: #000;
     }
 
-    /* Comic Onomatopoeia Popups */
-    .comic-burst {
-      position: absolute;
-      font-family: var(--font-pixel);
-      font-size: 1.6rem;
-      font-weight: 900;
-      color: #ffd600;
-      text-shadow: 3px 3px 0 #d50000, -2px -2px 0 #000;
-      pointer-events: none;
-      z-index: 150;
-      animation: comicPop 0.8s ease-out forwards;
-      transform-origin: center;
-    }
-
-    @keyframes comicPop {
-      0% { transform: scale(0.4) rotate(-15deg); opacity: 1; }
-      50% { transform: scale(1.3) rotate(5deg); opacity: 1; }
-      100% { transform: scale(1.1) translateY(-40px) rotate(10deg); opacity: 0; }
-    }
-
-    /* Announcer Banner */
-    .fightkaro-announcer {
-      position: absolute;
-      top: 42%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      font-family: var(--font-pixel);
-      font-size: 2.2rem;
-      color: var(--accent-gold);
-      text-shadow: 0 0 20px rgba(255, 214, 0, 0.9), 4px 4px 0 #000;
-      z-index: 100;
-      pointer-events: none;
-      text-align: center;
-      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .fightkaro-announcer.show {
-      transform: translate(-50%, -50%) scale(1);
-    }
-
-    /* Ending Overlay */
-    .ending-overlay {
+    /* GTA "WASTED" / "DHAMAAK" Screen */
+    .gta-wasted-screen {
       display: none;
       position: absolute;
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      width: 90%;
-      max-width: 620px;
-      background: rgba(11, 17, 25, 0.96);
-      border: 2px solid var(--accent-gold);
-      border-radius: 8px;
-      padding: 24px;
+      font-family: 'Space Grotesk', serif;
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: #d50000;
+      text-shadow: 0 0 30px rgba(213, 0, 0, 0.9), 4px 4px 0 #000;
+      letter-spacing: 6px;
+      z-index: 200;
       text-align: center;
-      z-index: 100;
-      box-shadow: 0 0 50px rgba(255, 214, 0, 0.35);
-      pointer-events: auto;
+      pointer-events: none;
     }
 
-    .ending-overlay.open {
-      display: block;
-    }
-
-    /* Screenplay Modal */
-    .screenplay-modal {
+    .gta-mission-passed {
       display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.88);
-      backdrop-filter: blur(8px);
-      z-index: 1000;
-      padding: 20px;
-      overflow-y: auto;
-      justify-content: center;
-    }
-
-    .screenplay-modal.open { display: flex; }
-
-    .screenplay-content {
-      background: #0f1622;
-      border: 2px solid var(--accent-saffron);
-      max-width: 800px;
-      width: 100%;
-      border-radius: 8px;
-      padding: 24px;
-      color: #e3ebf4;
-      line-height: 1.6;
-      position: relative;
-    }
-
-    .screenplay-close {
       position: absolute;
-      top: 16px; right: 16px;
-      background: #251016;
-      border: 1px solid #ff1744;
-      color: #ff5252;
-      padding: 4px 10px;
-      font-family: var(--font-pixel);
-      font-size: 0.6rem;
-      cursor: pointer;
-      border-radius: 4px;
+      top: 38%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 900;
+      font-size: 2.4rem;
+      color: #ffd600;
+      text-shadow: 0 0 25px rgba(255, 214, 0, 0.8), 3px 3px 0 #000;
+      z-index: 200;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    /* Other Mode UI Containers */
+    #fightkaro-ui, #runner-ui {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+      pointer-events: none;
     }
 
     /* Responsive */
     @media (max-width: 800px) {
-      .arcade-hud-row { grid-template-columns: 1fr; gap: 4px; }
-      .arcade-vs-box { display: none; }
-      .action-grid { grid-template-columns: 1fr 1fr; }
-      .middle-stage { flex-direction: column; align-items: stretch; gap: 6px; }
-      .boss-shout-card { text-align: left; border-right: none; border-left: 4px solid #ff1744; }
-      .brand-sub { display: none; }
+      .gta-touch-controls { display: grid; }
+      .gta-location-tag { display: none; }
+      .brand-title { font-size: 0.65rem; }
     }
   </style>
 </head>
 <body>
-  <!-- 3D WebGL Canvas Layer -->
   <div id="webgl-canvas"></div>
   <div class="crt-overlay"></div>
   <div class="vignette-overlay"></div>
 
-  <!-- FightKaro Dramatic Announcer ("ROUND 1: FIGHT!", "K.O.!") -->
-  <div class="fightkaro-announcer" id="fightAnnouncer">ROUND 1<br><span style="color: #ff1744; font-size: 1.8rem;">FIGHT!</span></div>
+  <!-- GTA Cinematic Banners -->
+  <div class="gta-wasted-screen" id="wastedBanner">
+    PHATI GALA<br>
+    <span style="font-size: 1.4rem; color: #ff5252;">WASTED (IZZAT KHATAM)</span>
+  </div>
 
-  <!-- UI Layer -->
+  <div class="gta-mission-passed" id="missionPassedBanner">
+    KHATTI PASSED!<br>
+    <span style="font-size: 1.3rem; color: #00e676;">RESPECT + +</span>
+  </div>
+
   <div id="ui-layer">
     <!-- Header -->
     <header>
-      <div>
-        <div class="brand-title">
-          <span>⚡</span> ODISHA SIMULATOR 3D
-        </div>
-        <div class="brand-sub">FIGHTKARO × BENGLOORU × DELHI METRO EDITION</div>
+      <div class="brand-title">
+        <span>⚡</span> GRAND THEFT AMA GADI 3D
       </div>
 
       <!-- Mode Switcher -->
       <div class="mode-switch-group">
-        <button class="btn-mode active" id="btnModeFight">🥊 1v1 SHOWDOWN</button>
-        <button class="btn-mode" id="btnModeRunner">🚌 MO BUS RUSH 3D</button>
+        <button class="btn-mode active" id="btnModeGTA">🚗 GTA OPEN WORLD</button>
+        <button class="btn-mode" id="btnModeFight">🥊 FIGHTKARO 1v1</button>
+        <button class="btn-mode" id="btnModeRunner">🚌 MO BUS RUSH</button>
       </div>
 
       <div class="header-btns">
         <button class="btn-ui" id="btnCamToggle">🎥 CAM</button>
         <button class="btn-ui" id="btnSoundToggle"><span id="soundIcon">🔊</span></button>
-        <button class="btn-ui" id="btnScreenplay">📜 SCRIPT</button>
         <button class="btn-ui" id="btnRestart">🔄 RESET</button>
       </div>
     </header>
 
-    <!-- Benglooru Soundboard Strip -->
-    <div class="soundboard-strip">
-      <span class="sb-label">📻 SFX:</span>
-      <button class="sb-btn" onclick="sound.playLadleClang(); spawnComic('THAK-THUNG! 🛎️');">🛎️ Dahibara</button>
-      <button class="sb-btn" onclick="sound.playBetelSlap(); spawnComic('PHAT-CHHAAK! 🍃');">🍃 Tookna</button>
-      <button class="sb-btn" onclick="sound.playVikramHorn(); spawnComic('PEEP-PEEP! 🛺');">🛺 Vikram</button>
-      <button class="sb-btn" onclick="sound.playMoBusAirHorn(); spawnComic('PAAAN! 🚌');">🚌 Route 20</button>
-      <button class="sb-btn" onclick="sound.playThunder(); spawnComic('DHOOOM! ⚡');">⚡ Cyclone</button>
-      <button class="sb-btn" onclick="sound.playKTMRev(); spawnComic('VROOOM! 🏍️');">🏍️ KTM</button>
-    </div>
-
     <!-- ======================================================================
-         MODE 1: FIGHTKARO 1V1 COMBAT INTERFACE
+         MODE: GTA BHUBANESWAR OPEN-WORLD SANDBOX HUD
          ====================================================================== -->
-    <div id="fightkaro-ui">
-      <!-- Arcade Health & Super Meter HUD -->
-      <div class="arcade-hud-row">
-        <!-- Player -->
-        <div>
-          <div style="font-family: var(--font-pixel); font-size: 0.58rem; color: #fff; margin-bottom: 3px;">
-            YOU (ODISHA COMMUTER)
-          </div>
-          <div class="fighter-hp-track">
-            <div class="fighter-hp-fill fill-player-hp" id="playerHpBar" style="width: 100%;"></div>
-            <div class="fighter-hp-text" id="playerHpVal">100/100 IZZAT</div>
-          </div>
-          <div style="display: flex; align-items: center; gap: 4px; margin-top: 3px;">
-            <span style="font-family: var(--font-pixel); font-size: 0.45rem; color: var(--accent-purple);">TORANI:</span>
-            <div style="flex: 1; height: 5px; background: #080c12; border: 1px solid #2a1f44; border-radius: 2px; overflow: hidden;">
-              <div id="superMeterBar" style="height: 100%; width: 25%; background: linear-gradient(90deg, #7c4dff, #ff80ab);"></div>
-            </div>
-            <span style="font-family: var(--font-pixel); font-size: 0.45rem; color: var(--accent-gold);" id="superMeterVal">25%</span>
+    <div id="gta-ui">
+      <!-- Top Right Status (Rupees, Health, Stars) -->
+      <div class="gta-top-hud">
+        <div class="gta-cash-box" id="gtaCash">₹00000250</div>
+        <div class="gta-bars-box">
+          <div class="gta-hp-track">
+            <div class="gta-hp-fill" id="gtaHpFill"></div>
           </div>
         </div>
-
-        <div class="arcade-vs-box">VS</div>
-
-        <!-- Boss -->
-        <div style="text-align: right;">
-          <div style="font-family: var(--font-pixel); font-size: 0.58rem; color: #ff5252; margin-bottom: 3px;" id="bossName">
-            Bunty "Neon Pulsar" Jena
-          </div>
-          <div class="fighter-hp-track">
-            <div class="fighter-hp-fill fill-boss-hp" id="bossHpBar" style="width: 100%;"></div>
-            <div class="fighter-hp-text" id="bossHpVal">80/80 HP</div>
-          </div>
-          <div style="font-family: var(--font-pixel); font-size: 0.45rem; color: var(--accent-turmeric); margin-top: 3px;" id="bossSubtitle">
-            WRONG-SIDE DIVIDER SPECIALIST
-          </div>
+        <div class="gta-wanted-stars" id="gtaStars">
+          <span class="star-item">★</span>
+          <span class="star-item">★</span>
+          <span class="star-item">★</span>
+          <span class="star-item">★</span>
+          <span class="star-item">★</span>
+        </div>
+        <div class="gta-weapon-card" id="gtaVehicleCard">
+          <span>🧍 ON FOOT</span>
+          <span style="color: var(--accent-teal);">[F: ENTER VEHICLE]</span>
         </div>
       </div>
 
-      <!-- Narrative & Dialogue -->
-      <div class="middle-stage">
-        <div class="act-narrative-card">
-          <div style="font-family: var(--font-pixel); font-size: 0.55rem; color: var(--accent-gold); margin-bottom: 3px;">
-            <span id="actNumber">ACT I</span> • <span id="actTime" style="color: var(--accent-teal);">9:15 AM</span>
-          </div>
-          <div style="font-size: 1.1rem; font-weight: 700; color: #fff;" id="actTitle">The Rasulgarh Flyover Gridlock</div>
-          <div style="font-family: var(--font-odia); font-size: 0.85rem; color: var(--accent-turmeric); margin-bottom: 4px;" id="actOdia">ରସୁଲଗଡ଼ ଫ୍ଲାଏଓଭର ଯୁଦ୍ଧ</div>
-          <div style="font-size: 0.75rem; color: #cfdbe6; font-style: italic;" id="actAtmosphere">
-            "In Bhubaneswar, distance is measured in how many times a KTM rider with bleached hair can graze your left ankle."
-          </div>
-        </div>
-
-        <div class="boss-shout-card">
-          <div style="font-family: var(--font-pixel); font-size: 0.5rem; color: #ff5252; margin-bottom: 3px;">OPPONENT RETORT:</div>
-          <div class="boss-shout-text" id="bossDialogue">"Dekhiki chala be! Rasta ta tama bapa ra ki?!"</div>
+      <!-- Center Action / Prompt Box -->
+      <div class="gta-prompt-box" id="gtaPrompt">
+        <div>📍 JANPATH CORRIDOR • MASTER CANTEEN</div>
+        <div style="font-size: 0.55rem; color: #a4bed4; margin-top: 3px;">
+          [WASD] Walk/Drive • [F] Hijack/Drive Gadi • [H] Honk Horn • [Space] Handbrake/Jump
         </div>
       </div>
 
-      <!-- Action Grid -->
-      <div style="width: 100%; max-width: 950px; margin: 0 auto; pointer-events: auto;">
-        <div class="action-grid" id="actionGrid">
-          <!-- 4 Actions injected dynamically -->
+      <!-- Bottom Row (Radar Minimap & Touch Controls) -->
+      <div class="gta-bottom-row">
+        <!-- Circular Radar -->
+        <div class="gta-radar-wrap">
+          <canvas id="gta-radar-canvas" width="130" height="130"></canvas>
         </div>
-      </div>
-    </div>
-
-    <!-- ======================================================================
-         MODE 2: DELHI METRO STYLE MO BUS 3D TRANSIT SURVIVAL INTERFACE
-         ====================================================================== -->
-    <div id="runner-ui">
-      <!-- Runner Stats (Distance, Coins, Window Seat Chance) -->
-      <div class="runner-top-hud">
-        <div class="runner-stat">
-          <span class="runner-stat-label">DISTANCE TO MO BUS:</span>
-          <span class="runner-stat-val" id="runnerDist">150m</span>
+        <div class="gta-location-tag" id="gtaLocation">
+          BHUBANESWAR • CUTTACK TWIN-CITY
         </div>
-        <div class="runner-stat">
-          <span class="runner-stat-label">🪙 KHUCHURA COLLECTED:</span>
-          <span class="runner-stat-val" id="runnerCoins">₹0</span>
+
+        <!-- Mobile Touch Controls -->
+        <div class="gta-touch-controls">
+          <button class="btn-touch" id="tLeft">◀ STEER</button>
+          <button class="btn-touch" id="tGas">▲ GAS</button>
+          <button class="btn-touch" id="tRight">STEER ▶</button>
+          <button class="btn-touch" id="tBrake">▼ BRAKE</button>
+          <button class="btn-touch" id="tAction" style="background: var(--accent-saffron); font-weight: bold;">[F] GADI</button>
+          <button class="btn-touch" id="tHorn">📯 HORN</button>
         </div>
-        <div class="runner-stat">
-          <span class="runner-stat-label">🪑 WINDOW SEAT CHANCE:</span>
-          <span class="runner-stat-val" id="runnerSeat">95%</span>
-        </div>
-      </div>
-
-      <!-- Center Prompt -->
-      <div class="runner-prompt-box" id="runnerPrompt">
-        <div style="font-family: var(--font-pixel); font-size: 0.75rem; color: var(--accent-gold); margin-bottom: 4px;">
-          BHAAGO! CATCH MO BUS ROUTE 20!
-        </div>
-        <div style="font-size: 0.78rem; color: #b0c6dc;">
-          Controls: [A] Left • [D] Right • [W / Space] Jump Bull • [S] Slide Under Barricade
-        </div>
-      </div>
-
-      <!-- On-Screen Touch D-Pad for Mobile -->
-      <div class="runner-touch-controls">
-        <button class="btn-run-ctrl" onclick="runnerMoveLeft()">◀ LEFT (A)</button>
-        <button class="btn-run-ctrl" onclick="runnerJump()">▲ JUMP (W)</button>
-        <button class="btn-run-ctrl" onclick="runnerMoveRight()">RIGHT (D) ▶</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Ending Overlay -->
-  <div class="ending-overlay" id="endingOverlay">
-    <div style="font-family: var(--font-pixel); font-size: 0.85rem; color: var(--accent-gold); margin-bottom: 10px;">
-      🏆 ODISHA SIMULATOR 3D CONQUERED!
-    </div>
-    <h2 style="font-size: 1.3rem; color: #fff; margin-bottom: 6px;" id="endingTitle">
-      THE TRUE TWIN-CITY LEGEND
-    </h2>
-    <div style="font-family: var(--font-odia); font-size: 1.1rem; color: var(--accent-turmeric); margin-bottom: 10px;">
-      ଆମ ଗାଡ଼ି, ଆମ ରାସ୍ତା — ତମେ ବିଜୟୀ ହେଲ!
-    </div>
-    <p style="font-size: 0.85rem; color: #bed0e2; line-height: 1.6; margin-bottom: 16px;" id="endingDesc">
-      You survived the wrong-side Pulsars at Rasulgarh, protected Cuttack Dahibara Aloodum from ketchup desecration, defeated Prafulla Uncle's bachelor rent syndicate, matched Tookna Bhai's acoustic Chuna slaps, debunked the MS-Paint IT fraud, secured 5kg of Nainital Aloo during Kalabaisakhi, and brought Pink Vikram Auto Anna to tears of Kataki brotherhood at Master Canteen!
-    </p>
-    <button class="btn-ui" style="font-size: 0.75rem; padding: 12px 24px; background: var(--accent-saffron); color: #fff; margin: 0 auto; display: inline-flex;" onclick="restartGame()">
-      🔄 PLAY AGAIN
-    </button>
-  </div>
-
-  <!-- Screenplay Reader Modal -->
-  <div class="screenplay-modal" id="screenplayModal">
-    <div class="screenplay-content">
-      <button class="screenplay-close" id="btnCloseScript">✕ CLOSE SCRIPT</button>
-      <h1 style="color: var(--accent-gold); font-family: var(--font-pixel); font-size: 0.95rem; margin-bottom: 6px;">
-        ODISHA SIMULATOR: AMA GADI, AMA RASTA
-      </h1>
-      <p style="color: var(--accent-teal); font-size: 0.78rem; margin-bottom: 16px;">
-        THE COMPLETE 7-ACT DRAMATIC SCREENPLAY • UNCUT DIRECTOR'S CUT
-      </p>
-
-      <div class="script-act">
-        <h2 style="color: var(--accent-gold); font-size: 0.85rem;">Act I: The Rasulgarh Flyover Gridlock (9:15 AM)</h2>
-        <p style="font-size: 0.82rem;">Beneath the flyover, a pink Vikram auto, green Mo Bus Route 20, four stray bulls having a territorial dispute, and two hundred Pulsars have achieved geometric lockjaw. KTM Chapri spits crimson gutkha: "Dekhiki chala be! Rasta ta tama bapa ra ki?"</p>
-      </div>
-
-      <div class="script-act" style="margin-top: 10px;">
-        <h2 style="color: var(--accent-gold); font-size: 0.85rem;">Act II: The Sonic Call of the Dahibara Seller (10:30 AM)</h2>
-        <p style="font-size: 0.82rem;">Outside Saheed Nagar banyan tree. Aluminum Handi in damp red cloth. *THAK-THAK-THUNG!* Bidyadhar Mausa strikes the steel ladle. A tech bro asks for Tomato Ketchup &amp; Sweet Corn. Sacred rage erupts!</p>
-      </div>
-
-      <div class="script-act" style="margin-top: 10px;">
-        <h2 style="color: var(--accent-gold); font-size: 0.85rem;">Act III: The "Bachelor Hunting" Student Rent Scam (1:15 PM)</h2>
-        <p style="font-size: 0.82rem;">Neon-green Patia G+2 house. Landlord Prafulla Uncle: "Electric sub-meter ₹13/unit! 9 PM gate tala! Friend mana, Swiggy mana!"</p>
-      </div>
-
-      <div class="script-act" style="margin-top: 10px;">
-        <h2 style="color: var(--accent-gold); font-size: 0.85rem;">Act IV: The Omfed "Tookna" &amp; Pan Dukan Khatti (5:30 PM)</h2>
-        <p style="font-size: 0.82rem;">*PHAT-PHAT-CHHAAK!* Tookna Bhai's acoustic Chuna palm slap. "Babu khuchura nahi, chocolate nei jaa!"</p>
-      </div>
-
-      <div class="script-act" style="margin-top: 10px;">
-        <h2 style="color: var(--accent-gold); font-size: 0.85rem;">Act V: The Fake "IT Placement / Backdoor Offer" Scam (7:00 PM)</h2>
-        <p style="font-size: 0.82rem;">Jaydev Vihar 10x10 cabin. Leaking AC into bucket. MS-Paint TCS+Infosys 6.5 LPA Bangalore offer letter for ₹15k GPay.</p>
-      </div>
-
-      <div class="script-act" style="margin-top: 10px;">
-        <h2 style="color: var(--accent-gold); font-size: 0.85rem;">Act VI: The Kalabaisakhi Cyclone Panic at Unit-1 Haat (8:30 PM)</h2>
-        <p style="font-size: 0.82rem;">Bruised purple sky. 3 Sambalpuri saree aunties locked in tug-of-war over the last 5kg sack of Nainital Aloo.</p>
-      </div>
-
-      <div class="script-act" style="margin-top: 10px;">
-        <h2 style="color: var(--accent-gold); font-size: 0.85rem;">Act VII: Final Showdown at Master Canteen (10:30 PM)</h2>
-        <p style="font-size: 0.82rem;">Stone warrior horse in torrential rain. Pink Vikram Auto Anna demanding ₹350 to Kalpana Square because "Barsha hauchi babu!"</p>
       </div>
     </div>
   </div>
 
   <!-- ==========================================================================
-       JAVASCRIPT: 3D ENGINE, SPATIAL AUDIO & COMBINED GAME MODES
+       JAVASCRIPT: 3D ENGINE, PROCEDURAL VEHICLES & GTA DRIVING PHYSICS
        ========================================================================== -->
   <script>
     /* ==========================================================================
@@ -800,80 +485,6 @@
         }
       }
 
-      playLadleClang() {
-        if (!this.enabled) return;
-        this.init();
-        const now = this.ctx.currentTime;
-        [1500, 2200, 3600].forEach((freq, i) => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = i === 0 ? 'triangle' : 'sine';
-          osc.frequency.setValueAtTime(freq, now);
-          osc.frequency.exponentialRampToValueAtTime(freq * 0.9, now + 0.35);
-
-          gain.gain.setValueAtTime(0.3 / (i + 1), now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4 + (i * 0.1));
-
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start(now);
-          osc.stop(now + 0.45);
-        });
-      }
-
-      playBetelSlap() {
-        if (!this.enabled) return;
-        this.init();
-        const now = this.ctx.currentTime;
-        const bufferSize = this.ctx.sampleRate * 0.08;
-        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.22));
-        }
-        const noise = this.ctx.createBufferSource();
-        noise.buffer = buffer;
-        const filter = this.ctx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(1600, now);
-        const gain = this.ctx.createGain();
-        gain.gain.setValueAtTime(0.75, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-        noise.connect(filter);
-        filter.connect(gain);
-        gain.connect(this.ctx.destination);
-        noise.start(now);
-
-        const osc = this.ctx.createOscillator();
-        const oscGain = this.ctx.createGain();
-        osc.frequency.setValueAtTime(140, now);
-        osc.frequency.exponentialRampToValueAtTime(45, now + 0.12);
-        oscGain.gain.setValueAtTime(0.6, now);
-        oscGain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
-        osc.connect(oscGain);
-        oscGain.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.12);
-      }
-
-      playKTMRev() {
-        if (!this.enabled) return;
-        this.init();
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(120, now);
-        osc.frequency.exponentialRampToValueAtTime(460, now + 0.25);
-        osc.frequency.exponentialRampToValueAtTime(160, now + 0.5);
-        gain.gain.setValueAtTime(0.22, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.55);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.55);
-      }
-
       playVikramHorn() {
         if (!this.enabled) return;
         this.init();
@@ -883,12 +494,12 @@
           const gain = this.ctx.createGain();
           osc.type = 'sawtooth';
           osc.frequency.setValueAtTime(f, now);
-          gain.gain.setValueAtTime(0.2, now);
-          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
           osc.connect(gain);
           gain.connect(this.ctx.destination);
           osc.start(now);
-          osc.stop(now + 0.3);
+          osc.stop(now + 0.35);
         });
       }
 
@@ -901,8 +512,8 @@
           const gain = this.ctx.createGain();
           osc.type = 'triangle';
           osc.frequency.setValueAtTime(freq, now);
-          gain.gain.setValueAtTime(0.2, now);
-          gain.gain.linearRampToValueAtTime(0.28, now + 0.08);
+          gain.gain.setValueAtTime(0.22, now);
+          gain.gain.linearRampToValueAtTime(0.3, now + 0.08);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
           osc.connect(gain);
           gain.connect(this.ctx.destination);
@@ -911,30 +522,39 @@
         });
       }
 
-      playThunder() {
+      playEngineRev() {
         if (!this.enabled) return;
         this.init();
         const now = this.ctx.currentTime;
-        const dur = 1.3;
-        const bufferSize = this.ctx.sampleRate * dur;
-        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.45));
-        }
-        const noise = this.ctx.createBufferSource();
-        noise.buffer = buffer;
-        const filter = this.ctx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(320, now);
-        filter.frequency.exponentialRampToValueAtTime(60, now + dur);
+        const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-        gain.gain.setValueAtTime(0.85, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + dur);
-        noise.connect(filter);
-        filter.connect(gain);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(100, now);
+        osc.frequency.exponentialRampToValueAtTime(280, now + 0.3);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+        osc.connect(gain);
         gain.connect(this.ctx.destination);
-        noise.start(now);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      }
+
+      playPoliceSiren() {
+        if (!this.enabled) return;
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.linearRampToValueAtTime(950, now + 0.3);
+        osc.frequency.linearRampToValueAtTime(600, now + 0.6);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.65);
       }
 
       playHit() {
@@ -944,84 +564,14 @@
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'square';
-        osc.frequency.setValueAtTime(260, now);
-        osc.frequency.exponentialRampToValueAtTime(45, now + 0.14);
+        osc.frequency.setValueAtTime(240, now);
+        osc.frequency.exponentialRampToValueAtTime(45, now + 0.15);
         gain.gain.setValueAtTime(0.35, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.16);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
-        osc.stop(now + 0.15);
-      }
-
-      playCrit() {
-        if (!this.enabled) return;
-        this.init();
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(560, now);
-        osc.frequency.linearRampToValueAtTime(140, now + 0.28);
-        gain.gain.setValueAtTime(0.45, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.3);
-      }
-
-      playCoin() {
-        if (!this.enabled) return;
-        this.init();
-        const now = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(987.77, now);
-        osc.frequency.setValueAtTime(1318.51, now + 0.08);
-        gain.gain.setValueAtTime(0.2, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(now);
-        osc.stop(now + 0.25);
-      }
-
-      playVictory() {
-        if (!this.enabled) return;
-        this.init();
-        [261.63, 329.63, 392.00, 523.25, 659.25, 783.99].forEach((freq, i) => {
-          const now = this.ctx.currentTime + (i * 0.08);
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(freq, now);
-          gain.gain.setValueAtTime(0.28, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start(now);
-          osc.stop(now + 0.3);
-        });
-      }
-
-      playFightCall() {
-        if (!this.enabled) return;
-        this.init();
-        const now = this.ctx.currentTime;
-        [180, 220, 280, 440].forEach((freq, i) => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(freq, now + (i * 0.07));
-          gain.gain.setValueAtTime(0.2, now + (i * 0.07));
-          gain.gain.exponentialRampToValueAtTime(0.001, now + (i * 0.07) + 0.18);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start(now + (i * 0.07));
-          osc.stop(now + (i * 0.07) + 0.2);
-        });
+        osc.stop(now + 0.16);
       }
 
       playBlip() {
@@ -1031,7 +581,7 @@
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(650, now);
+        osc.frequency.setValueAtTime(700, now);
         gain.gain.setValueAtTime(0.08, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
         osc.connect(gain);
@@ -1048,11 +598,11 @@
        ========================================================================== */
     const container = document.getElementById('webgl-canvas');
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x06090d);
-    scene.fog = new THREE.FogExp2(0x06090d, 0.024);
+    scene.background = new THREE.Color(0x0a0f16);
+    scene.fog = new THREE.FogExp2(0x0a0f16, 0.018);
 
-    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 4.5, 12);
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 6, 12);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -1061,55 +611,22 @@
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
 
-    const hemiLight = new THREE.HemisphereLight(0xffeedd, 0x111122, 0.6);
+    const hemiLight = new THREE.HemisphereLight(0xffeedd, 0x111122, 0.65);
     scene.add(hemiLight);
 
-    const dirLight = new THREE.DirectionalLight(0xfffaed, 0.9);
-    dirLight.position.set(12, 20, 15);
+    const dirLight = new THREE.DirectionalLight(0xfffaed, 1.0);
+    dirLight.position.set(25, 45, 30);
     dirLight.castShadow = true;
     scene.add(dirLight);
 
-    const pointLight = new THREE.PointLight(0xff6d00, 1.2, 30);
-    pointLight.position.set(0, 3, 0);
-    scene.add(pointLight);
+    // City Group (Streets, Buildings, Landmarks)
+    const cityGroup = new THREE.Group();
+    scene.add(cityGroup);
 
-    // Dynamic Act 3D Node Group (For FightKaro 1v1)
-    const actGroup = new THREE.Group();
-    scene.add(actGroup);
+    // Vehicles Array (Hijackable!)
+    const gtaVehicles = [];
 
-    // Runner 3D Node Group (For Delhi Metro / Mo Bus Survival)
-    const runnerGroup = new THREE.Group();
-    scene.add(runnerGroup);
-
-    // Player 3D Avatar
-    const player3D = new THREE.Group();
-    player3D.position.set(-2.5, 0, 3.0);
-    player3D.rotation.y = Math.PI / 4;
-    scene.add(player3D);
-
-    // Global Ground Plane
-    const groundGeo = new THREE.PlaneGeometry(120, 120);
-    const groundMat = new THREE.MeshStandardMaterial({ color: 0x141a22, roughness: 0.85, metalness: 0.2 });
-    const ground = new THREE.Mesh(groundGeo, groundMat);
-    ground.rotation.x = -Math.PI / 2;
-    ground.receiveShadow = true;
-    scene.add(ground);
-
-    // Particle Weather System
-    const particleCount = 750;
-    const particleGeo = new THREE.BufferGeometry();
-    const particlePositions = new Float32Array(particleCount * 3);
-    for (let i = 0; i < particleCount * 3; i += 3) {
-      particlePositions[i] = (Math.random() - 0.5) * 50;
-      particlePositions[i + 1] = Math.random() * 25;
-      particlePositions[i + 2] = (Math.random() - 0.5) * 50;
-    }
-    particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-    const particleMat = new THREE.PointsMaterial({ color: 0x00e5ff, size: 0.16, transparent: true, opacity: 0.65 });
-    const particles = new THREE.Points(particleGeo, particleMat);
-    scene.add(particles);
-
-    // Procedural Mesh Factory
+    // Procedural Mesh Builders
     const MeshFactory = {
       createVikramAuto() {
         const group = new THREE.Group();
@@ -1130,19 +647,39 @@
         const w1 = new THREE.Mesh(wGeo, wMat); w1.position.set(0, 0.4, 1.4); group.add(w1);
         const w2 = new THREE.Mesh(wGeo, wMat); w2.position.set(-1.15, 0.4, -1.2); group.add(w2);
         const w3 = new THREE.Mesh(wGeo, wMat); w3.position.set(1.15, 0.4, -1.2); group.add(w3);
+
+        group.userData = {
+          name: "Pink Vikram Auto",
+          type: "auto",
+          speed: 0,
+          maxSpeed: 0.42,
+          accel: 0.012,
+          turnSpeed: 0.038,
+          hornSound: () => sound.playVikramHorn()
+        };
         return group;
       },
 
       createMoBus() {
         const group = new THREE.Group();
-        const body = new THREE.Mesh(new THREE.BoxGeometry(3.2, 3.0, 9.5), new THREE.MeshStandardMaterial({ color: 0x00c853, roughness: 0.5 }));
+        const body = new THREE.Mesh(new THREE.BoxGeometry(3.4, 3.0, 10.5), new THREE.MeshStandardMaterial({ color: 0x00c853, roughness: 0.5 }));
         body.position.y = 2.1;
         body.castShadow = true;
         group.add(body);
 
         const board = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.5, 0.1), new THREE.MeshBasicMaterial({ color: 0x263238 }));
-        board.position.set(0, 3.2, 4.8);
+        board.position.set(0, 3.2, 5.3);
         group.add(board);
+
+        group.userData = {
+          name: "Mo Bus Route 20",
+          type: "bus",
+          speed: 0,
+          maxSpeed: 0.52,
+          accel: 0.008,
+          turnSpeed: 0.022,
+          hornSound: () => sound.playMoBusAirHorn()
+        };
         return group;
       },
 
@@ -1157,97 +694,28 @@
         const w1 = new THREE.Mesh(wGeo, wheelMat); w1.position.set(0, 0.5, 1.1); group.add(w1);
         const w2 = new THREE.Mesh(wGeo, wheelMat); w2.position.set(0, 0.5, -1.0); group.add(w2);
 
-        const bunty = MeshFactory.createHumanoid(0xffd54f, 0x37474f);
-        bunty.scale.set(0.8, 0.8, 0.8);
-        bunty.position.set(0, 0.85, -0.1);
-        group.add(bunty);
+        group.userData = {
+          name: "Bunty's KTM Duke",
+          type: "bike",
+          speed: 0,
+          maxSpeed: 0.65,
+          accel: 0.02,
+          turnSpeed: 0.05,
+          hornSound: () => sound.playVikramHorn()
+        };
         return group;
       },
 
-      createDahibaraSetup() {
-        const group = new THREE.Group();
-        const trunk = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 2.2, 8, 12), new THREE.MeshStandardMaterial({ color: 0x4e342e }));
-        trunk.position.set(-4, 4, -3);
-        group.add(trunk);
-
-        const canopy = new THREE.Mesh(new THREE.DodecahedronGeometry(5.5, 1), new THREE.MeshStandardMaterial({ color: 0x2e7d32 }));
-        canopy.position.set(-4, 9, -3);
-        group.add(canopy);
-
-        const handi = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.95, 1.1, 16), new THREE.MeshStandardMaterial({ color: 0xb0bec5, metalness: 0.8 }));
-        handi.position.set(0, 1.4, -0.9);
-        group.add(handi);
-
-        const cloth = new THREE.Mesh(new THREE.CylinderGeometry(0.78, 0.98, 0.45, 16), new THREE.MeshStandardMaterial({ color: 0xb71c1c }));
-        cloth.position.set(0, 1.25, -0.9);
-        group.add(cloth);
-
-        const mausa = MeshFactory.createHumanoid(0xffffff, 0xd7ccc8);
-        mausa.position.set(-1.1, 0, -0.6);
-        group.add(mausa);
-        return group;
+      createBuilding(w, h, d, color = 0x37474f) {
+        const geo = new THREE.BoxGeometry(w, h, d);
+        const mat = new THREE.MeshStandardMaterial({ color, roughness: 0.8 });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.y = h / 2;
+        mesh.castShadow = true;
+        return mesh;
       },
 
-      createOmfedBooth() {
-        const group = new THREE.Group();
-        const box = new THREE.Mesh(new THREE.BoxGeometry(4.5, 3.2, 3.5), new THREE.MeshStandardMaterial({ color: 0x00c853 }));
-        box.position.y = 1.6;
-        group.add(box);
-
-        const stripe = new THREE.Mesh(new THREE.BoxGeometry(4.55, 0.6, 3.55), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-        stripe.position.y = 1.8;
-        group.add(stripe);
-
-        const tookna = MeshFactory.createHumanoid(0x212121, 0xef6c00);
-        tookna.position.set(0, 0.5, 0.4);
-        group.add(tookna);
-        return group;
-      },
-
-      createMasterCanteenHorse() {
-        const group = new THREE.Group();
-        const stoneMat = new THREE.MeshStandardMaterial({ color: 0x37474f, roughness: 0.9 });
-        const ped = new THREE.Mesh(new THREE.BoxGeometry(4.8, 1.4, 7.5), stoneMat);
-        ped.position.y = 0.7;
-        group.add(ped);
-
-        const horseBody = new THREE.Mesh(new THREE.BoxGeometry(1.6, 2.2, 4.2), stoneMat);
-        horseBody.position.set(0, 2.7, 0);
-        group.add(horseBody);
-
-        const neck = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.4, 1.6), stoneMat);
-        neck.rotation.x = -Math.PI / 6;
-        neck.position.set(0, 4.2, 1.6);
-        group.add(neck);
-
-        const warrior = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 2.2, 8), stoneMat);
-        warrior.position.set(0.9, 3.8, 0.4);
-        group.add(warrior);
-        return group;
-      },
-
-      // Stray Zebu Cow / Bull Obstacle (For Runner)
-      createStrayCow() {
-        const group = new THREE.Group();
-        const cowMat = new THREE.MeshStandardMaterial({ color: 0xeeeeee });
-        const body = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.9, 1.8), cowMat);
-        body.position.y = 0.8;
-        group.add(body);
-
-        // Hump
-        const hump = new THREE.Mesh(new THREE.SphereGeometry(0.35, 8, 8), cowMat);
-        hump.position.set(0, 1.35, 0.3);
-        group.add(hump);
-
-        // Head & Horns
-        const head = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.7), cowMat);
-        head.position.set(0, 1.2, 1.1);
-        group.add(head);
-
-        return group;
-      },
-
-      createHumanoid(hairColor = 0x212121, shirtColor = 0xffffff) {
+      createHumanoid(hairColor = 0x212121, shirtColor = 0x00b0ff) {
         const char = new THREE.Group();
         const head = new THREE.Mesh(new THREE.SphereGeometry(0.35, 12, 12), new THREE.MeshStandardMaterial({ color: 0xd7ccc8 }));
         head.position.y = 2.1;
@@ -1268,822 +736,254 @@
       }
     };
 
-    const playerMesh = MeshFactory.createHumanoid(0x212121, 0x00b0ff);
-    player3D.add(playerMesh);
-
-    function spawnComic(text, x = null, y = null) {
-      const burst = document.createElement('div');
-      burst.className = 'comic-burst';
-      burst.innerText = text;
-      burst.style.left = x ? `${x}px` : `${window.innerWidth * (0.35 + Math.random() * 0.3)}px`;
-      burst.style.top = y ? `${y}px` : `${window.innerHeight * (0.35 + Math.random() * 0.25)}px`;
-      document.body.appendChild(burst);
-      setTimeout(() => burst.remove(), 800);
-    }
-
     /* ==========================================================================
-       3. MODE CONTROLLER (FIGHTKARO vs DELHI METRO MO BUS SURVIVAL)
+       3. BUILD GTA BHUBANESWAR 3D MAP & STREETS
        ========================================================================== */
-    let currentMode = 'FIGHT'; // 'FIGHT' or 'RUNNER'
+    function buildBhubaneswarCity() {
+      // Ground / Roads
+      const mainGround = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), new THREE.MeshStandardMaterial({ color: 0x161e27, roughness: 0.9 }));
+      mainGround.rotation.x = -Math.PI / 2;
+      mainGround.receiveShadow = true;
+      cityGroup.add(mainGround);
 
-    function switchMode(mode) {
-      currentMode = mode;
-      document.getElementById('btnModeFight').className = mode === 'FIGHT' ? 'btn-mode active' : 'btn-mode';
-      document.getElementById('btnModeRunner').className = mode === 'RUNNER' ? 'btn-mode active' : 'btn-mode';
+      // Asphalt Janpath Avenue (North-South)
+      const road1 = new THREE.Mesh(new THREE.PlaneGeometry(16, 280), new THREE.MeshStandardMaterial({ color: 0x212933, roughness: 0.8 }));
+      road1.rotation.x = -Math.PI / 2;
+      road1.position.y = 0.02;
+      cityGroup.add(road1);
 
-      if (mode === 'FIGHT') {
-        document.getElementById('fightkaro-ui').style.display = 'flex';
-        document.getElementById('runner-ui').style.display = 'none';
-        runnerGroup.visible = false;
-        actGroup.visible = true;
+      // Cuttack-Puri Cross Road (East-West)
+      const road2 = new THREE.Mesh(new THREE.PlaneGeometry(280, 16), new THREE.MeshStandardMaterial({ color: 0x212933, roughness: 0.8 }));
+      road2.rotation.x = -Math.PI / 2;
+      road2.position.y = 0.03;
+      cityGroup.add(road2);
 
-        player3D.position.set(-2.5, 0, 3.0);
-        player3D.rotation.set(0, Math.PI / 4, 0);
-        camera.position.set(0, 4.5, 12);
-        camera.lookAt(0, 1.5, 0);
-        loadAct(state.actIndex);
-      } else {
-        document.getElementById('fightkaro-ui').style.display = 'none';
-        document.getElementById('runner-ui').style.display = 'flex';
-        actGroup.visible = false;
-        runnerGroup.visible = true;
-        initRunnerMode();
-      }
-      sound.playBlip();
-    }
+      // Master Canteen Central Square Roundabout
+      const circleGeo = new THREE.CircleGeometry(18, 32);
+      const circleMat = new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 0.9 });
+      const roundabout = new THREE.Mesh(circleGeo, circleMat);
+      roundabout.rotation.x = -Math.PI / 2;
+      roundabout.position.y = 0.04;
+      cityGroup.add(roundabout);
 
-    document.getElementById('btnModeFight').addEventListener('click', () => switchMode('FIGHT'));
-    document.getElementById('btnModeRunner').addEventListener('click', () => switchMode('RUNNER'));
+      // Master Canteen Stone Warrior Horse Monument
+      const horsePed = new THREE.Mesh(new THREE.BoxGeometry(4.8, 2.5, 7.5), new THREE.MeshStandardMaterial({ color: 0x37474f }));
+      horsePed.position.set(0, 1.25, 0);
+      cityGroup.add(horsePed);
 
-    /* ==========================================================================
-       4. MODE 1: FIGHTKARO STATE & LOGIC
-       ========================================================================== */
-    const state = {
-      actIndex: 0,
-      izzat: 100,
-      maxIzzat: 100,
-      superMeter: 25,
-      currentBoss: null,
-      battleActive: false
-    };
+      const horseBody = new THREE.Mesh(new THREE.BoxGeometry(1.8, 2.6, 4.5), new THREE.MeshStandardMaterial({ color: 0x263238 }));
+      horseBody.position.set(0, 3.8, 0);
+      cityGroup.add(horseBody);
 
-    const ACTS = [
-      {
-        number: "ACT I",
-        time: "9:15 AM",
-        title: "The Rasulgarh Flyover Gridlock",
-        odia: "ରସୁଲଗଡ଼ ଫ୍ଲାଏଓଭର ଟ୍ରାଫିକ ଯୁଦ୍ଧ",
-        atmosphere: "NH-16 coal truck exhaust, pink Vikram auto, green Mo Bus Route 20, and two hundred Pulsars achieving geometric lockjaw.",
-        bossName: "Bunty 'Neon Pulsar' Jena",
-        bossTitle: "WRONG-SIDE DIVIDER SPECIALIST",
-        dialogue: "Dekhiki chala be! Rasta ta tama bapa ra ki?!",
-        maxHp: 80,
-        audioFn: () => sound.playKTMRev(),
-        buildScene(grp) {
-          const flyover = new THREE.Mesh(new THREE.BoxGeometry(8, 0.8, 40), new THREE.MeshStandardMaterial({ color: 0x37474f }));
-          flyover.position.set(0, 3.8, 0);
-          grp.add(flyover);
-
-          const moBus = MeshFactory.createMoBus();
-          moBus.position.set(-2.8, 0, -2);
-          grp.add(moBus);
-
-          const ktm = MeshFactory.createKTMBike();
-          ktm.position.set(1.5, 0, 2.5);
-          ktm.rotation.y = Math.PI;
-          grp.add(ktm);
-        },
-        moves: [
-          {
-            title: "Mo Bus Retort",
-            desc: "'Mo bapa ra nuhen, kintu tora ta jama nuhen!'",
-            cost: "0 Stamina",
-            fn: () => executeAttack(24, "You deliver a stinging Cuttack street retort!", "DISHUUM! 💥", sound.playCrit)
-          },
-          {
-            title: "Mo Bus Air Horn Blast",
-            desc: "Honk the massive Route 20 air horn right into Bunty's ears",
-            cost: "Super +25%",
-            fn: () => executeAttack(36, "Mo Bus air horn disorients Bunty completely!", "PAAAN! 🚌", sound.playMoBusAirHorn)
-          },
-          {
-            title: "Traffic Police Threat",
-            desc: "'Bhubaneswar Traffic Police Twitter re tag karuchi!'",
-            cost: "Super +15%",
-            fn: () => executeAttack(28, "Bunty panics about the ₹5,000 challan!", "CHALLAN! 📝", sound.playHit)
-          },
-          {
-            title: "SUPER: BHAICHARA BLAST",
-            desc: "Unleash Kataki brotherhood to vaporize Bunty's aggression!",
-            cost: "100% Super Meter",
-            isSuper: true,
-            fn: () => executeSuperMove(60, "SUPER MOVE: Kataki Bhaichara overwhelms the divider!", "BHAICHARA! ⚡")
-          }
-        ]
-      },
-      {
-        number: "ACT II",
-        time: "10:30 AM",
-        title: "The Sonic Call of the Dahibara Seller",
-        odia: "ଦହିବରା ଆଳୁଦମ ସମ୍ମାନ ରକ୍ଷା",
-        atmosphere: "Outside Saheed Nagar banyan tree. Aluminum Handi in damp red cloth. A tech bro asks for Tomato Ketchup on the sacred Dahibara.",
-        bossName: "Siddharth 'AirPods' Mohapatra",
-        bossTitle: "KETCHUP & SWEET CORN TERRORIST",
-        dialogue: "Bhaiya, can you put Tomato Ketchup & Sweet Corn on this Dahibara?",
-        maxHp: 90,
-        audioFn: () => sound.playLadleClang(),
-        buildScene(grp) {
-          const dahibara = MeshFactory.createDahibaraSetup();
-          grp.add(dahibara);
-
-          const techBro = MeshFactory.createHumanoid(0x1a237e, 0x00bcd4);
-          techBro.position.set(1.6, 0, 0.4);
-          grp.add(techBro);
-        },
-        moves: [
-          {
-            title: "Sacred Torani Splash",
-            desc: "Splash extra spicy Chhuna Dahi water with curry leaves",
-            cost: "Super +20%",
-            fn: () => executeAttack(32, "Cuttack Torani blinds the tech bro with divine flavor!", "TORANI! 🍲", sound.playLadleClang)
-          },
-          {
-            title: "Mausa Ladle Smite",
-            desc: "Bidyadhar Mausa strikes the steel ladle on the handi!",
-            cost: "Super +25%",
-            fn: () => executeAttack(40, "*THAK-THUNG!* Ladle strike shatters Siddharth's pride!", "THAK-THUNG! 🛎️", sound.playLadleClang)
-          },
-          {
-            title: "Panch Phoron Lecture",
-            desc: "Educate him on 1000 years of Barabati culinary lineage",
-            cost: "Super +15%",
-            fn: () => executeAttack(25, "The crowd rallies behind your culinary sermon!", "CHUP BE! 🥄", sound.playHit)
-          },
-          {
-            title: "SUPER: DAHIBARA DELUGE",
-            desc: "Unleash 40 years of spicy Aloo Dum and Guguni fury!",
-            cost: "100% Super Meter",
-            isSuper: true,
-            fn: () => executeSuperMove(65, "SUPER MOVE: 1000-Year Cuttack Dahibara Torrent!", "ALOO DUM! 🌋")
-          }
-        ]
-      },
-      {
-        number: "ACT III",
-        time: "1:15 PM",
-        title: "The 'Bachelor Hunting' Student Rent Scam",
-        odia: "ପଟିଆ ବ୍ୟାଚଲର ଭଡ଼ା ଘର ଯୁଦ୍ଧ",
-        atmosphere: "Waterlogged Patia lane. Neon-green G+2 house. Strict rules: No Swiggy, 9 PM gate lock, ₹13/unit submeter, ₹500 visiting fee.",
-        bossName: "Landlord Prafulla Uncle & Ramesh",
-        bossTitle: "SUBMETER & VISITING CHARGE CARTEL",
-        dialogue: "Electric bill ₹13 per unit! 9 PM re gate re tala! Friend mana, Swiggy mana!",
-        maxHp: 110,
-        audioFn: () => sound.playCrit(),
-        buildScene(grp) {
-          const house = new THREE.Mesh(new THREE.BoxGeometry(8, 7, 5), new THREE.MeshStandardMaterial({ color: 0x00e676 }));
-          house.position.set(-2, 3.5, -4);
-          grp.add(house);
-
-          const uncle = MeshFactory.createHumanoid(0xffffff, 0xfff9c4);
-          uncle.position.set(1.4, 0, 0);
-          grp.add(uncle);
-        },
-        moves: [
-          {
-            title: "Sanskar Certificate",
-            desc: "Claim your uncle is an OAS officer in Jaydev Vihar",
-            cost: "Super +20%",
-            fn: () => executeAttack(34, "Prafulla Uncle softens: 'Mora bi mausa rahanti!'", "OAS POWER! 🏛️", sound.playHit)
-          },
-          {
-            title: "Quote Rent Control Act",
-            desc: "Cite Odisha Tenancy Act submeter regulations (₹6/unit max)",
-            cost: "Super +25%",
-            fn: () => executeAttack(40, "Ramesh Broker drops three rusted keys in panic!", "HIGH COURT! ⚖️", sound.playCrit)
-          },
-          {
-            title: "Ginger Chai Peace Offer",
-            desc: "Offer ginger tea at nearest Omfed to cool tempers",
-            cost: "Super +15%",
-            fn: () => executeAttack(26, "Warm ginger tea halts the rent hike momentarily!", "CHAI BREAK! ☕", sound.playBlip)
-          },
-          {
-            title: "SUPER: MIDNIGHT SWIGGY STRIKE",
-            desc: "Summon 10 delivery bikes to blast the 9 PM gate padlock!",
-            cost: "100% Super Meter",
-            isSuper: true,
-            fn: () => executeSuperMove(70, "SUPER MOVE: Midnight Biryani Delivery Armada!", "SWIGGY RUSH! 🛵")
-          }
-        ]
-      },
-      {
-        number: "ACT IV",
-        time: "5:30 PM",
-        title: "The Omfed 'Tookna' & Pan Dukan Khatti",
-        odia: "ଓମଫେଡ୍ ଟୁକନା ଭାଇ ପାନ ଓ ଖୁଚୁରା ଖଟି",
-        atmosphere: "Fluorescent Omfed kiosk. Six uncles debating world politics over ₹10 ginger tea. *PHAT-PHAT-CHHAAK!* Tookna slaps the betel leaf.",
-        bossName: "Tookna Bhai (Omfed Maestro)",
-        bossTitle: "MASTER OF THE ₹2 MELODY CHOCOLATE CHANGE",
-        dialogue: "Babu, khuchura nahi! Chocolate nei jaa, nahale khata re lekhi dauchi!",
-        maxHp: 110,
-        audioFn: () => sound.playBetelSlap(),
-        buildScene(grp) {
-          const omfed = MeshFactory.createOmfedBooth();
-          grp.add(omfed);
-        },
-        moves: [
-          {
-            title: "Demand Genuine 5 Rupee Coin",
-            desc: "'Tookna bhai, UPI karidie, chocolate darakar nahi!'",
-            cost: "Super +20%",
-            fn: () => executeAttack(32, "Tookna sighs and opens the secret coin drawer!", "COIN DROP! 🪙", sound.playHit)
-          },
-          {
-            title: "Echoing Counter-Slap",
-            desc: "Slap the counter with equal acoustic resonance: *CHHAAK!*",
-            cost: "Super +30%",
-            fn: () => executeAttack(44, "You reproduce Tookna's acoustic palm crack! Khatti roars!", "CHHAAK! 🍃", sound.playBetelSlap)
-          },
-          {
-            title: "Weaponize Melody Chocolate",
-            desc: "Chew two sticky chocolates at once for an instant glucose surge",
-            cost: "Super +15%",
-            fn: () => executeAttack(28, "Sugar rush powers your rapid-fire Odia debate!", "MELODY! 🍬", sound.playCrit)
-          },
-          {
-            title: "SUPER: SONIC CHUNA TSUNAMI",
-            desc: "Unleash the ultimate acoustic shockwave across Janpath!",
-            cost: "100% Super Meter",
-            isSuper: true,
-            fn: () => executeSuperMove(75, "SUPER MOVE: Masterwork Betel Palm Crack!", "KHATTI CRACK! 💥")
-          }
-        ]
-      },
-      {
-        number: "ACT V",
-        time: "7:00 PM",
-        title: "The Fake 'IT Placement' Scam",
-        odia: "ଜୟଦେବ ବିହାର ବ୍ୟାକଡୋର ଚାକିରି ଫ୍ରଡ୍",
-        atmosphere: "10x10 Jaydev Vihar cabin. Split-AC leaking into bucket. MS-Paint hybrid TCS-Infosys 6.5 LPA offer letter.",
-        bossName: "HR Director Subrat",
-        bossTitle: "MS-PAINT 6.5 LPA BANGALORE ARCHITECT",
-        dialogue: "Direct Bangalore package! Only ₹15,000 Laptop Security fee azi GPay!",
-        maxHp: 125,
-        audioFn: () => sound.playBlip(),
-        buildScene(grp) {
-          const office = new THREE.Mesh(new THREE.BoxGeometry(6, 4, 6), new THREE.MeshStandardMaterial({ color: 0x90a4ae, side: THREE.BackSide }));
-          office.position.y = 2;
-          grp.add(office);
-
-          const subrat = MeshFactory.createHumanoid(0x212121, 0x1565c0);
-          subrat.position.set(1.2, 0, -0.6);
-          grp.add(subrat);
-        },
-        moves: [
-          {
-            title: "Demand Corporate GSTIN",
-            desc: "Open MCA21 portal on your smartphone: 'Check karuchi!'",
-            cost: "Super +20%",
-            fn: () => executeAttack(36, "Subrat breaks into a heavy sweat as his blazer soaks!", "GSTIN BUST! 💻", sound.playHit)
-          },
-          {
-            title: "LeetCode Hard DP Question",
-            desc: "'Bhaiya, Trapping Rain Water algorithm bujhai dia!'",
-            cost: "Super +30%",
-            fn: () => executeAttack(48, "Subrat's brain blue-screens completely! Offers drop!", "LEETCODE! ⚙️", sound.playCrit)
-          },
-          {
-            title: "Cyber Police Threat",
-            desc: "'Bhubaneswar Cyber Police Station ta 2 km doori re!'",
-            cost: "Super +15%",
-            fn: () => executeAttack(32, "Subrat contemplates leaping out the 3rd floor window!", "CYBER CELL! 🚨", sound.playCrit)
-          },
-          {
-            title: "SUPER: REVERSE PROXY OVERFLOW",
-            desc: "Trigger a recursive UPI fraud report on his phone!",
-            cost: "100% Super Meter",
-            isSuper: true,
-            fn: () => executeSuperMove(80, "SUPER MOVE: Complete Digital Cyber-Takedown!", "REVERSE GPAY! 📱")
-          }
-        ]
-      },
-      {
-        number: "ACT VI",
-        time: "8:30 PM",
-        title: "The Kalabaisakhi Cyclone Panic",
-        odia: "ୟୁନିଟ୍-୧ ହାଟରେ କାଳବୈଶାଖୀ ଆଳୁ ଯୁଦ୍ଧ",
-        atmosphere: "Unit-1 Haat. Bruised purple sky. Mad Max potato run. Aunties locked in tug-of-war over the last 5kg sack of Nainital Aloo.",
-        bossName: "Barabati Aloo Syndicate & Aunties",
-        bossTitle: "SURGE-PRICING KALABAISAKHI CARTEL",
-        dialogue: "Aloo ₹60 per kg! Momabati ₹50! Tufan asigala babu!",
-        maxHp: 140,
-        audioFn: () => sound.playThunder(),
-        buildScene(grp) {
-          const aunty = MeshFactory.createHumanoid(0x212121, 0xd81b60);
-          aunty.position.set(1.4, 0, 0.2);
-          grp.add(aunty);
-        },
-        moves: [
-          {
-            title: "Sambalpuri Saree Bargain",
-            desc: "'Barabati re ta ₹20 chalichi! Emti loot machauchha?!'",
-            cost: "Super +20%",
-            fn: () => executeAttack(40, "Your peerless bargaining shames the hoarder!", "BARGAIN! 👗", sound.playHit)
-          },
-          {
-            title: "Relief Van Rumor",
-            desc: "Quote SRC bulletin: 'Sarkari relief gaadi asuchi!'",
-            cost: "Super +25%",
-            fn: () => executeAttack(46, "Fear of market crash forces vendor to drop prices!", "SRC ALERT! 📢", sound.playThunder)
-          },
-          {
-            title: "Aunty Coalition Pact",
-            desc: "Split the 5kg sack 50/50 with the Sambalpuri saree aunties",
-            cost: "Super +20%",
-            fn: () => executeAttack(42, "The aunties adopt you as their collective nephew!", "AUNTY FORCE! 👵", sound.playCrit)
-          },
-          {
-            title: "SUPER: 5KG NAINITAL METEOR",
-            desc: "Bombard the hoarder cartel with an avalanche of potatoes!",
-            cost: "100% Super Meter",
-            isSuper: true,
-            fn: () => executeSuperMove(85, "SUPER MOVE: 5kg Nainital Aloo Cataclysm!", "ALOO METEOR! 🥔")
-          }
-        ]
-      },
-      {
-        number: "ACT VII",
-        time: "10:30 PM",
-        title: "Final Showdown at Master Canteen",
-        odia: "ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ ଘୋଡ଼ା ଆଗରେ ଶେଷ ମହାଯୁଦ୍ଧ",
-        atmosphere: "Master Canteen stone horse gleaming in torrential rain. Pink Vikram Auto Anna demands ₹350 for 2km to Kalpana Square.",
-        bossName: "Pink Vikram Auto Anna (Final Boss)",
-        bossTitle: "EMPEROR OF THE ₹350 KALPANA SQUARE SURGE",
-        dialogue: "Barsha hauchi Babu, rasta budi jaichi! ₹350 fixed! Basa nahale paidal jaa!",
-        maxHp: 200,
-        audioFn: () => sound.playVikramHorn(),
-        buildScene(grp) {
-          const horse = MeshFactory.createMasterCanteenHorse();
-          horse.position.set(-2, 0, -1);
-          grp.add(horse);
-
-          const auto = MeshFactory.createVikramAuto();
-          auto.position.set(2.2, 0, 1.5);
-          auto.rotation.y = -Math.PI / 6;
-          grp.add(auto);
-        },
-        moves: [
-          {
-            title: "Throw 5kg Nainital Aloo",
-            desc: "Weaponize your Unit-1 potato hoard at the auto chassis!",
-            cost: "Super +25%",
-            fn: () => executeAttack(55, "DIRECT HIT! The 5kg potato salvo dents Anna's pink fender!", "ALOO SMASH! 🥔", sound.playCrit)
-          },
-          {
-            title: "Sticky Melody Bribe",
-            desc: "Offer Tookna Bhai's sacred sticky Melody chocolates",
-            cost: "Super +20%",
-            fn: () => executeAttack(45, "Anna tastes the chocolate! Childhood nostalgia softens his heart!", "MELODY MELT! 🍬", sound.playBlip)
-          },
-          {
-            title: "Mo Bus Midnight Stand",
-            desc: "Threaten to wait for midnight Route 20 (Zero desperation)",
-            cost: "Super +15%",
-            fn: () => executeAttack(38, "Anna realizes you cannot be blackmailed by rainwater!", "ROUTE 20! 🚌", sound.playMoBusAirHorn)
-          },
-          {
-            title: "SUPER: TWIN-CITY TRANSCENDENCE",
-            desc: "Unite Cuttack and Bhubaneswar into ultimate Bhaichara!",
-            cost: "100% Super Meter",
-            isSuper: true,
-            fn: () => executeSuperMove(100, "SUPER MOVE: Twin-City Supreme Brotherhood!", "AMEY SABU BHAI! 👑")
-          }
-        ]
-      }
-    ];
-
-    function loadAct(idx) {
-      if (idx >= ACTS.length) {
-        showEnding();
-        return;
-      }
-      state.actIndex = idx;
-      const act = ACTS[idx];
-      state.currentBoss = {
-        name: act.bossName,
-        title: act.bossTitle,
-        dialogue: act.dialogue,
-        hp: act.maxHp,
-        maxHp: act.maxHp
-      };
-      state.battleActive = true;
-
-      while (actGroup.children.length > 0) {
-        actGroup.remove(actGroup.children[0]);
-      }
-      act.buildScene(actGroup);
-
-      triggerAnnouncer(`ROUND ${idx + 1}`, "FIGHT!");
-
-      document.getElementById('actNumber').innerText = act.number;
-      document.getElementById('actTime').innerText = act.time;
-      document.getElementById('actTitle').innerText = act.title;
-      document.getElementById('actOdia').innerText = act.odia;
-      document.getElementById('actAtmosphere').innerText = `"${act.atmosphere}"`;
-
-      document.getElementById('bossSubtitle').innerText = act.bossTitle;
-      document.getElementById('bossName').innerText = act.bossName;
-      document.getElementById('bossDialogue').innerText = `"${act.dialogue}"`;
-
-      updateHUD();
-      renderActionButtons(act);
-      if (act.audioFn) setTimeout(act.audioFn, 600);
-    }
-
-    function triggerAnnouncer(title, sub) {
-      const announcer = document.getElementById('fightAnnouncer');
-      announcer.innerHTML = `${title}<br><span style="color: #ff1744; font-size: 1.8rem;">${sub}</span>`;
-      announcer.classList.add('show');
-      sound.playFightCall();
-      setTimeout(() => announcer.classList.remove('show'), 1200);
-    }
-
-    function updateHUD() {
-      document.getElementById('playerHpVal').innerText = `${Math.max(0, state.izzat)}/${state.maxIzzat} IZZAT`;
-      document.getElementById('playerHpBar').style.width = `${Math.max(0, (state.izzat / state.maxIzzat) * 100)}%`;
-
-      document.getElementById('superMeterVal').innerText = `${Math.min(100, state.superMeter)}%`;
-      document.getElementById('superMeterBar').style.width = `${Math.min(100, state.superMeter)}%`;
-
-      if (state.currentBoss) {
-        document.getElementById('bossHpVal').innerText = `${Math.max(0, state.currentBoss.hp)}/${state.currentBoss.maxHp} HP`;
-        document.getElementById('bossHpBar').style.width = `${Math.max(0, (state.currentBoss.hp / state.currentBoss.maxHp) * 100)}%`;
-      }
-    }
-
-    function renderActionButtons(act) {
-      const grid = document.getElementById('actionGrid');
-      grid.innerHTML = '';
-      act.moves.forEach((m, i) => {
-        const btn = document.createElement('button');
-        btn.className = `action-btn ${m.isSuper ? 'super-btn' : ''}`;
-        btn.innerHTML = `
-          <div style="font-family: var(--font-pixel); font-size: 0.55rem; color: var(--accent-gold); display: flex; justify-content: space-between;">
-            <span>${m.title}</span>
-            <span style="font-size: 0.45rem; background: #0b1016; border: 1px solid #33475f; padding: 1px 3px; border-radius: 2px; color: var(--accent-teal);">[${i + 1}]</span>
-          </div>
-          <div style="font-size: 0.7rem; color: var(--text-muted); line-height: 1.25;">${m.desc}</div>
-          <div style="font-size: 0.55rem; color: var(--accent-saffron); font-weight: 600;">${m.cost}</div>
-        `;
-        btn.addEventListener('click', () => m.fn());
-        grid.appendChild(btn);
+      // Procedural City Buildings (Patia Apartments, Omfed booth, Commercial Towers)
+      const buildings = [
+        { x: -30, z: -35, w: 22, h: 25, d: 22, color: 0x2e3d4d },
+        { x: 30, z: -35, w: 24, h: 32, d: 22, color: 0x00e676 }, // Neon Green Patia Building
+        { x: -30, z: 35, w: 20, h: 18, d: 24, color: 0x3e2723 },
+        { x: 30, z: 35, w: 26, h: 22, d: 22, color: 0x1565c0 },
+        { x: -45, z: 0, w: 18, h: 14, d: 35, color: 0x455a64 },
+        { x: 45, z: 0, w: 18, h: 16, d: 35, color: 0x37474f },
+        { x: 0, z: -45, w: 35, h: 18, d: 18, color: 0x263238 }
+      ];
+      buildings.forEach(b => {
+        const mesh = MeshFactory.createBuilding(b.w, b.h, b.d, b.color);
+        mesh.position.set(b.x, b.h / 2, b.z);
+        cityGroup.add(mesh);
       });
+
+      // Spawn Hijackable Vehicles
+      const auto1 = MeshFactory.createVikramAuto();
+      auto1.position.set(-5, 0, 15);
+      cityGroup.add(auto1);
+      gtaVehicles.push(auto1);
+
+      const ktm1 = MeshFactory.createKTMBike();
+      ktm1.position.set(6, 0, 12);
+      cityGroup.add(ktm1);
+      gtaVehicles.push(ktm1);
+
+      const bus1 = MeshFactory.createMoBus();
+      bus1.position.set(-5, 0, -25);
+      cityGroup.add(bus1);
+      gtaVehicles.push(bus1);
     }
 
-    function executeAttack(dmg, text, comicWord, soundFn) {
-      if (!state.battleActive) return;
-      const isCrit = Math.random() < 0.25;
-      const finalDmg = isCrit ? Math.round(dmg * 1.4) : dmg;
-
-      state.currentBoss.hp = Math.max(0, state.currentBoss.hp - finalDmg);
-      state.superMeter = Math.min(100, state.superMeter + 22);
-
-      if (soundFn) soundFn.call(sound);
-      else sound.playHit();
-
-      spawnComic(comicWord);
-      triggerCombatImpact();
-      updateHUD();
-
-      if (state.currentBoss.hp <= 0) {
-        handleActVictory();
-      } else {
-        setTimeout(bossCounterAttack, 750);
-      }
-    }
-
-    function executeSuperMove(dmg, text, comicWord) {
-      if (!state.battleActive) return;
-      if (state.superMeter < 100) {
-        spawnComic("NEED 100% SUPER! ⚠️");
-        sound.playHit();
-        return;
-      }
-      state.superMeter = 0;
-      state.currentBoss.hp = Math.max(0, state.currentBoss.hp - dmg);
-
-      sound.playCrit();
-      spawnComic(comicWord);
-      triggerCombatImpact(true);
-      updateHUD();
-
-      if (state.currentBoss.hp <= 0) {
-        handleActVictory();
-      } else {
-        setTimeout(bossCounterAttack, 850);
-      }
-    }
-
-    function bossCounterAttack() {
-      if (!state.battleActive || state.currentBoss.hp <= 0) return;
-      const incomingDmg = 14 + Math.floor(Math.random() * 12);
-      state.izzat = Math.max(0, state.izzat - incomingDmg);
-      state.superMeter = Math.min(100, state.superMeter + 10);
-
-      sound.playHit();
-      spawnComic("OUCH! 💢");
-      triggerCombatImpact();
-      updateHUD();
-
-      if (state.izzat <= 0) {
-        state.battleActive = false;
-        triggerAnnouncer("DEFEAT", "K.O.");
-        setTimeout(() => alert("Defeat! You ran out of Izzat. Restarting at Rasulgarh..."), 800);
-        setTimeout(restartGame, 1600);
-      }
-    }
-
-    function handleActVictory() {
-      state.battleActive = false;
-      triggerAnnouncer("VICTORY!", "K.O.");
-      sound.playVictory();
-      setTimeout(() => {
-        loadAct(state.actIndex + 1);
-      }, 1600);
-    }
-
-    function triggerCombatImpact(isSuper = false) {
-      camera.position.y += isSuper ? 0.6 : 0.35;
-      setTimeout(() => camera.position.y -= isSuper ? 0.6 : 0.35, 120);
-
-      player3D.position.x += 0.4;
-      setTimeout(() => player3D.position.x -= 0.4, 150);
-    }
-
-    function showEnding() {
-      sound.playVictory();
-      document.getElementById('endingOverlay').classList.add('open');
-    }
-
-    function restartGame() {
-      document.getElementById('endingOverlay').classList.remove('open');
-      state.actIndex = 0;
-      state.izzat = 100;
-      state.superMeter = 25;
-      loadAct(0);
-    }
+    buildBhubaneswarCity();
 
     /* ==========================================================================
-       5. MODE 2: DELHI METRO STYLE MO BUS 3D TRANSIT SURVIVAL (RUNNER)
+       4. GTA PLAYER, VEHICLE & PHYSICS CONTROLLER
        ========================================================================== */
-    const runnerState = {
-      active: false,
-      distance: 150,
-      coins: 0,
-      windowSeatChance: 95,
-      lane: 1, // 0: Left (-2.2), 1: Center (0), 2: Right (2.2)
-      targetX: 0,
-      playerY: 0,
-      vy: 0,
-      isJumping: false,
-      obstacles: [],
-      coinsList: [],
-      roadZ: 0,
-      moBusMesh: null
+    const player3D = MeshFactory.createHumanoid(0x212121, 0x00b0ff);
+    player3D.position.set(0, 0, 14);
+    scene.add(player3D);
+
+    const gtaState = {
+      cash: 250,
+      hp: 100,
+      wantedStars: 1,
+      inVehicle: false,
+      currentVehicle: null,
+      keys: { w: false, s: false, a: false, d: false, space: false },
+      playerRot: 0,
+      speed: 0,
+      maxWalkSpeed: 0.18
     };
 
-    const LANES_X = [-2.4, 0, 2.4];
+    function updateGTAHUD() {
+      document.getElementById('gtaCash').innerText = `₹${String(gtaState.cash).padStart(8, '0')}`;
+      document.getElementById('gtaHpFill').style.width = `${gtaState.hp}%`;
 
-    function initRunnerMode() {
-      runnerState.active = true;
-      runnerState.distance = 150;
-      runnerState.coins = 0;
-      runnerState.windowSeatChance = 95;
-      runnerState.lane = 1;
-      runnerState.targetX = 0;
-      runnerState.playerY = 0;
-      runnerState.vy = 0;
-      runnerState.isJumping = false;
-      runnerState.obstacles = [];
-      runnerState.coinsList = [];
+      const starItems = document.querySelectorAll('.star-item');
+      starItems.forEach((s, idx) => {
+        if (idx < gtaState.wantedStars) s.className = 'star-item active-star';
+        else s.className = 'star-item';
+      });
 
-      // Clear runnerGroup
-      while (runnerGroup.children.length > 0) {
-        runnerGroup.remove(runnerGroup.children[0]);
+      const card = document.getElementById('gtaVehicleCard');
+      if (gtaState.inVehicle) {
+        card.innerHTML = `<span>🚗 ${gtaState.currentVehicle.userData.name.toUpperCase()}</span> <span style="color: var(--accent-gold);">[F: EXIT]</span>`;
+      } else {
+        card.innerHTML = `<span>🧍 ON FOOT</span> <span style="color: var(--accent-teal);">[F: ENTER GADI]</span>`;
       }
+    }
 
-      // Build 3-Lane Janpath Road Mesh
-      const roadGeo = new THREE.PlaneGeometry(8, 120);
-      const roadMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.9 });
-      const road = new THREE.Mesh(roadGeo, roadMat);
-      road.rotation.x = -Math.PI / 2;
-      road.position.set(0, 0.02, -40);
-      runnerGroup.add(road);
+    function toggleVehicleEnterExit() {
+      if (gtaState.inVehicle) {
+        // Exit Vehicle
+        const veh = gtaState.currentVehicle;
+        gtaState.inVehicle = false;
+        gtaState.currentVehicle = null;
 
-      // Lane dividers
-      for (let i = -80; i <= 20; i += 6) {
-        [-1.2, 1.2].forEach(lx => {
-          const dash = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.05, 2.5), new THREE.MeshBasicMaterial({ color: 0xffeb3b }));
-          dash.position.set(lx, 0.04, i);
-          runnerGroup.add(dash);
+        player3D.visible = true;
+        player3D.position.set(veh.position.x - 2.5, 0, veh.position.z);
+        sound.playBlip();
+        document.getElementById('gtaPrompt').innerText = "Exited vehicle. On foot.";
+      } else {
+        // Find nearest vehicle within 4 units
+        let nearest = null;
+        let minDist = 4.2;
+        gtaVehicles.forEach(v => {
+          const d = player3D.position.distanceTo(v.position);
+          if (d < minDist) {
+            minDist = d;
+            nearest = v;
+          }
         });
-      }
 
-      // Mo Bus Route 20 waiting at finish line (z = -140)
-      runnerState.moBusMesh = MeshFactory.createMoBus();
-      runnerState.moBusMesh.position.set(0, 0, -140);
-      runnerGroup.add(runnerState.moBusMesh);
-
-      // Spawn initial obstacles (Stray Bulls, Barricades, Puddles)
-      for (let z = -20; z >= -120; z -= 14) {
-        const laneIdx = Math.floor(Math.random() * 3);
-        const type = Math.random() < 0.5 ? 'bull' : 'barricade';
-        let mesh;
-        if (type === 'bull') {
-          mesh = MeshFactory.createStrayCow();
+        if (nearest) {
+          gtaState.inVehicle = true;
+          gtaState.currentVehicle = nearest;
+          player3D.visible = false;
+          sound.playEngineRev();
+          nearest.userData.hornSound();
+          document.getElementById('gtaPrompt').innerText = `Driving: ${nearest.userData.name}! [WASD to Drive, H to Honk, F to Exit]`;
         } else {
-          mesh = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.7, 0.4), new THREE.MeshStandardMaterial({ color: 0xd32f2f }));
-          mesh.position.y = 0.35;
-        }
-        mesh.position.x = LANES_X[laneIdx];
-        mesh.position.z = z;
-        runnerGroup.add(mesh);
-        runnerState.obstacles.push({ mesh, lane: laneIdx, z: z, type });
-
-        // Coin in other lane
-        const coinLane = (laneIdx + 1) % 3;
-        const coin = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.08, 16), new THREE.MeshBasicMaterial({ color: 0xffd600 }));
-        coin.rotation.x = Math.PI / 2;
-        coin.position.set(LANES_X[coinLane], 0.6, z);
-        runnerGroup.add(coin);
-        runnerState.coinsList.push({ mesh: coin, lane: coinLane, z: z, collected: false });
-      }
-
-      // Setup Camera for 3rd Person Runner
-      camera.position.set(0, 4.0, 7.5);
-      camera.lookAt(0, 1.4, -10);
-
-      // Setup Player in Runner
-      player3D.position.set(0, 0, 2.0);
-      player3D.rotation.set(0, Math.PI, 0);
-
-      updateRunnerHUD();
-      sound.playMoBusAirHorn();
-      spawnComic("BHAAGO! CATCH MO BUS! 🚌");
-    }
-
-    function runnerMoveLeft() {
-      if (!runnerState.active) return;
-      if (runnerState.lane > 0) {
-        runnerState.lane--;
-        runnerState.targetX = LANES_X[runnerState.lane];
-        sound.playBlip();
-      }
-    }
-
-    function runnerMoveRight() {
-      if (!runnerState.active) return;
-      if (runnerState.lane < 2) {
-        runnerState.lane++;
-        runnerState.targetX = LANES_X[runnerState.lane];
-        sound.playBlip();
-      }
-    }
-
-    function runnerJump() {
-      if (!runnerState.active || runnerState.isJumping) return;
-      runnerState.vy = 0.28;
-      runnerState.isJumping = true;
-      sound.playBlip();
-      spawnComic("JUMP! 🦘");
-    }
-
-    function updateRunnerHUD() {
-      document.getElementById('runnerDist').innerText = `${Math.max(0, Math.round(runnerState.distance))}m`;
-      document.getElementById('runnerCoins').innerText = `₹${runnerState.coins}`;
-      document.getElementById('runnerSeat').innerText = `${runnerState.windowSeatChance}%`;
-    }
-
-    function updateRunnerPhysics(delta) {
-      if (!runnerState.active) return;
-
-      // Forward run progress
-      const speed = 18 * delta;
-      runnerState.distance -= speed;
-      updateRunnerHUD();
-
-      // Smooth horizontal lane transition
-      player3D.position.x += (runnerState.targetX - player3D.position.x) * 0.25;
-
-      // Jump gravity physics
-      if (runnerState.isJumping) {
-        runnerState.playerY += runnerState.vy;
-        runnerState.vy -= 0.6 * delta;
-        if (runnerState.playerY <= 0) {
-          runnerState.playerY = 0;
-          runnerState.isJumping = false;
+          document.getElementById('gtaPrompt').innerText = "No vehicle nearby! Walk closer to Pink Vikram, KTM, or Mo Bus.";
         }
       }
-      player3D.position.y = runnerState.playerY;
-
-      // Move camera smoothly behind player
-      camera.position.x = player3D.position.x * 0.4;
-
-      // Check obstacle collisions
-      const playerZ = - (150 - runnerState.distance);
-      runnerState.obstacles.forEach(obs => {
-        if (!obs.hit && Math.abs(obs.z - playerZ) < 1.2 && obs.lane === runnerState.lane) {
-          if (obs.type === 'barricade' && runnerState.playerY > 0.6) {
-            // Jumped over barricade successfully!
-            spawnComic("CLEAR! ⚡");
-          } else {
-            obs.hit = true;
-            sound.playHit();
-            spawnComic("DHAMAAK! 💥");
-            runnerState.windowSeatChance = Math.max(10, runnerState.windowSeatChance - 25);
-            updateRunnerHUD();
-          }
-        }
-      });
-
-      // Check coin collections
-      runnerState.coinsList.forEach(coin => {
-        if (!coin.collected && Math.abs(coin.z - playerZ) < 1.4 && coin.lane === runnerState.lane) {
-          coin.collected = true;
-          coin.mesh.visible = false;
-          runnerState.coins += 10;
-          sound.playCoin();
-          spawnComic("+₹10 COIN! 🪙");
-          updateRunnerHUD();
-        }
-      });
-
-      // Reached Mo Bus finish line
-      if (runnerState.distance <= 0) {
-        runnerState.active = false;
-        sound.playVictory();
-        sound.playMoBusAirHorn();
-
-        const endingPrompt = document.getElementById('runnerPrompt');
-        endingPrompt.innerHTML = `
-          <div style="font-family: var(--font-pixel); font-size: 0.95rem; color: var(--accent-gold); margin-bottom: 6px;">
-            🎉 MO BUS CAUGHT! WINDOW SEAT SECURED!
-          </div>
-          <div style="font-size: 0.85rem; color: #fff;">
-            You scrambled past Uncle's briefcase and claimed the ultimate breeze-facing seat on Route 20!
-          </div>
-          <button class="btn-ui" style="margin-top: 10px; background: var(--accent-green); color: #000; font-weight: bold;" onclick="initRunnerMode()">
-            🔄 RUN AGAIN
-          </button>
-        `;
-      }
+      updateGTAHUD();
     }
 
     /* ==========================================================================
-       6. KEYBOARD & CONTROLS
+       5. GTA RADAR MINIMAP CANVAS RENDERER
+       ========================================================================== */
+    const radarCanvas = document.getElementById('gta-radar-canvas');
+    const radarCtx = radarCanvas.getContext('2d');
+
+    function drawRadar() {
+      radarCtx.clearRect(0, 0, 130, 130);
+      const cx = 65, cy = 65;
+
+      // Radar Background & Grid
+      radarCtx.fillStyle = '#080d13';
+      radarCtx.beginPath();
+      radarCtx.arc(cx, cy, 60, 0, Math.PI * 2);
+      radarCtx.fill();
+
+      // Range rings
+      radarCtx.strokeStyle = '#1e2b38';
+      radarCtx.lineWidth = 1;
+      radarCtx.beginPath();
+      radarCtx.arc(cx, cy, 35, 0, Math.PI * 2);
+      radarCtx.arc(cx, cy, 55, 0, Math.PI * 2);
+      radarCtx.stroke();
+
+      const pPos = gtaState.inVehicle ? gtaState.currentVehicle.position : player3D.position;
+
+      // Draw Vehicles Blips (Cyan/Pink dots)
+      gtaVehicles.forEach(v => {
+        const dx = (v.position.x - pPos.x) * 0.9;
+        const dy = (v.position.z - pPos.z) * 0.9;
+        if (Math.hypot(dx, dy) < 55) {
+          radarCtx.fillStyle = '#00e5ff';
+          radarCtx.beginPath();
+          radarCtx.arc(cx + dx, cy + dy, 3.5, 0, Math.PI * 2);
+          radarCtx.fill();
+        }
+      });
+
+      // Draw Player Arrow at Center
+      radarCtx.save();
+      radarCtx.translate(cx, cy);
+      const rot = gtaState.inVehicle ? gtaState.currentVehicle.rotation.y : gtaState.playerRot;
+      radarCtx.rotate(-rot);
+      radarCtx.fillStyle = '#ffd600';
+      radarCtx.beginPath();
+      radarCtx.moveTo(0, -6);
+      radarCtx.lineTo(4, 5);
+      radarCtx.lineTo(-4, 5);
+      radarCtx.closePath();
+      radarCtx.fill();
+      radarCtx.restore();
+    }
+
+    /* ==========================================================================
+       6. KEYBOARD & TOUCH EVENT LISTENERS
        ========================================================================== */
     window.addEventListener('keydown', (e) => {
-      if (currentMode === 'FIGHT') {
-        if (['1', '2', '3', '4'].includes(e.key)) {
-          const idx = parseInt(e.key) - 1;
-          const act = ACTS[state.actIndex];
-          if (act && act.moves && act.moves[idx]) {
-            act.moves[idx].fn();
-          }
-        }
-      } else if (currentMode === 'RUNNER') {
-        if (e.key === 'a' || e.key === 'ArrowLeft') runnerMoveLeft();
-        else if (e.key === 'd' || e.key === 'ArrowRight') runnerMoveRight();
-        else if (e.key === 'w' || e.key === ' ' || e.key === 'ArrowUp') runnerJump();
-      }
+      const k = e.key.toLowerCase();
+      if (k === 'w' || k === 'arrowup') gtaState.keys.w = true;
+      if (k === 's' || k === 'arrowdown') gtaState.keys.s = true;
+      if (k === 'a' || k === 'arrowleft') gtaState.keys.a = true;
+      if (k === 'd' || k === 'arrowright') gtaState.keys.d = true;
+      if (k === 'f' || k === 'enter') toggleVehicleEnterExit();
+      if (k === 'h' && gtaState.inVehicle) gtaState.currentVehicle.userData.hornSound();
     });
 
-    document.getElementById('btnCamToggle').addEventListener('click', () => {
+    window.addEventListener('keyup', (e) => {
+      const k = e.key.toLowerCase();
+      if (k === 'w' || k === 'arrowup') gtaState.keys.w = false;
+      if (k === 's' || k === 'arrowdown') gtaState.keys.s = false;
+      if (k === 'a' || k === 'arrowleft') gtaState.keys.a = false;
+      if (k === 'd' || k === 'arrowright') gtaState.keys.d = false;
+    });
+
+    // Touch D-Pad
+    document.getElementById('tGas').addEventListener('touchstart', () => gtaState.keys.w = true);
+    document.getElementById('tGas').addEventListener('touchend', () => gtaState.keys.w = false);
+    document.getElementById('tBrake').addEventListener('touchstart', () => gtaState.keys.s = true);
+    document.getElementById('tBrake').addEventListener('touchend', () => gtaState.keys.s = false);
+    document.getElementById('tLeft').addEventListener('touchstart', () => gtaState.keys.a = true);
+    document.getElementById('tLeft').addEventListener('touchend', () => gtaState.keys.a = false);
+    document.getElementById('tRight').addEventListener('touchstart', () => gtaState.keys.d = true);
+    document.getElementById('tRight').addEventListener('touchend', () => gtaState.keys.d = false);
+    document.getElementById('tAction').addEventListener('click', toggleVehicleEnterExit);
+    document.getElementById('tHorn').addEventListener('click', () => {
+      if (gtaState.inVehicle) gtaState.currentVehicle.userData.hornSound();
+    });
+
+    // Header buttons
+    document.getElementById('btnRestart').addEventListener('click', () => {
+      player3D.position.set(0, 0, 14);
+      if (gtaState.inVehicle) toggleVehicleEnterExit();
+      gtaState.hp = 100;
+      updateGTAHUD();
       sound.playBlip();
-      if (camera.position.z > 10) camera.position.set(2.0, 3.2, 8.0);
-      else camera.position.set(0, 4.5, 12.0);
     });
 
     document.getElementById('btnSoundToggle').addEventListener('click', () => {
       sound.enabled = !sound.enabled;
       document.getElementById('soundIcon').innerText = sound.enabled ? '🔊' : '🔇';
-      if (sound.enabled) sound.playBlip();
-    });
-
-    document.getElementById('btnScreenplay').addEventListener('click', () => {
-      document.getElementById('screenplayModal').classList.add('open');
-      sound.playBlip();
-    });
-
-    document.getElementById('btnCloseScript').addEventListener('click', () => {
-      document.getElementById('screenplayModal').classList.remove('open');
-      sound.playBlip();
-    });
-
-    document.getElementById('btnRestart').addEventListener('click', () => {
-      sound.playBlip();
-      if (currentMode === 'FIGHT') restartGame();
-      else initRunnerMode();
     });
 
     window.addEventListener('resize', () => {
@@ -2093,43 +993,83 @@
     });
 
     /* ==========================================================================
-       7. MAIN 3D ANIMATION LOOP
+       7. MAIN 3D ANIMATION LOOP (60 FPS)
        ========================================================================== */
     let clock = new THREE.Clock();
 
     function animate() {
       requestAnimationFrame(animate);
       const delta = clock.getDelta();
-      const elapsed = clock.getElapsedTime();
 
-      if (currentMode === 'FIGHT') {
-        if (actGroup.children.length > 0) {
-          actGroup.children.forEach((obj, idx) => {
-            if (obj.isGroup) {
-              obj.position.y += Math.sin(elapsed * 6 + idx) * 0.0015;
-            }
-          });
+      if (gtaState.inVehicle) {
+        // VEHICLE DRIVING PHYSICS
+        const v = gtaState.currentVehicle;
+        const u = v.userData;
+
+        // Acceleration / Reverse
+        if (gtaState.keys.w) u.speed = Math.min(u.maxSpeed, u.speed + u.accel);
+        else if (gtaState.keys.s) u.speed = Math.max(-u.maxSpeed * 0.4, u.speed - u.accel * 1.5);
+        else u.speed *= 0.94; // Friction
+
+        // Steering
+        if (Math.abs(u.speed) > 0.01) {
+          if (gtaState.keys.a) v.rotation.y += u.turnSpeed * (u.speed > 0 ? 1 : -1);
+          if (gtaState.keys.d) v.rotation.y -= u.turnSpeed * (u.speed > 0 ? 1 : -1);
         }
-        player3D.position.y = Math.sin(elapsed * 5) * 0.04;
-      } else if (currentMode === 'RUNNER') {
-        updateRunnerPhysics(delta);
-        runnerState.coinsList.forEach(c => c.mesh.rotation.z += delta * 4);
+
+        // Apply Velocity Forward
+        v.position.x += Math.sin(v.rotation.y) * u.speed;
+        v.position.z += Math.cos(v.rotation.y) * u.speed;
+
+        // Bouncy chassis pitch
+        v.rotation.x = THREE.MathUtils.lerp(v.rotation.x, (u.speed / u.maxSpeed) * 0.04, 0.1);
+
+        // Smooth 3rd-person Chase Camera
+        const camDist = u.type === 'bus' ? 14 : 9;
+        const camHeight = u.type === 'bus' ? 6.5 : 4.2;
+        const targetCamX = v.position.x - Math.sin(v.rotation.y) * camDist;
+        const targetCamZ = v.position.z - Math.cos(v.rotation.y) * camDist;
+
+        camera.position.x += (targetCamX - camera.position.x) * 0.1;
+        camera.position.y += (v.position.y + camHeight - camera.position.y) * 0.1;
+        camera.position.z += (targetCamZ - camera.position.z) * 0.1;
+        camera.lookAt(v.position.x, v.position.y + 1.2, v.position.z);
+
+      } else {
+        // ON-FOOT WALKING PHYSICS
+        let moveX = 0, moveZ = 0;
+        if (gtaState.keys.w) moveZ -= 1;
+        if (gtaState.keys.s) moveZ += 1;
+        if (gtaState.keys.a) moveX -= 1;
+        if (gtaState.keys.d) moveX += 1;
+
+        if (moveX !== 0 || moveZ !== 0) {
+          const angle = Math.atan2(moveX, moveZ);
+          gtaState.playerRot = angle + Math.PI;
+          player3D.rotation.y = gtaState.playerRot;
+
+          player3D.position.x += Math.sin(angle) * gtaState.maxWalkSpeed;
+          player3D.position.z += Math.cos(angle) * gtaState.maxWalkSpeed;
+
+          // Bobbing walk animation
+          player3D.position.y = Math.abs(Math.sin(clock.getElapsedTime() * 12)) * 0.12;
+        } else {
+          player3D.position.y = 0;
+        }
+
+        // Camera follow behind player
+        camera.position.x += (player3D.position.x - camera.position.x) * 0.08;
+        camera.position.y = 5.2;
+        camera.position.z += (player3D.position.z + 8.5 - camera.position.z) * 0.08;
+        camera.lookAt(player3D.position.x, player3D.position.y + 1.2, player3D.position.z);
       }
 
-      // Animate weather particles
-      const positions = particleGeo.attributes.position.array;
-      for (let i = 1; i < particleCount * 3; i += 3) {
-        positions[i] -= delta * 18;
-        if (positions[i] < 0) positions[i] = 25;
-      }
-      particleGeo.attributes.position.needsUpdate = true;
-
-      pointLight.intensity = 1.0 + Math.sin(elapsed * 4) * 0.3;
+      drawRadar();
       renderer.render(scene, camera);
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      loadAct(0);
+      updateGTAHUD();
       animate();
     });
   </script>
