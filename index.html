@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>BHUBANESWAR 3D: Ama Gadi, Ama Rasta (Benglooru × FightKaro Edition)</title>
+  <title>BHUBANESWAR 3D: Ama Gadi, Ama Rasta (Antigravity & Emergent Physics Edition)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Noto+Sans+Oriya:wght@500;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
@@ -13,14 +15,15 @@
       --cyan: #00e5ff;
       --green: #00e676;
       --odia: #ff6d00;
-      --dark: rgba(12, 9, 20, 0.88);
+      --neon-purple: #c026d3;
+      --dark: rgba(12, 9, 24, 0.90);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     body, html {
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #09060e;
+      background: #06040a;
       font-family: 'VT323', 'Noto Sans Oriya', monospace, sans-serif;
       color: #fff;
     }
@@ -42,7 +45,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 14px;
+      padding: 12px;
     }
     .interactive { pointer-events: auto; }
 
@@ -51,71 +54,123 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
     }
     .brand-box {
       background: var(--dark);
       border: 3px solid var(--accent);
-      box-shadow: 5px 5px 0 #000;
-      padding: 10px 14px;
+      box-shadow: 4px 4px 0 #000;
+      padding: 8px 12px;
     }
     .brand-box h1 {
       font-family: 'Press Start 2P', cursive;
-      font-size: 13px;
+      font-size: 11px;
       color: var(--accent);
-      margin-bottom: 5px;
+      margin-bottom: 4px;
       line-height: 1.4;
+      text-shadow: 2px 2px 0 #000;
+    }
+    .status-pill-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
     }
     .weather-pill {
-      font-size: 18px;
+      font-size: 16px;
       color: var(--cyan);
       display: flex;
       align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      gap: 6px;
+      background: rgba(0,0,0,0.4);
+      padding: 2px 6px;
+      border: 1px solid #334;
     }
     .mini-btn {
       background: #231a38;
       color: #fff;
       border: 1px solid var(--cyan);
-      padding: 3px 8px;
-      font-family: 'VT323', monospace;
+      padding: 4px 8px;
+      font-family: 'VT323', 'Noto Sans Oriya', monospace;
       font-size: 16px;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
     }
     .mini-btn:hover { background: var(--cyan); color: #000; }
+    .mini-btn.active {
+      background: var(--neon-purple);
+      border-color: #f43f5e;
+      color: #fff;
+      box-shadow: 0 0 10px #c026d3;
+    }
+
+    /* ANTIGRAV SUPER GAUGE */
+    .antigrav-box {
+      background: var(--dark);
+      border: 2px solid var(--cyan);
+      box-shadow: 4px 4px 0 #000;
+      padding: 6px 10px;
+      min-width: 170px;
+    }
+    .antigrav-title {
+      font-size: 14px;
+      color: var(--cyan);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 8px;
+    }
+    .plasma-bar {
+      width: 100%;
+      height: 8px;
+      background: #111;
+      border: 1px solid var(--cyan);
+      margin-top: 4px;
+      overflow: hidden;
+    }
+    .plasma-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #00e5ff, #c026d3, #ffcc00);
+      box-shadow: 0 0 8px #00e5ff;
+      transition: width 0.2s;
+    }
 
     /* STATS BARS (Benglooru style) */
     .stats-bar {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       background: var(--dark);
       border: 3px solid #49386e;
-      box-shadow: 5px 5px 0 #000;
-      padding: 8px 12px;
+      box-shadow: 4px 4px 0 #000;
+      padding: 6px 10px;
       flex-wrap: wrap;
     }
     .stat-item {
-      min-width: 110px;
+      min-width: 95px;
     }
     .stat-label {
-      font-size: 15px;
+      font-size: 13px;
       color: #bbb;
       display: flex;
       justify-content: space-between;
     }
     .stat-val {
       font-family: 'Press Start 2P', cursive;
-      font-size: 10px;
+      font-size: 9px;
       color: var(--accent);
     }
     .progress {
       width: 100%;
-      height: 7px;
+      height: 6px;
       background: #000;
       border: 1px solid #555;
-      margin-top: 4px;
+      margin-top: 3px;
     }
     .progress-fill {
       height: 100%;
@@ -127,31 +182,32 @@
     /* CENTER PROMPT (Hotspot Alert) */
     #hotspot-prompt {
       align-self: center;
-      background: rgba(0, 0, 0, 0.92);
+      background: rgba(0, 0, 0, 0.94);
       border: 3px solid var(--accent);
-      padding: 10px 20px;
+      padding: 8px 16px;
       text-align: center;
-      box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+      box-shadow: 0 0 18px rgba(255, 204, 0, 0.6);
       display: none;
-      animation: pulseBox 0.9s infinite alternate;
+      animation: pulseBox 0.8s infinite alternate;
+      cursor: pointer;
     }
     @keyframes pulseBox {
       from { transform: scale(1); }
-      to { transform: scale(1.05); }
+      to { transform: scale(1.04); }
     }
     #hotspot-prompt .title {
       font-family: 'Press Start 2P', cursive;
-      font-size: 12px;
+      font-size: 11px;
       color: var(--accent);
       display: block;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
     #hotspot-prompt .sub {
-      font-size: 20px;
+      font-size: 18px;
       color: #fff;
     }
 
-    /* MODAL FOR TRILINGUAL DIALOGUE & FIGHTKARO COMBAT */
+    /* MODAL FOR DIALOGUE & FIGHTKARO COMBAT */
     #interaction-modal {
       position: fixed;
       top: 50%;
@@ -159,10 +215,10 @@
       transform: translate(-50%, -50%);
       width: 92%;
       max-width: 720px;
-      background: rgba(17, 12, 28, 0.96);
+      background: rgba(17, 12, 28, 0.97);
       border: 4px solid var(--accent);
-      box-shadow: 0 0 0 4px #000, 12px 12px 0 #000;
-      padding: 18px;
+      box-shadow: 0 0 0 4px #000, 10px 10px 0 #000;
+      padding: 16px;
       z-index: 10;
       display: none;
     }
@@ -171,115 +227,145 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 2px solid #3f2e63;
-      padding-bottom: 8px;
+      padding-bottom: 6px;
       margin-bottom: 10px;
     }
     .modal-title {
       font-family: 'Press Start 2P', cursive;
-      font-size: 13px;
+      font-size: 12px;
       color: var(--accent);
     }
     .close-btn {
       background: var(--danger);
       color: #fff;
       border: 2px solid #fff;
-      padding: 3px 10px;
+      padding: 2px 8px;
       font-family: 'Press Start 2P', cursive;
-      font-size: 10px;
+      font-size: 9px;
       cursor: pointer;
     }
-    .modal-desc {
-      font-size: 21px;
-      color: #e6e0f8;
-      line-height: 1.35;
-      margin-bottom: 10px;
-    }
-    .trilingual-quote {
-      background: #221638;
-      border-left: 4px solid var(--odia);
-      padding: 10px 12px;
-      color: #ffe082;
-      font-size: 20px;
+    .modal-body {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
       margin-bottom: 12px;
-      line-height: 1.4;
+    }
+    .npc-portrait {
+      width: 80px;
+      height: 80px;
+      border: 3px solid var(--cyan);
+      background: #1e1333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+      flex-shrink: 0;
+    }
+    .dialogue-text {
+      font-size: 18px;
+      line-height: 1.35;
+      color: #f0e6ff;
+    }
+    .quote-bubble {
+      margin-top: 6px;
+      padding: 6px 10px;
+      background: #251642;
+      border-left: 3px solid var(--odia);
+      font-style: italic;
+      color: #ffb74d;
+      font-size: 17px;
     }
     .modal-choices {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
     .choice-btn {
-      background: #2b1f44;
+      background: #1f1435;
       color: #fff;
-      border: 2px solid var(--accent);
-      padding: 10px 12px;
+      border: 2px solid #5a4282;
+      padding: 8px 12px;
       font-family: 'VT323', 'Noto Sans Oriya', monospace;
-      font-size: 20px;
+      font-size: 18px;
       text-align: left;
       cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      transition: all 0.15s;
     }
     .choice-btn:hover {
       background: var(--accent);
       color: #000;
+      border-color: #fff;
+      transform: translateX(4px);
     }
-    .tag-pill {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 9px;
-      background: #000;
-      color: var(--cyan);
-      padding: 4px 6px;
-      margin-left: 8px;
-      white-space: nowrap;
+    .choice-btn .tag-pill {
+      font-size: 14px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 2px 6px;
+      border: 1px solid #666;
     }
 
-    /* FIGHTKARO 3D COMBAT OVERLAY */
+    /* FIGHTKARO BRAWL UI */
     #fight-ui {
       display: none;
       margin-top: 10px;
-      border-top: 2px dashed var(--danger);
-      padding-top: 10px;
     }
-    .hp-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
+    .fighter-meters {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
       margin-bottom: 10px;
     }
-    .hp-bar-outer {
-      width: 100%;
-      height: 16px;
+    .fighter-box { flex: 1; }
+    .fighter-name {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 9px;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .fighter-bar {
+      height: 14px;
       background: #000;
       border: 2px solid #fff;
-      margin-top: 4px;
     }
-    .hp-bar-inner {
+    .fighter-fill {
       height: 100%;
-      width: 100%;
-      background: var(--green);
+      background: var(--danger);
       transition: width 0.2s;
     }
-    .enemy-bar { background: var(--danger); }
-    .fight-moves {
+    .fighter-fill.player { background: var(--green); }
+    .fight-log {
+      min-height: 40px;
+      background: #0c0717;
+      border: 2px solid #443166;
+      padding: 6px 10px;
+      font-size: 17px;
+      color: #ffcc00;
+      margin-bottom: 8px;
+    }
+    .fight-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 6px;
     }
     .atk-btn {
+      background: #391122;
+      color: #fff;
+      border: 2px solid var(--danger);
+      padding: 7px;
+      font-family: 'VT323', 'Noto Sans Oriya', monospace;
+      font-size: 17px;
+      cursor: pointer;
+    }
+    .atk-btn:hover {
       background: var(--danger);
       color: #fff;
-      border: 2px solid #fff;
-      padding: 9px;
-      font-family: 'VT323', 'Noto Sans Oriya', monospace;
-      font-size: 19px;
-      cursor: pointer;
-      text-align: left;
     }
-    .atk-btn:hover { background: var(--accent); color: #000; }
 
-    /* BOTTOM BAR: CONTROLS, SPEEDOMETER & MINIMAP */
+    /* BOTTOM CONTROLS & RADAR */
     .bottom-row {
       display: flex;
       justify-content: space-between;
@@ -287,70 +373,108 @@
       gap: 12px;
       flex-wrap: wrap;
     }
-    .controls-card {
+    .vehicle-hud {
       background: var(--dark);
-      border: 2px solid #4e3b75;
-      padding: 10px 14px;
-      font-size: 18px;
-      line-height: 1.35;
+      border: 3px solid var(--accent);
       box-shadow: 4px 4px 0 #000;
+      padding: 6px 12px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
     }
-    .key {
-      background: var(--accent);
-      color: #000;
-      padding: 1px 6px;
-      font-family: 'Press Start 2P', cursive;
-      font-size: 9px;
-      border-radius: 2px;
-    }
-    .speed-card {
-      background: var(--dark);
-      border: 3px solid var(--cyan);
-      padding: 10px 16px;
-      text-align: right;
-      box-shadow: 4px 4px 0 #000;
-    }
-    .speed-num {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 18px;
-      color: var(--cyan);
-    }
-    #toast-msg {
-      position: fixed;
-      bottom: 95px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.9);
-      border: 2px solid var(--cyan);
-      color: var(--cyan);
-      padding: 6px 16px;
-      font-size: 20px;
-      z-index: 5;
-      pointer-events: none;
+    .speedo {
       text-align: center;
     }
-
-    /* MOBILE TOUCH CONTROLS */
-    .touch-controls {
-      display: none;
-      gap: 8px;
-    }
-    .t-btn {
-      width: 54px;
-      height: 54px;
-      background: rgba(255, 204, 0, 0.85);
-      color: #000;
-      border: 2px solid #fff;
+    .speed-number {
       font-family: 'Press Start 2P', cursive;
-      font-size: 14px;
+      font-size: 20px;
+      color: var(--accent);
+    }
+    .speed-unit { font-size: 15px; color: #aaa; }
+    .toast-box {
+      background: rgba(0, 0, 0, 0.88);
+      border-left: 4px solid var(--cyan);
+      padding: 6px 10px;
+      font-size: 16px;
+      color: #fff;
+      max-width: 440px;
+      min-height: 30px;
+    }
+
+    /* ON-SCREEN TOUCH BUTTONS */
+    .touch-controls {
+      display: flex;
+      gap: 8px;
+      pointer-events: auto;
+    }
+    .d-pad {
+      display: grid;
+      grid-template-columns: repeat(3, 42px);
+      grid-template-rows: repeat(2, 42px);
+      gap: 4px;
+    }
+    .d-btn {
+      background: rgba(26, 17, 43, 0.9);
+      border: 2px solid var(--accent);
+      color: #fff;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 6px;
+      border-radius: 4px;
+      touch-action: manipulation;
     }
-    @media (max-width: 768px) {
-      .touch-controls { display: flex; }
-      .controls-card { display: none; }
+    .d-btn:active { background: var(--accent); color: #000; }
+
+    .action-pad {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .act-btn {
+      background: rgba(26, 17, 43, 0.9);
+      border: 2px solid var(--cyan);
+      color: #fff;
+      padding: 6px 10px;
+      font-family: 'VT323', 'Noto Sans Oriya', monospace;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .act-btn:active { background: var(--cyan); color: #000; }
+    .act-btn.pulse { border-color: var(--danger); }
+    .act-btn.pulse:active { background: var(--danger); }
+    .act-btn.antigrav { border-color: var(--neon-purple); }
+    .act-btn.antigrav:active { background: var(--neon-purple); }
+
+    /* SAMBALPURI PATTERN ACCENT BORDER */
+    .sambalpuri-border {
+      background-image: repeating-linear-gradient(
+        45deg,
+        #ff6d00 0,
+        #ff6d00 5px,
+        #000 5px,
+        #000 10px,
+        #ffcc00 10px,
+        #ffcc00 15px,
+        #00e5ff 15px,
+        #00e5ff 20px
+      );
+      height: 4px;
+      width: 100%;
+      margin: 4px 0;
+    }
+
+    @media (max-width: 600px) {
+      .brand-box h1 { font-size: 9px; }
+      .stat-item { min-width: 75px; }
+      .d-pad { grid-template-columns: repeat(3, 36px); grid-template-rows: repeat(2, 36px); }
+      .speed-number { font-size: 16px; }
+      .toast-box { max-width: 260px; font-size: 14px; }
     }
   </style>
 </head>
@@ -358,126 +482,262 @@
 
 <canvas id="webgl-canvas"></canvas>
 
+<!-- HUD -->
 <div id="hud">
   <!-- TOP ROW -->
   <div class="top-row">
+    <!-- BRAND & CITY -->
     <div class="brand-box interactive">
-      <h1>🛵 BHUBANESWAR 3D: ଆମ ଗାଡ଼ି, ଆମ ରାସ୍ତା</h1>
-      <div class="weather-pill">
-        <span id="live-weather-text">📡 Fetching Live Bhubaneswar Weather...</span>
-        <button class="mini-btn" onclick="toggleKalabaisakhi()">⛈️ Toggle Kalabaisakhi Storm</button>
-        <button class="mini-btn" onclick="switchVehicle()">🛺 Switch Vehicle [V]</button>
+      <h1 id="brand-title">BHUBANESWAR 3D: AMA GADI, AMA RASTA</h1>
+      <div class="status-pill-row">
+        <div class="weather-pill">
+          <span id="weather-icon">☀️</span>
+          <span id="weather-text">34°C • HUMID</span>
+        </div>
+        <button class="mini-btn" id="btn-kalabaisakhi" onclick="toggleKalabaisakhi()">⛈️ KALABAISAKHI</button>
+        <button class="mini-btn" id="btn-lang" onclick="cycleLanguage()">🌐 <span id="lang-label">ଓଡ଼ିଆ</span></button>
+      </div>
+      <div class="sambalpuri-border"></div>
+      <div style="font-size: 14px; color: #ffcc00;" id="sub-tagline">
+        ଖଟି • ଦହିବରା • ପିଙ୍କ୍ ଅଟୋ • ଶୂନ୍ୟ ମାଧ୍ୟାକର୍ଷଣ
       </div>
     </div>
 
+    <!-- ANTIGRAVITY & THRUSTERS STATUS -->
+    <div class="antigrav-box interactive">
+      <div class="antigrav-title">
+        <span id="ag-label">🛸 ANTIGRAV: OFF</span>
+        <span id="ag-alt">ALT: 0.0m</span>
+      </div>
+      <div class="plasma-bar">
+        <div class="plasma-fill" id="plasma-fill"></div>
+      </div>
+      <div style="display: flex; gap: 4px; margin-top: 5px;">
+        <button class="mini-btn" id="btn-ag-toggle" onclick="toggleAntigravity()" style="flex: 1; font-size: 14px; padding: 2px 4px;">🚀 TOGGLE [G]</button>
+        <button class="mini-btn pulse" id="btn-ag-pulse" onclick="triggerAntigravPulse()" style="flex: 1; font-size: 14px; padding: 2px 4px; border-color: #ff2a55;">⚡ PULSE [Q]</button>
+      </div>
+    </div>
+
+    <!-- BENGLOORU STATS -->
     <div class="stats-bar interactive">
       <div class="stat-item">
-        <div class="stat-label"><span>ପଖାଳ STAMINA</span><span class="stat-val" id="ui-stamina">85%</span></div>
-        <div class="progress"><div class="progress-fill" id="bar-stamina" style="width:85%;"></div></div>
+        <div class="stat-label"><span id="lbl-stamina">ପଖାଳ</span> <span class="stat-val" id="ui-stamina">85%</span></div>
+        <div class="progress"><div class="progress-fill" id="bar-stamina" style="width: 85%;"></div></div>
       </div>
       <div class="stat-item">
-        <div class="stat-label"><span>JUGAAD (ଭାଇଚାରା)</span><span class="stat-val" id="ui-jugaad">35</span></div>
-        <div class="progress"><div class="progress-fill" id="bar-jugaad" style="width:35%; background:#00e5ff;"></div></div>
+        <div class="stat-label"><span id="lbl-jugaad">ଜୁଗାଡ଼</span> <span class="stat-val" id="ui-jugaad">40</span></div>
+        <div class="progress"><div class="progress-fill" id="bar-jugaad" style="width: 40%; background: var(--green);"></div></div>
       </div>
       <div class="stat-item">
-        <div class="stat-label"><span>KARMA (ଶାନ୍ତି)</span><span class="stat-val" id="ui-karma">80</span></div>
-        <div class="progress"><div class="progress-fill" id="bar-karma" style="width:80%; background:#00e676;"></div></div>
+        <div class="stat-label"><span id="lbl-karma">ଶାନ୍ତି</span> <span class="stat-val" id="ui-karma">80</span></div>
+        <div class="progress"><div class="progress-fill" id="bar-karma" style="width: 80%; background: var(--cyan);"></div></div>
       </div>
       <div class="stat-item">
-        <div class="stat-label"><span>WALLET (ଟଙ୍କା)</span><span class="stat-val" id="ui-wallet">₹500</span></div>
-        <div class="progress"><div class="progress-fill" id="bar-wallet" style="width:55%; background:#ff6d00;"></div></div>
+        <div class="stat-label"><span id="lbl-wallet">ଟଙ୍କା</span> <span class="stat-val" id="ui-wallet">₹500</span></div>
+        <div class="progress"><div class="progress-fill" id="bar-wallet" style="width: 60%; background: #ffcc00;"></div></div>
       </div>
     </div>
   </div>
 
-  <!-- CENTER HOTSPOT TRIGGER PROMPT -->
+  <!-- CENTER HOTSPOT NOTIFIER -->
   <div id="hotspot-prompt" class="interactive" onclick="openActiveHotspot()">
-    <span class="title" id="prompt-title">📍 SAHEED NAGAR DAHIBARA CART</span>
-    <span class="sub">Press <span class="key">E</span> or Click Here to Interact / FightKaro!</span>
+    <span class="title" id="prompt-title">HOTSPOT REACHED</span>
+    <span class="sub" id="prompt-sub">PRESS [E] OR CLICK TO INTERACT / BRAWL</span>
   </div>
 
   <!-- BOTTOM ROW -->
   <div class="bottom-row">
-    <div class="controls-card interactive">
-      <div><span class="key">W</span><span class="key">A</span><span class="key">S</span><span class="key">D</span> or <span class="key">ARROWS</span> : Drive around Bhubaneswar</div>
-      <div><span class="key">H</span> : Horn / *Thak-Thak-Thung* &nbsp;|&nbsp; <span class="key">V</span> : Swap Activa / Pink Vikram Auto</div>
-      <div><span class="key">E</span> : Enter Zone (Dahibara Cart, Tookna Paan, Patia Broker, Master Canteen)</div>
+    <!-- VEHICLE & SPEED -->
+    <div class="vehicle-hud interactive">
+      <div class="speedo">
+        <div class="speed-number" id="speed-val">0</div>
+        <div class="speed-unit">KM/H</div>
+      </div>
+      <div>
+        <div style="font-family:'Press Start 2P'; font-size: 9px; color: var(--accent);" id="vehicle-label">🛵 WHITE ACTIVA 6G</div>
+        <div style="font-size: 15px; color: #88e5ff;" id="zone-indicator">LOC: JANPATH (SAHEED NAGAR)</div>
+        <div style="display: flex; gap: 4px; margin-top: 4px;">
+          <button class="mini-btn" onclick="switchVehicle()">🔄 SWAP [V]</button>
+          <button class="mini-btn" onclick="playHorn()">📢 HORN [H]</button>
+        </div>
+      </div>
     </div>
 
-    <!-- Mobile Touch Pad -->
+    <!-- TOAST FEEDBACK -->
+    <div class="toast-box interactive" id="toast-box">
+      <span id="toast-msg">🎮 WASD/Arrows to drive • [G] Antigravity Zero-G • [Q] Pulse • Space/Shift Fly</span>
+    </div>
+
+    <!-- TOUCH CONTROLS FOR MOBILE -->
     <div class="touch-controls interactive">
-      <button class="t-btn" id="btn-left">◀</button>
-      <button class="t-btn" id="btn-up">▲</button>
-      <button class="t-btn" id="btn-down">▼</button>
-      <button class="t-btn" id="btn-right">▶</button>
-      <button class="t-btn" onclick="playHorn()">📢</button>
-    </div>
-
-    <div class="speed-card interactive">
-      <div id="vehicle-label" style="color:var(--accent); font-size:18px;">🛵 WHITE ACTIVA 6G</div>
-      <div class="speed-num"><span id="speed-val">0</span> KM/H</div>
-      <div style="font-size:16px; color:#aaa;" id="zone-indicator">ZONE: Rasulgarh Highway</div>
+      <div class="d-pad">
+        <div></div>
+        <button class="d-btn" id="btn-up">▲</button>
+        <div></div>
+        <button class="d-btn" id="btn-left">◀</button>
+        <button class="d-btn" id="btn-down">▼</button>
+        <button class="d-btn" id="btn-right">▶</button>
+      </div>
+      <div class="action-pad">
+        <div style="display: flex; gap: 4px;">
+          <button class="act-btn antigrav" id="btn-thrust-up" style="flex:1;">🚀 LIFT</button>
+          <button class="act-btn antigrav" id="btn-thrust-down" style="flex:1;">🛬 DIVE</button>
+        </div>
+        <div style="display: flex; gap: 4px;">
+          <button class="act-btn pulse" onclick="triggerAntigravPulse()">⚡ PULSE</button>
+          <button class="act-btn" onclick="openActiveHotspot()">💥 ACT [E]</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<div id="toast-msg">🔊 Drive to any glowing yellow ring in Bhubaneswar & press [E] for Odia-Hindi street drama!</div>
-
-<!-- TRILINGUAL DIALOGUE & FIGHTKARO 3D BRAWL MODAL -->
+<!-- INTERACTION & FIGHTKARO MODAL -->
 <div id="interaction-modal" class="interactive">
   <div class="modal-header">
-    <span class="modal-title" id="m-title">ZONE ENCOUNTER</span>
-    <button class="close-btn" onclick="closeModal()">ESC / DRIVE ON</button>
+    <span class="modal-title" id="m-title">LANDMARK KHATTI</span>
+    <button class="close-btn" onclick="closeModal()">X</button>
   </div>
-  <div class="modal-desc" id="m-desc"></div>
-  <div class="trilingual-quote" id="m-quote"></div>
+  <div class="modal-body">
+    <div class="npc-portrait" id="m-avatar">🍲</div>
+    <div style="flex: 1;">
+      <div class="dialogue-text" id="m-desc">Landmark description</div>
+      <div class="quote-bubble" id="m-quote">"Quote in Odia/Hindi"</div>
+    </div>
+  </div>
+  
+  <!-- Dialogue Choices -->
   <div class="modal-choices" id="m-choices"></div>
 
-  <!-- FightKaro 3D Combat Sub-Panel -->
+  <!-- FightKaro 3D Brawl Section -->
   <div id="fight-ui">
-    <div class="hp-grid">
-      <div>
-        <span>YOU (BHUBANESWAR RIDER)</span>
-        <div class="hp-bar-outer"><div class="hp-bar-inner" id="f-p-hp"></div></div>
+    <div class="fighter-meters">
+      <div class="fighter-box">
+        <div class="fighter-name"><span>YOU (YOU)</span><span id="f-p-hp-num">100 HP</span></div>
+        <div class="fighter-bar"><div class="fighter-fill player" id="f-p-hp" style="width: 100%;"></div></div>
       </div>
-      <div>
-        <span id="f-e-name">BOSS</span>
-        <div class="hp-bar-outer"><div class="hp-bar-inner enemy-bar" id="f-e-hp"></div></div>
+      <div class="fighter-box">
+        <div class="fighter-name"><span id="f-e-name">BOSS</span><span id="f-e-hp-num">100 HP</span></div>
+        <div class="fighter-bar"><div class="fighter-fill" id="f-e-hp" style="width: 100%;"></div></div>
       </div>
     </div>
-    <div id="f-log" style="color:var(--accent); margin-bottom:8px; font-size:19px;">⚔️ 3D FIGHTKARO ARENA ACTIVE! Choose your street attack:</div>
-    <div class="fight-moves">
-      <button class="atk-btn" onclick="combatAttack('Guguni Splash', 28)">🌶️ ଗରମ ଗୁଗୁନି ଛିଞ୍ଚା (Hot Guguni Splash - 28 DMG)</button>
-      <button class="atk-btn" onclick="combatAttack('Tookna Chuna Slap', 34)">🌿 ଟୁକନା ୩୦୦-ନମ୍ବର ଚୂନ ଚାପୁଡ଼ା (Chuna Slap - 34 DMG)</button>
-      <button class="atk-btn" onclick="combatAttack('Pahala Rasagola Drop', 45)">🍯 ପାହାଳ ରସଗୋଲା ବୋମା (Rasagola Slam - 45 DMG)</button>
-      <button class="atk-btn" onclick="combatAttack('Vani Vihar Squad', 40)">📞 ବାଣୀ ବିହାର ଭାଇ ଡାକରା (Summon Boys - 40 DMG)</button>
+    <div class="fight-log" id="f-log">⚔️ FIGHT STARTED! Pick your move!</div>
+    <div class="fight-actions">
+      <button class="atk-btn" onclick="combatAttack('Guguni Splash', 28)">🥣 ଗୁଗୁନି ସ୍ପ୍ଲାସ୍ (Guguni Splash - 28 DMG)</button>
+      <button class="atk-btn" onclick="combatAttack('Tookna Chuna Slap', 34)">🖐️ ଖଇର ଚୂନ ଚପତ (Chuna Slap - 34 DMG)</button>
+      <button class="atk-btn" onclick="combatAttack('Pahala Rasagola Slam', 45)">🍯 ପହଳା ରସଗୋଲା ଡ୍ରପ୍ (Rasagola Slam - 45 DMG)</button>
+      <button class="atk-btn" onclick="combatAttack('Vani Vihar Squad', 40)">👥 ବାଣୀବିହାର ଗ୍ୟାଙ୍ଗ (Summon Boys - 40 DMG)</button>
     </div>
   </div>
 </div>
 
 <script>
   /* =========================================================================
-     1. PROCEDURAL WEB AUDIO SYNTHESIZER (Dahibara Clang, Tookna Clap, Horn)
+     1. TRILINGUAL LOCALIZATION STRINGS (ODIA, HINDI, ENGLISH)
+     ========================================================================= */
+  const I18N = {
+    odia: {
+      langName: "ଓଡ଼ିଆ",
+      brandTitle: "ଭୁବନେଶ୍ୱର 3D: ଆମ ଗାଡ଼ି ଆମ ରାସ୍ତା",
+      subTagline: "ଖଟି • ଦହିବରା • ପିଙ୍କ୍ ଅଟୋ • ଶୂନ୍ୟ ମାଧ୍ୟାକର୍ଷଣ",
+      stamina: "ପଖାଳ",
+      jugaad: "ଜୁଗାଡ଼",
+      karma: "ଶାନ୍ତି",
+      wallet: "ଟଙ୍କା",
+      agOff: "🛸 ANTIGRAV: ବନ୍ଦ",
+      agOn: "🚀 ଶୂନ୍ୟ ଗୁରୁତ୍ୱ: ସକ୍ରିୟ",
+      scooter: "🛵 ହ୍ୱାଇଟ୍ ଆକ୍ଟିଭା 6G",
+      pinkAuto: "🛺 ୧୯୯୮ ପିଙ୍କ୍ ବିକ୍ରମ ଅଟୋ",
+      pulseToast: "⚡ ବିକର୍ଷଣ ତରଙ୍ଗ! ସବୁ ବାସନ ଓ ବସ୍ତା ଉଡ଼ିଗଲା!",
+      cowsIgnored: "🐮 ଜନପଥ ଗାଈ ଆପଣଙ୍କ ହର୍ଣ୍ଣକୁ ପୂରା ଇଗ୍ନୋର କଲା!",
+      autoHorn: "🛺 *ପୋଁ-ପୋଁ!* 'ବାବୁ ଡାଇରେକ୍ଟ ₹୧୫୦! ରାସ୍ତା ଖାଲି କର!'",
+      stormActive: "⛈️ କାଳବୈଶାଖୀ ଝଡ଼ ଓ ଘଡ଼ଘଡ଼ି ଆରମ୍ଭ!",
+      stormCalm: "☀️ ଆକାଶ ପରିଷ୍କାର ହେଲା।"
+    },
+    hindi: {
+      langName: "हिंदी",
+      brandTitle: "भुवनेश्वर 3D: हमारी गाड़ी, हमारा रास्ता",
+      subTagline: "खट्टी • दहीबड़ा • पिंक ऑटो • एंटी-ग्रेविटी मोड",
+      stamina: "पखाल",
+      jugaad: "जुगाड़",
+      karma: "शांति",
+      wallet: "पैसे",
+      agOff: "🛸 ANTIGRAV: बंद",
+      agOn: "🚀 एंटी-ग्रेविटी: चालू",
+      scooter: "🛵 वाइट एक्टिवा 6G",
+      pinkAuto: "🛺 1998 पिंक विक्रम ऑटो",
+      pulseToast: "⚡ रिपल्सर पल्स! सड़क के बर्तन और कट्टे हवा में उड़ गए!",
+      cowsIgnored: "🐮 गाय ने हॉर्न को पूरी तरह नजरअंदाज कर दिया!",
+      autoHorn: "🛺 *पों-पों!* 'भैया नो मीटर! सीधा ₹150!'",
+      stormActive: "⛈️ कालबैशाखी तूफ़ान शुरू!",
+      stormCalm: "☀️ मौसम साफ हो गया।"
+    },
+    en: {
+      langName: "ENG",
+      brandTitle: "BHUBANESWAR 3D: AMA GADI, AMA RASTA",
+      subTagline: "KHATTI • DAHIBARA • PINK AUTO • ANTIGRAV ZERO-G",
+      stamina: "STAMINA",
+      jugaad: "JUGAAD",
+      karma: "KARMA",
+      wallet: "WALLET",
+      agOff: "🛸 ANTIGRAV: OFF",
+      agOn: "🚀 ZERO-G: ACTIVE",
+      scooter: "🛵 WHITE ACTIVA 6G",
+      pinkAuto: "🛺 1998 PINK VIKRAM AUTO",
+      pulseToast: "⚡ ANTIGRAV PULSE! Debris and handis launched into zero-G orbit!",
+      cowsIgnored: "🐮 Cows on Janpath completely ignored your horn.",
+      autoHorn: "🛺 *POMP-POMP!* 'No meter bro! Straight ₹150 flat!'",
+      stormActive: "⛈️ Kalabaisakhi cyclonic storm unleashed!",
+      stormCalm: "☀️ Skies cleared up."
+    }
+  };
+
+  let currentLang = 'odia';
+  function cycleLanguage() {
+    if (currentLang === 'odia') currentLang = 'hindi';
+    else if (currentLang === 'hindi') currentLang = 'en';
+    else currentLang = 'odia';
+    applyLanguage();
+  }
+
+  function applyLanguage() {
+    const t = I18N[currentLang];
+    document.getElementById('lang-label').innerText = t.langName;
+    document.getElementById('brand-title').innerText = t.brandTitle;
+    document.getElementById('sub-tagline').innerText = t.subTagline;
+    document.getElementById('lbl-stamina').innerText = t.stamina;
+    document.getElementById('lbl-jugaad').innerText = t.jugaad;
+    document.getElementById('lbl-karma').innerText = t.karma;
+    document.getElementById('lbl-wallet').innerText = t.wallet;
+    document.getElementById('vehicle-label').innerText = isPinkAuto ? t.pinkAuto : t.scooter;
+    document.getElementById('ag-label').innerText = isAntigrav ? t.agOn : t.agOff;
+  }
+
+  /* =========================================================================
+     2. PROCEDURAL WEB AUDIO SYNTHESIZER (No external audio files!)
      ========================================================================= */
   const AudioCtx = window.AudioContext || window.webkitAudioContext;
-  let audioCtx;
-  function initAudio() { if (!audioCtx) audioCtx = new AudioCtx(); }
+  let audioCtx = null;
+  function initAudio() {
+    if (!audioCtx) audioCtx = new AudioCtx();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
 
   function playDahibaraClang() {
     initAudio();
     const notes = [
-      { t: 0, f: 930, d: 0.06 },
-      { t: 0.12, f: 970, d: 0.06 },
-      { t: 0.25, f: 530, d: 0.28 },
-      { t: 0.60, f: 930, d: 0.06 },
-      { t: 0.74, f: 560, d: 0.32 }
+      { t: 0, f: 940, d: 0.08 },
+      { t: 0.12, f: 980, d: 0.08 },
+      { t: 0.25, f: 540, d: 0.35 },
+      { t: 0.60, f: 940, d: 0.08 },
+      { t: 0.74, f: 570, d: 0.40 }
     ];
     notes.forEach(n => {
       const o = audioCtx.createOscillator();
       const g = audioCtx.createGain();
       o.type = 'triangle';
       o.frequency.setValueAtTime(n.f, audioCtx.currentTime + n.t);
-      g.gain.setValueAtTime(0.4, audioCtx.currentTime + n.t);
+      g.gain.setValueAtTime(0.35, audioCtx.currentTime + n.t);
       g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + n.t + n.d);
       o.connect(g); g.connect(audioCtx.destination);
       o.start(audioCtx.currentTime + n.t);
@@ -487,7 +747,7 @@
 
   function playTooknaClap() {
     initAudio();
-    [0, 0.14, 0.28].forEach(offset => {
+    [0, 0.13, 0.26].forEach(offset => {
       const len = audioCtx.sampleRate * 0.05;
       const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
       const data = buf.getChannelData(0);
@@ -495,7 +755,7 @@
       const src = audioCtx.createBufferSource();
       src.buffer = buf;
       const g = audioCtx.createGain();
-      g.gain.setValueAtTime(0.55, audioCtx.currentTime + offset);
+      g.gain.setValueAtTime(0.5, audioCtx.currentTime + offset);
       g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + offset + 0.05);
       src.connect(g); g.connect(audioCtx.destination);
       src.start(audioCtx.currentTime + offset);
@@ -510,19 +770,72 @@
       const g = audioCtx.createGain();
       o.type = isPinkAuto ? 'sawtooth' : 'square';
       o.frequency.setValueAtTime(baseFreq, audioCtx.currentTime + t);
-      g.gain.setValueAtTime(0.22, audioCtx.currentTime + t);
+      g.gain.setValueAtTime(0.2, audioCtx.currentTime + t);
       g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + t + 0.14);
       o.connect(g); g.connect(audioCtx.destination);
       o.start(audioCtx.currentTime + t);
       o.stop(audioCtx.currentTime + t + 0.14);
     });
-    showToast(isPinkAuto
-      ? "🛺 *POMP-POMP!* 'ଅରେ ସାଇଡ୍ ଦେ ବେ! Rasta jam kar diya!'"
-      : "🛵 *PEEP-PEEP!* Cows on Janpath completely ignored your horn.");
+    showToast(isPinkAuto ? I18N[currentLang].autoHorn : I18N[currentLang].cowsIgnored);
+  }
+
+  // Antigravity Thruster Jet Sound
+  function playThrusterSound(isUp) {
+    initAudio();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'sine';
+    const startF = isUp ? 180 : 280;
+    const endF = isUp ? 380 : 140;
+    o.frequency.setValueAtTime(startF, audioCtx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(endF, audioCtx.currentTime + 0.25);
+    g.gain.setValueAtTime(0.25, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + 0.26);
+  }
+
+  // Antigravity Electromagnetic Repulsor Pulse (Shockwave)
+  function playShockwaveSound() {
+    initAudio();
+    // Sub bass drop
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(500, audioCtx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(45, audioCtx.currentTime + 0.45);
+    g.gain.setValueAtTime(0.6, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + 0.52);
+
+    // High sci-fi chime
+    const o2 = audioCtx.createOscillator();
+    const g2 = audioCtx.createGain();
+    o2.type = 'triangle';
+    o2.frequency.setValueAtTime(1200, audioCtx.currentTime);
+    o2.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.3);
+    g2.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    g2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+    o2.connect(g2); g2.connect(audioCtx.destination);
+    o2.start(); o2.stop(audioCtx.currentTime + 0.32);
+  }
+
+  // Debris collision acoustic clack
+  function playDebrisClack(type) {
+    if (!audioCtx) return;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = type === 'handi' ? 'triangle' : 'square';
+    o.frequency.setValueAtTime(type === 'handi' ? 880 : 180, audioCtx.currentTime);
+    g.gain.setValueAtTime(0.18, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.005, audioCtx.currentTime + 0.08);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + 0.09);
   }
 
   /* =========================================================================
-     2. THREE.JS 3D OPEN-WORLD BHUBANESWAR SCENE SETUP
+     3. THREE.JS 3D OPEN-WORLD BHUBANESWAR SCENE
      ========================================================================= */
   const canvas = document.getElementById('webgl-canvas');
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -531,65 +844,83 @@
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xff9e6d);
-  scene.fog = new THREE.FogExp2(0xff9e6d, 0.0065);
+  scene.fog = new THREE.FogExp2(0xff9e6d, 0.006);
 
-  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 400);
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 500);
 
   // Lights
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
   scene.add(ambientLight);
 
-  const sunLight = new THREE.DirectionalLight(0xffe6b3, 1.1);
-  sunLight.position.set(60, 90, 50);
+  const sunLight = new THREE.DirectionalLight(0xffe6b3, 1.15);
+  sunLight.position.set(70, 110, 60);
   sunLight.castShadow = true;
   scene.add(sunLight);
 
-  // Ground (Laterite Red-Brown Odisha Soil + Asphalt Road Cross)
-  const groundGeo = new THREE.PlaneGeometry(500, 500);
-  const groundMat = new THREE.MeshLambertMaterial({ color: 0x3d2922 });
+  // Odisha Laterite Soil Ground
+  const groundGeo = new THREE.PlaneGeometry(600, 600);
+  const groundMat = new THREE.MeshLambertMaterial({ color: 0x3d271e });
   const ground = new THREE.Mesh(groundGeo, groundMat);
   ground.rotation.x = -Math.PI / 2;
   ground.receiveShadow = true;
   scene.add(ground);
 
-  // Main Janpath & NH-16 Intersecting Roads
+  // Main Intersecting Roads (Janpath N-S & NH-16 E-W)
   function createRoad(w, h, x, z) {
     const r = new THREE.Mesh(
       new THREE.PlaneGeometry(w, h),
-      new THREE.MeshPhongMaterial({ color: 0x22232a, shininess: 25 })
+      new THREE.MeshPhongMaterial({ color: 0x22232a, shininess: 20 })
     );
     r.rotation.x = -Math.PI / 2;
     r.position.set(x, 0.03, z);
     scene.add(r);
   }
-  createRoad(26, 480, 0, 0);   // North-South Janpath
-  createRoad(480, 26, 0, 0);   // East-West NH-16 Rasulgarh-Khandagiri
+  createRoad(28, 560, 0, 0);   // Janpath
+  createRoad(560, 28, 0, 0);   // NH-16
 
-  // Road Dividers
-  for (let i = -220; i <= 220; i += 14) {
-    if (Math.abs(i) < 18) continue;
+  // Yellow & White Road Dividers
+  for (let i = -240; i <= 240; i += 14) {
+    if (Math.abs(i) < 20) continue;
     const divNS = new THREE.Mesh(
-      new THREE.BoxGeometry(0.6, 0.4, 6),
+      new THREE.BoxGeometry(0.7, 0.45, 6),
       new THREE.MeshLambertMaterial({ color: i % 28 === 0 ? 0xffcc00 : 0xffffff })
     );
-    divNS.position.set(0, 0.2, i);
+    divNS.position.set(0, 0.22, i);
     scene.add(divNS);
 
     const divEW = new THREE.Mesh(
-      new THREE.BoxGeometry(6, 0.4, 0.6),
+      new THREE.BoxGeometry(6, 0.45, 0.7),
       new THREE.MeshLambertMaterial({ color: i % 28 === 0 ? 0xffcc00 : 0xffffff })
     );
-    divEW.position.set(i, 0.2, 0);
+    divEW.position.set(i, 0.22, 0);
     scene.add(divEW);
   }
 
+  // Overhead Rasulgarh Flyover Bridge (Drive or Fly under/over!)
+  const flyover = new THREE.Mesh(
+    new THREE.BoxGeometry(220, 2, 20),
+    new THREE.MeshLambertMaterial({ color: 0x4a4f59 })
+  );
+  flyover.position.set(0, 16, -110);
+  scene.add(flyover);
+
+  // Flyover Pillars
+  [-80, -35, 35, 80].forEach(px => {
+    const pillar = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.5, 1.8, 16, 12),
+      new THREE.MeshLambertMaterial({ color: 0x33373d })
+    );
+    pillar.position.set(px, 8, -110);
+    scene.add(pillar);
+  });
+
   /* =========================================================================
-     3. BUILD PLAYER VEHICLES (Scooter + Pink Vikram Auto) & 3D FIGHTER
+     4. BUILD PLAYER VEHICLES & NEON ANTIGRAV THRUSTERS
      ========================================================================= */
   const playerGroup = new THREE.Group();
   scene.add(playerGroup);
 
-  // A. White Activa Mesh Group
+  // A. White Activa 6G
   const scooterMesh = new THREE.Group();
   const sBody = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.0, 2.2), new THREE.MeshLambertMaterial({ color: 0xf5f5f5 }));
   sBody.position.y = 0.7;
@@ -605,7 +936,7 @@
   scooterMesh.add(sHelmet);
   playerGroup.add(scooterMesh);
 
-  // B. Pink Bhubaneswar Vikram Auto Mesh Group
+  // B. 1998 Pink Vikram Auto
   const pinkAutoMesh = new THREE.Group();
   const aCabin = new THREE.Mesh(new THREE.BoxGeometry(2.3, 2.1, 3.2), new THREE.MeshLambertMaterial({ color: 0xff2a85 }));
   aCabin.position.y = 1.25;
@@ -619,33 +950,227 @@
   pinkAutoMesh.visible = false;
   playerGroup.add(pinkAutoMesh);
 
+  // C. Antigravity Plasma Repulsor Rings (Glow underneath wheels)
+  const thrusterRings = [];
+  function createThrusterRing(x, y, z) {
+    const ringGeo = new THREE.RingGeometry(0.4, 0.85, 24);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: 0x00e5ff,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.85
+    });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.rotation.x = Math.PI / 2;
+    ring.position.set(x, y, z);
+    ring.visible = false;
+    playerGroup.add(ring);
+    thrusterRings.push(ring);
+  }
+  createThrusterRing(0, 0.12, 0.9);   // Front thruster
+  createThrusterRing(0, 0.12, -0.9);  // Rear thruster
+  createThrusterRing(0.9, 0.12, -0.6); // Auto side right
+  createThrusterRing(-0.9, 0.12, -0.6); // Auto side left
+
   let isPinkAuto = false;
   function switchVehicle() {
     isPinkAuto = !isPinkAuto;
     scooterMesh.visible = !isPinkAuto;
     pinkAutoMesh.visible = isPinkAuto;
-    document.getElementById('vehicle-label').innerText = isPinkAuto
-      ? "🛺 1998 PINK VIKRAM AUTO"
-      : "🛵 WHITE ACTIVA 6G";
+    applyLanguage();
     playHorn();
   }
 
+  // Antigravity state variables
+  let isAntigrav = false;
+  let playerAltitude = 0;
+  let verticalVelocity = 0;
+
+  function toggleAntigravity() {
+    isAntigrav = !isAntigrav;
+    thrusterRings.forEach(r => r.visible = isAntigrav);
+    const btn = document.getElementById('btn-ag-toggle');
+    if (isAntigrav) {
+      btn.classList.add('active');
+      verticalVelocity = 0.12;
+      playThrusterSound(true);
+      showToast(I18N[currentLang].agOn + " • [Space/Shift] Fly • [Q] Pulse");
+    } else {
+      btn.classList.remove('active');
+      showToast(I18N[currentLang].agOff);
+    }
+    applyLanguage();
+  }
+
   /* =========================================================================
-     4. BHUBANESWAR LANDMARKS & INTERACTIVE HOTSPOTS
+     5. EMERGENT PHYSICS SANDBOX (Movable Handis, Barricades, Sacks & Chain Reactions)
+     ========================================================================= */
+  const physicsObjects = [];
+
+  function spawnPhysicsObject(type, x, z) {
+    let mesh;
+    let radius = 1.0;
+    let mass = 15;
+
+    if (type === 'handi') {
+      // Aluminum Dahibara Handi with red cloth cover
+      mesh = new THREE.Group();
+      const pot = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.7, 0.9, 1.2, 16),
+        new THREE.MeshLambertMaterial({ color: 0xd91e36 })
+      );
+      pot.position.y = 0.6;
+      mesh.add(pot);
+      const lid = new THREE.Mesh(
+        new THREE.SphereGeometry(0.5, 12, 8),
+        new THREE.MeshLambertMaterial({ color: 0xdddddd })
+      );
+      lid.position.y = 1.25;
+      mesh.add(lid);
+      radius = 0.9;
+      mass = 12;
+    } else if (type === 'sack') {
+      // 50kg Heavy Potato/Rice Sack (ବସ୍ତା)
+      mesh = new THREE.Mesh(
+        new THREE.BoxGeometry(1.2, 0.8, 1.6),
+        new THREE.MeshLambertMaterial({ color: 0x997950 })
+      );
+      mesh.position.y = 0.4;
+      radius = 1.0;
+      mass = 50;
+    } else if (type === 'barricade') {
+      // Yellow Police Traffic Barricade
+      mesh = new THREE.Mesh(
+        new THREE.BoxGeometry(2.4, 1.1, 0.5),
+        new THREE.MeshLambertMaterial({ color: 0xffcc00 })
+      );
+      mesh.position.y = 0.55;
+      radius = 1.2;
+      mass = 22;
+    } else if (type === 'crate') {
+      // Tookna Wooden Paan/Tea Stall Crate
+      mesh = new THREE.Mesh(
+        new THREE.BoxGeometry(1.3, 1.3, 1.3),
+        new THREE.MeshLambertMaterial({ color: 0x6e4726 })
+      );
+      mesh.position.y = 0.65;
+      radius = 1.0;
+      mass = 18;
+    } else if (type === 'tinroof') {
+      // Flying Kalabaisakhi Tin Roof
+      mesh = new THREE.Mesh(
+        new THREE.BoxGeometry(3.2, 0.1, 2.2),
+        new THREE.MeshLambertMaterial({ color: 0x88929e })
+      );
+      mesh.position.y = 0.1;
+      radius = 1.8;
+      mass = 8;
+    }
+
+    mesh.position.set(x, 0, z);
+    scene.add(mesh);
+
+    physicsObjects.push({
+      mesh,
+      type,
+      radius,
+      mass,
+      pos: mesh.position,
+      vel: new THREE.Vector3((Math.random() - 0.5) * 0.02, 0, (Math.random() - 0.5) * 0.02),
+      rotVel: new THREE.Vector3(),
+      isFloating: false
+    });
+  }
+
+  // Populate Janpath & NH-16 intersections with emergent debris
+  const spawnCoords = [
+    { type: 'handi', x: 18, z: -25 },
+    { type: 'handi', x: 24, z: -35 },
+    { type: 'handi', x: -14, z: 40 },
+    { type: 'sack', x: -16, z: -45 },
+    { type: 'sack', x: -18, z: -50 },
+    { type: 'sack', x: 20, z: 60 },
+    { type: 'barricade', x: 8, z: -80 },
+    { type: 'barricade', x: -8, z: -80 },
+    { type: 'barricade', x: 10, z: 90 },
+    { type: 'crate', x: -18, z: 12 },
+    { type: 'crate', x: -22, z: 18 },
+    { type: 'crate', x: 16, z: -90 },
+    { type: 'tinroof', x: -30, z: -110 },
+    { type: 'tinroof', x: 30, z: 120 }
+  ];
+  spawnCoords.forEach(c => spawnPhysicsObject(c.type, c.x, c.z));
+
+  // Electromagnetic Antigravity Pulse Shockwave Ring Mesh
+  const pulseRingGeo = new THREE.RingGeometry(0.5, 1.8, 32);
+  const pulseRingMat = new THREE.MeshBasicMaterial({
+    color: 0x00e5ff,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.95
+  });
+  const pulseRingMesh = new THREE.Mesh(pulseRingGeo, pulseRingMat);
+  pulseRingMesh.rotation.x = -Math.PI / 2;
+  pulseRingMesh.visible = false;
+  scene.add(pulseRingMesh);
+
+  let pulseActive = false;
+  let pulseRadius = 0;
+
+  function triggerAntigravPulse() {
+    playShockwaveSound();
+    pulseActive = true;
+    pulseRadius = 1;
+    pulseRingMesh.position.set(playerGroup.position.x, playerGroup.position.y + 0.3, playerGroup.position.z);
+    pulseRingMesh.scale.set(1, 1, 1);
+    pulseRingMesh.visible = true;
+
+    cameraShake = 16;
+    showToast(I18N[currentLang].pulseToast);
+
+    // Apply radial outward & upward impulse to all physics debris in 35-unit radius
+    const pPos = playerGroup.position;
+    physicsObjects.forEach(obj => {
+      const dx = obj.pos.x - pPos.x;
+      const dz = obj.pos.z - pPos.z;
+      const dist = Math.hypot(dx, dz);
+      if (dist < 36 && dist > 0.05) {
+        const force = (36 - dist) / 36 * 0.75;
+        obj.vel.x += (dx / dist) * force;
+        obj.vel.z += (dz / dist) * force;
+        obj.vel.y += 0.35 + Math.random() * 0.45; // Pop straight into the sky!
+        obj.rotVel.x += (Math.random() - 0.5) * 0.2;
+        obj.rotVel.y += (Math.random() - 0.5) * 0.2;
+        obj.rotVel.z += (Math.random() - 0.5) * 0.2;
+        obj.isFloating = true;
+      }
+    });
+
+    // Nearby cows also get lifted!
+    trafficAgents.forEach(t => {
+      if (t.isCow) {
+        const cDist = Math.hypot(t.mesh.position.x - pPos.x, t.mesh.position.z - pPos.z);
+        if (cDist < 30) {
+          t.isFloating = true;
+          t.floatYVel = 0.25;
+        }
+      }
+    });
+  }
+
+  /* =========================================================================
+     6. BHUBANESWAR LANDMARKS & INTERACTIVE HOTSPOTS
      ========================================================================= */
   const hotspots = [];
-  const colliders = [];
 
   function createHotspotZone(x, z, radius, color, id, title, npcColor, data) {
-    // Glowing Ground Ring
-    const ringGeo = new THREE.RingGeometry(radius - 0.5, radius, 32);
-    const ringMat = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide });
+    const ringGeo = new THREE.RingGeometry(radius - 0.6, radius, 32);
+    const ringMat = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide, transparent: true, opacity: 0.8 });
     const ring = new THREE.Mesh(ringGeo, ringMat);
     ring.rotation.x = -Math.PI / 2;
     ring.position.set(x, 0.08, z);
     scene.add(ring);
 
-    // 3D NPC Fighter Boss standing inside zone
     const npcGroup = new THREE.Group();
     const torso = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.6, 0.8), new THREE.MeshLambertMaterial({ color: npcColor }));
     torso.position.y = 1.2;
@@ -659,258 +1184,186 @@
     hotspots.push({ x, z, radius, id, title, ring, npcGroup, data });
   }
 
-  // LANDMARK 1: SAHEED NAGAR DAHIBARA CART (X: 22, Z: -30)
-  const cartGroup = new THREE.Group();
-  const cartTable = new THREE.Mesh(new THREE.BoxGeometry(3.2, 1.2, 2.2), new THREE.MeshLambertMaterial({ color: 0x7b4b2a }));
-  cartTable.position.y = 0.8;
-  cartGroup.add(cartTable);
-  // Aluminum Handi wrapped in red cloth
-  const handi = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.85, 1.2, 16), new THREE.MeshLambertMaterial({ color: 0xd91e36 }));
-  handi.position.set(0, 1.85, 0);
-  cartGroup.add(handi);
-  cartGroup.position.set(22, 0, -34);
-  scene.add(cartGroup);
-
-  createHotspotZone(22, -28, 7, 0xffcc00, "dahibara", "🍲 SAHEED NAGAR DAHIBARA CART (Bidyadhar Mausa)", 0xff6d00, {
-    desc: "Steam rises from Bidyadhar Mausa's giant aluminum Handi wrapped in wet red cotton (*THAK-THAK-THUNG!*). A tech bro next to you just asked Mausa to put Tomato Ketchup and Sweet Corn on Cuttack Dahibara!",
-    quote: "🗣️ BIDYADHAR MAUSA: «କଣ କହିଲୁ ବେ?! Tomato Ketchup?! अरे शर्म नहीं आता है तुमको?! ତୋ ଜୀବନରେ କେବେ ଅସଲି କଟକ ଦହିବରା ଖାଇଛୁ ନା ନାହିଁ?! ଏଇଠି ଖାଲି ଦହି-ପାଣି ଆଉ ପଞ୍ଚ-ଫୁଟଣ ଚାଲେ!»",
-    bossName: "FURIOUS BIDYADHAR MAUSA",
+  // LANDMARK 1: Saheed Nagar Dahibara Cart (Bidyadhar Mausa)
+  createHotspotZone(22, -30, 7.5, 0xffcc00, 'dahibara', 'SAHEED NAGAR DAHIBARA', 0xd91e36, {
+    avatar: '🍲',
+    desc: 'Bidyadhar Mausa has been beating his aluminum handi with a spoon since 1989. The smell of hing and fried curry leaves fills the air.',
+    quote: '"ପାଣି ଟିକେ ମାରିବି କି ବାବୁ? ଲଙ୍କା କେତେ ଖାଇବ?"',
     choices: [
-      {
-        text: "Order ₹40 Full Plate + Extra Dahi-Pani in leaf bowl: \"ମାଉସା, ଏ Ketchup ବାଲାକୁ ଗୋଟେ ଚଟୁରେ ଦିଅ!\"",
-        tag: "-₹40 | +30 STAMINA",
-        fn: () => {
-          playDahibaraClang();
-          updateStats(30, 15, 20, -40);
-          showToast("🍲 Heavenly Cuttack Dahibara Aloodum! (+30 Stamina)");
-          closeModal();
-        }
-      },
-      {
-        text: "Ask for Tomato Ketchup & Mayonnaise on your Dahibara: \"भइया थोड़ा Ketchup डालो ना!\"",
-        tag: "⚔️ 3D FIGHT KARO!",
-        fn: () => start3DFight("FURIOUS BIDYADHAR MAUSA")
-      },
-      {
-        text: "Street Jugaad: \"ମାଉସା PhonePe ସର୍ଭର୍ ଡାଉନ୍ ଅଛି, ₹20 ର ଚକଟା ଦିଅ କାଲି ଦେବି!\"",
-        tag: "+15 JUGAAD | ₹0",
-        fn: () => {
-          playDahibaraClang();
-          updateStats(15, 15, -5, 0);
-          showToast("🙏 Mausa: 'କାଳିଆ ସବୁ ଦେଖୁଛି ବାବୁ, ଖାଇକି ଯା!'");
-          closeModal();
-        }
-      }
+      { text: 'Have Double Plate Dahibara Aloodum (-₹40)', tag: '+35 Stamina', fn: () => {
+        playDahibaraClang();
+        updateStats(35, 5, 10, -40);
+        showToast('🍲 Authentic Dahibara savored! Pakhala stamina refreshed (+35%).');
+        closeModal();
+      }},
+      { text: 'Complain about lack of Sev in Guguni', tag: '⚔️ FightKaro Brawl', fn: () => start3DFight('Bidyadhar Mausa') }
     ]
   });
 
-  // LANDMARK 2: OMFED TOOKNA & PAN DUKAN KHATTI (X: -24, Z: -35)
-  const omfedBooth = new THREE.Mesh(new THREE.BoxGeometry(4.2, 3.6, 3.5), new THREE.MeshLambertMaterial({ color: 0x00a651 }));
-  omfedBooth.position.set(-28, 1.8, -35);
-  scene.add(omfedBooth);
-
-  createHotspotZone(-21, -35, 7, 0x00e676, "tookna", "🌿 OMFED TOOKNA & PAN DUKAN KHATTI", 0x00a651, {
-    desc: "Strips of Safa, Barkha, and ₹5 mixture hang around the green Omfed booth. Tookna Bhai is boiling ginger tea while slapping wet Chuna and Gundi on his palm at Mach-3 speed (*PHAT-PHAT-PHAT!*).",
-    quote: "🗣️ TOOKNA BHAI: «ବାବୁ, ଖୁଚୁରା ନାହିଁ! Khuchura bilkul nahi hai bhai! ₹20 दिए हो, ₹10 का चा हुआ, बाकी ₹10 का ये 5 ठो Melody चॉकलेट ले जाओ! ଆଉ କହ—ଗୋଟେ କଡ଼ା ୩୦୦-ନମ୍ବର 'Special Tookna Paan' ବନେଇ ଦେବି କି?»",
-    bossName: "TOOKNA BHAI (CHUNA MASTER)",
+  // LANDMARK 2: Omfed Tookna Paan Khatti
+  createHotspotZone(-22, 15, 7.5, 0x00e676, 'omfed', 'OMFED TOOKNA PAAN KHATTI', 0x2e7d32, {
+    avatar: '🍃',
+    desc: 'Bhubaneswar evening Khatti headquarters. Tookna Bhai is rubbing lime paste on his palm while debating politics with university juniors.',
+    quote: '"ଆରେ ଭାଇ! ଏଠି କଣ ମିଟିଙ୍ଗ୍ ବସିଛି? ପାନ ଖାଇବ ନା ଘରକୁ ଯିବ?"',
     choices: [
-      {
-        text: "Accept 5 Melody Chocolates & sip ₹10 Ginger Tea on a red plastic stool.",
-        tag: "-₹20 | +25 STAMINA",
-        fn: () => {
-          playTooknaClap();
-          updateStats(25, 10, 15, -20);
-          showToast("☕ Khatti complete! You now have 5 Melody chocolates in your pocket.");
-          closeModal();
-        }
-      },
-      {
-        text: "Chew the '300-Number Special Tookna Masala Paan' with extra Gundi!",
-        tag: "+35 JUGAAD | HEAD RUSH!",
-        fn: () => {
-          playTooknaClap();
-          updateStats(-15, 35, 5, -30);
-          cameraShake = 25;
-          showToast("😵💫 BRAHMAANDA DARSHAN! The 3D camera is spinning, but your Jugaad skyrocketed!");
-          closeModal();
-        }
-      },
-      {
-        text: "Demand cash change: \"अबे रोज़-रोज़ Melody दे देता है! ମୋ ₹10 ଖୁଚୁରା ଏବେ ଦେ!\"",
-        tag: "⚔️ 3D FIGHT KARO!",
-        fn: () => start3DFight("TOOKNA BHAI (CHUNA MASTER)")
-      }
+      { text: 'Grab Meetha Paan & Gold Leaf Tea (-₹25)', tag: '+15 Jugaad', fn: () => {
+        playTooknaClap();
+        updateStats(10, 15, 5, -25);
+        showToast('🍃 Meetha Paan enjoyed. Street Jugaad increased (+15).');
+        closeModal();
+      }},
+      { text: 'Challenge Tookna to a Slap Showdown', tag: '⚔️ FightKaro Brawl', fn: () => start3DFight('Tookna Bhai') }
     ]
   });
 
-  // LANDMARK 3: PATIA 'BACHELOR TO-LET' RENT SCAM HOUSE (X: -45, Z: 28)
-  const patiaHouse = new THREE.Mesh(new THREE.BoxGeometry(9, 11, 9), new THREE.MeshLambertMaterial({ color: 0xb8ff33 }));
-  patiaHouse.position.set(-54, 5.5, 28);
-  scene.add(patiaHouse);
-
-  createHotspotZone(-42, 28, 7.5, 0x00e5ff, "patia", "🔑 PATIA 'BACHELOR TO-LET' RENT SCAM", 0xff2a55, {
-    desc: "You followed a Facebook Marketplace post: 'Posh 2BHK in Patia, ₹6,000/month'. Outside the neon-green house stands Ramesh Broker (gold chain, 62 keys) and Landlord Prafulla Uncle next to a 'STRICTLY NO BACHELORS' board.",
-    quote: "🗣️ RAMESH BROKER & UNCLE: «देखो बाबू, flat pura VVIP ଅଛି! Lekin chabi kholne se pehle ₹500 'Visiting Card Registration Charge' deba ku padiba. ଆଉ ଶୁଣ—Sub-meter bijuli bill ₹13/unit, 4 ମାସ Advance, ଆଉ ରାତି 9 PM ରେ ଗେଟ୍ ତାଲା!»",
-    bossName: "SCAMMER BROKER RAMESH & UNCLE",
+  // LANDMARK 3: Patia Bachelor Rent Scam
+  createHotspotZone(-30, -90, 8.5, 0x00e5ff, 'patia', 'PATIA G+2 BACHELOR HOUSE', 0x1565c0, {
+    avatar: '🏢',
+    desc: 'Ramesh Broker is asking for 6 months advance and demanding no cooking non-veg on Tuesdays, Thursdays, and Saturdays.',
+    quote: '"ସାର୍! ବ୍ୟାଚେଲର୍ସ ପାଇଁ ଘର ନାହିଁ! ଆଉ ପାଖାଳ ଖାଇଲେ ଏକ୍ସଟ୍ରା ₹୨୦୦୦ ମେଣ୍ଟେନାନ୍ସ!"',
     choices: [
-      {
-        text: "Bluff like a true Bhubaneswar local: \"ଅଙ୍କଲ୍, ମୋ ବଡ଼ ବାପା Vigilance ଆଉ BDA ରେ ଅଛନ୍ତି, sub-meter ଚେକ୍ କରିବି କି?\"",
-        tag: "+35 JUGAAD | ₹0 FEE",
-        fn: () => {
-          updateStats(5, 35, 20, 0);
-          showToast("😎 Uncle panicked: 'ଆରେ ପୁଅ, ତୁ ତ ଆମ ଘର ପିଲା! Visiting charge ଦରକାର ନାହିଁ!'");
-          closeModal();
-        }
-      },
-      {
-        text: "Challenge the ₹500 Visiting Card scam & ₹13/unit sub-meter rate!",
-        tag: "⚔️ 3D FIGHT KARO!",
-        fn: () => start3DFight("SCAMMER BROKER RAMESH & UNCLE")
-      },
-      {
-        text: "Pay the ₹500 Visiting Charge like an innocent 1st-year student.",
-        tag: "-₹500 | SCAMMED!",
-        fn: () => {
-          updateStats(-15, -15, -20, -500);
-          showToast("🚨 SCAMMED! Ramesh Broker took your ₹500 and vanished into Patia traffic!");
-          closeModal();
-        }
-      }
+      { text: 'Pay 1 Month Security Deposit (-₹300)', tag: '+30 Jugaad', fn: () => {
+        updateStats(-5, 30, -5, -300);
+        showToast('🏢 Broker convinced with Jugaad cash. House unlocked.');
+        closeModal();
+      }},
+      { text: 'Argue Rent Agreement Injustice', tag: '⚔️ FightKaro Brawl', fn: () => start3DFight('Ramesh Broker') }
     ]
   });
 
-  // LANDMARK 4: MASTER CANTEEN HORSE STATUE & PINK AUTO BOSS (X: 40, Z: 35)
-  const pedestal = new THREE.Mesh(new THREE.BoxGeometry(4, 3, 6), new THREE.MeshLambertMaterial({ color: 0x8d6e63 }));
-  pedestal.position.set(48, 1.5, 35);
-  scene.add(pedestal);
-  const horseStatue = new THREE.Mesh(new THREE.BoxGeometry(1.8, 3.2, 3.8), new THREE.MeshLambertMaterial({ color: 0xd7ccc8 }));
-  horseStatue.position.set(48, 4.2, 35);
-  scene.add(horseStatue);
-
-  createHotspotZone(38, 35, 8, 0xff2a85, "mastercanteen", "🛺 MASTER CANTEEN: PINK AUTO BOSS", 0xff2a85, {
-    desc: "Beside the iconic Master Canteen stone horse statue, every Ola and Rapido driver has asked 'Drop kouthi?' and cancelled. Blocking the road is Final Boss Jagannath Bhai and his roaring 1998 Pink Vikram Auto!",
-    quote: "🗣️ PINK AUTO ANNA: «Kalpana Square? ₹350 ଲାଗିବ ବାବୁ! अरे बारिश देख रहे हो कि नहीं?! ରାସ୍ତା ପୁରା ସମୁଦ୍ର ହେଇଯାଇଛି! Meter-fiter Odisha mein nahi chalta bhai, बैठना है तो बैठो वरना पैदल पोंराओ!»",
-    bossName: "FINAL BOSS: PINK VIKRAM AUTO ANNA",
+  // LANDMARK 4: Master Canteen Pink Vikram Auto Boss
+  createHotspotZone(30, 85, 8.5, 0xff2a85, 'mastercanteen', 'MASTER CANTEEN AUTO STAND', 0xc2185b, {
+    avatar: '🛺',
+    desc: 'The legendary Master Canteen Pink Vikram Auto union chief stands beside his turbo-charged diesel three-wheeler.',
+    quote: '"ବାଣୀବିହାର ଯିବ? ₹୧୫୦ ଫିକ୍ସ! କୌଣସି ବାକି ନାହିଁ!"',
     choices: [
-      {
-        text: "Use Master Bhaichara (Requires 50+ Jugaad): \"ଜଗନ୍ନାଥ ଭାଇ, ମୁଁ ଟୁକନା ଭାଇର ସାନ ଭାଇ... ଚାଲ ₹50 ନିଅ ଆଉ ୩୦୦-ନମ୍ବର ପାନ ଖାଅ!\"",
-        tag: "50+ JUGAAD CHECK",
-        fn: () => {
-          if (gameStats.jugaad >= 50) {
-            updateStats(20, 25, 30, -50);
-            showToast("👑 LEGENDARY JUGAAD! Auto Anna hugged you and gave you the keys to his Pink Vikram Auto!");
-            if (!isPinkAuto) switchVehicle();
-            closeModal();
-          } else {
-            showToast("❌ Need 50+ Jugaad! Auto Anna splashed puddle water on you—FIGHT TRIGGERED!");
-            start3DFight("FINAL BOSS: PINK VIKRAM AUTO ANNA");
-          }
-        }
-      },
-      {
-        text: "SETTLE IT IN THE 3D RING: \"₹350 ରେ ମୁଁ ଫ୍ଲାଇଟ୍ ରେ କୋଲକାତା ପଳେଇବି ବେ! ଚାଲ୍ ମଇଦାନକୁ!\"",
-        tag: "⚔️ FINAL BOSS BRAWL!",
-        fn: () => start3DFight("FINAL BOSS: PINK VIKRAM AUTO ANNA")
-      }
+      { text: 'Hire Auto for City Tour (-₹150)', tag: '+25 Karma', fn: () => {
+        updateStats(10, 15, 25, -150);
+        showToast('🛺 Pink Auto booked! Traveling in true Bhubaneswar style.');
+        closeModal();
+      }},
+      { text: 'Bargain for ₹50 Meter Fare', tag: '⚔️ FightKaro Brawl', fn: () => start3DFight('Pink Auto Union Boss') }
     ]
   });
 
-  // Add City Buildings, Rasulgarh Flyover Pillars, Trees & Wandering Cows
-  for (let i = 0; i < 36; i++) {
-    const bx = (Math.random() - 0.5) * 260;
-    const bz = (Math.random() - 0.5) * 260;
-    if (Math.abs(bx) < 28 || Math.abs(bz) < 28) continue;
-    if (Math.hypot(bx - 22, bz + 28) < 18) continue;
-    if (Math.hypot(bx + 21, bz + 35) < 18) continue;
-    if (Math.hypot(bx + 42, bz - 28) < 18) continue;
-    if (Math.hypot(bx - 38, bz - 35) < 18) continue;
+  /* =========================================================================
+     7. ROADSIDE ARCHITECTURE & AMBIENT URBAN LIFE (Mo Buses & Cows)
+     ========================================================================= */
+  // City Buildings with Neon Billboards
+  const buildingColors = [0x2c1f3d, 0x1f2738, 0x3d2b1f, 0x1c3128];
+  for (let bx = -180; bx <= 180; bx += 40) {
+    for (let bz = -180; bz <= 180; bz += 40) {
+      if (Math.abs(bx) < 28 || Math.abs(bz) < 28) continue;
+      const bH = 14 + Math.random() * 32;
+      const bMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(20, bH, 20),
+        new THREE.MeshLambertMaterial({ color: buildingColors[Math.floor(Math.random() * buildingColors.length)] })
+      );
+      bMesh.position.set(bx, bH / 2, bz);
+      scene.add(bMesh);
 
-    const h = 6 + Math.random() * 18;
-    const bColors = [0x392f5a, 0x4a3b69, 0xd4a373, 0x2a9d8f, 0xe76f51];
-    const bMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(7, h, 7),
-      new THREE.MeshLambertMaterial({ color: bColors[i % bColors.length] })
-    );
-    bMesh.position.set(bx, h / 2, bz);
-    bMesh.castShadow = true;
-    scene.add(bMesh);
+      // Random Rooftop Helipad / Hoverpad
+      if (Math.random() > 0.6) {
+        const pad = new THREE.Mesh(
+          new THREE.RingGeometry(3, 6, 16),
+          new THREE.MeshBasicMaterial({ color: 0x00e5ff, side: THREE.DoubleSide })
+        );
+        pad.rotation.x = -Math.PI / 2;
+        pad.position.set(bx, bH + 0.1, bz);
+        scene.add(pad);
+      }
+    }
   }
 
-  // Wandering Street Cows on Janpath & Moving Mo Buses
+  // Mo Buses (Green Bhubaneswar Transit) & Sacred Street Cows
   const trafficAgents = [];
-  for (let i = 0; i < 8; i++) {
-    const isBus = i < 3;
-    const mesh = new THREE.Mesh(
-      isBus ? new THREE.BoxGeometry(2.8, 3.0, 6.5) : new THREE.BoxGeometry(1.2, 1.3, 2.2),
-      new THREE.MeshLambertMaterial({ color: isBus ? 0x23d160 : 0xffffff })
-    );
-    mesh.position.set(isBus ? -6 : 5, isBus ? 1.5 : 0.65, -140 + i * 38);
-    scene.add(mesh);
-    trafficAgents.push({ mesh, speed: isBus ? 0.22 : 0.03, dir: i % 2 === 0 ? 1 : -1 });
+
+  function createMoBus(z, dir) {
+    const bus = new THREE.Group();
+    const body = new THREE.Mesh(new THREE.BoxGeometry(3.2, 3.4, 9.2), new THREE.MeshLambertMaterial({ color: 0x00a86b }));
+    body.position.y = 1.9;
+    bus.add(body);
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(3.3, 0.3, 9.3), new THREE.MeshLambertMaterial({ color: 0xffffff }));
+    roof.position.y = 3.65;
+    bus.add(roof);
+    bus.position.set(dir > 0 ? 6.5 : -6.5, 0, z);
+    scene.add(bus);
+    trafficAgents.push({ mesh: bus, speed: 0.18 + Math.random() * 0.12, dir, isCow: false });
+  }
+  createMoBus(-120, 1);
+  createMoBus(50, -1);
+  createMoBus(160, 1);
+
+  // Sacred Cows roaming Janpath
+  for (let c = 0; c < 5; c++) {
+    const cow = new THREE.Group();
+    const cowBody = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.4, 2.2), new THREE.MeshLambertMaterial({ color: 0xeeeeee }));
+    cowBody.position.y = 1.0;
+    cow.add(cowBody);
+    const cowHead = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 1.0), new THREE.MeshLambertMaterial({ color: 0xdddddd }));
+    cowHead.position.set(0, 1.5, 1.3);
+    cow.add(cowHead);
+    cow.position.set((Math.random() - 0.5) * 20, 0, (Math.random() - 0.5) * 200);
+    scene.add(cow);
+    trafficAgents.push({ mesh: cow, speed: 0.02, dir: 1, isCow: true, isFloating: false, floatYVel: 0 });
   }
 
   /* =========================================================================
-     5. LIVE BHUBANESWAR WEATHER API + KALABAISAKHI 3D RAIN ENGINE
+     8. KALABAISAKHI STORM & WEATHER SIMULATION
      ========================================================================= */
   let isStorming = false;
   const rainCount = 1200;
   const rainGeo = new THREE.BufferGeometry();
-  const rainPositions = new Float32Array(rainCount * 3);
+  const rainPos = new Float32Array(rainCount * 3);
   for (let i = 0; i < rainCount * 3; i += 3) {
-    rainPositions[i] = (Math.random() - 0.5) * 160;
-    rainPositions[i + 1] = Math.random() * 60;
-    rainPositions[i + 2] = (Math.random() - 0.5) * 160;
+    rainPos[i] = (Math.random() - 0.5) * 160;
+    rainPos[i + 1] = Math.random() * 60;
+    rainPos[i + 2] = (Math.random() - 0.5) * 160;
   }
-  rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPositions, 3));
-  const rainMat = new THREE.PointsMaterial({ color: 0x99e5ff, size: 0.35, transparent: true, opacity: 0.8 });
+  rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
+  const rainMat = new THREE.PointsMaterial({ color: 0x88ccff, size: 0.35, transparent: true, opacity: 0.75 });
   const rainSystem = new THREE.Points(rainGeo, rainMat);
   rainSystem.visible = false;
   scene.add(rainSystem);
 
-  function setStormVisuals(active, labelText) {
-    isStorming = active;
-    rainSystem.visible = active;
-    if (active) {
-      scene.background.setHex(0x161b29);
-      scene.fog.color.setHex(0x161b29);
-      sunLight.intensity = 0.45;
+  function toggleKalabaisakhi() {
+    isStorming = !isStorming;
+    rainSystem.visible = isStorming;
+    const btn = document.getElementById('btn-kalabaisakhi');
+    if (isStorming) {
+      btn.classList.add('active');
+      scene.background.setHex(0x110c1e);
+      scene.fog.color.setHex(0x110c1e);
+      sunLight.intensity = 0.3;
+      showToast(I18N[currentLang].stormActive);
     } else {
+      btn.classList.remove('active');
       scene.background.setHex(0xff9e6d);
       scene.fog.color.setHex(0xff9e6d);
-      sunLight.intensity = 1.1;
+      sunLight.intensity = 1.15;
+      showToast(I18N[currentLang].stormCalm);
     }
-    if (labelText) document.getElementById('live-weather-text').innerText = labelText;
   }
 
-  function toggleKalabaisakhi() {
-    setStormVisuals(!isStorming, isStorming
-      ? "☀️ Manual Weather: Bhubaneswar Sunny (36°C)"
-      : "⛈️ KALABAISAKHI STORM ACTIVE! Aloo prices at Unit-1 Haat doubled to ₹60/kg!");
-  }
-
-  // Fetch Real-Time Weather for Bhubaneswar (20.2961° N, 85.8245° E)
+  // Fetch real Bhubaneswar weather from Open-Meteo REST API
   async function fetchBhubaneswarWeather() {
     try {
-      const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=20.2961&longitude=85.8245&current=temperature_2m,precipitation,weather_code,wind_speed_10m");
+      const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=20.2961&longitude=85.8245&current=temperature_2m,relative_humidity_2m,weather_code');
       const data = await res.json();
       if (data && data.current) {
-        const temp = data.current.temperature_2m;
-        const rain = data.current.precipitation;
-        const wind = data.current.wind_speed_10m;
-        const rainingNow = rain > 0 || data.current.weather_code >= 51;
-        setStormVisuals(
-          rainingNow,
-          `📡 LIVE BHUBANESWAR: ${temp}°C | Wind ${wind} km/h | ${rainingNow ? '🌧️ Raining Now' : '☀️ Clear/Humid'}`
-        );
+        const temp = Math.round(data.current.temperature_2m);
+        const hum = Math.round(data.current.relative_humidity_2m);
+        document.getElementById('weather-text').innerText = `${temp}°C • ${hum}% HUMID`;
+        if (hum > 85) toggleKalabaisakhi();
       }
     } catch (e) {
-      document.getElementById('live-weather-text').innerText = "📡 Bhubaneswar: 34°C Humid (Offline Mode)";
+      console.log('Weather API fallback active:', e);
     }
   }
   fetchBhubaneswarWeather();
 
   /* =========================================================================
-     6. DRIVING PHYSICS, CONTROLS & 3D FIGHTKARO ARENA CAMERA
+     9. CONTROLS & EVENT LISTENERS
      ========================================================================= */
   const keys = {};
   window.addEventListener('keydown', e => {
@@ -918,12 +1371,15 @@
     keys[k] = true;
     if (k === 'h') playHorn();
     if (k === 'v') switchVehicle();
+    if (k === 'g') toggleAntigravity();
+    if (k === 'q' || k === 'b') triggerAntigravPulse();
+    if (k === 'l') cycleLanguage();
     if (k === 'e' && nearHotspot && !modalOpen) openActiveHotspot();
     if (e.key === 'Escape' && modalOpen) closeModal();
   });
   window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
 
-  // Touch buttons for mobile
+  // Mobile Touch Controls
   function bindTouch(id, keyName) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -934,6 +1390,8 @@
   bindTouch('btn-down', 's');
   bindTouch('btn-left', 'a');
   bindTouch('btn-right', 'd');
+  bindTouch('btn-thrust-up', ' ');
+  bindTouch('btn-thrust-down', 'shift');
 
   let playerSpeed = 0;
   let playerAngle = 0;
@@ -942,8 +1400,8 @@
   let in3DCombat = false;
   let cameraShake = 0;
 
-  // Survival Stats
-  const gameStats = { stamina: 85, jugaad: 35, karma: 80, wallet: 500 };
+  // Stats
+  const gameStats = { stamina: 85, jugaad: 40, karma: 80, wallet: 500 };
   function updateStats(s, j, k, w) {
     gameStats.stamina = Math.max(0, Math.min(100, gameStats.stamina + s));
     gameStats.jugaad = Math.max(0, Math.min(100, gameStats.jugaad + j));
@@ -973,6 +1431,7 @@
 
     const d = nearHotspot.data;
     document.getElementById('m-title').innerText = nearHotspot.title;
+    document.getElementById('m-avatar').innerText = d.avatar;
     document.getElementById('m-desc').innerText = d.desc;
     document.getElementById('m-quote').innerText = d.quote;
 
@@ -994,7 +1453,7 @@
   }
 
   /* =========================================================================
-     7. 3D FIGHTKARO STREET BRAWL ENGINE
+     10. 3D FIGHTKARO BRAWL ENGINE
      ========================================================================= */
   let fightState = { pHp: 100, eHp: 100, bossName: "" };
 
@@ -1006,21 +1465,23 @@
     document.getElementById('f-e-name').innerText = bossName;
     document.getElementById('f-p-hp').style.width = '100%';
     document.getElementById('f-e-hp').style.width = '100%';
-    document.getElementById('f-log').innerHTML = `🔥 <strong>${bossName}:</strong> «ରହ ବେ! ଆଜି ତତେ ଭୁବନେଶ୍ୱର ଷ୍ଟାଇଲ୍ ଦେଖଉଛି!»`;
+    document.getElementById('f-p-hp-num').innerText = '100 HP';
+    document.getElementById('f-e-hp-num').innerText = '100 HP';
+    document.getElementById('f-log').innerHTML = `🥊 <strong>${bossName}:</strong> "ହେଇ ଗଲା! ଆମ ସାଙ୍ଗରେ ଲାଗିବ? ଡିସୁମ୍ ଡିସୁମ୍ ହବ!"`;
   }
 
   function combatAttack(moveName, dmg) {
     playTooknaClap();
-    cameraShake = 12;
+    cameraShake = 14;
 
-    // Animate NPC knockback in 3D scene
     if (nearHotspot && nearHotspot.npcGroup) {
       nearHotspot.npcGroup.position.y = 1.4;
-      setTimeout(() => { if (nearHotspot) nearHotspot.npcGroup.position.y = 0; }, 220);
+      setTimeout(() => { if (nearHotspot) nearHotspot.npcGroup.position.y = 0; }, 200);
     }
 
     fightState.eHp = Math.max(0, fightState.eHp - dmg);
     document.getElementById('f-e-hp').style.width = fightState.eHp + '%';
+    document.getElementById('f-e-hp-num').innerText = fightState.eHp + ' HP';
 
     if (fightState.eHp <= 0) {
       updateStats(10, 25, 15, 100);
@@ -1029,32 +1490,34 @@
       return;
     }
 
-    const counterDmg = 15 + Math.floor(Math.random() * 10);
+    const counterDmg = 14 + Math.floor(Math.random() * 10);
     fightState.pHp = Math.max(0, fightState.pHp - counterDmg);
     document.getElementById('f-p-hp').style.width = fightState.pHp + '%';
+    document.getElementById('f-p-hp-num').innerText = fightState.pHp + ' HP';
 
     document.getElementById('f-log').innerHTML =
-      `💥 You hit with <strong>${moveName}</strong> (-${dmg} HP)! ⚡ ${fightState.bossName} countered (-${counterDmg} HP)!`;
+      `💥 You hit with <strong>${moveName}</strong> (-${dmg} HP)! 🛡️ ${fightState.bossName} countered (-${counterDmg} HP)!`;
 
     if (fightState.pHp <= 0) {
       updateStats(-25, -10, -15, -50);
-      showToast("😵 Knocked out! Bidyadhar Mausa revived you with cold Dahi-Pani.");
+      showToast("😵 Knocked out! Bidyadhar Mausa revived you with ice-cold Dahi-Pani.");
       closeModal();
     }
   }
 
   /* =========================================================================
-     8. MAIN 60FPS GAME & RENDER LOOP
+     11. 60 FPS MAIN LOOP: PHYSICS, ZERO-G LEVITATION, CAMERA & RENDERING
      ========================================================================= */
   function animate() {
     requestAnimationFrame(animate);
 
+    // 1. Vehicle Driving & Antigravity Mechanics
     if (!modalOpen) {
-      const maxSpeed = isPinkAuto ? 0.55 : 0.72;
-      const accel = isPinkAuto ? 0.018 : 0.026;
+      const maxSpeed = isPinkAuto ? 0.58 : 0.74;
+      const accel = isPinkAuto ? 0.020 : 0.028;
 
       if (keys['w'] || keys['arrowup']) playerSpeed = Math.min(maxSpeed, playerSpeed + accel);
-      else if (keys['s'] || keys['arrowdown']) playerSpeed = Math.max(-maxSpeed * 0.5, playerSpeed - accel);
+      else if (keys['s'] || keys['arrowdown']) playerSpeed = Math.max(-maxSpeed * 0.45, playerSpeed - accel);
       else playerSpeed *= 0.94;
 
       if (Math.abs(playerSpeed) > 0.01) {
@@ -1063,26 +1526,153 @@
         if (keys['d'] || keys['arrowright']) playerAngle -= 0.042 * turnFactor;
       }
 
+      // Vertical Antigravity Flight Dynamics
+      if (isAntigrav) {
+        if (keys[' '] || keys['space']) {
+          verticalVelocity = Math.min(0.55, verticalVelocity + 0.035);
+          if (Math.random() > 0.6) playThrusterSound(true);
+        } else if (keys['shift'] || keys['c']) {
+          verticalVelocity = Math.max(-0.45, verticalVelocity - 0.035);
+        } else {
+          verticalVelocity *= 0.92; // Atmospheric damping
+        }
+
+        playerAltitude = Math.max(0.2, Math.min(42.0, playerAltitude + verticalVelocity));
+        playerGroup.position.y = playerAltitude;
+
+        // Smooth flight pitch tilt
+        playerGroup.rotation.x = -playerSpeed * 0.45;
+        playerGroup.rotation.z = -(keys['a'] ? 0.12 : (keys['d'] ? -0.12 : 0));
+
+        // Spin glowing repulsor rings
+        thrusterRings.forEach(r => r.rotation.z += 0.25);
+      } else {
+        // Normal ground gravity settle
+        if (playerAltitude > 0) {
+          playerAltitude = Math.max(0, playerAltitude - 0.35);
+          playerGroup.position.y = playerAltitude;
+        } else {
+          playerGroup.position.y = 0;
+        }
+        playerGroup.rotation.x = 0;
+        playerGroup.rotation.z = 0;
+      }
+
       playerGroup.position.x += Math.sin(playerAngle) * playerSpeed;
       playerGroup.position.z += Math.cos(playerAngle) * playerSpeed;
       playerGroup.rotation.y = playerAngle;
 
-      // Speedometer UI
+      // Update Speedometer & Altitude UI
       const kmh = Math.round(Math.abs(playerSpeed) * 95);
       document.getElementById('speed-val').innerText = kmh;
+      document.getElementById('ag-alt').innerText = `ALT: ${playerAltitude.toFixed(1)}m`;
     }
 
-    // Animate Traffic & Cows
-    trafficAgents.forEach(t => {
-      t.mesh.position.z += t.speed * t.dir;
-      if (t.mesh.position.z > 180) t.mesh.position.z = -180;
-      if (t.mesh.position.z < -180) t.mesh.position.z = 180;
+    // 2. Pulse Shockwave Animation
+    if (pulseActive) {
+      pulseRadius += 1.4;
+      pulseRingMesh.scale.set(pulseRadius, pulseRadius, 1);
+      pulseRingMat.opacity = Math.max(0, 1 - (pulseRadius / 36));
+      if (pulseRadius > 36) {
+        pulseActive = false;
+        pulseRingMesh.visible = false;
+      }
+    }
+
+    // 3. Emergent Physics Objects Simulation Loop
+    const pPos = playerGroup.position;
+    physicsObjects.forEach(obj => {
+      // Vehicle to Object Ramming Collision
+      const dx = obj.pos.x - pPos.x;
+      const dz = obj.pos.z - pPos.z;
+      const dy = obj.pos.y - pPos.y;
+      const distXZ = Math.hypot(dx, dz);
+
+      if (distXZ < obj.radius + 1.4 && Math.abs(dy) < 2.0) {
+        // Elastic momentum transfer
+        const pushForce = Math.max(0.18, Math.abs(playerSpeed) * 0.95);
+        obj.vel.x += (dx / (distXZ || 1)) * pushForce;
+        obj.vel.z += (dz / (distXZ || 1)) * pushForce;
+        obj.vel.y += isAntigrav ? 0.25 : 0.12;
+        obj.rotVel.x += (Math.random() - 0.5) * 0.25;
+        obj.rotVel.y += (Math.random() - 0.5) * 0.25;
+        playDebrisClack(obj.type);
+      }
+
+      // Physics Gravity & Zero-G behavior
+      if (isAntigrav) {
+        // Nearby objects drift weightlessly in zero-G
+        const distToPlayer = Math.hypot(dx, dz);
+        if (distToPlayer < 45) {
+          obj.isFloating = true;
+          obj.vel.y += (Math.random() - 0.48) * 0.008; // Gentle floating drift
+          obj.vel.y = Math.max(-0.15, Math.min(0.2, obj.vel.y));
+        }
+      } else {
+        // Standard gravity
+        if (obj.pos.y > 0) {
+          obj.vel.y -= 0.018; // 9.8 m/s^2 scaled
+        }
+      }
+
+      // Integrate position & rotation
+      obj.pos.x += obj.vel.x;
+      obj.pos.y += obj.vel.y;
+      obj.pos.z += obj.vel.z;
+      obj.mesh.rotation.x += obj.rotVel.x;
+      obj.mesh.rotation.y += obj.rotVel.y;
+      obj.mesh.rotation.z += obj.rotVel.z;
+
+      // Ground bounce & restitution
+      if (obj.pos.y <= 0) {
+        obj.pos.y = 0;
+        if (Math.abs(obj.vel.y) > 0.05) {
+          obj.vel.y = -obj.vel.y * 0.45; // Bounce
+        } else {
+          obj.vel.y = 0;
+        }
+        obj.vel.x *= 0.93; // Ground friction
+        obj.vel.z *= 0.93;
+        obj.rotVel.multiplyScalar(0.92);
+      } else {
+        // Air resistance
+        obj.vel.x *= 0.985;
+        obj.vel.z *= 0.985;
+        obj.vel.y *= 0.985;
+        obj.rotVel.multiplyScalar(0.98);
+      }
+
+      // World boundaries bounce
+      if (Math.abs(obj.pos.x) > 280) obj.vel.x = -obj.vel.x;
+      if (Math.abs(obj.pos.z) > 280) obj.vel.z = -obj.vel.z;
     });
 
-    // Check Distance to Hotspots
+    // 4. Animate Mo Buses & Sacred Cows
+    trafficAgents.forEach(t => {
+      if (t.isCow && t.isFloating) {
+        t.mesh.position.y += t.floatYVel;
+        t.mesh.rotation.x += 0.02;
+        t.mesh.rotation.z += 0.015;
+        t.floatYVel *= 0.98;
+        if (!isAntigrav && t.mesh.position.y > 0) {
+          t.mesh.position.y -= 0.08;
+          if (t.mesh.position.y <= 0) {
+            t.mesh.position.y = 0;
+            t.isFloating = false;
+            t.mesh.rotation.set(0, 0, 0);
+          }
+        }
+      } else {
+        t.mesh.position.z += t.speed * t.dir;
+        if (t.mesh.position.z > 220) t.mesh.position.z = -220;
+        if (t.mesh.position.z < -220) t.mesh.position.z = 220;
+      }
+    });
+
+    // 5. Hotspot Proximity Detection
     let foundSpot = null;
     hotspots.forEach(h => {
-      h.ring.rotation.z += 0.02;
+      h.ring.rotation.z += 0.025;
       const dist = Math.hypot(playerGroup.position.x - h.x, playerGroup.position.z - h.z);
       if (dist < h.radius + 2.5) foundSpot = h;
     });
@@ -1097,11 +1687,11 @@
       promptEl.style.display = 'none';
     }
 
-    // Animate 3D Rain Particles if Storming
+    // 6. Kalabaisakhi Storm Rain System
     if (isStorming) {
       const pos = rainGeo.attributes.position.array;
       for (let i = 1; i < pos.length; i += 3) {
-        pos[i] -= 1.25;
+        pos[i] -= 1.35;
         if (pos[i] < 0) pos[i] = 55;
       }
       rainGeo.attributes.position.needsUpdate = true;
@@ -1109,36 +1699,43 @@
       rainSystem.position.z = playerGroup.position.z;
     }
 
-    // Dynamic Camera: Third-Person Chase Cam OR Side-View FightKaro Arena Cam
+    // 7. Dynamic Camera Tracking (Chase Cam or FightKaro Arena Cam)
     if (in3DCombat && nearHotspot) {
       const midX = (playerGroup.position.x + nearHotspot.x) / 2;
       const midZ = (playerGroup.position.z + nearHotspot.z) / 2;
-      camera.position.lerp(new THREE.Vector3(midX + 10, 4.5, midZ + 10), 0.08);
-      camera.lookAt(midX, 1.5, midZ);
+      camera.position.lerp(new THREE.Vector3(midX + 11, playerAltitude + 4.5, midZ + 11), 0.08);
+      camera.lookAt(midX, playerAltitude + 1.5, midZ);
     } else {
-      const camOffset = new THREE.Vector3(
-        playerGroup.position.x - Math.sin(playerAngle) * 11,
-        playerGroup.position.y + 6.2,
-        playerGroup.position.z - Math.cos(playerAngle) * 11
+      const camHeight = Math.max(5.5, playerAltitude + 5.5);
+      const camDist = 11;
+      const targetCamPos = new THREE.Vector3(
+        playerGroup.position.x - Math.sin(playerAngle) * camDist,
+        playerGroup.position.y + camHeight,
+        playerGroup.position.z - Math.cos(playerAngle) * camDist
       );
+
       if (cameraShake > 0) {
-        camOffset.x += (Math.random() - 0.5) * 0.9;
-        camOffset.y += (Math.random() - 0.5) * 0.9;
+        targetCamPos.x += (Math.random() - 0.5) * 0.9;
+        targetCamPos.y += (Math.random() - 0.5) * 0.9;
         cameraShake--;
       }
-      camera.position.lerp(camOffset, 0.12);
-      camera.lookAt(playerGroup.position.x, playerGroup.position.y + 1.5, playerGroup.position.z);
+
+      camera.position.lerp(targetCamPos, 0.12);
+      camera.lookAt(playerGroup.position.x, playerGroup.position.y + 1.8, playerGroup.position.z);
     }
 
     renderer.render(scene, camera);
   }
 
+  // Handle Window Resizing
   window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
+  // Start Engine Loop
+  applyLanguage();
   animate();
 </script>
 </body>
