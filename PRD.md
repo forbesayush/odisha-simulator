@@ -1,82 +1,155 @@
 # Product Requirements Document (PRD)
-## ODISHA SIMULATOR: AMA GADI, AMA RASTA (3D Director’s Cut)
-**A 3D Hyper-Local Urban Satire & 1v1 Street Combat Game**
+## BHUBANESWAR 3D: AMA GADI, AMA RASTA
+### (Benglooru × FightKaro × Delhi Metro Edition)
+**A 3D Hyper-Local Open-World Driving, Street Satire & 1v1 Street Brawl Game**
 
 ---
 
-## 1. Executive Summary & Vision
+## 1. Executive Summary & Project Overview
 
-- **Product Name:** *Odisha Simulator: Ama Gadi, Ama Rasta (3D Director's Cut)*
-- **Platforms:** Web (Desktop & Mobile, touch + keyboard supported), hosted directly via **GitHub Pages**.
-- **Tech Stack:** Vanilla JavaScript + Three.js (r160+ via CDN/Import Maps), CSS3, Web Audio API (Spatial 3D Audio), HTML5 Canvas. Zero external build tooling required for instant static hosting.
-- **Inspirations:**
-  - **FightKaro.com:** Dynamic 1v1 fighting game camera, cinematic clash animations, impact shockwaves, dialogue interruptions, combo meters, HP bars.
-  - **Benglooru.com:** Deeply satirical hyper-local urban culture, localized idioms, comedic encounters, branching dialogue choices, atmospheric weather.
-- **Theme:** Bhubaneswar & Cuttack ("The Twin Cities") street life, featuring the complete uncut 7-act dramatic screenplay brought to life in full interactive **3D low-poly / cel-shaded retro aesthetic**.
-
----
-
-## 2. Core Player Fantasy & Pillars
-
-1. **Authentic Hyper-Local Satire:** Everything from the *THAK-THUNG* of Bidyadhar Mausa's Dahibara ladle to Tookna Bhai's acoustic Chuna slaps, Patia bachelor rental interrogation, and the ₹350 Pink Vikram Auto surge at Master Canteen.
-2. **FightKaro 3D Showdown Engine:** Every act climaxes in a 3D confrontation with animated boss models, cinematic attack cameras, floating 3D hit numbers, and interactive retorts.
-3. **Instant Zero-Friction Web Delivery:** Single or lightweight modular files running directly in any modern mobile or desktop browser via GitHub Pages, with no 500MB asset downloads or Node.js server dependencies.
+- **Product Name:** *Bhubaneswar 3D: Ama Gadi, Ama Rasta (Benglooru × FightKaro Edition)*
+- **Live Deployment:** [https://forbesayush.github.io/odisha-simulator/](https://forbesayush.github.io/odisha-simulator/)
+- **Repository:** [github.com/forbesayush/odisha-simulator](https://github.com/forbesayush/odisha-simulator)
+- **Target Audience:** Casual web gamers, commuters, fans of Indian urban culture, retro arcade enthusiasts.
+- **Tech Stack:**
+  - **Renderer:** Pure client-side Three.js (WebGL, r128 CDN)
+  - **Typography:** Google Fonts (`Press Start 2P`, `VT323`, `Noto Sans Oriya`)
+  - **Audio Engine:** HTML5 Web Audio API (100% procedural waveform synthesis — 0 external audio downloads)
+  - **Live Weather API:** Open-Meteo REST API (Bhubaneswar: 20.2961° N, 85.8245° E)
+  - **Hosting:** GitHub Pages via GitHub Actions Jekyll/Static pipeline
 
 ---
 
-## 3. Gameplay Mechanics & Systems Architecture
+## 2. Core Inspirations & Product Pillars
 
-### 3.1 Player Character & Core Stats
-The player navigates the Twin Cities across the timeline of a single chaotic day (9:15 AM to 10:30 PM).
+```
++-----------------------------------------------------------------------------------------+
+|                              BHUBANESWAR 3D CORE PILLARS                                |
++-----------------------------------------------------------------------------------------+
+|  1. BENGLOORU.COM SATIRE    |  2. FIGHTKARO.COM COMBAT     |  3. OPEN-WORLD 3D FREEDOM  |
+|  Hyper-local Odia humor,    |  1v1 street brawling with    |  Drive Activa or Pink      |
+|  trilingual street quotes,  |  dynamic side-arena camera,  |  Vikram Auto across        |
+|  pakhala/jugaad stats, and  |  HP gauges, and Odia combat  |  Janpath & NH-16 with live |
+|  real-time city weather.    |  moves (Guguni Splash!).     |  cows & moving Mo Buses.   |
++-----------------------------------------------------------------------------------------+
+```
 
-- **Izzat (HP: 0-100):** Depleted by opponent insults, traffic honks, surge charges, and scam attacks. Reaching 0 results in the "Public Defeat / Loss of Face" game over screen.
-- **Petara (Stamina: 0-100):** Fuels offensive dialogue retorts and special moves. Restored through defensive plays, drinking Torani water, or sipping Omfed ginger tea.
-- **BP (Blood Pressure: 0-100):** Rises when provoked by traffic or absurd demands. At 90+ BP, player enters **"Hypertensive Rage"** (deals 1.5x damage but takes 1.2x damage).
-- **Khuchura (Rupees: ₹):** Used to buy emergency refreshments, bribe brokers/conductors, or pay final auto fares.
-- **Jhola (Inventory):** Stores physical 3D items acquired across acts (*Melody Chocolates, 5kg Nainital Aloo, MS-Paint Offer Letter, Brass Dona Token*).
-
-### 3.2 3D Combat Arena & Camera Choreography (FightKaro Style)
-- **Narrative Exploration Cam:** Slow cinematic panning showcasing the 3D environment (Flyover, Banyan Tree, Haat).
-- **1v1 Duel Cam:** Dynamic fighting perspective with slight perspective angle, depth of field, and impact snap-zooms.
-- **Finisher Cam:** Slow-motion orbit when delivering the final verbal blow or throwing the 5kg Nainital Aloo.
-
----
-
-## 4. Act-by-Act 3D Visual & Level Specifications
-
-| Act | Time | Location | 3D Environment Features | Boss Model & Props | Key Audio Cue |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Act I** | 9:15 AM | Rasulgarh Flyover | Elevated concrete overpass, gridlocked Mo Bus, coal truck emitting particle smoke, stray bulls | **Bunty Jena**: Neon-green wheel KTM, bleached hair, visor spit animation | KTM revs, Mo Bus Route 20 air horn |
-| **Act II** | 10:30 AM | Saheed Nagar | Massive procedural Banyan tree with canopy foliage, rusted Hero Jet cycle, steaming Handi | **Siddharth Mohapatra**: Tech bro with AirPods, artisanal ketchup bottle | *THAK-THAK-THUNG!* Metallic ladle clangs |
-| **Act III** | 1:15 PM | Patia By-Lane | Neon-green G+2 house, reflective water puddles, rusted iron gate with "TO-LET" sign | **Prafulla Uncle & Ramesh**: Lungi + vest, oversized key ring with 62 keys | Iron gate squeak, key clinking |
-| **Act IV** | 5:30 PM | Janpath Omfed Booth | Glowing green-white booth, hanging chip strips, red plastic stools, twilight ambient lighting | **Tookna Bhai**: Animated hands smearing Chuna and folding betel leaves | *PHAT-PHAT-CHHAAK!* Acoustic palm slaps |
-| **Act V** | 7:00 PM | Jaydev Vihar Cabin | 10x10 office, peeling paint, dripping AC unit with dripping water particles into yellow bucket | **HR Director Subrat**: Shiny blazer, fake TCS-Infosys MS-Paint letter | Water drops, wheezing AC, GPay ping |
-| **Act VI** | 8:30 PM | Unit-1 Haat | Bruised purple cyclonic skybox, swaying tarpaulins, rain streaks, potato crates, flashlights | **Barabati Aloo Syndicate & Aunties**: Sambalpuri saree models, 5kg potato sack | Kalabaisakhi thunder, howling wind |
-| **Act VII** | 10:30 PM | Master Canteen | 3D Stone Warrior Horse monument, wet road reflections, neon station signs, floodwaters | **Pink Vikram Auto Anna**: Pink Vikram 3D model, idling engine, glowing headlamps | Vikram dual-tone horn, rain roar |
+1. **Benglooru.com-Style Urban Satire & Micro-Interactions:**
+   - Survival stats reflecting authentic Odia street life: `ପଖାଳ STAMINA`, `JUGAAD (ଭାଇଚାରା)`, `KARMA (ଶାନ୍ତି)`, `WALLET (ଟଙ୍କା)`.
+   - Trilingual dialogue trees mixing Odia, Hindi, and English with razor-sharp localized comedic timing.
+   - Real-time weather fetched directly from Bhubaneswar atmospheric sensors + manual toggle for the cyclonic Kalabaisakhi thunderstorm.
+2. **FightKaro.com 3D Combat Arena:**
+   - Any confrontation can escalate into a full 3D street brawl.
+   - Dynamic arena camera transition smoothly framing the player and NPC in a classic side-view fighting perspective.
+   - Visual 3D knockback animations on the boss mesh when hit.
+3. **Open-World 3D Street Freedom (GTA / Delhi Metro Elements):**
+   - Free 3D driving physics across Janpath and NH-16 highway intersections.
+   - Instant vehicle swapping between the nimble **White Activa 6G** and the heavy **1998 Pink Vikram Auto**.
+   - Moving green Mo Buses, road dividers, and sacred street cows that ignore player horns.
 
 ---
 
-## 5. Technical Architecture (Three.js WebGL Engine)
+## 3. Detailed Feature Specifications
 
-- **Target Frame Rate:** Solid 60 FPS on mid-range Android/iOS mobile devices and desktop browsers.
-- **Draw Call Budget:** Under 60 draw calls per scene via geometry merging and shared canvas materials.
-- **Asset Footprint:** 100% procedural low-poly geometry & mathematical textures generated via Canvas2D; zero external 50MB `.gltf` model downloads required.
-- **Fallbacks:** Graceful degradation on older devices (disabling dynamic shadows/bloom while retaining 3D models).
+### 3.1 3D Open-World Map & Landmark Hotspots
+The 3D map features an expansive 500x500 ground with laterite soil and intersecting asphalt highways, housing 4 iconic interactive zones marked by animated glowing ground rings:
+
+| Landmark Zone | Coordinates | 3D Landmark Props | NPC Boss | Theme & Dialogue Conflict |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Saheed Nagar Dahibara Cart** | `X: 22, Z: -28` | Wooden cart, giant aluminum Handi wrapped in damp crimson cotton | **Bidyadhar Mausa** | A tech bro asked for Tomato Ketchup & Sweet Corn on sacred Cuttack Dahibara Aloodum! |
+| **2. Omfed Tookna Pan Dukan** | `X: -21, Z: -35` | Green Omfed booth, hanging Safa/Barkha strips, red stools | **Tookna Bhai** | ₹10 tea paid with ₹20 note. Tookna slides 5 sticky Melody chocolates instead of loose cash. |
+| **3. Patia Bachelor To-Let Scam** | `X: -42, Z: 28` | Neon-green G+2 house, rusted iron gate, "No Bachelors" sign | **Ramesh Broker & Prafulla Uncle** | ₹500 non-refundable visiting fee, ₹13/unit submeter, 9 PM gate lock, strictly family only. |
+| **4. Master Canteen Horse Statue** | `X: 38, Z: 35` | Stone warrior horse monument on pedestal | **Pink Vikram Auto Anna** | Rainstorm surge: demanding ₹350 for 2km to Kalpana Square because "Barsha hauchi babu!" |
 
 ---
 
-## 6. Milestones & Implementation Roadmap
+### 3.2 Vehicle Dynamics & Physics Engine
 
-1. **Phase 1 (PRD & Visual Engine Scaffolding):**
-   - Approve PRD and architectural blueprint.
-   - Scaffold Three.js rendering viewport with responsive aspect ratio, lighting rig, and CRT shader overlay.
-2. **Phase 2 (Procedural 3D Environment & Vehicle Models):**
-   - Build procedural 3D models: Pink Vikram Auto, Hero Jet cycle with Handi, Mo Bus, Banyan Tree, Stone Horse.
-   - Implement dynamic environment skybox (Daylight -> Golden Hour -> Bruised Purple Cyclone -> Sodium Night).
-3. **Phase 3 (FightKaro 3D Camera & Combat System):**
-   - Implement dynamic camera transitions (Orbit -> 1v1 Action Angle -> Finisher Zoom).
-   - Hook up 3D billboard combat text, damage numbers, and particle shockwaves.
-4. **Phase 4 (7-Act Integration & Dynamic Endings):**
-   - Wire all 7 screenplay acts into the 3D scene switchers.
-   - Implement 3D spatial Web Audio positioning.
-   - Final polish of UI overlays, mobile touch controls, and GitHub Pages live verification.
+```mermaid
+graph LR
+    A["Player Input (WASD / Arrows)"] --> B["Vehicle Physics Engine"]
+    B --> C["White Activa 6G: Max Speed 0.72 | High Accel | Tight Steering"]
+    B --> D["Pink Vikram Auto: Max Speed 0.55 | Heavy Drift | High Horn Bass"]
+    C --> E["Dynamic 3rd-Person Chase Cam with Speedometer (KM/H)"]
+    D --> E
+```
+
+- **Activa 6G:** Top speed ~68 KM/H, high acceleration, agile turning for weaving through traffic.
+- **Pink Vikram Auto:** Top speed ~52 KM/H, heavy drift momentum, deep low-frequency horn (*POMP-POMP!*).
+- **Vehicle Swap (`[V]` Key):** Instant visual and physical mesh transformation with sound notification.
+
+---
+
+### 3.3 Live Bhubaneswar Weather & Kalabaisakhi Rain Engine
+- **Live API Endpoint:** `https://api.open-meteo.com/v1/forecast?latitude=20.2961&longitude=85.8245`
+- **Dynamic Sky & Lighting:**
+  - Clear / Sunny: Warm terracotta sky (`#ff9e6d`), high sun intensity (1.1).
+  - Storming / Kalabaisakhi: Dark navy sky (`#161b29`), muted directional lighting (0.45), 1,200 particle rain streaks falling at high velocity with fog occlusion.
+
+---
+
+### 3.4 FightKaro 3D Street Brawl Engine
+When an interaction escalates into combat, the game transitions to FightKaro Arena Mode:
+- **Camera:** Lerps to side-view fighting angle framing both combatants.
+- **Player Moves:**
+  1. 🌶️ **Guguni Splash (28 DMG):** Splashes boiling yellow Guguni from the cart.
+  2. 🌿 **Tookna 300-Number Chuna Slap (34 DMG):** Supersonic acoustic palm slap with lime dust.
+  3. 🍯 **Pahala Rasagola Slam (45 DMG):** Heavy syrup-soaked confectionery bombardment.
+  4. 📞 **Vani Vihar Squad (40 DMG):** Summons local university hostel boys for backup.
+- **Boss Counter-Attacks:** AI responds with 15–25 counter DMG with comic screen shake.
+- **Outcome:** Defeating the boss grants +25 Jugaad, +15 Karma, and +₹100 cash reward.
+
+---
+
+### 3.5 Procedural Web Audio API Synthesizer (0 External Assets)
+All sound effects are synthesized on the fly via mathematical oscillators and noise buffers:
+- **Dahibara Ladle Strike:** Triangle wave FM bell cluster (930Hz, 970Hz, 530Hz, 560Hz) with exponential damping.
+- **Tookna Palm Clap:** Filtered white noise burst with rapid envelope decay (Mach-3 transient).
+- **Auto & Scooter Horns:** Sawtooth and square wave dual-tones (360Hz and 520Hz).
+
+---
+
+## 4. Architecture & Technical Design
+
+```
++-----------------------------------------------------------------------------------------+
+|                                    APPLICATION ARCHITECTURE                             |
++-----------------------------------------------------------------------------------------+
+|  [ DOM HUD Layer (VT323 / Oriya font) ]  <--->  [ Interactive Modals / FightKaro UI ]   |
+|                                       ^                                                 |
+|                                       | (Syncs stats, speed, hotspot prompts)           |
+|                                       v                                                 |
+|  [ Three.js 60 FPS Render Loop ]        <--->  [ Physics Engine (Activa / Vikram Auto)] |
+|    - PerspectiveCamera (Chase / Arena)           - Speed, Turn Angle, Friction          |
+|    - Scene, Directional & Ambient Light          - Collision Check with Hotspot Zones   |
+|    - Weather Particle System (Rain)              - Traffic Agents (Mo Bus & Cows)       |
+|                                       ^                                                 |
+|                                       |                                                 |
+|  [ Web Audio Synthesizer Engine ]     <--->  [ Open-Meteo Weather REST API ]            |
++-----------------------------------------------------------------------------------------+
+```
+
+---
+
+## 5. Controls & Key Bindings
+
+| Control | Action |
+| :--- | :--- |
+| **`W` / `Up Arrow`** | Accelerate forward |
+| **`S` / `Down Arrow`** | Reverse / Brake |
+| **`A` / `Left Arrow`** | Steer Left |
+| **`D` / `Right Arrow`** | Steer Right |
+| **`H`** | Sound vehicle horn / *Thak-Thak-Thung* |
+| **`V`** | Switch vehicle (White Activa 6G $\leftrightarrow$ Pink Vikram Auto) |
+| **`E`** | Interact with hotspot zone / trigger dialogue or FightKaro brawl |
+| **`Escape`** | Close interaction modal / drive on |
+| **Mobile Touch D-Pad** | On-screen touch buttons for full mobile browser playability |
+
+---
+
+## 6. Verification & Deployment Status
+
+- **Branch:** `main`
+- **Latest Commit:** `bec0bae`
+- **GitHub Pages Status:** Active & Deployed (HTTP 200 OK)
+- **Live URL:** [https://forbesayush.github.io/odisha-simulator/](https://forbesayush.github.io/odisha-simulator/)
