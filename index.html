@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ODISHA SIMULATOR: AMA GADI, AMA RASTA (FightKaro x Benglooru 3D Edition)</title>
+  <title>ODISHA SIMULATOR: AMA GADI, AMA RASTA (FightKaro × Benglooru × Delhi Metro 3D)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;600;700;800&family=Tiro+Odia:ital@0;1&display=swap" rel="stylesheet">
@@ -11,8 +11,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     :root {
-      --bg-color: #070a0e;
-      --card-bg: rgba(14, 20, 30, 0.90);
+      --bg-color: #06090d;
+      --card-bg: rgba(13, 19, 28, 0.92);
       --card-border: #24364a;
       --text-main: #f0f5fa;
       --text-muted: #8b9fb5;
@@ -58,7 +58,7 @@
       z-index: 1;
     }
 
-    /* Retro CRT Scanlines (Benglooru / FightKaro Aesthetic) */
+    /* Retro CRT Scanlines */
     .crt-overlay {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -86,7 +86,7 @@
       flex-direction: column;
       justify-content: space-between;
       pointer-events: none;
-      padding: 10px 14px;
+      padding: 8px 12px;
     }
 
     /* Top Navigation Header */
@@ -95,10 +95,10 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(11, 16, 24, 0.88);
+      background: rgba(11, 16, 24, 0.90);
       border: 1px solid var(--card-border);
       border-radius: 8px;
-      padding: 8px 14px;
+      padding: 8px 12px;
       backdrop-filter: blur(8px);
       pointer-events: auto;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
@@ -106,7 +106,7 @@
 
     .brand-title {
       font-family: var(--font-pixel);
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       color: var(--accent-gold);
       display: flex;
       align-items: center;
@@ -115,8 +115,39 @@
 
     .brand-sub {
       font-family: var(--font-odia);
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--accent-saffron);
+    }
+
+    .mode-switch-group {
+      display: flex;
+      gap: 4px;
+      background: #090e15;
+      padding: 3px;
+      border-radius: 6px;
+      border: 1px solid #1f2f42;
+    }
+
+    .btn-mode {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 6px 10px;
+      font-family: var(--font-pixel);
+      font-size: 0.52rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-mode.active {
+      background: #182536;
+      color: var(--accent-teal);
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+      border: 1px solid var(--accent-teal);
     }
 
     .header-btns {
@@ -131,7 +162,7 @@
       color: var(--text-main);
       padding: 6px 10px;
       font-family: var(--font-pixel);
-      font-size: 0.55rem;
+      font-size: 0.52rem;
       border-radius: 4px;
       cursor: pointer;
       transition: all 0.16s ease;
@@ -141,17 +172,16 @@
       pointer-events: auto;
     }
 
-    .btn-ui:hover, .btn-ui.active {
+    .btn-ui:hover {
       border-color: var(--accent-teal);
       color: var(--accent-teal);
-      box-shadow: 0 0 10px rgba(0, 229, 255, 0.35);
     }
 
-    /* Benglooru-style Street Soundboard Bar */
+    /* Benglooru-style Soundboard Strip */
     .soundboard-strip {
       width: 100%;
       max-width: 950px;
-      margin: 6px auto 0;
+      margin: 4px auto 0;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -166,24 +196,24 @@
 
     .sb-label {
       font-family: var(--font-pixel);
-      font-size: 0.5rem;
+      font-size: 0.48rem;
       color: var(--accent-turmeric);
       white-space: nowrap;
-      margin-right: 4px;
+      margin-right: 2px;
     }
 
     .sb-btn {
       background: #121a24;
       border: 1px solid #233446;
       color: #cad8e6;
-      font-size: 0.65rem;
-      padding: 3px 7px;
+      font-size: 0.62rem;
+      padding: 3px 6px;
       border-radius: 3px;
       cursor: pointer;
       white-space: nowrap;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
       transition: all 0.12s ease;
     }
 
@@ -193,42 +223,36 @@
       color: #fff;
     }
 
-    /* FightKaro Arcade Health Bars (Top Arena HUD) */
+    /* ==========================================================================
+       MODE 1: FIGHTKARO 1V1 COMBAT HUD
+       ========================================================================== */
+    #fightkaro-ui {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
     .arcade-hud-row {
       width: 100%;
       max-width: 950px;
-      margin: 6px auto 0;
+      margin: 4px auto 0;
       display: grid;
-      grid-template-columns: 1fr 60px 1fr;
+      grid-template-columns: 1fr 50px 1fr;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       background: rgba(10, 15, 22, 0.88);
       border: 2px solid #213244;
       border-radius: 8px;
-      padding: 8px 14px;
+      padding: 6px 12px;
       backdrop-filter: blur(8px);
       pointer-events: auto;
-      box-shadow: 0 6px 25px rgba(0,0,0,0.6);
-    }
-
-    .fighter-hud-card {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .fighter-hud-name {
-      font-family: var(--font-pixel);
-      font-size: 0.62rem;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 6px;
     }
 
     .fighter-hp-track {
       width: 100%;
-      height: 14px;
+      height: 12px;
       background: #06090e;
       border: 1px solid #33485e;
       border-radius: 3px;
@@ -241,73 +265,36 @@
       transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .fill-player-hp {
-      background: linear-gradient(90deg, #00b0ff, #00e676);
-    }
-
-    .fill-boss-hp {
-      background: linear-gradient(90deg, #d50000, #ff1744);
-    }
+    .fill-player-hp { background: linear-gradient(90deg, #00b0ff, #00e676); }
+    .fill-boss-hp { background: linear-gradient(90deg, #d50000, #ff1744); }
 
     .fighter-hp-text {
       position: absolute;
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       font-family: var(--font-pixel);
-      font-size: 0.52rem;
+      font-size: 0.5rem;
       color: #fff;
       text-shadow: 1px 1px 2px #000;
     }
 
     .arcade-vs-box {
       font-family: var(--font-pixel);
-      font-size: 1.1rem;
+      font-size: 1rem;
       color: var(--accent-gold);
       text-align: center;
       text-shadow: 0 0 10px rgba(255, 214, 0, 0.7);
       background: #172230;
       border: 1px solid var(--accent-saffron);
       border-radius: 4px;
-      padding: 4px 6px;
+      padding: 3px 5px;
     }
 
-    /* Super Move / Torani Meter */
-    .super-meter-wrap {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 2px;
-    }
-
-    .super-meter-label {
-      font-family: var(--font-pixel);
-      font-size: 0.48rem;
-      color: var(--accent-purple);
-    }
-
-    .super-meter-track {
-      flex: 1;
-      height: 6px;
-      background: #080c12;
-      border: 1px solid #2a1f44;
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .super-meter-fill {
-      height: 100%;
-      width: 30%;
-      background: linear-gradient(90deg, #7c4dff, #b388ff, #ff80ab);
-      transition: width 0.2s ease;
-    }
-
-    /* Middle 3D Act Presentation Overlay */
     .middle-stage {
-      flex: 1;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      padding: 10px 0;
+      padding: 8px 0;
       pointer-events: none;
     }
 
@@ -316,102 +303,149 @@
       border: 2px solid var(--card-border);
       border-left: 4px solid var(--accent-saffron);
       border-radius: 8px;
-      padding: 12px 16px;
-      max-width: 420px;
+      padding: 10px 14px;
+      max-width: 400px;
       backdrop-filter: blur(8px);
       pointer-events: auto;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
     }
 
-    .act-tag {
-      font-family: var(--font-pixel);
-      font-size: 0.58rem;
-      color: var(--accent-gold);
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .act-title-text {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 3px;
-    }
-
-    .act-odia-sub {
-      font-family: var(--font-odia);
-      font-size: 0.9rem;
-      color: var(--accent-turmeric);
-      margin-bottom: 6px;
-    }
-
-    .act-quote-box {
-      font-size: 0.78rem;
-      color: #cfdbe6;
-      line-height: 1.45;
-      font-style: italic;
-    }
-
-    /* Boss Speech Callout */
     .boss-shout-card {
       background: rgba(26, 12, 18, 0.92);
       border: 2px solid #571626;
       border-right: 4px solid #ff1744;
       border-radius: 8px;
-      padding: 12px 16px;
-      max-width: 380px;
+      padding: 10px 14px;
+      max-width: 360px;
       text-align: right;
       backdrop-filter: blur(8px);
       pointer-events: auto;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-    }
-
-    .boss-role-tag {
-      font-family: var(--font-pixel);
-      font-size: 0.52rem;
-      color: #ff5252;
-      margin-bottom: 4px;
     }
 
     .boss-shout-text {
       background: #2b0811;
       border: 1px dashed #ff5252;
-      padding: 6px 10px;
+      padding: 5px 8px;
       border-radius: 4px;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       color: #ff80ab;
       font-style: italic;
-      animation: alertPulse 1.8s infinite alternate;
     }
 
-    @keyframes alertPulse {
-      from { transform: scale(0.99); opacity: 0.88; }
-      to { transform: scale(1.02); opacity: 1; filter: drop-shadow(0 0 8px #ff1744); }
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      pointer-events: auto;
     }
 
-    /* FightKaro Dramatic Round Banner (Overlay) */
-    .fightkaro-announcer {
-      position: absolute;
-      top: 42%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      font-family: var(--font-pixel);
-      font-size: 2.2rem;
-      color: var(--accent-gold);
-      text-shadow: 0 0 20px rgba(255, 214, 0, 0.9), 4px 4px 0 #000;
-      z-index: 100;
+    .action-btn {
+      background: rgba(18, 26, 36, 0.94);
+      border: 2px solid #233549;
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      text-align: left;
+      transition: all 0.16s ease;
+    }
+
+    .action-btn:hover:not(:disabled) {
+      background: #1c2c3e;
+      border-color: var(--accent-teal);
+      transform: translateY(-2px);
+    }
+
+    .action-btn.super-btn {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 10px rgba(179, 136, 255, 0.35);
+    }
+
+    /* ==========================================================================
+       MODE 2: DELHI METRO STYLE MO BUS 3D TRANSIT SURVIVAL HUD
+       ========================================================================== */
+    #runner-ui {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
       pointer-events: none;
+    }
+
+    .runner-top-hud {
+      width: 100%;
+      max-width: 950px;
+      margin: 4px auto 0;
+      display: flex;
+      justify-content: space-between;
+      background: rgba(10, 16, 24, 0.90);
+      border: 2px solid var(--accent-green);
+      border-radius: 8px;
+      padding: 8px 16px;
+      backdrop-filter: blur(8px);
+      pointer-events: auto;
+      box-shadow: 0 0 20px rgba(0, 230, 118, 0.25);
+    }
+
+    .runner-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .runner-stat-label {
+      font-family: var(--font-pixel);
+      font-size: 0.5rem;
+      color: var(--accent-turmeric);
+    }
+
+    .runner-stat-val {
+      font-family: var(--font-pixel);
+      font-size: 0.9rem;
+      color: #fff;
+    }
+
+    .runner-prompt-box {
+      align-self: center;
+      background: rgba(16, 26, 38, 0.92);
+      border: 2px solid var(--accent-gold);
+      border-radius: 8px;
+      padding: 12px 24px;
       text-align: center;
-      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      backdrop-filter: blur(8px);
+      animation: alertPulse 1.5s infinite alternate;
     }
 
-    .fightkaro-announcer.show {
-      transform: translate(-50%, -50%) scale(1);
+    .runner-touch-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      max-width: 480px;
+      margin: 0 auto;
+      pointer-events: auto;
+      width: 100%;
     }
 
-    /* Comic Onomatopoeia Popups (DISHUUM! CHHAAK!) */
+    .btn-run-ctrl {
+      background: rgba(22, 34, 48, 0.9);
+      border: 2px solid #36506c;
+      color: #fff;
+      font-family: var(--font-pixel);
+      font-size: 0.7rem;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .btn-run-ctrl:active {
+      background: var(--accent-teal);
+      color: #000;
+    }
+
+    /* Comic Onomatopoeia Popups */
     .comic-burst {
       position: absolute;
       font-family: var(--font-pixel);
@@ -431,180 +465,24 @@
       100% { transform: scale(1.1) translateY(-40px) rotate(10deg); opacity: 0; }
     }
 
-    /* Bottom Control Deck (FightKaro 4-Action Grid) */
-    .bottom-deck {
-      width: 100%;
-      max-width: 950px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      pointer-events: auto;
-    }
-
-    /* Benglooru Route Indicator */
-    .route-tracker-strip {
-      display: flex;
-      justify-content: space-between;
-      background: rgba(8, 12, 17, 0.88);
-      border: 1px solid #1c2a38;
-      border-radius: 4px;
-      padding: 4px 10px;
-      font-size: 0.65rem;
-      color: var(--text-muted);
-      align-items: center;
-    }
-
-    .route-node {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      opacity: 0.5;
-    }
-
-    .route-node.active {
-      opacity: 1;
-      color: var(--accent-gold);
-      font-weight: bold;
-    }
-
-    .action-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-
-    .action-btn {
-      background: rgba(18, 26, 36, 0.94);
-      border: 2px solid #233549;
-      border-radius: 6px;
-      padding: 10px 12px;
-      color: #fff;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      text-align: left;
-      transition: all 0.16s ease;
-      backdrop-filter: blur(6px);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .action-btn:hover:not(:disabled) {
-      background: #1c2c3e;
-      border-color: var(--accent-teal);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 229, 255, 0.25);
-    }
-
-    .action-btn.super-btn {
-      border-color: var(--accent-purple);
-      box-shadow: 0 0 10px rgba(179, 136, 255, 0.4);
-    }
-
-    .action-btn.super-btn:hover:not(:disabled) {
-      border-color: var(--accent-gold);
-      box-shadow: 0 0 16px rgba(255, 214, 0, 0.6);
-    }
-
-    .action-btn:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      border-color: #1a2533;
-    }
-
-    .action-title {
-      font-family: var(--font-pixel);
-      font-size: 0.58rem;
-      color: var(--accent-gold);
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .action-key {
-      font-size: 0.48rem;
-      background: #0b1016;
-      border: 1px solid #33475f;
-      padding: 2px 4px;
-      border-radius: 3px;
-      color: var(--accent-teal);
-    }
-
-    .action-desc {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      line-height: 1.3;
-    }
-
-    .action-cost {
-      font-size: 0.58rem;
-      color: var(--accent-saffron);
-      font-weight: 600;
-    }
-
-    /* Screenplay Reader Modal */
-    .screenplay-modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.88);
-      backdrop-filter: blur(8px);
-      z-index: 1000;
-      padding: 24px;
-      overflow-y: auto;
-      justify-content: center;
-    }
-
-    .screenplay-modal.open {
-      display: flex;
-    }
-
-    .screenplay-content {
-      background: #0f1622;
-      border: 2px solid var(--accent-saffron);
-      max-width: 820px;
-      width: 100%;
-      border-radius: 8px;
-      padding: 30px;
-      position: relative;
-      color: #e3ebf4;
-      line-height: 1.7;
-    }
-
-    .screenplay-close {
+    /* Announcer Banner */
+    .fightkaro-announcer {
       position: absolute;
-      top: 18px; right: 20px;
-      background: #251016;
-      border: 1px solid #ff1744;
-      color: #ff5252;
-      padding: 6px 12px;
+      top: 42%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
       font-family: var(--font-pixel);
-      font-size: 0.65rem;
-      cursor: pointer;
-      border-radius: 4px;
-    }
-
-    .script-act {
-      margin-bottom: 26px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid #233549;
-    }
-
-    .script-act h2 {
-      font-family: var(--font-pixel);
-      font-size: 0.9rem;
+      font-size: 2.2rem;
       color: var(--accent-gold);
-      margin-bottom: 8px;
+      text-shadow: 0 0 20px rgba(255, 214, 0, 0.9), 4px 4px 0 #000;
+      z-index: 100;
+      pointer-events: none;
+      text-align: center;
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    .script-dialogue {
-      background: #0a0f17;
-      border-left: 3px solid var(--accent-gold);
-      padding: 10px 14px;
-      margin: 10px 0;
-      border-radius: 0 4px 4px 0;
-      font-style: italic;
+    .fightkaro-announcer.show {
+      transform: translate(-50%, -50%) scale(1);
     }
 
     /* Ending Overlay */
@@ -618,7 +496,7 @@
       background: rgba(11, 17, 25, 0.96);
       border: 2px solid var(--accent-gold);
       border-radius: 8px;
-      padding: 28px;
+      padding: 24px;
       text-align: center;
       z-index: 100;
       box-shadow: 0 0 50px rgba(255, 214, 0, 0.35);
@@ -629,14 +507,54 @@
       display: block;
     }
 
+    /* Screenplay Modal */
+    .screenplay-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      padding: 20px;
+      overflow-y: auto;
+      justify-content: center;
+    }
+
+    .screenplay-modal.open { display: flex; }
+
+    .screenplay-content {
+      background: #0f1622;
+      border: 2px solid var(--accent-saffron);
+      max-width: 800px;
+      width: 100%;
+      border-radius: 8px;
+      padding: 24px;
+      color: #e3ebf4;
+      line-height: 1.6;
+      position: relative;
+    }
+
+    .screenplay-close {
+      position: absolute;
+      top: 16px; right: 16px;
+      background: #251016;
+      border: 1px solid #ff1744;
+      color: #ff5252;
+      padding: 4px 10px;
+      font-family: var(--font-pixel);
+      font-size: 0.6rem;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
     /* Responsive */
     @media (max-width: 800px) {
-      .arcade-hud-row { grid-template-columns: 1fr; gap: 6px; }
+      .arcade-hud-row { grid-template-columns: 1fr; gap: 4px; }
       .arcade-vs-box { display: none; }
       .action-grid { grid-template-columns: 1fr 1fr; }
       .middle-stage { flex-direction: column; align-items: stretch; gap: 6px; }
       .boss-shout-card { text-align: left; border-right: none; border-left: 4px solid #ff1744; }
-      .soundboard-strip { overflow-x: scroll; }
+      .brand-sub { display: none; }
     }
   </style>
 </head>
@@ -649,7 +567,7 @@
   <!-- FightKaro Dramatic Announcer ("ROUND 1: FIGHT!", "K.O.!") -->
   <div class="fightkaro-announcer" id="fightAnnouncer">ROUND 1<br><span style="color: #ff1744; font-size: 1.8rem;">FIGHT!</span></div>
 
-  <!-- UI HUD Layer -->
+  <!-- UI Layer -->
   <div id="ui-layer">
     <!-- Header -->
     <header>
@@ -657,117 +575,137 @@
         <div class="brand-title">
           <span>⚡</span> ODISHA SIMULATOR 3D
         </div>
-        <div class="brand-sub">ଆମ ଗାଡ଼ି, ଆମ ରାସ୍ତା • FIGHTKARO × BENGLOORU EDITION</div>
+        <div class="brand-sub">FIGHTKARO × BENGLOORU × DELHI METRO EDITION</div>
       </div>
+
+      <!-- Mode Switcher -->
+      <div class="mode-switch-group">
+        <button class="btn-mode active" id="btnModeFight">🥊 1v1 SHOWDOWN</button>
+        <button class="btn-mode" id="btnModeRunner">🚌 MO BUS RUSH 3D</button>
+      </div>
+
       <div class="header-btns">
-        <button class="btn-ui" id="btnCamToggle">
-          <span>🎥</span> <span id="camText">COMBAT CAM</span>
-        </button>
-        <button class="btn-ui" id="btnSoundToggle">
-          <span id="soundIcon">🔊</span> SOUND
-        </button>
-        <button class="btn-ui" id="btnScreenplay">
-          <span>📜</span> SCRIPT
-        </button>
-        <button class="btn-ui" id="btnRestart">
-          <span>🔄</span> RESET
-        </button>
+        <button class="btn-ui" id="btnCamToggle">🎥 CAM</button>
+        <button class="btn-ui" id="btnSoundToggle"><span id="soundIcon">🔊</span></button>
+        <button class="btn-ui" id="btnScreenplay">📜 SCRIPT</button>
+        <button class="btn-ui" id="btnRestart">🔄 RESET</button>
       </div>
     </header>
 
-    <!-- Benglooru-style Street Soundboard Bar -->
+    <!-- Benglooru Soundboard Strip -->
     <div class="soundboard-strip">
-      <span class="sb-label">📻 STREET SFX:</span>
-      <button class="sb-btn" onclick="sound.playLadleClang(); spawnComic('THAK-THUNG! 🛎️');">🛎️ Dahibara Ladle</button>
-      <button class="sb-btn" onclick="sound.playBetelSlap(); spawnComic('PHAT-CHHAAK! 🍃');">🍃 Tookna Slap</button>
-      <button class="sb-btn" onclick="sound.playVikramHorn(); spawnComic('PEEP-PEEP! 🛺');">🛺 Vikram Horn</button>
-      <button class="sb-btn" onclick="sound.playMoBusAirHorn(); spawnComic('PAAAN! 🚌');">🚌 Mo Bus Route 20</button>
-      <button class="sb-btn" onclick="sound.playThunder(); spawnComic('DHOOOM! ⚡');">⚡ Kalabaisakhi</button>
-      <button class="sb-btn" onclick="sound.playKTMRev(); spawnComic('VROOOM! 🏍️');">🏍️ KTM Rev</button>
+      <span class="sb-label">📻 SFX:</span>
+      <button class="sb-btn" onclick="sound.playLadleClang(); spawnComic('THAK-THUNG! 🛎️');">🛎️ Dahibara</button>
+      <button class="sb-btn" onclick="sound.playBetelSlap(); spawnComic('PHAT-CHHAAK! 🍃');">🍃 Tookna</button>
+      <button class="sb-btn" onclick="sound.playVikramHorn(); spawnComic('PEEP-PEEP! 🛺');">🛺 Vikram</button>
+      <button class="sb-btn" onclick="sound.playMoBusAirHorn(); spawnComic('PAAAN! 🚌');">🚌 Route 20</button>
+      <button class="sb-btn" onclick="sound.playThunder(); spawnComic('DHOOOM! ⚡');">⚡ Cyclone</button>
+      <button class="sb-btn" onclick="sound.playKTMRev(); spawnComic('VROOOM! 🏍️');">🏍️ KTM</button>
     </div>
 
-    <!-- FightKaro Arcade Health & Super Meter HUD -->
-    <div class="arcade-hud-row">
-      <!-- Player Card -->
-      <div class="fighter-hud-card">
-        <div class="fighter-hud-name">
-          <span>🧍</span> YOU (ODISHA COMMUTER)
-        </div>
-        <div class="fighter-hp-track">
-          <div class="fighter-hp-fill fill-player-hp" id="playerHpBar" style="width: 100%;"></div>
-          <div class="fighter-hp-text" id="playerHpVal">100/100 IZZAT</div>
-        </div>
-        <!-- Super Meter -->
-        <div class="super-meter-wrap">
-          <span class="super-meter-label">TORANI METER:</span>
-          <div class="super-meter-track">
-            <div class="super-meter-fill" id="superMeterBar" style="width: 25%;"></div>
+    <!-- ======================================================================
+         MODE 1: FIGHTKARO 1V1 COMBAT INTERFACE
+         ====================================================================== -->
+    <div id="fightkaro-ui">
+      <!-- Arcade Health & Super Meter HUD -->
+      <div class="arcade-hud-row">
+        <!-- Player -->
+        <div>
+          <div style="font-family: var(--font-pixel); font-size: 0.58rem; color: #fff; margin-bottom: 3px;">
+            YOU (ODISHA COMMUTER)
           </div>
-          <span style="font-family: var(--font-pixel); font-size: 0.48rem; color: var(--accent-gold);" id="superMeterVal">25%</span>
+          <div class="fighter-hp-track">
+            <div class="fighter-hp-fill fill-player-hp" id="playerHpBar" style="width: 100%;"></div>
+            <div class="fighter-hp-text" id="playerHpVal">100/100 IZZAT</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 4px; margin-top: 3px;">
+            <span style="font-family: var(--font-pixel); font-size: 0.45rem; color: var(--accent-purple);">TORANI:</span>
+            <div style="flex: 1; height: 5px; background: #080c12; border: 1px solid #2a1f44; border-radius: 2px; overflow: hidden;">
+              <div id="superMeterBar" style="height: 100%; width: 25%; background: linear-gradient(90deg, #7c4dff, #ff80ab);"></div>
+            </div>
+            <span style="font-family: var(--font-pixel); font-size: 0.45rem; color: var(--accent-gold);" id="superMeterVal">25%</span>
+          </div>
+        </div>
+
+        <div class="arcade-vs-box">VS</div>
+
+        <!-- Boss -->
+        <div style="text-align: right;">
+          <div style="font-family: var(--font-pixel); font-size: 0.58rem; color: #ff5252; margin-bottom: 3px;" id="bossName">
+            Bunty "Neon Pulsar" Jena
+          </div>
+          <div class="fighter-hp-track">
+            <div class="fighter-hp-fill fill-boss-hp" id="bossHpBar" style="width: 100%;"></div>
+            <div class="fighter-hp-text" id="bossHpVal">80/80 HP</div>
+          </div>
+          <div style="font-family: var(--font-pixel); font-size: 0.45rem; color: var(--accent-turmeric); margin-top: 3px;" id="bossSubtitle">
+            WRONG-SIDE DIVIDER SPECIALIST
+          </div>
         </div>
       </div>
 
-      <!-- VS Emblem -->
-      <div class="arcade-vs-box">VS</div>
+      <!-- Narrative & Dialogue -->
+      <div class="middle-stage">
+        <div class="act-narrative-card">
+          <div style="font-family: var(--font-pixel); font-size: 0.55rem; color: var(--accent-gold); margin-bottom: 3px;">
+            <span id="actNumber">ACT I</span> • <span id="actTime" style="color: var(--accent-teal);">9:15 AM</span>
+          </div>
+          <div style="font-size: 1.1rem; font-weight: 700; color: #fff;" id="actTitle">The Rasulgarh Flyover Gridlock</div>
+          <div style="font-family: var(--font-odia); font-size: 0.85rem; color: var(--accent-turmeric); margin-bottom: 4px;" id="actOdia">ରସୁଲଗଡ଼ ଫ୍ଲାଏଓଭର ଯୁଦ୍ଧ</div>
+          <div style="font-size: 0.75rem; color: #cfdbe6; font-style: italic;" id="actAtmosphere">
+            "In Bhubaneswar, distance is measured in how many times a KTM rider with bleached hair can graze your left ankle."
+          </div>
+        </div>
 
-      <!-- Boss Card -->
-      <div class="fighter-hud-card">
-        <div class="fighter-hud-name" style="justify-content: flex-end; color: #ff5252;">
-          <span id="bossName">Bunty "Neon Pulsar" Jena</span> <span>⚠️</span>
+        <div class="boss-shout-card">
+          <div style="font-family: var(--font-pixel); font-size: 0.5rem; color: #ff5252; margin-bottom: 3px;">OPPONENT RETORT:</div>
+          <div class="boss-shout-text" id="bossDialogue">"Dekhiki chala be! Rasta ta tama bapa ra ki?!"</div>
         </div>
-        <div class="fighter-hp-track">
-          <div class="fighter-hp-fill fill-boss-hp" id="bossHpBar" style="width: 100%;"></div>
-          <div class="fighter-hp-text" id="bossHpVal">80/80 HP</div>
-        </div>
-        <div style="font-family: var(--font-pixel); font-size: 0.48rem; color: var(--accent-turmeric); text-align: right;" id="bossSubtitle">
-          WRONG-SIDE DIVIDER SPECIALIST
+      </div>
+
+      <!-- Action Grid -->
+      <div style="width: 100%; max-width: 950px; margin: 0 auto; pointer-events: auto;">
+        <div class="action-grid" id="actionGrid">
+          <!-- 4 Actions injected dynamically -->
         </div>
       </div>
     </div>
 
-    <!-- Middle Stage (Act Info & Boss Speech Callout) -->
-    <div class="middle-stage">
-      <div class="act-narrative-card">
-        <div class="act-tag">
-          <span id="actNumber">ACT I</span>
-          <span>•</span>
-          <span id="actTime" style="color: var(--accent-teal);">9:15 AM</span>
+    <!-- ======================================================================
+         MODE 2: DELHI METRO STYLE MO BUS 3D TRANSIT SURVIVAL INTERFACE
+         ====================================================================== -->
+    <div id="runner-ui">
+      <!-- Runner Stats (Distance, Coins, Window Seat Chance) -->
+      <div class="runner-top-hud">
+        <div class="runner-stat">
+          <span class="runner-stat-label">DISTANCE TO MO BUS:</span>
+          <span class="runner-stat-val" id="runnerDist">150m</span>
         </div>
-        <div class="act-title-text" id="actTitle">The Rasulgarh Flyover Gridlock</div>
-        <div class="act-odia-sub" id="actOdia">ରସୁଲଗଡ଼ ଫ୍ଲାଏଓଭର ଟ୍ରାଫିକ ଯୁଦ୍ଧ</div>
-        <div class="act-quote-box" id="actAtmosphere">
-          "In Bhubaneswar, distance is measured in how many times a KTM rider with bleached hair can graze your left ankle."
+        <div class="runner-stat">
+          <span class="runner-stat-label">🪙 KHUCHURA COLLECTED:</span>
+          <span class="runner-stat-val" id="runnerCoins">₹0</span>
+        </div>
+        <div class="runner-stat">
+          <span class="runner-stat-label">🪑 WINDOW SEAT CHANCE:</span>
+          <span class="runner-stat-val" id="runnerSeat">95%</span>
         </div>
       </div>
 
-      <div class="boss-shout-card">
-        <div class="boss-role-tag">OPPONENT RETORT:</div>
-        <div class="boss-shout-text" id="bossDialogue">
-          "Dekhiki chala be! Rasta ta tama bapa ra ki?!"
+      <!-- Center Prompt -->
+      <div class="runner-prompt-box" id="runnerPrompt">
+        <div style="font-family: var(--font-pixel); font-size: 0.75rem; color: var(--accent-gold); margin-bottom: 4px;">
+          BHAAGO! CATCH MO BUS ROUTE 20!
+        </div>
+        <div style="font-size: 0.78rem; color: #b0c6dc;">
+          Controls: [A] Left • [D] Right • [W / Space] Jump Bull • [S] Slide Under Barricade
         </div>
       </div>
-    </div>
 
-    <!-- Bottom Control Deck (Benglooru Route Tracker & FightKaro Grid) -->
-    <div class="bottom-deck">
-      <div class="route-tracker-strip">
-        <span class="route-node active" id="node1">📍 1. Rasulgarh</span>
-        <span>➔</span>
-        <span class="route-node" id="node2">2. Saheed Nagar</span>
-        <span>➔</span>
-        <span class="route-node" id="node3">3. Patia</span>
-        <span>➔</span>
-        <span class="route-node" id="node4">4. Omfed</span>
-        <span>➔</span>
-        <span class="route-node" id="node5">5. Jaydev Vihar</span>
-        <span>➔</span>
-        <span class="route-node" id="node6">6. Unit-1 Haat</span>
-        <span>➔</span>
-        <span class="route-node" id="node7">7. Master Canteen</span>
-      </div>
-
-      <div class="action-grid" id="actionGrid">
-        <!-- 4 Actions injected dynamically -->
+      <!-- On-Screen Touch D-Pad for Mobile -->
+      <div class="runner-touch-controls">
+        <button class="btn-run-ctrl" onclick="runnerMoveLeft()">◀ LEFT (A)</button>
+        <button class="btn-run-ctrl" onclick="runnerJump()">▲ JUMP (W)</button>
+        <button class="btn-run-ctrl" onclick="runnerMoveRight()">RIGHT (D) ▶</button>
       </div>
     </div>
   </div>
@@ -777,17 +715,17 @@
     <div style="font-family: var(--font-pixel); font-size: 0.85rem; color: var(--accent-gold); margin-bottom: 10px;">
       🏆 ODISHA SIMULATOR 3D CONQUERED!
     </div>
-    <h2 style="font-size: 1.4rem; color: #fff; margin-bottom: 6px;">
+    <h2 style="font-size: 1.3rem; color: #fff; margin-bottom: 6px;" id="endingTitle">
       THE TRUE TWIN-CITY LEGEND
     </h2>
-    <div style="font-family: var(--font-odia); font-size: 1.1rem; color: var(--accent-turmeric); margin-bottom: 12px;">
+    <div style="font-family: var(--font-odia); font-size: 1.1rem; color: var(--accent-turmeric); margin-bottom: 10px;">
       ଆମ ଗାଡ଼ି, ଆମ ରାସ୍ତା — ତମେ ବିଜୟୀ ହେଲ!
     </div>
-    <p style="font-size: 0.88rem; color: #bed0e2; line-height: 1.6; margin-bottom: 18px;">
+    <p style="font-size: 0.85rem; color: #bed0e2; line-height: 1.6; margin-bottom: 16px;" id="endingDesc">
       You survived the wrong-side Pulsars at Rasulgarh, protected Cuttack Dahibara Aloodum from ketchup desecration, defeated Prafulla Uncle's bachelor rent syndicate, matched Tookna Bhai's acoustic Chuna slaps, debunked the MS-Paint IT fraud, secured 5kg of Nainital Aloo during Kalabaisakhi, and brought Pink Vikram Auto Anna to tears of Kataki brotherhood at Master Canteen!
     </p>
     <button class="btn-ui" style="font-size: 0.75rem; padding: 12px 24px; background: var(--accent-saffron); color: #fff; margin: 0 auto; display: inline-flex;" onclick="restartGame()">
-      🔄 PLAY AGAIN (DIRECTOR'S CUT)
+      🔄 PLAY AGAIN
     </button>
   </div>
 
@@ -795,67 +733,52 @@
   <div class="screenplay-modal" id="screenplayModal">
     <div class="screenplay-content">
       <button class="screenplay-close" id="btnCloseScript">✕ CLOSE SCRIPT</button>
-      <h1 style="color: var(--accent-gold); font-family: var(--font-pixel); font-size: 1rem; margin-bottom: 8px;">
+      <h1 style="color: var(--accent-gold); font-family: var(--font-pixel); font-size: 0.95rem; margin-bottom: 6px;">
         ODISHA SIMULATOR: AMA GADI, AMA RASTA
       </h1>
-      <p style="color: var(--accent-teal); font-size: 0.8rem; margin-bottom: 20px;">
+      <p style="color: var(--accent-teal); font-size: 0.78rem; margin-bottom: 16px;">
         THE COMPLETE 7-ACT DRAMATIC SCREENPLAY • UNCUT DIRECTOR'S CUT
       </p>
 
       <div class="script-act">
-        <h2>Act I: The Rasulgarh Flyover Gridlock (9:15 AM)</h2>
-        <p><strong>Visual Atmosphere:</strong> Morning sun over NH-16. Exhaust fumes from an overloaded Talcher coal truck shimmer against the asphalt. Beneath the flyover, a pink Vikram auto, green Mo Bus Route 20, four stray bulls having a territorial dispute, and two hundred Bajaj Pulsars have achieved geometric lockjaw.</p>
-        <div class="script-dialogue">
-          <strong>Bunty Jena (KTM Chapri):</strong> "Dekhiki chala be! Rasta ta tama bapa ra ki?"
-        </div>
+        <h2 style="color: var(--accent-gold); font-size: 0.85rem;">Act I: The Rasulgarh Flyover Gridlock (9:15 AM)</h2>
+        <p style="font-size: 0.82rem;">Beneath the flyover, a pink Vikram auto, green Mo Bus Route 20, four stray bulls having a territorial dispute, and two hundred Pulsars have achieved geometric lockjaw. KTM Chapri spits crimson gutkha: "Dekhiki chala be! Rasta ta tama bapa ra ki?"</p>
       </div>
 
-      <div class="script-act">
-        <h2>Act II: The Sonic Call of the Dahibara Seller (10:30 AM)</h2>
-        <p><strong>Visual Atmosphere:</strong> Beneath an ancient banyan tree outside Saheed Nagar, a rusted Hero Jet bicycle carries a dented aluminum Handi wrapped in damp crimson cloth. *THAK-THAK-THUNG! ... Kudi-Kudi-THUNG!* Bidyadhar Mausa strikes the steel ladle.</p>
-        <div class="script-dialogue">
-          <strong>The Conflict:</strong> A tech bro asks for Tomato Ketchup &amp; Sweet Corn on the Dahibara. Mausa's ladle hand trembles in sacred fury.
-        </div>
+      <div class="script-act" style="margin-top: 10px;">
+        <h2 style="color: var(--accent-gold); font-size: 0.85rem;">Act II: The Sonic Call of the Dahibara Seller (10:30 AM)</h2>
+        <p style="font-size: 0.82rem;">Outside Saheed Nagar banyan tree. Aluminum Handi in damp red cloth. *THAK-THAK-THUNG!* Bidyadhar Mausa strikes the steel ladle. A tech bro asks for Tomato Ketchup &amp; Sweet Corn. Sacred rage erupts!</p>
       </div>
 
-      <div class="script-act">
-        <h2>Act III: The "Bachelor Hunting" Student Rent Scam (1:15 PM)</h2>
-        <p><strong>Visual Atmosphere:</strong> Waterlogged Patia lane. Neon-green G+2 building. Crooked board: "TO-LET: STRICTLY FOR FAMILY / WORKING GIRLS ONLY. BACHELORS EXCUSE."</p>
-        <div class="script-dialogue">
-          <strong>Prafulla Uncle:</strong> "Advance 4 masa ra. Electric sub-meter re ₹13 per unit. Rati 9:00 PM re gate tala! Swiggy mana!"
-        </div>
+      <div class="script-act" style="margin-top: 10px;">
+        <h2 style="color: var(--accent-gold); font-size: 0.85rem;">Act III: The "Bachelor Hunting" Student Rent Scam (1:15 PM)</h2>
+        <p style="font-size: 0.82rem;">Neon-green Patia G+2 house. Landlord Prafulla Uncle: "Electric sub-meter ₹13/unit! 9 PM gate tala! Friend mana, Swiggy mana!"</p>
       </div>
 
-      <div class="script-act">
-        <h2>Act IV: The Omfed "Tookna" &amp; Pan Dukan Khatti (5:30 PM)</h2>
-        <p><strong>Visual Atmosphere:</strong> Green-and-white Omfed booth. Men on red plastic stools debating geopolitics. *PHAT-PHAT-PHAT! ... CHHAAK!* Tookna Bhai's legendary betel leaf palm slap.</p>
-        <div class="script-dialogue">
-          <strong>Tookna Bhai:</strong> "Babu, khuchura nahi. Chocolate nei jaa, nahale khata re lekhi dauchi."
-        </div>
+      <div class="script-act" style="margin-top: 10px;">
+        <h2 style="color: var(--accent-gold); font-size: 0.85rem;">Act IV: The Omfed "Tookna" &amp; Pan Dukan Khatti (5:30 PM)</h2>
+        <p style="font-size: 0.82rem;">*PHAT-PHAT-CHHAAK!* Tookna Bhai's acoustic Chuna palm slap. "Babu khuchura nahi, chocolate nei jaa!"</p>
       </div>
 
-      <div class="script-act">
-        <h2>Act V: The Fake "IT Placement / Backdoor Offer" Scam (7:00 PM)</h2>
-        <p><strong>Visual Atmosphere:</strong> 10x10 Jaydev Vihar cabin. Leaking AC dripping into bucket. MS-Paint TCS+Infosys merged offer letter.</p>
-        <div class="script-dialogue">
-          <strong>HR Subrat:</strong> "Direct Bangalore package—6.5 LPA! Only ₹15,000 Laptop Security fee azi GPay kari diya!"
-        </div>
+      <div class="script-act" style="margin-top: 10px;">
+        <h2 style="color: var(--accent-gold); font-size: 0.85rem;">Act V: The Fake "IT Placement / Backdoor Offer" Scam (7:00 PM)</h2>
+        <p style="font-size: 0.82rem;">Jaydev Vihar 10x10 cabin. Leaking AC into bucket. MS-Paint TCS+Infosys 6.5 LPA Bangalore offer letter for ₹15k GPay.</p>
       </div>
 
-      <div class="script-act">
-        <h2>Act VI: The Kalabaisakhi Cyclone Panic at Unit-1 Haat (8:30 PM)</h2>
-        <p><strong>Visual Atmosphere:</strong> Bruised purple sky in 4 minutes. Mad Max potato run. 3 Sambalpuri saree aunties lock horns over the last 5kg sack of Nainital Aloo.</p>
+      <div class="script-act" style="margin-top: 10px;">
+        <h2 style="color: var(--accent-gold); font-size: 0.85rem;">Act VI: The Kalabaisakhi Cyclone Panic at Unit-1 Haat (8:30 PM)</h2>
+        <p style="font-size: 0.82rem;">Bruised purple sky. 3 Sambalpuri saree aunties locked in tug-of-war over the last 5kg sack of Nainital Aloo.</p>
       </div>
 
-      <div class="script-act">
-        <h2>Act VII: Final Showdown at Master Canteen (10:30 PM)</h2>
-        <p><strong>Visual Atmosphere:</strong> Iconic stone horse gleaming in torrential rain. Pink Vikram Auto Anna blocking the road to Kalpana Square demanding ₹350.</p>
+      <div class="script-act" style="margin-top: 10px;">
+        <h2 style="color: var(--accent-gold); font-size: 0.85rem;">Act VII: Final Showdown at Master Canteen (10:30 PM)</h2>
+        <p style="font-size: 0.82rem;">Stone warrior horse in torrential rain. Pink Vikram Auto Anna demanding ₹350 to Kalpana Square because "Barsha hauchi babu!"</p>
       </div>
     </div>
   </div>
 
   <!-- ==========================================================================
-       JAVASCRIPT: 3D ENGINE, SPATIAL AUDIO, FIGHTKARO & BENGLOORU MECHANICS
+       JAVASCRIPT: 3D ENGINE, SPATIAL AUDIO & COMBINED GAME MODES
        ========================================================================== -->
   <script>
     /* ==========================================================================
@@ -1048,6 +971,23 @@
         osc.stop(now + 0.3);
       }
 
+      playCoin() {
+        if (!this.enabled) return;
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(987.77, now);
+        osc.frequency.setValueAtTime(1318.51, now + 0.08);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.25);
+      }
+
       playVictory() {
         if (!this.enabled) return;
         this.init();
@@ -1108,8 +1048,8 @@
        ========================================================================== */
     const container = document.getElementById('webgl-canvas');
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x070a0e);
-    scene.fog = new THREE.FogExp2(0x070a0e, 0.024);
+    scene.background = new THREE.Color(0x06090d);
+    scene.fog = new THREE.FogExp2(0x06090d, 0.024);
 
     const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 4.5, 12);
@@ -1121,7 +1061,6 @@
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
 
-    // Global Lights
     const hemiLight = new THREE.HemisphereLight(0xffeedd, 0x111122, 0.6);
     scene.add(hemiLight);
 
@@ -1134,11 +1073,15 @@
     pointLight.position.set(0, 3, 0);
     scene.add(pointLight);
 
-    // Dynamic Act 3D Node Group
+    // Dynamic Act 3D Node Group (For FightKaro 1v1)
     const actGroup = new THREE.Group();
     scene.add(actGroup);
 
-    // Player 3D Avatar (Standing on Left)
+    // Runner 3D Node Group (For Delhi Metro / Mo Bus Survival)
+    const runnerGroup = new THREE.Group();
+    scene.add(runnerGroup);
+
+    // Player 3D Avatar
     const player3D = new THREE.Group();
     player3D.position.set(-2.5, 0, 3.0);
     player3D.rotation.y = Math.PI / 4;
@@ -1152,7 +1095,7 @@
     ground.receiveShadow = true;
     scene.add(ground);
 
-    // Particle System (Rain / Weather)
+    // Particle Weather System
     const particleCount = 750;
     const particleGeo = new THREE.BufferGeometry();
     const particlePositions = new Float32Array(particleCount * 3);
@@ -1231,12 +1174,10 @@
         canopy.position.set(-4, 9, -3);
         group.add(canopy);
 
-        // Aluminum Handi
         const handi = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.95, 1.1, 16), new THREE.MeshStandardMaterial({ color: 0xb0bec5, metalness: 0.8 }));
         handi.position.set(0, 1.4, -0.9);
         group.add(handi);
 
-        // Crimson Cloth
         const cloth = new THREE.Mesh(new THREE.CylinderGeometry(0.78, 0.98, 0.45, 16), new THREE.MeshStandardMaterial({ color: 0xb71c1c }));
         cloth.position.set(0, 1.25, -0.9);
         group.add(cloth);
@@ -1285,6 +1226,27 @@
         return group;
       },
 
+      // Stray Zebu Cow / Bull Obstacle (For Runner)
+      createStrayCow() {
+        const group = new THREE.Group();
+        const cowMat = new THREE.MeshStandardMaterial({ color: 0xeeeeee });
+        const body = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.9, 1.8), cowMat);
+        body.position.y = 0.8;
+        group.add(body);
+
+        // Hump
+        const hump = new THREE.Mesh(new THREE.SphereGeometry(0.35, 8, 8), cowMat);
+        hump.position.set(0, 1.35, 0.3);
+        group.add(hump);
+
+        // Head & Horns
+        const head = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.7), cowMat);
+        head.position.set(0, 1.2, 1.1);
+        group.add(head);
+
+        return group;
+      },
+
       createHumanoid(hairColor = 0x212121, shirtColor = 0xffffff) {
         const char = new THREE.Group();
         const head = new THREE.Mesh(new THREE.SphereGeometry(0.35, 12, 12), new THREE.MeshStandardMaterial({ color: 0xd7ccc8 }));
@@ -1306,13 +1268,9 @@
       }
     };
 
-    // Build Player Commuter 3D Mesh
     const playerMesh = MeshFactory.createHumanoid(0x212121, 0x00b0ff);
     player3D.add(playerMesh);
 
-    /* ==========================================================================
-       3. COMIC BURST POPUP GENERATOR
-       ========================================================================== */
     function spawnComic(text, x = null, y = null) {
       const burst = document.createElement('div');
       burst.className = 'comic-burst';
@@ -1324,7 +1282,41 @@
     }
 
     /* ==========================================================================
-       4. GAMEPLAY STATE & THE 7 DRAMATIC ACTS
+       3. MODE CONTROLLER (FIGHTKARO vs DELHI METRO MO BUS SURVIVAL)
+       ========================================================================== */
+    let currentMode = 'FIGHT'; // 'FIGHT' or 'RUNNER'
+
+    function switchMode(mode) {
+      currentMode = mode;
+      document.getElementById('btnModeFight').className = mode === 'FIGHT' ? 'btn-mode active' : 'btn-mode';
+      document.getElementById('btnModeRunner').className = mode === 'RUNNER' ? 'btn-mode active' : 'btn-mode';
+
+      if (mode === 'FIGHT') {
+        document.getElementById('fightkaro-ui').style.display = 'flex';
+        document.getElementById('runner-ui').style.display = 'none';
+        runnerGroup.visible = false;
+        actGroup.visible = true;
+
+        player3D.position.set(-2.5, 0, 3.0);
+        player3D.rotation.set(0, Math.PI / 4, 0);
+        camera.position.set(0, 4.5, 12);
+        camera.lookAt(0, 1.5, 0);
+        loadAct(state.actIndex);
+      } else {
+        document.getElementById('fightkaro-ui').style.display = 'none';
+        document.getElementById('runner-ui').style.display = 'flex';
+        actGroup.visible = false;
+        runnerGroup.visible = true;
+        initRunnerMode();
+      }
+      sound.playBlip();
+    }
+
+    document.getElementById('btnModeFight').addEventListener('click', () => switchMode('FIGHT'));
+    document.getElementById('btnModeRunner').addEventListener('click', () => switchMode('RUNNER'));
+
+    /* ==========================================================================
+       4. MODE 1: FIGHTKARO STATE & LOGIC
        ========================================================================== */
     const state = {
       actIndex: 0,
@@ -1670,9 +1662,6 @@
       }
     ];
 
-    /* ==========================================================================
-       5. COMBAT & HUD CONTROLLER
-       ========================================================================== */
     function loadAct(idx) {
       if (idx >= ACTS.length) {
         showEnding();
@@ -1689,16 +1678,13 @@
       };
       state.battleActive = true;
 
-      // Clear & rebuild 3D Scene
       while (actGroup.children.length > 0) {
         actGroup.remove(actGroup.children[0]);
       }
       act.buildScene(actGroup);
 
-      // Trigger FightKaro Round Announcer Banner
       triggerAnnouncer(`ROUND ${idx + 1}`, "FIGHT!");
 
-      // Update UI cards
       document.getElementById('actNumber').innerText = act.number;
       document.getElementById('actTime').innerText = act.time;
       document.getElementById('actTitle').innerText = act.title;
@@ -1708,15 +1694,6 @@
       document.getElementById('bossSubtitle').innerText = act.bossTitle;
       document.getElementById('bossName').innerText = act.bossName;
       document.getElementById('bossDialogue').innerText = `"${act.dialogue}"`;
-
-      // Update Benglooru route node tracker
-      for (let i = 1; i <= 7; i++) {
-        const node = document.getElementById(`node${i}`);
-        if (node) {
-          if (i === idx + 1) node.className = 'route-node active';
-          else node.className = 'route-node';
-        }
-      }
 
       updateHUD();
       renderActionButtons(act);
@@ -1751,12 +1728,12 @@
         const btn = document.createElement('button');
         btn.className = `action-btn ${m.isSuper ? 'super-btn' : ''}`;
         btn.innerHTML = `
-          <div class="action-title">
+          <div style="font-family: var(--font-pixel); font-size: 0.55rem; color: var(--accent-gold); display: flex; justify-content: space-between;">
             <span>${m.title}</span>
-            <span class="action-key">[${i + 1}]</span>
+            <span style="font-size: 0.45rem; background: #0b1016; border: 1px solid #33475f; padding: 1px 3px; border-radius: 2px; color: var(--accent-teal);">[${i + 1}]</span>
           </div>
-          <div class="action-desc">${m.desc}</div>
-          <div class="action-cost">${m.cost}</div>
+          <div style="font-size: 0.7rem; color: var(--text-muted); line-height: 1.25;">${m.desc}</div>
+          <div style="font-size: 0.55rem; color: var(--accent-saffron); font-weight: 600;">${m.cost}</div>
         `;
         btn.addEventListener('click', () => m.fn());
         grid.appendChild(btn);
@@ -1839,7 +1816,6 @@
       camera.position.y += isSuper ? 0.6 : 0.35;
       setTimeout(() => camera.position.y -= isSuper ? 0.6 : 0.35, 120);
 
-      // Dash player mesh forward
       player3D.position.x += 0.4;
       setTimeout(() => player3D.position.x -= 0.4, 150);
     }
@@ -1858,15 +1834,227 @@
     }
 
     /* ==========================================================================
-       6. CONTROLS & LISTENERS
+       5. MODE 2: DELHI METRO STYLE MO BUS 3D TRANSIT SURVIVAL (RUNNER)
+       ========================================================================== */
+    const runnerState = {
+      active: false,
+      distance: 150,
+      coins: 0,
+      windowSeatChance: 95,
+      lane: 1, // 0: Left (-2.2), 1: Center (0), 2: Right (2.2)
+      targetX: 0,
+      playerY: 0,
+      vy: 0,
+      isJumping: false,
+      obstacles: [],
+      coinsList: [],
+      roadZ: 0,
+      moBusMesh: null
+    };
+
+    const LANES_X = [-2.4, 0, 2.4];
+
+    function initRunnerMode() {
+      runnerState.active = true;
+      runnerState.distance = 150;
+      runnerState.coins = 0;
+      runnerState.windowSeatChance = 95;
+      runnerState.lane = 1;
+      runnerState.targetX = 0;
+      runnerState.playerY = 0;
+      runnerState.vy = 0;
+      runnerState.isJumping = false;
+      runnerState.obstacles = [];
+      runnerState.coinsList = [];
+
+      // Clear runnerGroup
+      while (runnerGroup.children.length > 0) {
+        runnerGroup.remove(runnerGroup.children[0]);
+      }
+
+      // Build 3-Lane Janpath Road Mesh
+      const roadGeo = new THREE.PlaneGeometry(8, 120);
+      const roadMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.9 });
+      const road = new THREE.Mesh(roadGeo, roadMat);
+      road.rotation.x = -Math.PI / 2;
+      road.position.set(0, 0.02, -40);
+      runnerGroup.add(road);
+
+      // Lane dividers
+      for (let i = -80; i <= 20; i += 6) {
+        [-1.2, 1.2].forEach(lx => {
+          const dash = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.05, 2.5), new THREE.MeshBasicMaterial({ color: 0xffeb3b }));
+          dash.position.set(lx, 0.04, i);
+          runnerGroup.add(dash);
+        });
+      }
+
+      // Mo Bus Route 20 waiting at finish line (z = -140)
+      runnerState.moBusMesh = MeshFactory.createMoBus();
+      runnerState.moBusMesh.position.set(0, 0, -140);
+      runnerGroup.add(runnerState.moBusMesh);
+
+      // Spawn initial obstacles (Stray Bulls, Barricades, Puddles)
+      for (let z = -20; z >= -120; z -= 14) {
+        const laneIdx = Math.floor(Math.random() * 3);
+        const type = Math.random() < 0.5 ? 'bull' : 'barricade';
+        let mesh;
+        if (type === 'bull') {
+          mesh = MeshFactory.createStrayCow();
+        } else {
+          mesh = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.7, 0.4), new THREE.MeshStandardMaterial({ color: 0xd32f2f }));
+          mesh.position.y = 0.35;
+        }
+        mesh.position.x = LANES_X[laneIdx];
+        mesh.position.z = z;
+        runnerGroup.add(mesh);
+        runnerState.obstacles.push({ mesh, lane: laneIdx, z: z, type });
+
+        // Coin in other lane
+        const coinLane = (laneIdx + 1) % 3;
+        const coin = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.08, 16), new THREE.MeshBasicMaterial({ color: 0xffd600 }));
+        coin.rotation.x = Math.PI / 2;
+        coin.position.set(LANES_X[coinLane], 0.6, z);
+        runnerGroup.add(coin);
+        runnerState.coinsList.push({ mesh: coin, lane: coinLane, z: z, collected: false });
+      }
+
+      // Setup Camera for 3rd Person Runner
+      camera.position.set(0, 4.0, 7.5);
+      camera.lookAt(0, 1.4, -10);
+
+      // Setup Player in Runner
+      player3D.position.set(0, 0, 2.0);
+      player3D.rotation.set(0, Math.PI, 0);
+
+      updateRunnerHUD();
+      sound.playMoBusAirHorn();
+      spawnComic("BHAAGO! CATCH MO BUS! 🚌");
+    }
+
+    function runnerMoveLeft() {
+      if (!runnerState.active) return;
+      if (runnerState.lane > 0) {
+        runnerState.lane--;
+        runnerState.targetX = LANES_X[runnerState.lane];
+        sound.playBlip();
+      }
+    }
+
+    function runnerMoveRight() {
+      if (!runnerState.active) return;
+      if (runnerState.lane < 2) {
+        runnerState.lane++;
+        runnerState.targetX = LANES_X[runnerState.lane];
+        sound.playBlip();
+      }
+    }
+
+    function runnerJump() {
+      if (!runnerState.active || runnerState.isJumping) return;
+      runnerState.vy = 0.28;
+      runnerState.isJumping = true;
+      sound.playBlip();
+      spawnComic("JUMP! 🦘");
+    }
+
+    function updateRunnerHUD() {
+      document.getElementById('runnerDist').innerText = `${Math.max(0, Math.round(runnerState.distance))}m`;
+      document.getElementById('runnerCoins').innerText = `₹${runnerState.coins}`;
+      document.getElementById('runnerSeat').innerText = `${runnerState.windowSeatChance}%`;
+    }
+
+    function updateRunnerPhysics(delta) {
+      if (!runnerState.active) return;
+
+      // Forward run progress
+      const speed = 18 * delta;
+      runnerState.distance -= speed;
+      updateRunnerHUD();
+
+      // Smooth horizontal lane transition
+      player3D.position.x += (runnerState.targetX - player3D.position.x) * 0.25;
+
+      // Jump gravity physics
+      if (runnerState.isJumping) {
+        runnerState.playerY += runnerState.vy;
+        runnerState.vy -= 0.6 * delta;
+        if (runnerState.playerY <= 0) {
+          runnerState.playerY = 0;
+          runnerState.isJumping = false;
+        }
+      }
+      player3D.position.y = runnerState.playerY;
+
+      // Move camera smoothly behind player
+      camera.position.x = player3D.position.x * 0.4;
+
+      // Check obstacle collisions
+      const playerZ = - (150 - runnerState.distance);
+      runnerState.obstacles.forEach(obs => {
+        if (!obs.hit && Math.abs(obs.z - playerZ) < 1.2 && obs.lane === runnerState.lane) {
+          if (obs.type === 'barricade' && runnerState.playerY > 0.6) {
+            // Jumped over barricade successfully!
+            spawnComic("CLEAR! ⚡");
+          } else {
+            obs.hit = true;
+            sound.playHit();
+            spawnComic("DHAMAAK! 💥");
+            runnerState.windowSeatChance = Math.max(10, runnerState.windowSeatChance - 25);
+            updateRunnerHUD();
+          }
+        }
+      });
+
+      // Check coin collections
+      runnerState.coinsList.forEach(coin => {
+        if (!coin.collected && Math.abs(coin.z - playerZ) < 1.4 && coin.lane === runnerState.lane) {
+          coin.collected = true;
+          coin.mesh.visible = false;
+          runnerState.coins += 10;
+          sound.playCoin();
+          spawnComic("+₹10 COIN! 🪙");
+          updateRunnerHUD();
+        }
+      });
+
+      // Reached Mo Bus finish line
+      if (runnerState.distance <= 0) {
+        runnerState.active = false;
+        sound.playVictory();
+        sound.playMoBusAirHorn();
+
+        const endingPrompt = document.getElementById('runnerPrompt');
+        endingPrompt.innerHTML = `
+          <div style="font-family: var(--font-pixel); font-size: 0.95rem; color: var(--accent-gold); margin-bottom: 6px;">
+            🎉 MO BUS CAUGHT! WINDOW SEAT SECURED!
+          </div>
+          <div style="font-size: 0.85rem; color: #fff;">
+            You scrambled past Uncle's briefcase and claimed the ultimate breeze-facing seat on Route 20!
+          </div>
+          <button class="btn-ui" style="margin-top: 10px; background: var(--accent-green); color: #000; font-weight: bold;" onclick="initRunnerMode()">
+            🔄 RUN AGAIN
+          </button>
+        `;
+      }
+    }
+
+    /* ==========================================================================
+       6. KEYBOARD & CONTROLS
        ========================================================================== */
     window.addEventListener('keydown', (e) => {
-      if (['1', '2', '3', '4'].includes(e.key)) {
-        const idx = parseInt(e.key) - 1;
-        const act = ACTS[state.actIndex];
-        if (act && act.moves && act.moves[idx]) {
-          act.moves[idx].fn();
+      if (currentMode === 'FIGHT') {
+        if (['1', '2', '3', '4'].includes(e.key)) {
+          const idx = parseInt(e.key) - 1;
+          const act = ACTS[state.actIndex];
+          if (act && act.moves && act.moves[idx]) {
+            act.moves[idx].fn();
+          }
         }
+      } else if (currentMode === 'RUNNER') {
+        if (e.key === 'a' || e.key === 'ArrowLeft') runnerMoveLeft();
+        else if (e.key === 'd' || e.key === 'ArrowRight') runnerMoveRight();
+        else if (e.key === 'w' || e.key === ' ' || e.key === 'ArrowUp') runnerJump();
       }
     });
 
@@ -1894,7 +2082,8 @@
 
     document.getElementById('btnRestart').addEventListener('click', () => {
       sound.playBlip();
-      restartGame();
+      if (currentMode === 'FIGHT') restartGame();
+      else initRunnerMode();
     });
 
     window.addEventListener('resize', () => {
@@ -1913,17 +2102,21 @@
       const delta = clock.getDelta();
       const elapsed = clock.getElapsedTime();
 
-      // Idle vehicle & character bounce
-      if (actGroup.children.length > 0) {
-        actGroup.children.forEach((obj, idx) => {
-          if (obj.isGroup) {
-            obj.position.y += Math.sin(elapsed * 6 + idx) * 0.0015;
-          }
-        });
+      if (currentMode === 'FIGHT') {
+        if (actGroup.children.length > 0) {
+          actGroup.children.forEach((obj, idx) => {
+            if (obj.isGroup) {
+              obj.position.y += Math.sin(elapsed * 6 + idx) * 0.0015;
+            }
+          });
+        }
+        player3D.position.y = Math.sin(elapsed * 5) * 0.04;
+      } else if (currentMode === 'RUNNER') {
+        updateRunnerPhysics(delta);
+        runnerState.coinsList.forEach(c => c.mesh.rotation.z += delta * 4);
       }
-      player3D.position.y = Math.sin(elapsed * 5) * 0.04;
 
-      // Animate particles
+      // Animate weather particles
       const positions = particleGeo.attributes.position.array;
       for (let i = 1; i < particleCount * 3; i += 3) {
         positions[i] -= delta * 18;
