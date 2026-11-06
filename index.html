@@ -3,25 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ODISHA SIMULATOR: AMA GADI, AMA RASTA (3D Director's Cut)</title>
+  <title>ODISHA SIMULATOR: AMA GADI, AMA RASTA (FightKaro x Benglooru 3D Edition)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;600;700&family=Tiro+Odia:ital@0;1&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;600;700;800&family=Tiro+Odia:ital@0;1&display=swap" rel="stylesheet">
   <!-- Three.js r128 CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     :root {
-      --bg-color: #080b0f;
-      --card-bg: rgba(16, 23, 34, 0.88);
-      --card-border: #233446;
-      --text-main: #f0f4f8;
-      --text-muted: #8b9eb3;
+      --bg-color: #070a0e;
+      --card-bg: rgba(14, 20, 30, 0.90);
+      --card-border: #24364a;
+      --text-main: #f0f5fa;
+      --text-muted: #8b9fb5;
       --accent-saffron: #ff6d00;
       --accent-gold: #ffd600;
       --accent-turmeric: #ffab00;
       --accent-teal: #00e5ff;
       --accent-green: #00e676;
       --accent-red: #ff1744;
+      --accent-purple: #b388ff;
       --font-pixel: 'Press Start 2P', monospace;
       --font-ui: 'Space Grotesk', -apple-system, sans-serif;
       --font-odia: 'Tiro Odia', serif;
@@ -57,23 +58,22 @@
       z-index: 1;
     }
 
-    /* CRT Scanline Overlay */
+    /* Retro CRT Scanlines (Benglooru / FightKaro Aesthetic) */
     .crt-overlay {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
       pointer-events: none;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.22) 50%);
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.24) 50%);
       background-size: 100% 3px;
       z-index: 10;
       opacity: 0.65;
     }
 
-    /* Vignette */
     .vignette-overlay {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
       pointer-events: none;
-      box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.7);
+      box-shadow: inset 0 0 110px rgba(0, 0, 0, 0.75);
       z-index: 11;
     }
 
@@ -86,19 +86,19 @@
       flex-direction: column;
       justify-content: space-between;
       pointer-events: none;
-      padding: 12px 16px;
+      padding: 10px 14px;
     }
 
-    /* Header Nav */
+    /* Top Navigation Header */
     header {
       width: 100%;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(11, 16, 24, 0.85);
+      background: rgba(11, 16, 24, 0.88);
       border: 1px solid var(--card-border);
       border-radius: 8px;
-      padding: 10px 16px;
+      padding: 8px 14px;
       backdrop-filter: blur(8px);
       pointer-events: auto;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
@@ -106,11 +106,11 @@
 
     .brand-title {
       font-family: var(--font-pixel);
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--accent-gold);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .brand-sub {
@@ -121,7 +121,7 @@
 
     .header-btns {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       align-items: center;
     }
 
@@ -129,74 +129,179 @@
       background: #141f2d;
       border: 1px solid var(--card-border);
       color: var(--text-main);
-      padding: 6px 12px;
+      padding: 6px 10px;
       font-family: var(--font-pixel);
-      font-size: 0.58rem;
+      font-size: 0.55rem;
       border-radius: 4px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.16s ease;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       pointer-events: auto;
     }
 
     .btn-ui:hover, .btn-ui.active {
       border-color: var(--accent-teal);
       color: var(--accent-teal);
-      box-shadow: 0 0 12px rgba(0, 229, 255, 0.35);
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.35);
     }
 
-    /* Player HUD */
-    .hud-row {
+    /* Benglooru-style Street Soundboard Bar */
+    .soundboard-strip {
       width: 100%;
-      max-width: 850px;
-      margin: 8px auto 0;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      background: rgba(11, 16, 24, 0.82);
-      border: 1px solid #1f2f42;
+      max-width: 950px;
+      margin: 6px auto 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(9, 14, 20, 0.85);
+      border: 1px solid #1a2736;
       border-radius: 6px;
-      padding: 8px 14px;
+      padding: 4px 8px;
       backdrop-filter: blur(6px);
       pointer-events: auto;
+      overflow-x: auto;
     }
 
-    .hud-stat {
+    .sb-label {
+      font-family: var(--font-pixel);
+      font-size: 0.5rem;
+      color: var(--accent-turmeric);
+      white-space: nowrap;
+      margin-right: 4px;
+    }
+
+    .sb-btn {
+      background: #121a24;
+      border: 1px solid #233446;
+      color: #cad8e6;
+      font-size: 0.65rem;
+      padding: 3px 7px;
+      border-radius: 3px;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.12s ease;
+    }
+
+    .sb-btn:hover {
+      background: #1b2636;
+      border-color: var(--accent-gold);
+      color: #fff;
+    }
+
+    /* FightKaro Arcade Health Bars (Top Arena HUD) */
+    .arcade-hud-row {
+      width: 100%;
+      max-width: 950px;
+      margin: 6px auto 0;
+      display: grid;
+      grid-template-columns: 1fr 60px 1fr;
+      align-items: center;
+      gap: 12px;
+      background: rgba(10, 15, 22, 0.88);
+      border: 2px solid #213244;
+      border-radius: 8px;
+      padding: 8px 14px;
+      backdrop-filter: blur(8px);
+      pointer-events: auto;
+      box-shadow: 0 6px 25px rgba(0,0,0,0.6);
+    }
+
+    .fighter-hud-card {
       display: flex;
       flex-direction: column;
       gap: 4px;
     }
 
-    .hud-label {
+    .fighter-hud-name {
       font-family: var(--font-pixel);
-      font-size: 0.52rem;
-      color: var(--text-muted);
+      font-size: 0.62rem;
+      color: #fff;
       display: flex;
-      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
     }
 
-    .progress-track {
+    .fighter-hp-track {
       width: 100%;
-      height: 8px;
-      background: #080c12;
+      height: 14px;
+      background: #06090e;
+      border: 1px solid #33485e;
       border-radius: 3px;
       overflow: hidden;
-      border: 1px solid #1a2736;
+      position: relative;
     }
 
-    .progress-fill {
+    .fighter-hp-fill {
       height: 100%;
-      transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .fill-izzat { background: linear-gradient(90deg, #d50000, #ff5252); }
-    .fill-petara { background: linear-gradient(90deg, #ffab00, #ffd600); }
-    .fill-bp { background: linear-gradient(90deg, #651fff, #b388ff); }
-    .fill-cash { background: linear-gradient(90deg, #00b0ff, #00e676); }
+    .fill-player-hp {
+      background: linear-gradient(90deg, #00b0ff, #00e676);
+    }
 
-    /* Middle 3D Info Cards */
+    .fill-boss-hp {
+      background: linear-gradient(90deg, #d50000, #ff1744);
+    }
+
+    .fighter-hp-text {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-pixel);
+      font-size: 0.52rem;
+      color: #fff;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    .arcade-vs-box {
+      font-family: var(--font-pixel);
+      font-size: 1.1rem;
+      color: var(--accent-gold);
+      text-align: center;
+      text-shadow: 0 0 10px rgba(255, 214, 0, 0.7);
+      background: #172230;
+      border: 1px solid var(--accent-saffron);
+      border-radius: 4px;
+      padding: 4px 6px;
+    }
+
+    /* Super Move / Torani Meter */
+    .super-meter-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .super-meter-label {
+      font-family: var(--font-pixel);
+      font-size: 0.48rem;
+      color: var(--accent-purple);
+    }
+
+    .super-meter-track {
+      flex: 1;
+      height: 6px;
+      background: #080c12;
+      border: 1px solid #2a1f44;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .super-meter-fill {
+      height: 100%;
+      width: 30%;
+      background: linear-gradient(90deg, #7c4dff, #b388ff, #ff80ab);
+      transition: width 0.2s ease;
+    }
+
+    /* Middle 3D Act Presentation Overlay */
     .middle-stage {
       flex: 1;
       display: flex;
@@ -206,13 +311,13 @@
       pointer-events: none;
     }
 
-    .act-info-card {
-      background: rgba(15, 23, 33, 0.88);
+    .act-narrative-card {
+      background: rgba(13, 19, 28, 0.90);
       border: 2px solid var(--card-border);
       border-left: 4px solid var(--accent-saffron);
       border-radius: 8px;
-      padding: 14px 18px;
-      max-width: 440px;
+      padding: 12px 16px;
+      max-width: 420px;
       backdrop-filter: blur(8px);
       pointer-events: auto;
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
@@ -220,90 +325,147 @@
 
     .act-tag {
       font-family: var(--font-pixel);
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       color: var(--accent-gold);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
-    .act-name {
-      font-size: 1.2rem;
+    .act-title-text {
+      font-size: 1.15rem;
       font-weight: 700;
       color: #fff;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
 
-    .act-name-odia {
+    .act-odia-sub {
       font-family: var(--font-odia);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       color: var(--accent-turmeric);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
-    .act-quote {
-      font-size: 0.82rem;
+    .act-quote-box {
+      font-size: 0.78rem;
       color: #cfdbe6;
-      line-height: 1.5;
+      line-height: 1.45;
       font-style: italic;
     }
 
-    /* 3D Boss Card (Right Side) */
-    .boss-hud-card {
-      background: rgba(22, 14, 20, 0.9);
-      border: 2px solid #571a2a;
+    /* Boss Speech Callout */
+    .boss-shout-card {
+      background: rgba(26, 12, 18, 0.92);
+      border: 2px solid #571626;
       border-right: 4px solid #ff1744;
       border-radius: 8px;
-      padding: 14px 18px;
-      min-width: 300px;
+      padding: 12px 16px;
       max-width: 380px;
+      text-align: right;
       backdrop-filter: blur(8px);
       pointer-events: auto;
       box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-      text-align: right;
     }
 
-    .boss-title {
+    .boss-role-tag {
       font-family: var(--font-pixel);
-      font-size: 0.55rem;
+      font-size: 0.52rem;
       color: #ff5252;
       margin-bottom: 4px;
     }
 
-    .boss-name {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 8px;
-    }
-
-    .boss-dialogue-shout {
-      background: #2b0b14;
+    .boss-shout-text {
+      background: #2b0811;
       border: 1px dashed #ff5252;
       padding: 6px 10px;
       border-radius: 4px;
       font-size: 0.78rem;
       color: #ff80ab;
       font-style: italic;
-      margin-bottom: 8px;
       animation: alertPulse 1.8s infinite alternate;
     }
 
     @keyframes alertPulse {
-      from { transform: scale(0.99); opacity: 0.85; }
+      from { transform: scale(0.99); opacity: 0.88; }
       to { transform: scale(1.02); opacity: 1; filter: drop-shadow(0 0 8px #ff1744); }
     }
 
-    /* Bottom Control Deck (FightKaro 4-Button Grid) */
+    /* FightKaro Dramatic Round Banner (Overlay) */
+    .fightkaro-announcer {
+      position: absolute;
+      top: 42%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      font-family: var(--font-pixel);
+      font-size: 2.2rem;
+      color: var(--accent-gold);
+      text-shadow: 0 0 20px rgba(255, 214, 0, 0.9), 4px 4px 0 #000;
+      z-index: 100;
+      pointer-events: none;
+      text-align: center;
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .fightkaro-announcer.show {
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* Comic Onomatopoeia Popups (DISHUUM! CHHAAK!) */
+    .comic-burst {
+      position: absolute;
+      font-family: var(--font-pixel);
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #ffd600;
+      text-shadow: 3px 3px 0 #d50000, -2px -2px 0 #000;
+      pointer-events: none;
+      z-index: 150;
+      animation: comicPop 0.8s ease-out forwards;
+      transform-origin: center;
+    }
+
+    @keyframes comicPop {
+      0% { transform: scale(0.4) rotate(-15deg); opacity: 1; }
+      50% { transform: scale(1.3) rotate(5deg); opacity: 1; }
+      100% { transform: scale(1.1) translateY(-40px) rotate(10deg); opacity: 0; }
+    }
+
+    /* Bottom Control Deck (FightKaro 4-Action Grid) */
     .bottom-deck {
       width: 100%;
       max-width: 950px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
       pointer-events: auto;
+    }
+
+    /* Benglooru Route Indicator */
+    .route-tracker-strip {
+      display: flex;
+      justify-content: space-between;
+      background: rgba(8, 12, 17, 0.88);
+      border: 1px solid #1c2a38;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      align-items: center;
+    }
+
+    .route-node {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      opacity: 0.5;
+    }
+
+    .route-node.active {
+      opacity: 1;
+      color: var(--accent-gold);
+      font-weight: bold;
     }
 
     .action-grid {
@@ -313,7 +475,7 @@
     }
 
     .action-btn {
-      background: rgba(18, 26, 36, 0.92);
+      background: rgba(18, 26, 36, 0.94);
       border: 2px solid #233549;
       border-radius: 6px;
       padding: 10px 12px;
@@ -321,17 +483,29 @@
       cursor: pointer;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
       text-align: left;
       transition: all 0.16s ease;
       backdrop-filter: blur(6px);
+      position: relative;
+      overflow: hidden;
     }
 
     .action-btn:hover:not(:disabled) {
       background: #1c2c3e;
       border-color: var(--accent-teal);
-      transform: translateY(-3px);
+      transform: translateY(-2px);
       box-shadow: 0 6px 16px rgba(0, 229, 255, 0.25);
+    }
+
+    .action-btn.super-btn {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 10px rgba(179, 136, 255, 0.4);
+    }
+
+    .action-btn.super-btn:hover:not(:disabled) {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 16px rgba(255, 214, 0, 0.6);
     }
 
     .action-btn:disabled {
@@ -349,7 +523,7 @@
     }
 
     .action-key {
-      font-size: 0.5rem;
+      font-size: 0.48rem;
       background: #0b1016;
       border: 1px solid #33475f;
       padding: 2px 4px;
@@ -364,38 +538,12 @@
     }
 
     .action-cost {
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       color: var(--accent-saffron);
       font-weight: 600;
     }
 
-    /* Battle Log Strip */
-    .battle-log-strip {
-      height: 38px;
-      overflow-y: hidden;
-      background: rgba(8, 12, 17, 0.88);
-      border: 1px solid #1a2533;
-      border-radius: 4px;
-      padding: 6px 12px;
-      font-family: monospace;
-      font-size: 0.75rem;
-      color: #a4b8cc;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .log-badge {
-      font-family: var(--font-pixel);
-      font-size: 0.55rem;
-      background: #1b2634;
-      padding: 3px 6px;
-      border-radius: 3px;
-      color: var(--accent-teal);
-      white-space: nowrap;
-    }
-
-    /* Screenplay Modal */
+    /* Screenplay Reader Modal */
     .screenplay-modal {
       display: none;
       position: fixed;
@@ -459,22 +607,6 @@
       font-style: italic;
     }
 
-    /* 3D Camera Mode Badge */
-    .camera-mode-badge {
-      position: absolute;
-      top: 70px;
-      left: 18px;
-      background: rgba(14, 21, 30, 0.85);
-      border: 1px solid #223447;
-      border-radius: 4px;
-      padding: 4px 8px;
-      font-family: var(--font-pixel);
-      font-size: 0.52rem;
-      color: var(--accent-teal);
-      pointer-events: auto;
-      cursor: pointer;
-    }
-
     /* Ending Overlay */
     .ending-overlay {
       display: none;
@@ -499,11 +631,12 @@
 
     /* Responsive */
     @media (max-width: 800px) {
-      .hud-row { grid-template-columns: 1fr 1fr; }
+      .arcade-hud-row { grid-template-columns: 1fr; gap: 6px; }
+      .arcade-vs-box { display: none; }
       .action-grid { grid-template-columns: 1fr 1fr; }
-      .middle-stage { flex-direction: column; align-items: stretch; gap: 8px; }
-      .boss-hud-card { text-align: left; border-right: none; border-left: 4px solid #ff1744; min-width: auto; }
-      .act-info-card { max-width: 100%; }
+      .middle-stage { flex-direction: column; align-items: stretch; gap: 6px; }
+      .boss-shout-card { text-align: left; border-right: none; border-left: 4px solid #ff1744; }
+      .soundboard-strip { overflow-x: scroll; }
     }
   </style>
 </head>
@@ -513,6 +646,9 @@
   <div class="crt-overlay"></div>
   <div class="vignette-overlay"></div>
 
+  <!-- FightKaro Dramatic Announcer ("ROUND 1: FIGHT!", "K.O.!") -->
+  <div class="fightkaro-announcer" id="fightAnnouncer">ROUND 1<br><span style="color: #ff1744; font-size: 1.8rem;">FIGHT!</span></div>
+
   <!-- UI HUD Layer -->
   <div id="ui-layer">
     <!-- Header -->
@@ -521,10 +657,10 @@
         <div class="brand-title">
           <span>⚡</span> ODISHA SIMULATOR 3D
         </div>
-        <div class="brand-sub">ଆମ ଗାଡ଼ି, ଆମ ରାସ୍ତା • 3D DIRECTOR’S CUT</div>
+        <div class="brand-sub">ଆମ ଗାଡ଼ି, ଆମ ରାସ୍ତା • FIGHTKARO × BENGLOORU EDITION</div>
       </div>
       <div class="header-btns">
-        <button class="btn-ui" id="btnCamToggle" title="Toggle Camera Perspective">
+        <button class="btn-ui" id="btnCamToggle">
           <span>🎥</span> <span id="camText">COMBAT CAM</span>
         </button>
         <button class="btn-ui" id="btnSoundToggle">
@@ -539,91 +675,99 @@
       </div>
     </header>
 
-    <!-- Player HUD Bar -->
-    <div class="hud-row">
-      <div class="hud-stat">
-        <div class="hud-label">
-          <span>IZZAT (HP)</span>
-          <span id="izzatVal">100/100</span>
+    <!-- Benglooru-style Street Soundboard Bar -->
+    <div class="soundboard-strip">
+      <span class="sb-label">📻 STREET SFX:</span>
+      <button class="sb-btn" onclick="sound.playLadleClang(); spawnComic('THAK-THUNG! 🛎️');">🛎️ Dahibara Ladle</button>
+      <button class="sb-btn" onclick="sound.playBetelSlap(); spawnComic('PHAT-CHHAAK! 🍃');">🍃 Tookna Slap</button>
+      <button class="sb-btn" onclick="sound.playVikramHorn(); spawnComic('PEEP-PEEP! 🛺');">🛺 Vikram Horn</button>
+      <button class="sb-btn" onclick="sound.playMoBusAirHorn(); spawnComic('PAAAN! 🚌');">🚌 Mo Bus Route 20</button>
+      <button class="sb-btn" onclick="sound.playThunder(); spawnComic('DHOOOM! ⚡');">⚡ Kalabaisakhi</button>
+      <button class="sb-btn" onclick="sound.playKTMRev(); spawnComic('VROOOM! 🏍️');">🏍️ KTM Rev</button>
+    </div>
+
+    <!-- FightKaro Arcade Health & Super Meter HUD -->
+    <div class="arcade-hud-row">
+      <!-- Player Card -->
+      <div class="fighter-hud-card">
+        <div class="fighter-hud-name">
+          <span>🧍</span> YOU (ODISHA COMMUTER)
         </div>
-        <div class="progress-track">
-          <div class="progress-fill fill-izzat" id="izzatBar" style="width: 100%;"></div>
+        <div class="fighter-hp-track">
+          <div class="fighter-hp-fill fill-player-hp" id="playerHpBar" style="width: 100%;"></div>
+          <div class="fighter-hp-text" id="playerHpVal">100/100 IZZAT</div>
+        </div>
+        <!-- Super Meter -->
+        <div class="super-meter-wrap">
+          <span class="super-meter-label">TORANI METER:</span>
+          <div class="super-meter-track">
+            <div class="super-meter-fill" id="superMeterBar" style="width: 25%;"></div>
+          </div>
+          <span style="font-family: var(--font-pixel); font-size: 0.48rem; color: var(--accent-gold);" id="superMeterVal">25%</span>
         </div>
       </div>
-      <div class="hud-stat">
-        <div class="hud-label">
-          <span>PETARA (STAMINA)</span>
-          <span id="petaraVal">70/100</span>
+
+      <!-- VS Emblem -->
+      <div class="arcade-vs-box">VS</div>
+
+      <!-- Boss Card -->
+      <div class="fighter-hud-card">
+        <div class="fighter-hud-name" style="justify-content: flex-end; color: #ff5252;">
+          <span id="bossName">Bunty "Neon Pulsar" Jena</span> <span>⚠️</span>
         </div>
-        <div class="progress-track">
-          <div class="progress-fill fill-petara" id="petaraBar" style="width: 70%;"></div>
+        <div class="fighter-hp-track">
+          <div class="fighter-hp-fill fill-boss-hp" id="bossHpBar" style="width: 100%;"></div>
+          <div class="fighter-hp-text" id="bossHpVal">80/80 HP</div>
         </div>
-      </div>
-      <div class="hud-stat">
-        <div class="hud-label">
-          <span>BP (STRESS)</span>
-          <span id="bpVal">15/100</span>
-        </div>
-        <div class="progress-track">
-          <div class="progress-fill fill-bp" id="bpBar" style="width: 15%;"></div>
-        </div>
-      </div>
-      <div class="hud-stat">
-        <div class="hud-label">
-          <span>KHUCHURA (CASH)</span>
-          <span id="cashVal">₹50</span>
-        </div>
-        <div class="progress-track">
-          <div class="progress-fill fill-cash" id="cashBar" style="width: 50%;"></div>
+        <div style="font-family: var(--font-pixel); font-size: 0.48rem; color: var(--accent-turmeric); text-align: right;" id="bossSubtitle">
+          WRONG-SIDE DIVIDER SPECIALIST
         </div>
       </div>
     </div>
 
-    <!-- Active Camera Mode Pill -->
-    <div class="camera-mode-badge" id="camBadge">
-      ● 3D SCENE: 60 FPS • THREE.JS
-    </div>
-
-    <!-- Middle Stage (Act Info & Boss HUD Cards) -->
+    <!-- Middle Stage (Act Info & Boss Speech Callout) -->
     <div class="middle-stage">
-      <div class="act-info-card" id="actInfoCard">
+      <div class="act-narrative-card">
         <div class="act-tag">
           <span id="actNumber">ACT I</span>
           <span>•</span>
           <span id="actTime" style="color: var(--accent-teal);">9:15 AM</span>
         </div>
-        <div class="act-name" id="actTitle">The Rasulgarh Flyover Gridlock</div>
-        <div class="act-name-odia" id="actOdia">ରସୁଲଗଡ଼ ଫ୍ଲାଏଓଭର ଟ୍ରାଫିକ ଯୁଦ୍ଧ</div>
-        <div class="act-quote" id="actAtmosphere">
+        <div class="act-title-text" id="actTitle">The Rasulgarh Flyover Gridlock</div>
+        <div class="act-odia-sub" id="actOdia">ରସୁଲଗଡ଼ ଫ୍ଲାଏଓଭର ଟ୍ରାଫିକ ଯୁଦ୍ଧ</div>
+        <div class="act-quote-box" id="actAtmosphere">
           "In Bhubaneswar, distance is measured in how many times a KTM rider with bleached hair can graze your left ankle."
         </div>
       </div>
 
-      <div class="boss-hud-card" id="bossCard">
-        <div class="boss-title" id="bossSubtitle">WRONG-SIDE DIVIDER SPECIALIST</div>
-        <div class="boss-name" id="bossName">Bunty "Neon Pulsar" Jena</div>
-        <div class="boss-dialogue-shout" id="bossDialogue">
+      <div class="boss-shout-card">
+        <div class="boss-role-tag">OPPONENT RETORT:</div>
+        <div class="boss-shout-text" id="bossDialogue">
           "Dekhiki chala be! Rasta ta tama bapa ra ki?!"
-        </div>
-        <div class="hud-label" style="margin-bottom: 3px;">
-          <span>OPPONENT HP</span>
-          <span id="bossHpVal">80/80</span>
-        </div>
-        <div class="progress-track">
-          <div class="progress-fill fill-izzat" id="bossHpBar" style="width: 100%;"></div>
         </div>
       </div>
     </div>
 
-    <!-- Bottom Control Deck (FightKaro Grid & Battle Log) -->
+    <!-- Bottom Control Deck (Benglooru Route Tracker & FightKaro Grid) -->
     <div class="bottom-deck">
-      <div class="battle-log-strip" id="logStrip">
-        <div class="log-badge">LOG</div>
-        <div id="logText">Scene initialized: 3D Rasulgarh Flyover Gridlock. Prepare for showdown!</div>
+      <div class="route-tracker-strip">
+        <span class="route-node active" id="node1">📍 1. Rasulgarh</span>
+        <span>➔</span>
+        <span class="route-node" id="node2">2. Saheed Nagar</span>
+        <span>➔</span>
+        <span class="route-node" id="node3">3. Patia</span>
+        <span>➔</span>
+        <span class="route-node" id="node4">4. Omfed</span>
+        <span>➔</span>
+        <span class="route-node" id="node5">5. Jaydev Vihar</span>
+        <span>➔</span>
+        <span class="route-node" id="node6">6. Unit-1 Haat</span>
+        <span>➔</span>
+        <span class="route-node" id="node7">7. Master Canteen</span>
       </div>
 
       <div class="action-grid" id="actionGrid">
-        <!-- 4 Action Buttons injected dynamically -->
+        <!-- 4 Actions injected dynamically -->
       </div>
     </div>
   </div>
@@ -633,14 +777,14 @@
     <div style="font-family: var(--font-pixel); font-size: 0.85rem; color: var(--accent-gold); margin-bottom: 10px;">
       🏆 ODISHA SIMULATOR 3D CONQUERED!
     </div>
-    <h2 style="font-size: 1.4rem; color: #fff; margin-bottom: 6px;" id="endingTitle">
+    <h2 style="font-size: 1.4rem; color: #fff; margin-bottom: 6px;">
       THE TRUE TWIN-CITY LEGEND
     </h2>
     <div style="font-family: var(--font-odia); font-size: 1.1rem; color: var(--accent-turmeric); margin-bottom: 12px;">
       ଆମ ଗାଡ଼ି, ଆମ ରାସ୍ତା — ତମେ ବିଜୟୀ ହେଲ!
     </div>
-    <p style="font-size: 0.88rem; color: #bed0e2; line-height: 1.6; margin-bottom: 18px;" id="endingDesc">
-      You survived the wrong-side Pulsars, defended Cuttack Dahibara Aloodum, outmaneuvered Prafulla Uncle, matched Tookna Bhai's acoustic slaps, debunked the MS-Paint IT fraud, secured 5kg of Nainital Aloo during Kalabaisakhi, and tamed Pink Vikram Auto Anna at Master Canteen!
+    <p style="font-size: 0.88rem; color: #bed0e2; line-height: 1.6; margin-bottom: 18px;">
+      You survived the wrong-side Pulsars at Rasulgarh, protected Cuttack Dahibara Aloodum from ketchup desecration, defeated Prafulla Uncle's bachelor rent syndicate, matched Tookna Bhai's acoustic Chuna slaps, debunked the MS-Paint IT fraud, secured 5kg of Nainital Aloo during Kalabaisakhi, and brought Pink Vikram Auto Anna to tears of Kataki brotherhood at Master Canteen!
     </p>
     <button class="btn-ui" style="font-size: 0.75rem; padding: 12px 24px; background: var(--accent-saffron); color: #fff; margin: 0 auto; display: inline-flex;" onclick="restartGame()">
       🔄 PLAY AGAIN (DIRECTOR'S CUT)
@@ -700,7 +844,7 @@
 
       <div class="script-act">
         <h2>Act VI: The Kalabaisakhi Cyclone Panic at Unit-1 Haat (8:30 PM)</h2>
-        <p><strong>Visual Atmosphere:</strong> Bruised purple sky in 4 minutes. Mad Max potato rush. 3 Sambalpuri saree aunties lock horns over the last 5kg sack of Nainital Aloo.</p>
+        <p><strong>Visual Atmosphere:</strong> Bruised purple sky in 4 minutes. Mad Max potato run. 3 Sambalpuri saree aunties lock horns over the last 5kg sack of Nainital Aloo.</p>
       </div>
 
       <div class="script-act">
@@ -711,7 +855,7 @@
   </div>
 
   <!-- ==========================================================================
-       JAVASCRIPT: 3D ENGINE (THREE.JS), PROCEDURAL MODELS & FIGHTKARO COMBAT
+       JAVASCRIPT: 3D ENGINE, SPATIAL AUDIO, FIGHTKARO & BENGLOORU MECHANICS
        ========================================================================== -->
   <script>
     /* ==========================================================================
@@ -770,7 +914,7 @@
         filter.type = 'bandpass';
         filter.frequency.setValueAtTime(1600, now);
         const gain = this.ctx.createGain();
-        gain.gain.setValueAtTime(0.7, now);
+        gain.gain.setValueAtTime(0.75, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
         noise.connect(filter);
         filter.connect(gain);
@@ -781,7 +925,7 @@
         const oscGain = this.ctx.createGain();
         osc.frequency.setValueAtTime(140, now);
         osc.frequency.exponentialRampToValueAtTime(45, now + 0.12);
-        oscGain.gain.setValueAtTime(0.5, now);
+        oscGain.gain.setValueAtTime(0.6, now);
         oscGain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
         osc.connect(oscGain);
         oscGain.connect(this.ctx.destination);
@@ -797,9 +941,9 @@
         const gain = this.ctx.createGain();
         osc.type = 'sawtooth';
         osc.frequency.setValueAtTime(120, now);
-        osc.frequency.exponentialRampToValueAtTime(450, now + 0.25);
+        osc.frequency.exponentialRampToValueAtTime(460, now + 0.25);
         osc.frequency.exponentialRampToValueAtTime(160, now + 0.5);
-        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.setValueAtTime(0.22, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.55);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
@@ -834,13 +978,13 @@
           const gain = this.ctx.createGain();
           osc.type = 'triangle';
           osc.frequency.setValueAtTime(freq, now);
-          gain.gain.setValueAtTime(0.18, now);
-          gain.gain.linearRampToValueAtTime(0.25, now + 0.08);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.linearRampToValueAtTime(0.28, now + 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
           osc.connect(gain);
           gain.connect(this.ctx.destination);
           osc.start(now);
-          osc.stop(now + 0.65);
+          osc.stop(now + 0.7);
         });
       }
 
@@ -862,7 +1006,7 @@
         filter.frequency.setValueAtTime(320, now);
         filter.frequency.exponentialRampToValueAtTime(60, now + dur);
         const gain = this.ctx.createGain();
-        gain.gain.setValueAtTime(0.8, now);
+        gain.gain.setValueAtTime(0.85, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + dur);
         noise.connect(filter);
         filter.connect(gain);
@@ -894,14 +1038,14 @@
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(540, now);
-        osc.frequency.linearRampToValueAtTime(150, now + 0.25);
-        gain.gain.setValueAtTime(0.4, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.28);
+        osc.frequency.setValueAtTime(560, now);
+        osc.frequency.linearRampToValueAtTime(140, now + 0.28);
+        gain.gain.setValueAtTime(0.45, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
-        osc.stop(now + 0.28);
+        osc.stop(now + 0.3);
       }
 
       playVictory() {
@@ -913,12 +1057,30 @@
           const gain = this.ctx.createGain();
           osc.type = 'triangle';
           osc.frequency.setValueAtTime(freq, now);
-          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.setValueAtTime(0.28, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
           osc.connect(gain);
           gain.connect(this.ctx.destination);
           osc.start(now);
           osc.stop(now + 0.3);
+        });
+      }
+
+      playFightCall() {
+        if (!this.enabled) return;
+        this.init();
+        const now = this.ctx.currentTime;
+        [180, 220, 280, 440].forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(freq, now + (i * 0.07));
+          gain.gain.setValueAtTime(0.2, now + (i * 0.07));
+          gain.gain.exponentialRampToValueAtTime(0.001, now + (i * 0.07) + 0.18);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + (i * 0.07));
+          osc.stop(now + (i * 0.07) + 0.2);
         });
       }
 
@@ -946,8 +1108,8 @@
        ========================================================================== */
     const container = document.getElementById('webgl-canvas');
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0a0f16);
-    scene.fog = new THREE.FogExp2(0x0a0f16, 0.025);
+    scene.background = new THREE.Color(0x070a0e);
+    scene.fog = new THREE.FogExp2(0x070a0e, 0.024);
 
     const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 4.5, 12);
@@ -966,8 +1128,6 @@
     const dirLight = new THREE.DirectionalLight(0xfffaed, 0.9);
     dirLight.position.set(12, 20, 15);
     dirLight.castShadow = true;
-    dirLight.shadow.mapSize.width = 1024;
-    dirLight.shadow.mapSize.height = 1024;
     scene.add(dirLight);
 
     const pointLight = new THREE.PointLight(0xff6d00, 1.2, 30);
@@ -978,16 +1138,22 @@
     const actGroup = new THREE.Group();
     scene.add(actGroup);
 
+    // Player 3D Avatar (Standing on Left)
+    const player3D = new THREE.Group();
+    player3D.position.set(-2.5, 0, 3.0);
+    player3D.rotation.y = Math.PI / 4;
+    scene.add(player3D);
+
     // Global Ground Plane
     const groundGeo = new THREE.PlaneGeometry(120, 120);
-    const groundMat = new THREE.MeshStandardMaterial({ color: 0x181e24, roughness: 0.85, metalness: 0.2 });
+    const groundMat = new THREE.MeshStandardMaterial({ color: 0x141a22, roughness: 0.85, metalness: 0.2 });
     const ground = new THREE.Mesh(groundGeo, groundMat);
     ground.rotation.x = -Math.PI / 2;
     ground.receiveShadow = true;
     scene.add(ground);
 
-    // Particle System (Rain / Exhaust / Dust)
-    const particleCount = 700;
+    // Particle System (Rain / Weather)
+    const particleCount = 750;
     const particleGeo = new THREE.BufferGeometry();
     const particlePositions = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount * 3; i += 3) {
@@ -996,16 +1162,14 @@
       particlePositions[i + 2] = (Math.random() - 0.5) * 50;
     }
     particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-    const particleMat = new THREE.PointsMaterial({ color: 0x00e5ff, size: 0.15, transparent: true, opacity: 0.6 });
+    const particleMat = new THREE.PointsMaterial({ color: 0x00e5ff, size: 0.16, transparent: true, opacity: 0.65 });
     const particles = new THREE.Points(particleGeo, particleMat);
     scene.add(particles);
 
-    // Procedural 3D Builders for Odisha Assets
+    // Procedural Mesh Factory
     const MeshFactory = {
-      // 1. Pink Vikram Auto
       createVikramAuto() {
         const group = new THREE.Group();
-        // Body (Hot pink)
         const bodyGeo = new THREE.BoxGeometry(2.4, 1.4, 3.8);
         const bodyMat = new THREE.MeshStandardMaterial({ color: 0xe91e63, roughness: 0.4 });
         const body = new THREE.Mesh(bodyGeo, bodyMat);
@@ -1013,300 +1177,150 @@
         body.castShadow = true;
         group.add(body);
 
-        // Yellow Roof Canopy
-        const roofGeo = new THREE.BoxGeometry(2.5, 0.2, 3.9);
-        const roofMat = new THREE.MeshStandardMaterial({ color: 0xffeb3b, roughness: 0.6 });
-        const roof = new THREE.Mesh(roofGeo, roofMat);
+        const roof = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.2, 3.9), new THREE.MeshStandardMaterial({ color: 0xffeb3b }));
         roof.position.y = 2.1;
         group.add(roof);
 
-        // Windshield
-        const winGeo = new THREE.PlaneGeometry(2.1, 0.9);
-        const winMat = new THREE.MeshStandardMaterial({ color: 0x80deea, transparent: true, opacity: 0.7 });
-        const win = new THREE.Mesh(winGeo, winMat);
-        win.position.set(0, 1.5, 1.91);
-        group.add(win);
-
-        // Wheels (Front 1, Rear 2)
-        const wheelGeo = new THREE.CylinderGeometry(0.4, 0.4, 0.35, 16);
-        const wheelMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
-        wheelGeo.rotateZ(Math.PI / 2);
-
-        const wFront = new THREE.Mesh(wheelGeo, wheelMat);
-        wFront.position.set(0, 0.4, 1.4);
-        group.add(wFront);
-
-        const wRearL = new THREE.Mesh(wheelGeo, wheelMat);
-        wRearL.position.set(-1.15, 0.4, -1.2);
-        group.add(wRearL);
-
-        const wRearR = new THREE.Mesh(wheelGeo, wheelMat);
-        wRearR.position.set(1.15, 0.4, -1.2);
-        group.add(wRearR);
-
-        // Headlight
-        const lightGeo = new THREE.CylinderGeometry(0.18, 0.18, 0.1, 16);
-        lightGeo.rotateX(Math.PI / 2);
-        const lightMat = new THREE.MeshBasicMaterial({ color: 0xfff59d });
-        const headlight = new THREE.Mesh(lightGeo, lightMat);
-        headlight.position.set(0, 0.9, 1.95);
-        group.add(headlight);
-
+        const wGeo = new THREE.CylinderGeometry(0.4, 0.4, 0.35, 16);
+        const wMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
+        wGeo.rotateZ(Math.PI / 2);
+        const w1 = new THREE.Mesh(wGeo, wMat); w1.position.set(0, 0.4, 1.4); group.add(w1);
+        const w2 = new THREE.Mesh(wGeo, wMat); w2.position.set(-1.15, 0.4, -1.2); group.add(w2);
+        const w3 = new THREE.Mesh(wGeo, wMat); w3.position.set(1.15, 0.4, -1.2); group.add(w3);
         return group;
       },
 
-      // 2. Green Mo Bus (Route 20)
       createMoBus() {
         const group = new THREE.Group();
-        const busMat = new THREE.MeshStandardMaterial({ color: 0x00c853, roughness: 0.5 });
-        const bodyGeo = new THREE.BoxGeometry(3.2, 3.0, 9.5);
-        const body = new THREE.Mesh(bodyGeo, busMat);
+        const body = new THREE.Mesh(new THREE.BoxGeometry(3.2, 3.0, 9.5), new THREE.MeshStandardMaterial({ color: 0x00c853, roughness: 0.5 }));
         body.position.y = 2.1;
         body.castShadow = true;
         group.add(body);
 
-        // Destination Board
-        const boardGeo = new THREE.BoxGeometry(2.4, 0.5, 0.1);
-        const boardMat = new THREE.MeshBasicMaterial({ color: 0x263238 });
-        const board = new THREE.Mesh(boardGeo, boardMat);
+        const board = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.5, 0.1), new THREE.MeshBasicMaterial({ color: 0x263238 }));
         board.position.set(0, 3.2, 4.8);
         group.add(board);
-
-        // Wheels
-        const wGeo = new THREE.CylinderGeometry(0.65, 0.65, 0.6, 16);
-        const wMat = new THREE.MeshStandardMaterial({ color: 0x1c1c1c });
-        wGeo.rotateZ(Math.PI / 2);
-        [[-1.6, 2.8], [1.6, 2.8], [-1.6, -2.8], [1.6, -2.8]].forEach(([x, z]) => {
-          const w = new THREE.Mesh(wGeo, wMat);
-          w.position.set(x, 0.65, z);
-          group.add(w);
-        });
         return group;
       },
 
-      // 3. Bunty's KTM Bike with Neon Wheels
       createKTMBike() {
         const group = new THREE.Group();
-        // Frame (Orange)
-        const frameMat = new THREE.MeshStandardMaterial({ color: 0xff6d00, roughness: 0.3 });
-        const frame = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.7, 2.2), frameMat);
+        const frame = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.7, 2.2), new THREE.MeshStandardMaterial({ color: 0xff6d00 }));
         frame.position.y = 0.9;
         group.add(frame);
 
-        // Neon Green Alloy Wheels
-        const wheelMat = new THREE.MeshStandardMaterial({ color: 0x76ff03, emissive: 0x33aa00, roughness: 0.3 });
+        const wheelMat = new THREE.MeshStandardMaterial({ color: 0x76ff03, emissive: 0x33aa00 });
         const wGeo = new THREE.TorusGeometry(0.45, 0.12, 10, 24);
-        const wFront = new THREE.Mesh(wGeo, wheelMat);
-        wFront.position.set(0, 0.5, 1.1);
-        group.add(wFront);
+        const w1 = new THREE.Mesh(wGeo, wheelMat); w1.position.set(0, 0.5, 1.1); group.add(w1);
+        const w2 = new THREE.Mesh(wGeo, wheelMat); w2.position.set(0, 0.5, -1.0); group.add(w2);
 
-        const wRear = new THREE.Mesh(wGeo, wheelMat);
-        wRear.position.set(0, 0.5, -1.0);
-        group.add(wRear);
-
-        // Handlebars
-        const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.9), new THREE.MeshStandardMaterial({ color: 0x212121 }));
-        bar.rotateZ(Math.PI / 2);
-        bar.position.set(0, 1.25, 0.8);
-        group.add(bar);
-
-        // Bunty Character on Bike
-        const bunty = MeshFactory.createHumanoid(0xffd54f, 0x37474f); // bleached hair
+        const bunty = MeshFactory.createHumanoid(0xffd54f, 0x37474f);
         bunty.scale.set(0.8, 0.8, 0.8);
         bunty.position.set(0, 0.85, -0.1);
         group.add(bunty);
-
         return group;
       },
 
-      // 4. Hero Jet Bicycle & Dented Aluminum Handi (Dahibara)
       createDahibaraSetup() {
         const group = new THREE.Group();
-        // Ancient Banyan Tree
-        const trunkGeo = new THREE.CylinderGeometry(1.4, 2.2, 8, 12);
-        const trunkMat = new THREE.MeshStandardMaterial({ color: 0x4e342e, roughness: 0.9 });
-        const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+        const trunk = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 2.2, 8, 12), new THREE.MeshStandardMaterial({ color: 0x4e342e }));
         trunk.position.set(-4, 4, -3);
-        trunk.castShadow = true;
         group.add(trunk);
 
-        // Foliage Canopy
-        const canopyGeo = new THREE.DodecahedronGeometry(5.5, 1);
-        const canopyMat = new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 0.8 });
-        const canopy = new THREE.Mesh(canopyGeo, canopyMat);
+        const canopy = new THREE.Mesh(new THREE.DodecahedronGeometry(5.5, 1), new THREE.MeshStandardMaterial({ color: 0x2e7d32 }));
         canopy.position.set(-4, 9, -3);
         group.add(canopy);
 
-        // Hero Jet Bicycle Frame
-        const cycleMat = new THREE.MeshStandardMaterial({ color: 0x5d4037, roughness: 0.8 });
-        const bar1 = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.4), cycleMat);
-        bar1.rotateZ(Math.PI / 4);
-        bar1.position.set(0, 0.8, 0);
-        group.add(bar1);
-
-        const cWheelGeo = new THREE.TorusGeometry(0.65, 0.05, 8, 24);
-        const cWheelMat = new THREE.MeshStandardMaterial({ color: 0x212121 });
-        const cw1 = new THREE.Mesh(cWheelGeo, cWheelMat);
-        cw1.position.set(0, 0.65, 1.2);
-        group.add(cw1);
-        const cw2 = new THREE.Mesh(cWheelGeo, cWheelMat);
-        cw2.position.set(0, 0.65, -1.2);
-        group.add(cw2);
-
-        // Massive Dented Aluminum Handi
-        const handiGeo = new THREE.CylinderGeometry(0.75, 0.95, 1.1, 16);
-        const handiMat = new THREE.MeshStandardMaterial({ color: 0xb0bec5, metalness: 0.8, roughness: 0.3 });
-        const handi = new THREE.Mesh(handiGeo, handiMat);
+        // Aluminum Handi
+        const handi = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.95, 1.1, 16), new THREE.MeshStandardMaterial({ color: 0xb0bec5, metalness: 0.8 }));
         handi.position.set(0, 1.4, -0.9);
         group.add(handi);
 
-        // Damp Crimson Cotton Cloth wrapped on Handi
-        const clothGeo = new THREE.CylinderGeometry(0.78, 0.98, 0.45, 16);
-        const clothMat = new THREE.MeshStandardMaterial({ color: 0xb71c1c, roughness: 0.9 });
-        const cloth = new THREE.Mesh(clothGeo, clothMat);
+        // Crimson Cloth
+        const cloth = new THREE.Mesh(new THREE.CylinderGeometry(0.78, 0.98, 0.45, 16), new THREE.MeshStandardMaterial({ color: 0xb71c1c }));
         cloth.position.set(0, 1.25, -0.9);
         group.add(cloth);
 
-        // Bidyadhar Mausa Vendor
         const mausa = MeshFactory.createHumanoid(0xffffff, 0xd7ccc8);
         mausa.position.set(-1.1, 0, -0.6);
         group.add(mausa);
-
         return group;
       },
 
-      // 5. Classic Omfed Booth
       createOmfedBooth() {
         const group = new THREE.Group();
-        // Green & White Booth Box
-        const boothMat = new THREE.MeshStandardMaterial({ color: 0x00c853, roughness: 0.5 });
-        const box = new THREE.Mesh(new THREE.BoxGeometry(4.5, 3.2, 3.5), boothMat);
+        const box = new THREE.Mesh(new THREE.BoxGeometry(4.5, 3.2, 3.5), new THREE.MeshStandardMaterial({ color: 0x00c853 }));
         box.position.y = 1.6;
-        box.castShadow = true;
         group.add(box);
 
-        // White stripe
-        const stripeMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        const stripe = new THREE.Mesh(new THREE.BoxGeometry(4.55, 0.6, 3.55), stripeMat);
+        const stripe = new THREE.Mesh(new THREE.BoxGeometry(4.55, 0.6, 3.55), new THREE.MeshBasicMaterial({ color: 0xffffff }));
         stripe.position.y = 1.8;
         group.add(stripe);
 
-        // Awning
-        const roof = new THREE.Mesh(new THREE.BoxGeometry(5.2, 0.25, 4.2), new THREE.MeshStandardMaterial({ color: 0x1b5e20 }));
-        roof.position.y = 3.3;
-        group.add(roof);
-
-        // Tookna Bhai inside booth
         const tookna = MeshFactory.createHumanoid(0x212121, 0xef6c00);
         tookna.position.set(0, 0.5, 0.4);
         group.add(tookna);
-
-        // Red plastic stools outside
-        const stoolMat = new THREE.MeshStandardMaterial({ color: 0xd50000 });
-        const stoolGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.6, 12);
-        [[-1.8, 2.6], [-0.7, 2.8], [0.8, 2.8], [1.9, 2.5]].forEach(([x, z]) => {
-          const stool = new THREE.Mesh(stoolGeo, stoolMat);
-          stool.position.set(x, 0.3, z);
-          group.add(stool);
-        });
-
         return group;
       },
 
-      // 6. Master Canteen Stone Warrior Horse Monument
       createMasterCanteenHorse() {
         const group = new THREE.Group();
-        const stoneMat = new THREE.MeshStandardMaterial({ color: 0x37474f, roughness: 0.9, metalness: 0.1 });
-        // Monument Pedestal
+        const stoneMat = new THREE.MeshStandardMaterial({ color: 0x37474f, roughness: 0.9 });
         const ped = new THREE.Mesh(new THREE.BoxGeometry(4.8, 1.4, 7.5), stoneMat);
         ped.position.y = 0.7;
-        ped.castShadow = true;
         group.add(ped);
 
-        // Stylized Horse Body
         const horseBody = new THREE.Mesh(new THREE.BoxGeometry(1.6, 2.2, 4.2), stoneMat);
         horseBody.position.set(0, 2.7, 0);
         group.add(horseBody);
 
-        // Horse Rearing Neck & Head
         const neck = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.4, 1.6), stoneMat);
         neck.rotation.x = -Math.PI / 6;
         neck.position.set(0, 4.2, 1.6);
         group.add(neck);
 
-        // Warrior figure with shield
         const warrior = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 2.2, 8), stoneMat);
         warrior.position.set(0.9, 3.8, 0.4);
         group.add(warrior);
-
-        const shield = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.1, 16), stoneMat);
-        shield.rotateZ(Math.PI / 2);
-        shield.position.set(1.5, 3.8, 0.4);
-        group.add(shield);
-
-        // Sodium Streetlight
-        const poleMat = new THREE.MeshStandardMaterial({ color: 0x263238 });
-        const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 6.5), poleMat);
-        pole.position.set(-4.5, 3.25, 3.5);
-        group.add(pole);
-
-        const lamp = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.3, 0.8), new THREE.MeshBasicMaterial({ color: 0xffab00 }));
-        lamp.position.set(-4.5, 6.5, 3.5);
-        group.add(lamp);
-
         return group;
       },
 
-      // Helper Humanoid Character
       createHumanoid(hairColor = 0x212121, shirtColor = 0xffffff) {
         const char = new THREE.Group();
-        // Head
         const head = new THREE.Mesh(new THREE.SphereGeometry(0.35, 12, 12), new THREE.MeshStandardMaterial({ color: 0xd7ccc8 }));
         head.position.y = 2.1;
         char.add(head);
 
-        // Hair
         const hair = new THREE.Mesh(new THREE.SphereGeometry(0.37, 10, 10), new THREE.MeshStandardMaterial({ color: hairColor }));
         hair.position.set(0, 2.22, -0.05);
         char.add(hair);
 
-        // Torso / Shirt
         const torso = new THREE.Mesh(new THREE.BoxGeometry(0.7, 1.0, 0.45), new THREE.MeshStandardMaterial({ color: shirtColor }));
         torso.position.y = 1.35;
         char.add(torso);
 
-        // Legs / Pants
         const legs = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.9, 0.4), new THREE.MeshStandardMaterial({ color: 0x1e272e }));
         legs.position.y = 0.45;
         char.add(legs);
-
         return char;
       }
     };
 
-    /* ==========================================================================
-       3. 3D CAMERA CONTROLLER & MODES
-       ========================================================================== */
-    const CameraModes = {
-      DUEL: 'COMBAT CAM',
-      ORBIT: 'CINEMATIC PAN',
-      TOP: 'DRONE VIEW'
-    };
-    let currentCamMode = CameraModes.DUEL;
-    let camTargetPos = new THREE.Vector3(0, 4.5, 12);
-    let camLookTarget = new THREE.Vector3(0, 1.5, 0);
+    // Build Player Commuter 3D Mesh
+    const playerMesh = MeshFactory.createHumanoid(0x212121, 0x00b0ff);
+    player3D.add(playerMesh);
 
-    function updateCameraTarget(mode) {
-      if (mode === CameraModes.DUEL) {
-        camTargetPos.set(1.5, 3.2, 8.5);
-        camLookTarget.set(0, 1.6, 0);
-      } else if (mode === CameraModes.ORBIT) {
-        camTargetPos.set(-8.5, 5.5, 10.5);
-        camLookTarget.set(0, 2.0, 0);
-      } else if (mode === CameraModes.TOP) {
-        camTargetPos.set(0, 15.0, 4.0);
-        camLookTarget.set(0, 0, 0);
-      }
+    /* ==========================================================================
+       3. COMIC BURST POPUP GENERATOR
+       ========================================================================== */
+    function spawnComic(text, x = null, y = null) {
+      const burst = document.createElement('div');
+      burst.className = 'comic-burst';
+      burst.innerText = text;
+      burst.style.left = x ? `${x}px` : `${window.innerWidth * (0.35 + Math.random() * 0.3)}px`;
+      burst.style.top = y ? `${y}px` : `${window.innerHeight * (0.35 + Math.random() * 0.25)}px`;
+      document.body.appendChild(burst);
+      setTimeout(() => burst.remove(), 800);
     }
 
     /* ==========================================================================
@@ -1316,11 +1330,7 @@
       actIndex: 0,
       izzat: 100,
       maxIzzat: 100,
-      petara: 70,
-      maxPetara: 100,
-      bp: 15,
-      cash: 50,
-      inventory: ["Old Hero Cycle Key", "₹10 Paper Note", "Khandagiri Bus Ticket"],
+      superMeter: 25,
       currentBoss: null,
       battleActive: false
     };
@@ -1338,31 +1348,16 @@
         maxHp: 80,
         audioFn: () => sound.playKTMRev(),
         buildScene(grp) {
-          // Elevated flyover road
           const flyover = new THREE.Mesh(new THREE.BoxGeometry(8, 0.8, 40), new THREE.MeshStandardMaterial({ color: 0x37474f }));
           flyover.position.set(0, 3.8, 0);
           grp.add(flyover);
 
-          // Pillars
-          [-10, 0, 10].forEach(z => {
-            const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 4.2), new THREE.MeshStandardMaterial({ color: 0x455a64 }));
-            pillar.position.set(0, 1.9, z);
-            grp.add(pillar);
-          });
-
-          // Vehicles
           const moBus = MeshFactory.createMoBus();
           moBus.position.set(-2.8, 0, -2);
           grp.add(moBus);
 
-          const auto = MeshFactory.createVikramAuto();
-          auto.position.set(1.8, 0, 1.5);
-          auto.rotation.y = Math.PI / 8;
-          grp.add(auto);
-
-          // Bunty's KTM Bike in foreground
           const ktm = MeshFactory.createKTMBike();
-          ktm.position.set(0.5, 0, 3.2);
+          ktm.position.set(1.5, 0, 2.5);
           ktm.rotation.y = Math.PI;
           grp.add(ktm);
         },
@@ -1371,25 +1366,26 @@
             title: "Mo Bus Retort",
             desc: "'Mo bapa ra nuhen, kintu tora ta jama nuhen!'",
             cost: "0 Stamina",
-            fn: () => executeMove(24, 0, -5, 0, "You deliver a stinging Cuttack street retort! Crowd erupts.", sound.playCrit)
+            fn: () => executeAttack(24, "You deliver a stinging Cuttack street retort!", "DISHUUM! 💥", sound.playCrit)
           },
           {
-            title: "Summon Mo Bus Driver",
-            desc: "Honk the massive Route 20 air horn directly at Bunty",
-            cost: "20 Stamina",
-            fn: () => executeMove(36, 20, 5, 0, "Route 20 driver blasts the multi-tone horn! Bunty is rattled!", sound.playMoBusAirHorn)
+            title: "Mo Bus Air Horn Blast",
+            desc: "Honk the massive Route 20 air horn right into Bunty's ears",
+            cost: "Super +25%",
+            fn: () => executeAttack(36, "Mo Bus air horn disorients Bunty completely!", "PAAAN! 🚌", sound.playMoBusAirHorn)
           },
           {
             title: "Traffic Police Threat",
-            desc: "Take out phone: 'Bhubaneswar Traffic Police ku tag karuchi!'",
-            cost: "10 Stamina",
-            fn: () => executeMove(28, 10, -10, 0, "Bunty fears the ₹5,000 challan and backs down!", sound.playHit)
+            desc: "'Bhubaneswar Traffic Police Twitter re tag karuchi!'",
+            cost: "Super +15%",
+            fn: () => executeAttack(28, "Bunty panics about the ₹5,000 challan!", "CHALLAN! 📝", sound.playHit)
           },
           {
-            title: "Kataki Bhaichara Shield",
-            desc: "'Arey bhai, amey ta sabu bhai bhai!' (Recovers Izzat)",
-            cost: "+25 Stamina",
-            fn: () => executeDefend(15, 25, -15, "The golden word 'Bhaichara' melts street anger. Blood pressure drops.")
+            title: "SUPER: BHAICHARA BLAST",
+            desc: "Unleash Kataki brotherhood to vaporize Bunty's aggression!",
+            cost: "100% Super Meter",
+            isSuper: true,
+            fn: () => executeSuperMove(60, "SUPER MOVE: Kataki Bhaichara overwhelms the divider!", "BHAICHARA! ⚡")
           }
         ]
       },
@@ -1408,35 +1404,35 @@
           const dahibara = MeshFactory.createDahibaraSetup();
           grp.add(dahibara);
 
-          // Tech bro character
           const techBro = MeshFactory.createHumanoid(0x1a237e, 0x00bcd4);
-          techBro.position.set(1.4, 0, 0.4);
+          techBro.position.set(1.6, 0, 0.4);
           grp.add(techBro);
         },
         moves: [
           {
             title: "Sacred Torani Splash",
             desc: "Splash extra spicy Chhuna Dahi water with curry leaves",
-            cost: "15 Stamina",
-            fn: () => executeMove(32, 15, -10, 0, "Cuttack Torani blinds the tech bro with divine flavour!", sound.playLadleClang)
+            cost: "Super +20%",
+            fn: () => executeAttack(32, "Cuttack Torani blinds the tech bro with divine flavor!", "TORANI! 🍲", sound.playLadleClang)
           },
           {
             title: "Mausa Ladle Smite",
             desc: "Bidyadhar Mausa strikes the steel ladle on the handi!",
-            cost: "25 Stamina",
-            fn: () => executeMove(42, 25, -5, 0, "*THAK-THUNG!* The sonic clang shatters Siddharth's pride!", sound.playLadleClang)
-          },
-          {
-            title: "Gorge on Dahibara-Dum",
-            desc: "Eat a full dona of spicy Dahibara-Aloodum (+40 Stamina)",
-            cost: "₹20 Cash",
-            fn: () => executeHeal(25, 40, 20, -20, "You finish the dona down to the last drop of Torani. Pure ambrosia!")
+            cost: "Super +25%",
+            fn: () => executeAttack(40, "*THAK-THUNG!* Ladle strike shatters Siddharth's pride!", "THAK-THUNG! 🛎️", sound.playLadleClang)
           },
           {
             title: "Panch Phoron Lecture",
             desc: "Educate him on 1000 years of Barabati culinary lineage",
-            cost: "0 Stamina",
-            fn: () => executeMove(22, 0, 5, 0, "The crowd rallies behind you. Siddharth drops his ketchup bottle!", sound.playHit)
+            cost: "Super +15%",
+            fn: () => executeAttack(25, "The crowd rallies behind your culinary sermon!", "CHUP BE! 🥄", sound.playHit)
+          },
+          {
+            title: "SUPER: DAHIBARA DELUGE",
+            desc: "Unleash 40 years of spicy Aloo Dum and Guguni fury!",
+            cost: "100% Super Meter",
+            isSuper: true,
+            fn: () => executeSuperMove(65, "SUPER MOVE: 1000-Year Cuttack Dahibara Torrent!", "ALOO DUM! 🌋")
           }
         ]
       },
@@ -1452,49 +1448,39 @@
         maxHp: 110,
         audioFn: () => sound.playCrit(),
         buildScene(grp) {
-          // Neon-green building
-          const house = new THREE.Mesh(new THREE.BoxGeometry(8, 7, 5), new THREE.MeshStandardMaterial({ color: 0x00e676, roughness: 0.8 }));
+          const house = new THREE.Mesh(new THREE.BoxGeometry(8, 7, 5), new THREE.MeshStandardMaterial({ color: 0x00e676 }));
           house.position.set(-2, 3.5, -4);
           grp.add(house);
 
-          // Rusted iron gate
-          const gate = new THREE.Mesh(new THREE.BoxGeometry(5, 2.5, 0.1), new THREE.MeshStandardMaterial({ color: 0x4e342e }));
-          gate.position.set(-2, 1.25, -1);
-          grp.add(gate);
-
-          // Uncle & Broker figures
           const uncle = MeshFactory.createHumanoid(0xffffff, 0xfff9c4);
-          uncle.position.set(0.8, 0, 0);
+          uncle.position.set(1.4, 0, 0);
           grp.add(uncle);
-
-          const broker = MeshFactory.createHumanoid(0x212121, 0x5c6bc0);
-          broker.position.set(2.0, 0, -0.3);
-          grp.add(broker);
         },
         moves: [
           {
             title: "Sanskar Certificate",
             desc: "Claim your uncle is an OAS officer in Jaydev Vihar",
-            cost: "15 Stamina",
-            fn: () => executeMove(32, 15, -10, 0, "Prafulla Uncle softens: 'Jaydev Vihar re ta mora bi mausa rahanti!'", sound.playHit)
+            cost: "Super +20%",
+            fn: () => executeAttack(34, "Prafulla Uncle softens: 'Mora bi mausa rahanti!'", "OAS POWER! 🏛️", sound.playHit)
           },
           {
-            title: "Quote High Court Rent Law",
+            title: "Quote Rent Control Act",
             desc: "Cite Odisha Tenancy Act submeter regulations (₹6/unit max)",
-            cost: "20 Stamina",
-            fn: () => executeMove(38, 20, 10, 0, "Ramesh Broker drops three keys in legal panic!", sound.playCrit)
+            cost: "Super +25%",
+            fn: () => executeAttack(40, "Ramesh Broker drops three rusted keys in panic!", "HIGH COURT! ⚖️", sound.playCrit)
           },
           {
             title: "Ginger Chai Peace Offer",
-            desc: "Offer ginger tea at nearest Omfed booth to cool tempers",
-            cost: "₹10 Cash",
-            fn: () => executeMove(26, 0, -5, 10, "Warm ginger tea halts the rent escalation momentarily!", sound.playBlip)
+            desc: "Offer ginger tea at nearest Omfed to cool tempers",
+            cost: "Super +15%",
+            fn: () => executeAttack(26, "Warm ginger tea halts the rent hike momentarily!", "CHAI BREAK! ☕", sound.playBlip)
           },
           {
-            title: "Threaten to Move to Khandagiri",
-            desc: "'Khandagiri re au 5 ta flat miluchi!' (Restores Stamina)",
-            cost: "+30 Stamina",
-            fn: () => executeDefend(20, 30, -10, "The broker's commission anxiety spikes as you prepare to walk!")
+            title: "SUPER: MIDNIGHT SWIGGY STRIKE",
+            desc: "Summon 10 delivery bikes to blast the 9 PM gate padlock!",
+            cost: "100% Super Meter",
+            isSuper: true,
+            fn: () => executeSuperMove(70, "SUPER MOVE: Midnight Biryani Delivery Armada!", "SWIGGY RUSH! 🛵")
           }
         ]
       },
@@ -1517,26 +1503,27 @@
           {
             title: "Demand Genuine 5 Rupee Coin",
             desc: "'Tookna bhai, UPI karidie, chocolate darakar nahi!'",
-            cost: "10 Stamina",
-            fn: () => executeMove(28, 10, -5, 0, "Tookna sighs at the QR code scanner and opens his coin drawer!", sound.playHit)
-          },
-          {
-            title: "Weaponize Melody Chocolates",
-            desc: "Chew two sticky chocolates at once for an instant glucose surge",
-            cost: "20 Stamina",
-            fn: () => executeMove(38, 20, 15, 0, "Sugar rush powers your Odia rapid-fire verbal debate!", sound.playCrit)
+            cost: "Super +20%",
+            fn: () => executeAttack(32, "Tookna sighs and opens the secret coin drawer!", "COIN DROP! 🪙", sound.playHit)
           },
           {
             title: "Echoing Counter-Slap",
             desc: "Slap the counter with equal acoustic resonance: *CHHAAK!*",
-            cost: "25 Stamina",
-            fn: () => executeMove(44, 25, -10, 0, "You reproduce Tookna's acoustic palm crack! The Khatti roars in approval!", sound.playBetelSlap)
+            cost: "Super +30%",
+            fn: () => executeAttack(44, "You reproduce Tookna's acoustic palm crack! Khatti roars!", "CHHAAK! 🍃", sound.playBetelSlap)
           },
           {
-            title: "Sip ₹10 Ginger Chai",
-            desc: "Sit on a red plastic stool and absorb timeless wisdom",
-            cost: "₹10 Cash",
-            fn: () => executeHeal(20, 35, 10, -25, "The piping hot tea clears your mind and normalizes your blood pressure.")
+            title: "Weaponize Melody Chocolate",
+            desc: "Chew two sticky chocolates at once for an instant glucose surge",
+            cost: "Super +15%",
+            fn: () => executeAttack(28, "Sugar rush powers your rapid-fire Odia debate!", "MELODY! 🍬", sound.playCrit)
+          },
+          {
+            title: "SUPER: SONIC CHUNA TSUNAMI",
+            desc: "Unleash the ultimate acoustic shockwave across Janpath!",
+            cost: "100% Super Meter",
+            isSuper: true,
+            fn: () => executeSuperMove(75, "SUPER MOVE: Masterwork Betel Palm Crack!", "KHATTI CRACK! 💥")
           }
         ]
       },
@@ -1552,50 +1539,39 @@
         maxHp: 125,
         audioFn: () => sound.playBlip(),
         buildScene(grp) {
-          // Office walls
           const office = new THREE.Mesh(new THREE.BoxGeometry(6, 4, 6), new THREE.MeshStandardMaterial({ color: 0x90a4ae, side: THREE.BackSide }));
           office.position.y = 2;
           grp.add(office);
 
-          // Desk
-          const desk = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.8, 1.2), new THREE.MeshStandardMaterial({ color: 0x4e342e }));
-          desk.position.set(0, 0.4, 0);
-          grp.add(desk);
-
-          // Subrat behind desk
           const subrat = MeshFactory.createHumanoid(0x212121, 0x1565c0);
-          subrat.position.set(0, 0, -0.6);
+          subrat.position.set(1.2, 0, -0.6);
           grp.add(subrat);
-
-          // Yellow bucket for leaking AC
-          const bucket = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.25, 0.6), new THREE.MeshStandardMaterial({ color: 0xffeb3b }));
-          bucket.position.set(2.2, 0.3, -1.8);
-          grp.add(bucket);
         },
         moves: [
           {
             title: "Demand Corporate GSTIN",
             desc: "Open MCA21 portal on your smartphone: 'Check karuchi!'",
-            cost: "15 Stamina",
-            fn: () => executeMove(34, 15, -15, 0, "Subrat breaks into a heavy sweat as his synthetic blazer soaks!", sound.playHit)
+            cost: "Super +20%",
+            fn: () => executeAttack(36, "Subrat breaks into a heavy sweat as his blazer soaks!", "GSTIN BUST! 💻", sound.playHit)
           },
           {
             title: "LeetCode Hard DP Question",
             desc: "'Bhaiya, Trapping Rain Water algorithm bujhai dia!'",
-            cost: "20 Stamina",
-            fn: () => executeMove(45, 20, 5, 0, "Subrat's brain blue-screens completely! He drops his offer letter!", sound.playCrit)
+            cost: "Super +30%",
+            fn: () => executeAttack(48, "Subrat's brain blue-screens completely! Offers drop!", "LEETCODE! ⚙️", sound.playCrit)
           },
           {
             title: "Cyber Police Threat",
             desc: "'Bhubaneswar Cyber Police Station ta 2 km doori re!'",
-            cost: "25 Stamina",
-            fn: () => executeMove(48, 25, -10, 0, "Subrat contemplates leaping out the 3rd floor window!", sound.playCrit)
+            cost: "Super +15%",
+            fn: () => executeAttack(32, "Subrat contemplates leaping out the 3rd floor window!", "CYBER CELL! 🚨", sound.playCrit)
           },
           {
-            title: "Expose Comic Sans Font",
-            desc: "'Eita ta Comic Sans re stamp heichi!' (Restores Self-Respect)",
-            cost: "+30 Stamina",
-            fn: () => executeDefend(20, 30, -15, "Calling out the amateur forgery restores your confidence!")
+            title: "SUPER: REVERSE PROXY OVERFLOW",
+            desc: "Trigger a recursive UPI fraud report on his phone!",
+            cost: "100% Super Meter",
+            isSuper: true,
+            fn: () => executeSuperMove(80, "SUPER MOVE: Complete Digital Cyber-Takedown!", "REVERSE GPAY! 📱")
           }
         ]
       },
@@ -1611,51 +1587,35 @@
         maxHp: 140,
         audioFn: () => sound.playThunder(),
         buildScene(grp) {
-          // Market stalls with crates
-          for (let i = -3; i <= 3; i += 2) {
-            const stall = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.8, 1.4), new THREE.MeshStandardMaterial({ color: 0x795548 }));
-            stall.position.set(i, 0.4, -2);
-            grp.add(stall);
-
-            // Burlap potato sack
-            const sack = new THREE.Mesh(new THREE.DodecahedronGeometry(0.4), new THREE.MeshStandardMaterial({ color: 0xd7ccc8 }));
-            sack.position.set(i, 1.0, -2);
-            grp.add(sack);
-          }
-
-          // Cyclone Aunties
-          const aunty1 = MeshFactory.createHumanoid(0x212121, 0xd81b60);
-          aunty1.position.set(-0.8, 0, 0.2);
-          grp.add(aunty1);
-
-          const aunty2 = MeshFactory.createHumanoid(0x212121, 0x8e24aa);
-          aunty2.position.set(0.8, 0, 0.2);
-          grp.add(aunty2);
+          const aunty = MeshFactory.createHumanoid(0x212121, 0xd81b60);
+          aunty.position.set(1.4, 0, 0.2);
+          grp.add(aunty);
         },
         moves: [
           {
             title: "Sambalpuri Saree Bargain",
             desc: "'Barabati re ta ₹20 chalichi! Emti loot machauchha?!'",
-            cost: "20 Stamina",
-            fn: () => executeMove(38, 20, -5, 0, "Your peerless bargaining shames the hoarder before his peers!", sound.playHit)
+            cost: "Super +20%",
+            fn: () => executeAttack(40, "Your peerless bargaining shames the hoarder!", "BARGAIN! 👗", sound.playHit)
           },
           {
             title: "Relief Van Rumor",
             desc: "Quote SRC bulletin: 'Sarkari relief gaadi asuchi!'",
-            cost: "25 Stamina",
-            fn: () => executeMove(46, 25, 10, 0, "Panic that prices will drop forces the vendor to surrender the sack!", sound.playThunder)
+            cost: "Super +25%",
+            fn: () => executeAttack(46, "Fear of market crash forces vendor to drop prices!", "SRC ALERT! 📢", sound.playThunder)
           },
           {
             title: "Aunty Coalition Pact",
             desc: "Split the 5kg sack 50/50 with the Sambalpuri saree aunties",
-            cost: "15 Stamina",
-            fn: () => executeMove(42, 15, -20, 0, "The aunties adopt you as their collective nephew! Unstoppable!", sound.playCrit)
+            cost: "Super +20%",
+            fn: () => executeAttack(42, "The aunties adopt you as their collective nephew!", "AUNTY FORCE! 👵", sound.playCrit)
           },
           {
-            title: "Stock Wax Candles & Matches",
-            desc: "Emergency cyclone lighting provisions secured",
-            cost: "₹15 Cash",
-            fn: () => executeHeal(25, 25, 15, -15, "Matchbox & candles packed! Ready to weather the storm.")
+            title: "SUPER: 5KG NAINITAL METEOR",
+            desc: "Bombard the hoarder cartel with an avalanche of potatoes!",
+            cost: "100% Super Meter",
+            isSuper: true,
+            fn: () => executeSuperMove(85, "SUPER MOVE: 5kg Nainital Aloo Cataclysm!", "ALOO METEOR! 🥔")
           }
         ]
       },
@@ -1675,42 +1635,43 @@
           horse.position.set(-2, 0, -1);
           grp.add(horse);
 
-          const annaAuto = MeshFactory.createVikramAuto();
-          annaAuto.position.set(2.2, 0, 1.5);
-          annaAuto.rotation.y = -Math.PI / 6;
-          grp.add(annaAuto);
+          const auto = MeshFactory.createVikramAuto();
+          auto.position.set(2.2, 0, 1.5);
+          auto.rotation.y = -Math.PI / 6;
+          grp.add(auto);
         },
         moves: [
           {
             title: "Throw 5kg Nainital Aloo",
             desc: "Weaponize your Unit-1 potato hoard at the auto chassis!",
-            cost: "30 Stamina",
-            fn: () => executeMove(60, 30, -10, 0, "DIRECT HIT! The 5kg potato salvo dents Anna's pink fender!", sound.playCrit)
+            cost: "Super +25%",
+            fn: () => executeAttack(55, "DIRECT HIT! The 5kg potato salvo dents Anna's pink fender!", "ALOO SMASH! 🥔", sound.playCrit)
           },
           {
             title: "Sticky Melody Bribe",
             desc: "Offer Tookna Bhai's sacred sticky Melody chocolates",
-            cost: "15 Stamina",
-            fn: () => executeMove(48, 15, -15, 0, "Anna tastes the chocolate! Childhood nostalgia softens his heart!", sound.playBlip)
-          },
-          {
-            title: "Dahibara Torani Surge",
-            desc: "Unleash the ultimate Cuttack spirit: 'Amey sabu bhai bhai!'",
-            cost: "35 Stamina",
-            fn: () => executeMove(55, 35, -20, 0, "The ancient spirit of Barabati radiates! Even the stone horse bows!", sound.playLadleClang)
+            cost: "Super +20%",
+            fn: () => executeAttack(45, "Anna tastes the chocolate! Childhood nostalgia softens his heart!", "MELODY MELT! 🍬", sound.playBlip)
           },
           {
             title: "Mo Bus Midnight Stand",
-            desc: "Threaten to wait for midnight Route 20 (Shows no desperation)",
-            cost: "0 Stamina",
-            fn: () => executeDefend(25, 25, -10, "Anna realizes you cannot be blackmailed by rainwater!")
+            desc: "Threaten to wait for midnight Route 20 (Zero desperation)",
+            cost: "Super +15%",
+            fn: () => executeAttack(38, "Anna realizes you cannot be blackmailed by rainwater!", "ROUTE 20! 🚌", sound.playMoBusAirHorn)
+          },
+          {
+            title: "SUPER: TWIN-CITY TRANSCENDENCE",
+            desc: "Unite Cuttack and Bhubaneswar into ultimate Bhaichara!",
+            cost: "100% Super Meter",
+            isSuper: true,
+            fn: () => executeSuperMove(100, "SUPER MOVE: Twin-City Supreme Brotherhood!", "AMEY SABU BHAI! 👑")
           }
         ]
       }
     ];
 
     /* ==========================================================================
-       5. COMBAT EXECUTION & HUD MANAGERS
+       5. COMBAT & HUD CONTROLLER
        ========================================================================== */
     function loadAct(idx) {
       if (idx >= ACTS.length) {
@@ -1734,8 +1695,8 @@
       }
       act.buildScene(actGroup);
 
-      // Play thematic audio
-      if (act.audioFn) setTimeout(act.audioFn, 300);
+      // Trigger FightKaro Round Announcer Banner
+      triggerAnnouncer(`ROUND ${idx + 1}`, "FIGHT!");
 
       // Update UI cards
       document.getElementById('actNumber').innerText = act.number;
@@ -1748,26 +1709,37 @@
       document.getElementById('bossName').innerText = act.bossName;
       document.getElementById('bossDialogue').innerText = `"${act.dialogue}"`;
 
+      // Update Benglooru route node tracker
+      for (let i = 1; i <= 7; i++) {
+        const node = document.getElementById(`node${i}`);
+        if (node) {
+          if (i === idx + 1) node.className = 'route-node active';
+          else node.className = 'route-node';
+        }
+      }
+
       updateHUD();
       renderActionButtons(act);
-      log(`Act ${idx + 1} loaded: ${act.title}. 3D Scene active.`);
+      if (act.audioFn) setTimeout(act.audioFn, 600);
+    }
+
+    function triggerAnnouncer(title, sub) {
+      const announcer = document.getElementById('fightAnnouncer');
+      announcer.innerHTML = `${title}<br><span style="color: #ff1744; font-size: 1.8rem;">${sub}</span>`;
+      announcer.classList.add('show');
+      sound.playFightCall();
+      setTimeout(() => announcer.classList.remove('show'), 1200);
     }
 
     function updateHUD() {
-      document.getElementById('izzatVal').innerText = `${Math.max(0, state.izzat)}/${state.maxIzzat}`;
-      document.getElementById('izzatBar').style.width = `${Math.max(0, (state.izzat / state.maxIzzat) * 100)}%`;
+      document.getElementById('playerHpVal').innerText = `${Math.max(0, state.izzat)}/${state.maxIzzat} IZZAT`;
+      document.getElementById('playerHpBar').style.width = `${Math.max(0, (state.izzat / state.maxIzzat) * 100)}%`;
 
-      document.getElementById('petaraVal').innerText = `${Math.max(0, state.petara)}/${state.maxPetara}`;
-      document.getElementById('petaraBar').style.width = `${Math.max(0, (state.petara / state.maxPetara) * 100)}%`;
-
-      document.getElementById('bpVal').innerText = `${state.bp}/100`;
-      document.getElementById('bpBar').style.width = `${Math.min(100, state.bp)}%`;
-
-      document.getElementById('cashVal').innerText = `₹${state.cash}`;
-      document.getElementById('cashBar').style.width = `${Math.min(100, state.cash)}%`;
+      document.getElementById('superMeterVal').innerText = `${Math.min(100, state.superMeter)}%`;
+      document.getElementById('superMeterBar').style.width = `${Math.min(100, state.superMeter)}%`;
 
       if (state.currentBoss) {
-        document.getElementById('bossHpVal').innerText = `${Math.max(0, state.currentBoss.hp)}/${state.currentBoss.maxHp}`;
+        document.getElementById('bossHpVal').innerText = `${Math.max(0, state.currentBoss.hp)}/${state.currentBoss.maxHp} HP`;
         document.getElementById('bossHpBar').style.width = `${Math.max(0, (state.currentBoss.hp / state.currentBoss.maxHp) * 100)}%`;
       }
     }
@@ -1777,7 +1749,7 @@
       grid.innerHTML = '';
       act.moves.forEach((m, i) => {
         const btn = document.createElement('button');
-        btn.className = 'action-btn';
+        btn.className = `action-btn ${m.isSuper ? 'super-btn' : ''}`;
         btn.innerHTML = `
           <div class="action-title">
             <span>${m.title}</span>
@@ -1791,37 +1763,19 @@
       });
     }
 
-    function log(text) {
-      document.getElementById('logText').innerText = text;
-    }
-
-    function executeMove(dmg, petaraCost, bpChange, cashCost, text, soundFn) {
+    function executeAttack(dmg, text, comicWord, soundFn) {
       if (!state.battleActive) return;
-      if (state.petara < petaraCost) {
-        log("Not enough Dahibara Petara stamina! Defend or sip tea.");
-        sound.playHit();
-        return;
-      }
-      if (state.cash < cashCost) {
-        log("Khuchura nahi babu! Insufficient loose cash.");
-        sound.playHit();
-        return;
-      }
-
-      state.petara -= petaraCost;
-      state.cash -= cashCost;
-      state.bp = Math.max(0, Math.min(100, state.bp + bpChange));
-
       const isCrit = Math.random() < 0.25;
       const finalDmg = isCrit ? Math.round(dmg * 1.4) : dmg;
+
       state.currentBoss.hp = Math.max(0, state.currentBoss.hp - finalDmg);
+      state.superMeter = Math.min(100, state.superMeter + 22);
 
       if (soundFn) soundFn.call(sound);
       else sound.playHit();
 
-      // Animate Camera Snap & Impact
+      spawnComic(comicWord);
       triggerCombatImpact();
-      log(`> ${text} (${finalDmg} DMG${isCrit ? ' - CRITICAL!' : ''})`);
       updateHUD();
 
       if (state.currentBoss.hp <= 0) {
@@ -1831,63 +1785,63 @@
       }
     }
 
-    function executeDefend(healIzzat, petaraGain, bpChange, text) {
+    function executeSuperMove(dmg, text, comicWord) {
       if (!state.battleActive) return;
-      state.izzat = Math.min(state.maxIzzat, state.izzat + healIzzat);
-      state.petara = Math.min(state.maxPetara, state.petara + petaraGain);
-      state.bp = Math.max(0, state.bp + bpChange);
-      sound.playBlip();
-
-      log(`> Tactical Odia Jugad: ${text}`);
-      updateHUD();
-      setTimeout(() => bossCounterAttack(true), 750);
-    }
-
-    function executeHeal(healIzzat, petaraGain, cashCost, bpChange, text) {
-      if (!state.battleActive) return;
-      if (state.cash < cashCost) {
-        log("Not enough cash for refreshments!");
+      if (state.superMeter < 100) {
+        spawnComic("NEED 100% SUPER! ⚠️");
+        sound.playHit();
         return;
       }
-      state.cash -= cashCost;
-      state.izzat = Math.min(state.maxIzzat, state.izzat + healIzzat);
-      state.petara = Math.min(state.maxPetara, state.petara + petaraGain);
-      state.bp = Math.max(0, state.bp + bpChange);
-      sound.playBlip();
+      state.superMeter = 0;
+      state.currentBoss.hp = Math.max(0, state.currentBoss.hp - dmg);
 
-      log(`> ${text}`);
+      sound.playCrit();
+      spawnComic(comicWord);
+      triggerCombatImpact(true);
       updateHUD();
-      setTimeout(() => bossCounterAttack(true), 750);
+
+      if (state.currentBoss.hp <= 0) {
+        handleActVictory();
+      } else {
+        setTimeout(bossCounterAttack, 850);
+      }
     }
 
-    function bossCounterAttack(defended = false) {
+    function bossCounterAttack() {
       if (!state.battleActive || state.currentBoss.hp <= 0) return;
-      const baseDmg = 16 + Math.floor(Math.random() * 10);
-      const incomingDmg = defended ? Math.round(baseDmg * 0.45) : baseDmg;
-
+      const incomingDmg = 14 + Math.floor(Math.random() * 12);
       state.izzat = Math.max(0, state.izzat - incomingDmg);
-      state.bp = Math.min(100, state.bp + 7);
+      state.superMeter = Math.min(100, state.superMeter + 10);
 
       sound.playHit();
+      spawnComic("OUCH! 💢");
       triggerCombatImpact();
-      log(`${state.currentBoss.name} strikes back! (-${incomingDmg} Izzat)`);
       updateHUD();
 
       if (state.izzat <= 0) {
         state.battleActive = false;
-        log("💀 DEFEAT! Your Izzat reached zero! Bhubaneswar chaos consumed you.");
-        setTimeout(() => alert("Defeat! You ran out of Izzat. Restarting at Rasulgarh..."), 200);
-        setTimeout(restartGame, 1000);
+        triggerAnnouncer("DEFEAT", "K.O.");
+        setTimeout(() => alert("Defeat! You ran out of Izzat. Restarting at Rasulgarh..."), 800);
+        setTimeout(restartGame, 1600);
       }
     }
 
     function handleActVictory() {
       state.battleActive = false;
+      triggerAnnouncer("VICTORY!", "K.O.");
       sound.playVictory();
-      log(`🏆 VICTORY! You conquered ${state.currentBoss.name}! Advancing...`);
       setTimeout(() => {
         loadAct(state.actIndex + 1);
       }, 1600);
+    }
+
+    function triggerCombatImpact(isSuper = false) {
+      camera.position.y += isSuper ? 0.6 : 0.35;
+      setTimeout(() => camera.position.y -= isSuper ? 0.6 : 0.35, 120);
+
+      // Dash player mesh forward
+      player3D.position.x += 0.4;
+      setTimeout(() => player3D.position.x -= 0.4, 150);
     }
 
     function showEnding() {
@@ -1899,20 +1853,12 @@
       document.getElementById('endingOverlay').classList.remove('open');
       state.actIndex = 0;
       state.izzat = 100;
-      state.petara = 70;
-      state.bp = 15;
-      state.cash = 50;
+      state.superMeter = 25;
       loadAct(0);
     }
 
-    function triggerCombatImpact() {
-      // 3D camera bump
-      camera.position.y += 0.35;
-      setTimeout(() => camera.position.y -= 0.35, 120);
-    }
-
     /* ==========================================================================
-       6. KEYBOARD CONTROLS & UI EVENT HANDLERS
+       6. CONTROLS & LISTENERS
        ========================================================================== */
     window.addEventListener('keydown', (e) => {
       if (['1', '2', '3', '4'].includes(e.key)) {
@@ -1925,14 +1871,9 @@
     });
 
     document.getElementById('btnCamToggle').addEventListener('click', () => {
-      if (currentCamMode === CameraModes.DUEL) currentCamMode = CameraModes.ORBIT;
-      else if (currentCamMode === CameraModes.ORBIT) currentCamMode = CameraModes.TOP;
-      else currentCamMode = CameraModes.DUEL;
-
-      document.getElementById('camText').innerText = currentCamMode;
-      document.getElementById('camBadge').innerText = `● 3D CAMERA: ${currentCamMode}`;
-      updateCameraTarget(currentCamMode);
       sound.playBlip();
+      if (camera.position.z > 10) camera.position.set(2.0, 3.2, 8.0);
+      else camera.position.set(0, 4.5, 12.0);
     });
 
     document.getElementById('btnSoundToggle').addEventListener('click', () => {
@@ -1963,7 +1904,7 @@
     });
 
     /* ==========================================================================
-       7. MAIN 3D ANIMATION & RENDER LOOP (60 FPS)
+       7. MAIN 3D ANIMATION LOOP
        ========================================================================== */
     let clock = new THREE.Clock();
 
@@ -1972,11 +1913,7 @@
       const delta = clock.getDelta();
       const elapsed = clock.getElapsedTime();
 
-      // Camera smooth interpolation (lerp)
-      camera.position.lerp(camTargetPos, 0.04);
-      camera.lookAt(camLookTarget);
-
-      // Idle vehicle bounce / vibration
+      // Idle vehicle & character bounce
       if (actGroup.children.length > 0) {
         actGroup.children.forEach((obj, idx) => {
           if (obj.isGroup) {
@@ -1984,8 +1921,9 @@
           }
         });
       }
+      player3D.position.y = Math.sin(elapsed * 5) * 0.04;
 
-      // Animate particles (Rain / Dust falling)
+      // Animate particles
       const positions = particleGeo.attributes.position.array;
       for (let i = 1; i < particleCount * 3; i += 3) {
         positions[i] -= delta * 18;
@@ -1993,15 +1931,11 @@
       }
       particleGeo.attributes.position.needsUpdate = true;
 
-      // Point light breathing
       pointLight.intensity = 1.0 + Math.sin(elapsed * 4) * 0.3;
-
       renderer.render(scene, camera);
     }
 
-    // Initialize Game
     window.addEventListener('DOMContentLoaded', () => {
-      updateCameraTarget(currentCamMode);
       loadAct(0);
       animate();
     });
