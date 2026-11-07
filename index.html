@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>BHUBANESWAR 3D: Ama Gadi, Ama Rasta (Konark Radar, Day-Night & Cinematic Edition)</title>
+  <title>BHUBANESWAR 3D: Ama Gadi, Ama Rasta (Cinematic Cutscenes & Sync Audio Edition)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Noto+Sans+Oriya:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=VT323&display=swap" rel="stylesheet">
@@ -37,48 +37,168 @@
       z-index: 1;
     }
 
-    /* CINEMATIC LETTERBOX BARS */
+    /* CINEMATIC ANAMORPHIC WIDESCREEN BARS */
     .cine-bar {
       position: fixed;
       left: 0;
       right: 0;
       height: 0;
       background: #000;
-      z-index: 15;
+      z-index: 25;
       transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
       pointer-events: none;
     }
-    .cine-bar.top { top: 0; border-bottom: 2px solid rgba(255, 204, 0, 0.25); }
-    .cine-bar.bottom { bottom: 0; border-top: 2px solid rgba(255, 204, 0, 0.25); }
-    body.cinematic-active .cine-bar { height: 9.5vh; }
+    .cine-bar.top { top: 0; border-bottom: 2px solid rgba(255, 204, 0, 0.3); }
+    .cine-bar.bottom { bottom: 0; border-top: 2px solid rgba(255, 204, 0, 0.3); }
+    body.cinematic-active .cine-bar,
+    body.cutscene-active .cine-bar { height: 10.5vh; }
 
-    /* CINEMATIC TITLE OVERLAY */
-    #cine-overlay {
+    /* SCRIPTED CUTSCENE OVERLAY */
+    #cutscene-overlay {
       position: fixed;
-      bottom: 12vh;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 16;
-      text-align: center;
+      inset: 0;
+      z-index: 30;
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12vh 24px 12vh 24px;
       pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.5s ease;
     }
-    body.cinematic-active #cine-overlay { opacity: 1; }
-    .cine-main-title {
+    body.cutscene-active #cutscene-overlay { display: flex; }
+
+    .cutscene-top-badge {
+      align-self: flex-start;
+      background: rgba(14, 10, 26, 0.92);
+      border: 2px solid var(--gold);
+      box-shadow: 4px 4px 0 #000;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      pointer-events: auto;
+    }
+    .cutscene-title {
       font-family: 'Cinzel', serif;
-      font-size: 24px;
-      letter-spacing: 4px;
-      color: #ffd166;
-      text-shadow: 0 0 15px rgba(255, 209, 102, 0.8), 2px 2px 0 #000;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 1px;
     }
-    .cine-sub-title {
+    .cutscene-sub {
+      font-size: 13px;
+      color: #e2e8f0;
       font-family: 'Noto Sans Oriya', sans-serif;
-      font-size: 18px;
-      color: #ffffff;
-      margin-top: 4px;
-      text-shadow: 1px 1px 3px #000;
     }
+
+    .cutscene-dialogue-card {
+      align-self: center;
+      width: 92%;
+      max-width: 820px;
+      background: rgba(17, 12, 28, 0.96);
+      border: 3px solid var(--accent);
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.9), 8px 8px 0 #000;
+      padding: 16px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: auto;
+      backdrop-filter: blur(8px);
+    }
+    .speaker-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .speaker-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #251642;
+      border: 1px solid var(--cyan);
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-family: 'Cinzel', 'Noto Sans Oriya', serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--cyan);
+    }
+    .audio-voice-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--gold);
+    }
+    .audio-wave {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      height: 14px;
+    }
+    .audio-bar {
+      width: 3px;
+      height: 6px;
+      background: var(--gold);
+      animation: audioPulse 0.6s infinite alternate ease-in-out;
+    }
+    .audio-bar:nth-child(2) { animation-delay: 0.2s; height: 12px; }
+    .audio-bar:nth-child(3) { animation-delay: 0.4s; height: 9px; }
+    @keyframes audioPulse {
+      from { height: 4px; }
+      to { height: 14px; }
+    }
+
+    .sub-voice-text {
+      font-size: 20px;
+      line-height: 1.45;
+      color: #fff;
+      min-height: 58px;
+      font-family: 'Noto Sans Devanagari', 'Plus Jakarta Sans', 'Noto Sans Oriya', sans-serif;
+    }
+    .sub-voice-text .highlight {
+      color: var(--accent);
+      text-shadow: 0 0 10px rgba(255, 204, 0, 0.6);
+      font-weight: 700;
+    }
+    .sub-odia-trans {
+      font-size: 15px;
+      color: #cbd5e1;
+      font-family: 'Noto Sans Oriya', sans-serif;
+      border-top: 1px dashed #443860;
+      padding-top: 6px;
+      font-style: italic;
+    }
+
+    .cutscene-actions-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .cutscene-btn {
+      background: #231a38;
+      color: #fff;
+      border: 1px solid var(--cyan);
+      padding: 6px 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .cutscene-btn:hover { background: var(--cyan); color: #000; }
+    .cutscene-btn.primary {
+      background: var(--accent);
+      color: #000;
+      border-color: #fff;
+      font-weight: 700;
+    }
+    .cutscene-btn.primary:hover { background: #ffe066; }
 
     /* HUD OVERLAY */
     #hud {
@@ -94,6 +214,7 @@
     }
     body.cinematic-active #hud { opacity: 0.25; }
     body.cinematic-active #hud:hover { opacity: 0.95; }
+    body.cutscene-active #hud { display: none; }
     .interactive { pointer-events: auto; }
 
     /* TOP ROW */
@@ -127,7 +248,7 @@
       flex-wrap: wrap;
     }
     .weather-pill {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--cyan);
       display: flex;
       align-items: center;
@@ -503,7 +624,7 @@
       gap: 14px;
       align-items: center;
       backdrop-filter: blur(6px);
-      margin-left: 140px; /* offset for minimap */
+      margin-left: 140px;
     }
     .speedo { text-align: center; }
     .speed-number {
@@ -588,7 +709,7 @@
       position: fixed;
       top: 11vh;
       right: 20px;
-      z-index: 20;
+      z-index: 26;
       background: rgba(0,0,0,0.85);
       border: 2px solid var(--accent);
       color: #fff;
@@ -603,7 +724,8 @@
     @media (max-width: 768px) {
       .vehicle-hud { margin-left: 0; }
       #minimap-container { display: none; }
-      #quest-card { max-width: 260px; font-size: 11px; }
+      #quest-card { max-width: 250px; font-size: 11px; }
+      .sub-voice-text { font-size: 16px; }
     }
   </style>
 </head>
@@ -615,12 +737,59 @@
 <div class="cine-bar top"></div>
 <div class="cine-bar bottom"></div>
 
+<!-- CINEMATIC TITLE OVERLAY (Free-cam mode) -->
 <div id="cine-overlay">
   <div class="cine-main-title" id="cine-title">BHUBANESWAR • 2026</div>
   <div class="cine-sub-title" id="cine-subtitle">ଜନପଥ ରାସ୍ତା • ଶହୀଦ ନଗର • ଏକାମ୍ର କ୍ଷେତ୍ର</div>
 </div>
 
 <button id="btn-skip-cine" class="interactive" onclick="toggleCinematicMode(false)">✕ EXIT CINEMATIC [C / ESC]</button>
+
+<!-- SCRIPTED CUTSCENE OVERLAY WITH SYNC AUDIO -->
+<div id="cutscene-overlay">
+  <div class="cutscene-top-badge">
+    <div>
+      <div class="cutscene-title" id="cs-scene-title">🎬 SCENE: ARRIVAL AT JANPATH</div>
+      <div class="cutscene-sub" id="cs-scene-sub">ସିନେମାଟିକ୍ କାହାଣୀ • ଭୁବନେଶ୍ୱର</div>
+    </div>
+    <div style="margin-left: auto;">
+      <button class="mini-btn" id="btn-voice-lang" onclick="CutsceneSystem.cycleVoiceLang()">🎙️ <span id="voice-lang-label">VOICE: HINDI</span></button>
+    </div>
+  </div>
+
+  <div class="cutscene-dialogue-card">
+    <div class="speaker-row">
+      <div class="speaker-badge" id="cs-speaker">🎙️ ANNOUNCER</div>
+      <div class="audio-voice-indicator">
+        <span class="audio-wave">
+          <span class="audio-bar"></span>
+          <span class="audio-bar"></span>
+          <span class="audio-bar"></span>
+        </span>
+        <span id="cs-audio-status">SYNC AUDIO PLAYING</span>
+      </div>
+    </div>
+
+    <!-- Subtitle text with real-time highlighted phrase -->
+    <div class="sub-voice-text" id="cs-text">
+      नमस्ते भुवनेश्वर! जनपथ की इस सुनहरी सुबह में आपका स्वागत है।
+    </div>
+    <div class="sub-odia-trans" id="cs-odia-trans">
+      ନମସ୍କାର ଭୁବନେଶ୍ୱର! ଜନପଥର ଏହି ସୁନେଲି ସକାଳକୁ ସ୍ୱାଗତ।
+    </div>
+
+    <div class="cutscene-actions-row">
+      <div style="font-size: 12px; color: #aaa; font-family: 'JetBrains Mono', monospace;">
+        PRESS <strong style="color:var(--accent);">[SPACE]</strong> TO ADVANCE • <strong style="color:var(--danger);">[ESC]</strong> TO SKIP
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="cutscene-btn" onclick="CutsceneSystem.replayCurrentVoice()">🔊 REPLAY</button>
+        <button class="cutscene-btn" onclick="CutsceneSystem.skip()">⏩ SKIP</button>
+        <button class="cutscene-btn primary" onclick="CutsceneSystem.nextStep()">⏭️ NEXT</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- HUD -->
 <div id="hud">
@@ -635,13 +804,13 @@
           <span id="weather-text">34°C • HUMID</span>
         </div>
         <button class="mini-btn" id="btn-time" onclick="cycleTimeOfDay()">⏰ <span id="time-label">09:15 AM</span></button>
-        <button class="mini-btn" id="btn-kalabaisakhi" onclick="toggleKalabaisakhi()">⛈️ KALABAISAKHI</button>
+        <button class="mini-btn" id="btn-cutscene" onclick="CutsceneSystem.play('intro')">🎬 <span>INTRO SCENE</span></button>
         <button class="mini-btn" id="btn-cine" onclick="toggleCinematicMode()">🎥 <span id="cine-btn-lbl">CINEMATIC [C]</span></button>
         <button class="mini-btn" id="btn-lang" onclick="cycleLanguage()">🌐 <span id="lang-label">ଓଡ଼ିଆ</span></button>
       </div>
       <div class="sambalpuri-border"></div>
       <div style="font-size: 13px; color: #ffcc00; font-family: 'Noto Sans Oriya', sans-serif;" id="sub-tagline">
-        ଖଟି • ଦହିବରା • ପିଙ୍କ୍ ଅଟୋ • ଶୂନ୍ୟ ମାଧ୍ୟାକର୍ଷଣ • କୋଣାର୍କ ରାଡାର
+        ଖଟି • ଦହିବରା • ପିଙ୍କ୍ ଅଟୋ • ସିଙ୍କ୍ ଅଡିଓ • କୋଣାର୍କ ରାଡାର
       </div>
     </div>
 
@@ -724,7 +893,7 @@
 
     <!-- TOAST FEEDBACK -->
     <div class="toast-box interactive" id="toast-box">
-      <span id="toast-msg">🎮 WASD/Arrows to drive • [G] Antigrav Flight • [Q] Shockwave • [T] Day/Night • [C] Cinematic</span>
+      <span id="toast-msg">🎮 WASD to drive • [G] Zero-G • [Q] Pulse • [X] Cutscenes • [C] Cinematic</span>
     </div>
 
     <!-- TOUCH CONTROLS FOR MOBILE -->
@@ -960,159 +1129,7 @@
   }
 
   /* =========================================================================
-     2. TRILINGUAL LOCALIZATION & STORY MISSIONS
-     ========================================================================= */
-  const I18N = {
-    odia: {
-      langName: "ଓଡ଼ିଆ",
-      brandTitle: "ଭୁବନେଶ୍ୱର 3D: ଆମ ଗାଡ଼ି ଆମ ରାସ୍ତା",
-      subTagline: "ଖଟି • ଦହିବରା • ପିଙ୍କ୍ ଅଟୋ • ଶୂନ୍ୟ ମାଧ୍ୟାକର୍ଷଣ • କୋଣାର୍କ ରାଡାର",
-      stamina: "ପଖାଳ",
-      jugaad: "ଜୁଗାଡ଼",
-      karma: "ଶାନ୍ତି",
-      wallet: "ଟଙ୍କା",
-      agOff: "🛸 ANTIGRAV: ବନ୍ଦ",
-      agOn: "🚀 ଶୂନ୍ୟ ଗୁରୁତ୍ୱ: ସକ୍ରିୟ",
-      scooter: "🛵 ହ୍ୱାଇଟ୍ ଆକ୍ଟିଭା 6G",
-      pinkAuto: "🛺 ୧୯୯୮ ପିଙ୍କ୍ ବିକ୍ରମ ଅଟୋ",
-      pulseToast: "⚡ ବିକର୍ଷଣ ତରଙ୍ଗ! ସବୁ ବାସନ ଓ ବସ୍ତା ଉଡ଼ିଗଲା!",
-      cowsIgnored: "🐮 ଜନପଥ ଗାଈ ଆପଣଙ୍କ ହର୍ଣ୍ଣକୁ ପୂରା ଇଗ୍ନୋର କଲା!",
-      autoHorn: "🛺 *ପୋଁ-ପୋଁ!* 'ବାବୁ ଡାଇରେକ୍ଟ ₹୧୫୦! ରାସ୍ତା ଖାଲି କର!'",
-      stormActive: "⛈️ କାଳବୈଶାଖୀ ଝଡ଼ ଓ ଘଡ଼ଘଡ଼ି ଆରମ୍ଭ!",
-      stormCalm: "☀️ ଆକାଶ ପରିଷ୍କାର ହେଲା।"
-    },
-    hindi: {
-      langName: "हिंदी",
-      brandTitle: "भुवनेश्वर 3D: हमारी गाड़ी, हमारा रास्ता",
-      subTagline: "खट्टी • दहीबड़ा • पिंक ऑटो • एंटी-ग्रेविटी मोड • कोणार्क रडार",
-      stamina: "पखाल",
-      jugaad: "जुगाड़",
-      karma: "शांति",
-      wallet: "पैसे",
-      agOff: "🛸 ANTIGRAV: बंद",
-      agOn: "🚀 एंटी-ग्रेविटी: चालू",
-      scooter: "🛵 वाइट एक्टिवा 6G",
-      pinkAuto: "🛺 1998 पिंक विक्रम ऑटो",
-      pulseToast: "⚡ रिपल्सर पल्स! सड़क के बर्तन और कट्टे हवा में उड़ गए!",
-      cowsIgnored: "🐮 गाय ने हॉर्न को पूरी तरह नजरअंदाज कर दिया!",
-      autoHorn: "🛺 *पों-पों!* 'भैया नो मीटर! सीधा ₹150!'",
-      stormActive: "⛈️ कालबैशाखी तूफ़ान शुरू!",
-      stormCalm: "☀️ मौसम साफ हो गया।"
-    },
-    en: {
-      langName: "ENG",
-      brandTitle: "BHUBANESWAR 3D: AMA GADI, AMA RASTA",
-      subTagline: "KHATTI • DAHIBARA • PINK AUTO • ANTIGRAV ZERO-G • KONARK RADAR",
-      stamina: "STAMINA",
-      jugaad: "JUGAAD",
-      karma: "KARMA",
-      wallet: "WALLET",
-      agOff: "🛸 ANTIGRAV: OFF",
-      agOn: "🚀 ZERO-G: ACTIVE",
-      scooter: "🛵 WHITE ACTIVA 6G",
-      pinkAuto: "🛺 1998 PINK VIKRAM AUTO",
-      pulseToast: "⚡ ANTIGRAV PULSE! Debris and handis launched into zero-G orbit!",
-      cowsIgnored: "🐮 Cows on Janpath completely ignored your horn.",
-      autoHorn: "🛺 *POMP-POMP!* 'No meter bro! Straight ₹150 flat!'",
-      stormActive: "⛈️ Kalabaisakhi cyclonic storm unleashed!",
-      stormCalm: "☀️ Skies cleared up."
-    }
-  };
-
-  let currentLang = 'odia';
-  function cycleLanguage() {
-    if (currentLang === 'odia') currentLang = 'hindi';
-    else if (currentLang === 'hindi') currentLang = 'en';
-    else currentLang = 'odia';
-    applyLanguage();
-  }
-
-  function applyLanguage() {
-    const t = I18N[currentLang];
-    document.getElementById('lang-label').innerText = t.langName;
-    document.getElementById('brand-title').innerText = t.brandTitle;
-    document.getElementById('sub-tagline').innerText = t.subTagline;
-    document.getElementById('lbl-stamina').innerText = t.stamina;
-    document.getElementById('lbl-jugaad').innerText = t.jugaad;
-    document.getElementById('lbl-karma').innerText = t.karma;
-    document.getElementById('lbl-wallet').innerText = t.wallet;
-    document.getElementById('vehicle-label').innerText = isPinkAuto ? t.pinkAuto : t.scooter;
-    document.getElementById('ag-label').innerText = isAntigrav ? t.agOn : t.agOff;
-    updateQuestCard();
-  }
-
-  // Story Missions
-  const QUESTS = [
-    {
-      id: 'dahibara',
-      titleOdia: '୧. ସକାଳ ଜଳଖିଆ ଖାଆନ୍ତୁ',
-      titleEn: '1. Grab Saheed Nagar Dahibara',
-      desc: 'Ride to Saheed Nagar Dahibara cart (🍲) and have a plate with Bidyadhar Mausa.',
-      reward: 'REWARD: +35 Stamina, +₹50',
-      done: false
-    },
-    {
-      id: 'omfed',
-      titleOdia: '୨. ଟୁକନା ଭାଇ ପାନ ଖଟି',
-      titleEn: '2. Visit Tookna Paan Khatti',
-      desc: 'Head to the Omfed booth (🍃) and grab Meetha Paan & gold leaf tea.',
-      reward: 'REWARD: +20 Jugaad',
-      done: false
-    },
-    {
-      id: 'antigrav',
-      titleOdia: '୩. ଶୂନ୍ୟ ଗୁରୁତ୍ୱରେ ଉଡ଼ନ୍ତୁ',
-      titleEn: '3. Fly in Antigravity Zero-G',
-      desc: 'Press [G] to activate Zero-G and fly above 15m altitude!',
-      reward: 'REWARD: +30 Karma',
-      done: false
-    },
-    {
-      id: 'pulse',
-      titleOdia: '୪. ବିକର୍ଷଣ ତରଙ୍ଗ ବ୍ଲାଷ୍ଟ୍',
-      titleEn: '4. Fire Repulsor Pulse',
-      desc: 'Press [Q] to launch street debris into zero-G orbit!',
-      reward: 'REWARD: +25 Jugaad, +₹100',
-      done: false
-    },
-    {
-      id: 'brawl',
-      titleOdia: '୫. ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ ବସ୍କୁ ହରାନ୍ତୁ',
-      titleEn: '5. Defeat Pink Auto Boss',
-      desc: 'Drive to Master Canteen (🛺) and win the FightKaro 3D street brawl!',
-      reward: 'REWARD: 🏆 ଭୁବନେଶ୍ୱର ଲିଜେଣ୍ଡ (LEGEND TITLE)',
-      done: false
-    }
-  ];
-
-  let currentQuestIdx = 0;
-  function updateQuestCard() {
-    if (currentQuestIdx >= QUESTS.length) {
-      document.getElementById('quest-num').innerText = 'COMPLETED!';
-      document.getElementById('quest-title').innerText = '🏆 ଭୁବନେଶ୍ୱର ସମ୍ରାଟ (ALL MISSIONS CLEAR)';
-      document.getElementById('quest-desc').innerText = 'You rule the streets of Bhubaneswar from Rasulgarh to Khandagiri!';
-      document.getElementById('quest-reward').innerText = 'STATUS: MASTER OF THE ROADS';
-      return;
-    }
-    const q = QUESTS[currentQuestIdx];
-    document.getElementById('quest-num').innerText = `${currentQuestIdx + 1} / ${QUESTS.length}`;
-    document.getElementById('quest-title').innerText = currentLang === 'odia' ? q.titleOdia : q.titleEn;
-    document.getElementById('quest-desc').innerText = q.desc;
-    document.getElementById('quest-reward').innerText = q.reward;
-  }
-
-  function advanceQuest(id) {
-    if (currentQuestIdx < QUESTS.length && QUESTS[currentQuestIdx].id === id) {
-      QUESTS[currentQuestIdx].done = true;
-      currentQuestIdx++;
-      playVictoryChime();
-      showToast(`🎉 MISSION COMPLETE! Advance to next target!`);
-      updateQuestCard();
-    }
-  }
-
-  /* =========================================================================
-     3. PROCEDURAL WEB AUDIO SYNTHESIZER
+     2. PROCEDURAL AUDIO & VOCAL SYNTHESIZER
      ========================================================================= */
   const AudioCtx = window.AudioContext || window.webkitAudioContext;
   let audioCtx = null;
@@ -1232,8 +1249,428 @@
     });
   }
 
+  // Vocal formant chirping for retro audio fallback
+  function playVocalFormant(pitch = 240, duration = 0.12) {
+    if (!audioCtx) initAudio();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'sawtooth';
+    o.frequency.setValueAtTime(pitch, audioCtx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(pitch * 1.15, audioCtx.currentTime + duration);
+
+    const f = audioCtx.createBiquadFilter();
+    f.type = 'bandpass';
+    f.frequency.setValueAtTime(pitch * 2.8, audioCtx.currentTime);
+    f.Q.value = 3.5;
+
+    g.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+    o.connect(f); f.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + duration);
+  }
+
   /* =========================================================================
-     4. THREE.JS 3D OPEN-WORLD BHUBANESWAR SCENE & LIGHTING
+     3. SCRIPTED 3D CUTSCENE ENGINE WITH SYNCHRONIZED AUDIO
+     ========================================================================= */
+  const CutsceneSystem = {
+    active: false,
+    currentSceneId: null,
+    stepIdx: 0,
+    voiceLang: 'hi', // 'hi' or 'en'
+    currentUtterance: null,
+    stepTimer: 0,
+    targetDuration: 5.0,
+
+    scenes: {
+      intro: {
+        title: "SCENE: THE TWIN CITY AWAKENS",
+        titleOdia: "ଦୃଶ୍ୟ: ଯମଜ ନଗରୀର ସୂର୍ଯ୍ୟୋଦୟ",
+        steps: [
+          {
+            camStart: { x: 0, y: 36, z: -170 },
+            camEnd: { x: 0, y: 18, z: -80 },
+            lookAt: { x: 0, y: 8, z: -110 },
+            duration: 5.0,
+            speaker: "🎙️ ANNOUNCER",
+            hi: "नमस्ते भुवनेश्वर! जनपथ की धूप और रसूलगढ़ के ट्रैफिक में आपका स्वागत है।",
+            en: "Welcome to Bhubaneswar 2026! Feel the morning coastal breeze along Janpath.",
+            odia: "ନମସ୍କାର ଭୁବନେଶ୍ୱର! ଜନପଥର ଏହି ଖରା ଓ ରସୁଲଗଡ଼ର ଟ୍ରାଫିକକୁ ସ୍ୱାଗତ।",
+            pitch: 1.0,
+            rate: 1.0
+          },
+          {
+            camStart: { x: 0, y: 18, z: -80 },
+            camEnd: { x: 0, y: 4.5, z: 12 },
+            lookAt: { x: 0, y: 1.6, z: 0 },
+            duration: 5.2,
+            speaker: "🛵 YOU (BABU)",
+            hi: "आज पूरा शहर घूमेंगे! सबसे पहले शहीद नगर जाकर बिद्याधर मौसा का दहीबड़ा खाते हैं।",
+            en: "Let's explore the city! First stop: Saheed Nagar for Bidyadhar Mausa's Dahibara.",
+            odia: "ଆଜି ପୂରା ସହର ବୁଲିବା! ପ୍ରଥମେ ଶହୀଦ ନଗର ଯାଇ ବିଦ୍ୟାଧର ମଉସାଙ୍କ ଦହିବରା ଖାଇବା।",
+            pitch: 1.1,
+            rate: 1.05
+          }
+        ]
+      },
+      dahibara: {
+        title: "SCENE: SAHEED NAGAR DAHIBARA",
+        titleOdia: "ଦୃଶ୍ୟ: ଶହୀଦ ନଗର ବିଦ୍ୟାଧର ମଉସା ଦହିବରା",
+        steps: [
+          {
+            camStart: { x: 12, y: 2.0, z: -22 },
+            camEnd: { x: 20, y: 2.2, z: -28 },
+            lookAt: { x: 22, y: 1.6, z: -30 },
+            duration: 5.5,
+            speaker: "🍲 BIDYADHAR MAUSA",
+            hi: "अरे बाबू! बैठो बैठो! कटक-भुवनेश्वर का असली दहीबड़ा आलूदम! थोड़ा दही पानी और मारूँ क्या?",
+            en: "Welcome Babu! Authentic twin-city Dahibara Aloodum! Should I splash extra spiced curd water?",
+            odia: "ଆରେ ବାବୁ! ବସ ବସ! କଟକ-ଭୁବନେଶ୍ୱରର ଅସଲି ଦହିବରା ଆଳୁଦମ୍! ପାଣି ଟିକେ ମାରିବି କି?",
+            pitch: 0.85,
+            rate: 0.95,
+            sfx: playDahibaraClang
+          }
+        ]
+      },
+      omfed: {
+        title: "SCENE: OMFED TOOKNA BHAI'S KHATTI",
+        titleOdia: "ଦୃଶ୍ୟ: ଓମ୍ଫେଡ୍ ଟୁକନା ଭାଇ ପାନ ଖଟି",
+        steps: [
+          {
+            camStart: { x: -14, y: 2.0, z: 22 },
+            camEnd: { x: -20, y: 2.3, z: 17 },
+            lookAt: { x: -22, y: 1.8, z: 15 },
+            duration: 5.5,
+            speaker: "🍃 TOOKNA BHAI",
+            hi: "अरे भाई! शाम की खट्टी शुरू हो गई है! गरमा-गरम चाय और मीठा पान खाओ, दिमाग की बत्ती जलाओ!",
+            en: "Hey brother! Evening Khatti headquarters are open! Grab hot chai and sweet paan, let's talk politics!",
+            odia: "ଆରେ ଭାଇ! ସନ୍ଧ୍ୟା ଖଟି ଆରମ୍ଭ ହେଲାଣି! ଚାହା ଆଉ ମିଠା ପାନ ଖାଅ, ଦିମାଗ୍ ଖୋଲିଯିବ!",
+            pitch: 1.15,
+            rate: 1.05,
+            sfx: playTooknaClap
+          }
+        ]
+      },
+      patia: {
+        title: "SCENE: PATIA G+2 BACHELOR SCAM",
+        titleOdia: "ଦୃଶ୍ୟ: ପଟିଆ ବ୍ୟାଚେଲର ଭଡ଼ା ଘର ସ୍କାମ୍",
+        steps: [
+          {
+            camStart: { x: -22, y: 1.5, z: -80 },
+            camEnd: { x: -28, y: 4.5, z: -88 },
+            lookAt: { x: -30, y: 2.5, z: -90 },
+            duration: 5.5,
+            speaker: "🏢 RAMESH BROKER",
+            hi: "सर! ये फ्लैट बहुत प्राइम लोकेशन है! छह महीने का एडवांस लगेगा, और रात नौ बजे मेन गेट बंद!",
+            en: "Sir! Prime bachelor apartment in Patia! But six months advance deposit and main gate padlocks at 9 PM!",
+            odia: "ସାର୍! ପଟିଆରେ ପ୍ରାଇମ୍ ବ୍ୟାଚେଲର ଘର! ଛଅ ମାସର ଆଡଭାନ୍ସ ଆଉ ରାତି ନଅଟାରେ ମେନ୍ ଗେଟ୍ ବନ୍ଦ!",
+            pitch: 0.95,
+            rate: 1.0
+          }
+        ]
+      },
+      mastercanteen: {
+        title: "SCENE: PINK AUTO SHOWDOWN",
+        titleOdia: "ଦୃଶ୍ୟ: ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ ପିଙ୍କ୍ ଅଟୋ ବସ୍",
+        steps: [
+          {
+            camStart: { x: 22, y: 2.0, z: 75 },
+            camEnd: { x: 28, y: 2.6, z: 82 },
+            lookAt: { x: 30, y: 2.0, z: 85 },
+            duration: 5.5,
+            speaker: "🛺 PINK AUTO BOSS",
+            hi: "मीटर-वीटर की बात मत करना बाबू! वाणी विहार जाना है तो सीधा ₹150! मुकाबला करोगे या किराया दोगे?",
+            en: "Don't talk about meters here brother! Straight ₹150 flat! Do you want a ride or a street brawl?",
+            odia: "ମିଟର ଫିଟର କଥା କହିବନି ବାବୁ! ବାଣୀବିହାର ଯିବ ତ ₹୧୫୦ ଫିକ୍ସ! ଲଢ଼ିବ ନା ଭଡ଼ା ଦେବ?",
+            pitch: 0.8,
+            rate: 0.92,
+            sfx: playHorn
+          }
+        ]
+      },
+      antigrav: {
+        title: "SCENE: ANTIGRAVITY ZERO-G IGNITION",
+        titleOdia: "ଦୃଶ୍ୟ: ଶୂନ୍ୟ ମାଧ୍ୟାକର୍ଷଣ ଉଡ଼ନ୍ତା ଅବତାର",
+        steps: [
+          {
+            camStart: { x: 8, y: 1.5, z: 8 },
+            camEnd: { x: 12, y: 16, z: -12 },
+            lookAt: { x: 0, y: 8, z: 0 },
+            duration: 4.5,
+            speaker: "🛸 ZERO-G COMPUTER",
+            hi: "शून्य गुरुत्वाकर्षण चालू हो गया! प्लाज्मा थ्रस्टर्स सक्रिय हैं, गाड़ी हवा में उड़ रही है!",
+            en: "Antigravity zero-G drive engaged! Plasma thrusters active, vehicle is airborne!",
+            odia: "ଶୂନ୍ୟ ମାଧ୍ୟାକର୍ଷଣ ସକ୍ରିୟ ହେଲା! ପ୍ଲାଜ୍ମା ଥ୍ରଷ୍ଟର୍ସ ଚାଲିଲା, ଗାଡ଼ି ଆକାଶରେ ଉଡ଼ୁଛି!",
+            pitch: 1.25,
+            rate: 1.05,
+            sfx: () => playThrusterSound(true)
+          }
+        ]
+      }
+    },
+
+    cycleVoiceLang() {
+      this.voiceLang = this.voiceLang === 'hi' ? 'en' : 'hi';
+      document.getElementById('voice-lang-label').innerText = `VOICE: ${this.voiceLang.toUpperCase()}`;
+      this.replayCurrentVoice();
+    },
+
+    play(sceneId) {
+      if (!this.scenes[sceneId]) return;
+      initAudio();
+      this.active = true;
+      this.currentSceneId = sceneId;
+      this.stepIdx = 0;
+      this.stepTimer = 0;
+
+      document.body.classList.add('cutscene-active');
+      const sc = this.scenes[sceneId];
+      document.getElementById('cs-scene-title').innerText = `🎬 ${sc.title}`;
+      document.getElementById('cs-scene-sub').innerText = sc.titleOdia;
+
+      this.executeStep();
+    },
+
+    executeStep() {
+      const sc = this.scenes[this.currentSceneId];
+      if (!sc || this.stepIdx >= sc.steps.length) {
+        this.finish();
+        return;
+      }
+
+      const st = sc.steps[this.stepIdx];
+      this.stepTimer = 0;
+      this.targetDuration = st.duration || 5.0;
+
+      document.getElementById('cs-speaker').innerText = st.speaker;
+      const textToSpeak = this.voiceLang === 'hi' ? st.hi : st.en;
+      document.getElementById('cs-text').innerHTML = `<span class="highlight">${textToSpeak}</span>`;
+      document.getElementById('cs-odia-trans').innerText = st.odia;
+
+      if (st.sfx) {
+        try { st.sfx(); } catch(e){}
+      }
+
+      this.speakVoice(textToSpeak, this.voiceLang, st.pitch, st.rate);
+    },
+
+    speakVoice(text, lang, pitch = 1.0, rate = 1.0) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = (lang === 'hi') ? 'hi-IN' : 'en-IN';
+        utter.pitch = pitch;
+        utter.rate = rate;
+
+        const voices = window.speechSynthesis.getVoices();
+        const targetVoice = voices.find(v => (lang === 'hi' ? (v.lang.includes('hi') || v.lang.includes('HI')) : (v.lang.includes('en-IN') || v.lang.includes('en_IN')))) ||
+                            voices.find(v => lang === 'hi' ? v.name.toLowerCase().includes('hindi') : v.name.toLowerCase().includes('india'));
+        if (targetVoice) utter.voice = targetVoice;
+
+        utter.onstart = () => {
+          document.getElementById('cs-audio-status').innerText = `SYNC AUDIO PLAYING (${lang.toUpperCase()})`;
+        };
+        utter.onend = () => {
+          document.getElementById('cs-audio-status').innerText = "AUDIO FINISHED";
+        };
+        utter.onerror = () => {
+          document.getElementById('cs-audio-status').innerText = "AUDIO STANDBY";
+        };
+
+        this.currentUtterance = utter;
+        window.speechSynthesis.speak(utter);
+      } else {
+        // Fallback vocal formant chirp
+        playVocalFormant(pitch * 250, 0.4);
+      }
+    },
+
+    replayCurrentVoice() {
+      const sc = this.scenes[this.currentSceneId];
+      if (!sc) return;
+      const st = sc.steps[this.stepIdx];
+      if (!st) return;
+      const textToSpeak = this.voiceLang === 'hi' ? st.hi : st.en;
+      this.speakVoice(textToSpeak, this.voiceLang, st.pitch, st.rate);
+    },
+
+    nextStep() {
+      const sc = this.scenes[this.currentSceneId];
+      if (!sc) return;
+      this.stepIdx++;
+      if (this.stepIdx < sc.steps.length) {
+        this.executeStep();
+      } else {
+        this.finish();
+      }
+    },
+
+    skip() {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      this.finish();
+    },
+
+    finish() {
+      this.active = false;
+      document.body.classList.remove('cutscene-active');
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      showToast("🎮 CUTSCENE COMPLETE • BACK TO ROAD");
+    }
+  };
+
+  /* =========================================================================
+     4. TRILINGUAL LOCALIZATION & STORY MISSIONS
+     ========================================================================= */
+  const I18N = {
+    odia: {
+      langName: "ଓଡ଼ିଆ",
+      brandTitle: "ଭୁବନେଶ୍ୱର 3D: ଆମ ଗାଡ଼ି ଆମ ରାସ୍ତା",
+      subTagline: "ଖଟି • ଦହିବରା • ପିଙ୍କ୍ ଅଟୋ • ସିଙ୍କ୍ ଅଡିଓ • କୋଣାର୍କ ରାଡାର",
+      stamina: "ପଖାଳ",
+      jugaad: "ଜୁଗାଡ଼",
+      karma: "ଶାନ୍ତି",
+      wallet: "ଟଙ୍କା",
+      agOff: "🛸 ANTIGRAV: ବନ୍ଦ",
+      agOn: "🚀 ଶୂନ୍ୟ ଗୁରୁତ୍ୱ: ସକ୍ରିୟ",
+      scooter: "🛵 ହ୍ୱାଇଟ୍ ଆକ୍ଟିଭା 6G",
+      pinkAuto: "🛺 ୧୯୯୮ ପିଙ୍କ୍ ବିକ୍ରମ ଅଟୋ",
+      pulseToast: "⚡ ବିକର୍ଷଣ ତରଙ୍ଗ! ସବୁ ବାସନ ଓ ବସ୍ତା ଉଡ଼ିଗଲା!",
+      cowsIgnored: "🐮 ଜନପଥ ଗାଈ ଆପଣଙ୍କ ହର୍ଣ୍ଣକୁ ପୂରା ଇଗ୍ନୋର କଲା!",
+      autoHorn: "🛺 *ପୋଁ-ପୋଁ!* 'ବାବୁ ଡାଇରେକ୍ଟ ₹୧୫୦! ରାସ୍ତା ଖାଲି କର!'",
+      stormActive: "⛈️ କାଳବୈଶାଖୀ ଝଡ଼ ଓ ଘଡ଼ଘଡ଼ି ଆରମ୍ଭ!",
+      stormCalm: "☀️ ଆକାଶ ପରିଷ୍କାର ହେଲା।"
+    },
+    hindi: {
+      langName: "हिंदी",
+      brandTitle: "भुवनेश्वर 3D: हमारी गाड़ी, हमारा रास्ता",
+      subTagline: "खट्टी • दहीबड़ा • पिंक ऑटो • सिंक ऑडियो • कोणार्क रडार",
+      stamina: "पखाल",
+      jugaad: "जुगाड़",
+      karma: "शांति",
+      wallet: "पैसे",
+      agOff: "🛸 ANTIGRAV: बंद",
+      agOn: "🚀 एंटी-ग्रेविटी: चालू",
+      scooter: "🛵 वाइट एक्टिवा 6G",
+      pinkAuto: "🛺 1998 पिंक विक्रम ऑटो",
+      pulseToast: "⚡ रिपल्सर पल्स! सड़क के बर्तन और कट्टे हवा में उड़ गए!",
+      cowsIgnored: "🐮 गाय ने हॉर्न को पूरी तरह नजरअंदाज कर दिया!",
+      autoHorn: "🛺 *पों-पों!* 'भैया नो मीटर! सीधा ₹150!'",
+      stormActive: "⛈️ कालबैशाखी तूफ़ान शुरू!",
+      stormCalm: "☀️ मौसम साफ हो गया।"
+    },
+    en: {
+      langName: "ENG",
+      brandTitle: "BHUBANESWAR 3D: AMA GADI, AMA RASTA",
+      subTagline: "KHATTI • DAHIBARA • PINK AUTO • SYNC AUDIO • KONARK RADAR",
+      stamina: "STAMINA",
+      jugaad: "JUGAAD",
+      karma: "KARMA",
+      wallet: "WALLET",
+      agOff: "🛸 ANTIGRAV: OFF",
+      agOn: "🚀 ZERO-G: ACTIVE",
+      scooter: "🛵 WHITE ACTIVA 6G",
+      pinkAuto: "🛺 1998 PINK VIKRAM AUTO",
+      pulseToast: "⚡ ANTIGRAV PULSE! Debris and handis launched into zero-G orbit!",
+      cowsIgnored: "🐮 Cows on Janpath completely ignored your horn.",
+      autoHorn: "🛺 *POMP-POMP!* 'No meter bro! Straight ₹150 flat!'",
+      stormActive: "⛈️ Kalabaisakhi cyclonic storm unleashed!",
+      stormCalm: "☀️ Skies cleared up."
+    }
+  };
+
+  let currentLang = 'odia';
+  function cycleLanguage() {
+    if (currentLang === 'odia') currentLang = 'hindi';
+    else if (currentLang === 'hindi') currentLang = 'en';
+    else currentLang = 'odia';
+    applyLanguage();
+  }
+
+  function applyLanguage() {
+    const t = I18N[currentLang];
+    document.getElementById('lang-label').innerText = t.langName;
+    document.getElementById('brand-title').innerText = t.brandTitle;
+    document.getElementById('sub-tagline').innerText = t.subTagline;
+    document.getElementById('lbl-stamina').innerText = t.stamina;
+    document.getElementById('lbl-jugaad').innerText = t.jugaad;
+    document.getElementById('lbl-karma').innerText = t.karma;
+    document.getElementById('lbl-wallet').innerText = t.wallet;
+    document.getElementById('vehicle-label').innerText = isPinkAuto ? t.pinkAuto : t.scooter;
+    document.getElementById('ag-label').innerText = isAntigrav ? t.agOn : t.agOff;
+    updateQuestCard();
+  }
+
+  const QUESTS = [
+    {
+      id: 'dahibara',
+      titleOdia: '୧. ସକାଳ ଜଳଖିଆ ଖାଆନ୍ତୁ',
+      titleEn: '1. Grab Saheed Nagar Dahibara',
+      desc: 'Ride to Saheed Nagar Dahibara cart (🍲) and have a plate with Bidyadhar Mausa.',
+      reward: 'REWARD: +35 Stamina, +₹50',
+      done: false
+    },
+    {
+      id: 'omfed',
+      titleOdia: '୨. ଟୁକନା ଭାଇ ପାନ ଖଟି',
+      titleEn: '2. Visit Tookna Paan Khatti',
+      desc: 'Head to the Omfed booth (🍃) and grab Meetha Paan & gold leaf tea.',
+      reward: 'REWARD: +20 Jugaad',
+      done: false
+    },
+    {
+      id: 'antigrav',
+      titleOdia: '୩. ଶୂନ୍ୟ ଗୁରୁତ୍ୱରେ ଉଡ଼ନ୍ତୁ',
+      titleEn: '3. Fly in Antigravity Zero-G',
+      desc: 'Press [G] to activate Zero-G and fly above 15m altitude!',
+      reward: 'REWARD: +30 Karma',
+      done: false
+    },
+    {
+      id: 'pulse',
+      titleOdia: '୪. ବିକର୍ଷଣ ତରଙ୍ଗ ବ୍ଲାଷ୍ଟ୍',
+      titleEn: '4. Fire Repulsor Pulse',
+      desc: 'Press [Q] to launch street debris into zero-G orbit!',
+      reward: 'REWARD: +25 Jugaad, +₹100',
+      done: false
+    },
+    {
+      id: 'brawl',
+      titleOdia: '୫. ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ ବସ୍କୁ ହରାନ୍ତୁ',
+      titleEn: '5. Defeat Pink Auto Boss',
+      desc: 'Drive to Master Canteen (🛺) and win the FightKaro 3D street brawl!',
+      reward: 'REWARD: 🏆 ଭୁବନେଶ୍ୱର ଲିଜେଣ୍ଡ (LEGEND TITLE)',
+      done: false
+    }
+  ];
+
+  let currentQuestIdx = 0;
+  function updateQuestCard() {
+    if (currentQuestIdx >= QUESTS.length) {
+      document.getElementById('quest-num').innerText = 'COMPLETED!';
+      document.getElementById('quest-title').innerText = '🏆 ଭୁବନେଶ୍ୱର ସମ୍ରାଟ (ALL MISSIONS CLEAR)';
+      document.getElementById('quest-desc').innerText = 'You rule the streets of Bhubaneswar from Rasulgarh to Khandagiri!';
+      document.getElementById('quest-reward').innerText = 'STATUS: MASTER OF THE ROADS';
+      return;
+    }
+    const q = QUESTS[currentQuestIdx];
+    document.getElementById('quest-num').innerText = `${currentQuestIdx + 1} / ${QUESTS.length}`;
+    document.getElementById('quest-title').innerText = currentLang === 'odia' ? q.titleOdia : q.titleEn;
+    document.getElementById('quest-desc').innerText = q.desc;
+    document.getElementById('quest-reward').innerText = q.reward;
+  }
+
+  function advanceQuest(id) {
+    if (currentQuestIdx < QUESTS.length && QUESTS[currentQuestIdx].id === id) {
+      QUESTS[currentQuestIdx].done = true;
+      currentQuestIdx++;
+      playVictoryChime();
+      showToast(`🎉 MISSION COMPLETE! Advance to next target!`);
+      updateQuestCard();
+    }
+  }
+
+  /* =========================================================================
+     5. THREE.JS 3D OPEN-WORLD SCENE
      ========================================================================= */
   const canvas = document.getElementById('webgl-canvas');
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
@@ -1257,7 +1694,6 @@
   sunLight.shadow.mapSize.height = 1024;
   scene.add(sunLight);
 
-  // Ground with Laterite Soil
   const groundGeo = new THREE.PlaneGeometry(600, 600);
   const groundMat = new THREE.MeshStandardMaterial({ map: groundTex(), roughness: 0.95 });
   const ground = new THREE.Mesh(groundGeo, groundMat);
@@ -1265,7 +1701,6 @@
   ground.receiveShadow = true;
   scene.add(ground);
 
-  // Roads with Asphalt Canvas Texture & Concrete Sidewalks
   function createRoad(w, h, x, z) {
     const asp = asphaltTex().clone();
     asp.repeat.set(w > h ? 18 : 2, w > h ? 2 : 18);
@@ -1294,10 +1729,9 @@
       });
     }
   }
-  createRoad(28, 560, 0, 0);   // Janpath
-  createRoad(560, 28, 0, 0);   // NH-16
+  createRoad(28, 560, 0, 0);
+  createRoad(560, 28, 0, 0);
 
-  // Yellow & White Road Dividers
   for (let i = -240; i <= 240; i += 14) {
     if (Math.abs(i) < 20) continue;
     const divNS = new THREE.Mesh(
@@ -1317,7 +1751,6 @@
     scene.add(divEW);
   }
 
-  // Overhead Rasulgarh Flyover
   const flyover = new THREE.Mesh(
     new THREE.BoxGeometry(220, 2, 20),
     new THREE.MeshStandardMaterial({ map: asphaltTex(), roughness: 0.8 })
@@ -1336,7 +1769,6 @@
     scene.add(pillar);
   });
 
-  // Kalinga Temple Deula (Tower)
   function createKalingaTemple(x, z, scale = 1) {
     const g = new THREE.Group();
     const lat = lateriteTex().clone();
@@ -1383,12 +1815,11 @@
   createKalingaTemple(75, 180, 0.75);
 
   /* =========================================================================
-     5. VEHICLES, HEADLIGHTS & NEON ANTIGRAV THRUSTERS
+     6. VEHICLES, HEADLIGHTS & NEON ANTIGRAV THRUSTERS
      ========================================================================= */
   const playerGroup = new THREE.Group();
   scene.add(playerGroup);
 
-  // A. White Activa 6G
   const scooterMesh = new THREE.Group();
   const sBody = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.0, 2.2), new THREE.MeshStandardMaterial({ color: 0xf8f9fa, roughness: 0.3 }));
   sBody.position.y = 0.7;
@@ -1406,7 +1837,6 @@
   scooterMesh.add(sHelmet);
   playerGroup.add(scooterMesh);
 
-  // B. 1998 Pink Vikram Auto
   const pinkAutoMesh = new THREE.Group();
   const aCabin = new THREE.Mesh(new THREE.BoxGeometry(2.3, 1.9, 3.2), new THREE.MeshStandardMaterial({ color: 0xff1493, metalness: 0.25, roughness: 0.45 }));
   aCabin.position.y = 1.15;
@@ -1430,14 +1860,12 @@
   pinkAutoMesh.visible = false;
   playerGroup.add(pinkAutoMesh);
 
-  // Vehicle Active Headlight Beam
   const vehicleHeadlight = new THREE.SpotLight(0xfff5d0, 1.5, 55, Math.PI / 4.5, 0.4, 1.2);
   vehicleHeadlight.position.set(0, 1.2, 1.6);
   vehicleHeadlight.target.position.set(0, 0.2, 18);
   playerGroup.add(vehicleHeadlight);
   playerGroup.add(vehicleHeadlight.target);
 
-  // Antigravity Plasma Repulsor Rings
   const thrusterRings = [];
   function createThrusterRing(x, y, z) {
     const ringGeo = new THREE.RingGeometry(0.4, 0.88, 28);
@@ -1471,6 +1899,7 @@
   let isAntigrav = false;
   let playerAltitude = 0;
   let verticalVelocity = 0;
+  let hasTriggeredAntigravCutscene = false;
 
   function toggleAntigravity() {
     isAntigrav = !isAntigrav;
@@ -1482,6 +1911,10 @@
       playThrusterSound(true);
       showToast(I18N[currentLang].agOn + " • [Space/Shift] Fly • [Q] Pulse");
       advanceQuest('antigrav');
+      if (!hasTriggeredAntigravCutscene) {
+        hasTriggeredAntigravCutscene = true;
+        CutsceneSystem.play('antigrav');
+      }
     } else {
       btn.classList.remove('active');
       showToast(I18N[currentLang].agOff);
@@ -1490,7 +1923,7 @@
   }
 
   /* =========================================================================
-     6. DAY / NIGHT CYCLE & ATMOSPHERIC LIGHTING
+     7. DAY / NIGHT CYCLE & ATMOSPHERIC LIGHTING
      ========================================================================= */
   const TIME_PRESETS = [
     { name: '09:15 AM', label: 'MORNING SUN', sky: 0xffa875, fog: 0xffa875, sunInt: 1.25, ambInt: 0.72, isNight: false },
@@ -1518,7 +1951,6 @@
     showToast(`⏰ TIME OF DAY: ${t.name} • ${t.label}`);
   }
 
-  // Streetlights along Janpath
   const streetLightZ = [-180, -120, -60, 60, 120, 180];
   streetLightZ.forEach(sz => {
     [-15, 15].forEach(sx => {
@@ -1539,7 +1971,7 @@
   });
 
   /* =========================================================================
-     7. PROCEDURAL ROADSIDE SHOPS WITH SIGNBOARDS & VEGETATION
+     8. SHOPS, MO BUSES & INTERACTIVE HOTSPOTS
      ========================================================================= */
   const shopData = [
     { o: "ଦହିବରା ଆଳୁଦମ୍", e: "DAHIBARA ALOODUM", bg: "#b71c1c" },
@@ -1602,7 +2034,6 @@
     }
   }
 
-  // Coconut Palms
   function createPalmTree(x, z) {
     const palm = new THREE.Group();
     const trunk = new THREE.Mesh(
@@ -1636,9 +2067,6 @@
     createPalmTree(z, -17);
   }
 
-  /* =========================================================================
-     8. MO BUSES, SACRED COWS & INTERACTIVE HOTSPOTS
-     ========================================================================= */
   const trafficAgents = [];
 
   function createMoBus(z, dir) {
@@ -1680,7 +2108,6 @@
     trafficAgents.push({ mesh: cow, speed: 0.02, dir: 1, isCow: true, isFloating: false, floatYVel: 0 });
   }
 
-  // 4 Interactive Landmarks
   const hotspots = [];
   function createHotspotZone(x, z, radius, color, id, title, npcColor, data) {
     const ringGeo = new THREE.RingGeometry(radius - 0.6, radius, 32);
@@ -1709,6 +2136,7 @@
     desc: 'Bidyadhar Mausa has been beating his aluminum handi with a spoon since 1989. The smell of hing and fried curry leaves fills the air.',
     quote: '"ପାଣି ଟିକେ ମାରିବି କି ବାବୁ? ଲଙ୍କା କେତେ ଖାଇବ?"',
     choices: [
+      { text: '🎬 Watch Cinematic Story Scene', tag: 'Cutscene', fn: () => { closeModal(); CutsceneSystem.play('dahibara'); } },
       { text: 'Have Double Plate Dahibara Aloodum (-₹40)', tag: '+35 Stamina', fn: () => {
         playDahibaraClang();
         updateStats(35, 5, 10, -40);
@@ -1725,6 +2153,7 @@
     desc: 'Bhubaneswar evening Khatti headquarters. Tookna Bhai is rubbing lime paste on his palm while debating politics with university juniors.',
     quote: '"ଆରେ ଭାଇ! ଏଠି କଣ ମିଟିଙ୍ଗ୍ ବସିଛି? ପାନ ଖାଇବ ନା ଘରକୁ ଯିବ?"',
     choices: [
+      { text: '🎬 Watch Cinematic Story Scene', tag: 'Cutscene', fn: () => { closeModal(); CutsceneSystem.play('omfed'); } },
       { text: 'Grab Meetha Paan & Gold Leaf Tea (-₹25)', tag: '+15 Jugaad', fn: () => {
         playTooknaClap();
         updateStats(10, 15, 5, -25);
@@ -1741,6 +2170,7 @@
     desc: 'Ramesh Broker is asking for 6 months advance and demanding no cooking non-veg on Tuesdays, Thursdays, and Saturdays.',
     quote: '"ସାର୍! ବ୍ୟାଚେଲର୍ସ ପାଇଁ ଘର ନାହିଁ! ଆଉ ପାଖାଳ ଖାଇଲେ ଏକ୍ସଟ୍ରା ₹୨୦୦୦ ମେଣ୍ଟେନାନ୍ସ!"',
     choices: [
+      { text: '🎬 Watch Cinematic Story Scene', tag: 'Cutscene', fn: () => { closeModal(); CutsceneSystem.play('patia'); } },
       { text: 'Pay 1 Month Security Deposit (-₹300)', tag: '+30 Jugaad', fn: () => {
         updateStats(-5, 30, -5, -300);
         showToast('🏢 Broker convinced with Jugaad cash. House unlocked.');
@@ -1755,6 +2185,7 @@
     desc: 'The legendary Master Canteen Pink Vikram Auto union chief stands beside his turbo-charged diesel three-wheeler.',
     quote: '"ବାଣୀବିହାର ଯିବ? ₹୧୫୦ ଫିକ୍ସ! କୌଣସି ବାକି ନାହିଁ!"',
     choices: [
+      { text: '🎬 Watch Cinematic Story Scene', tag: 'Cutscene', fn: () => { closeModal(); CutsceneSystem.play('mastercanteen'); } },
       { text: 'Hire Auto for City Tour (-₹150)', tag: '+25 Karma', fn: () => {
         updateStats(10, 15, 25, -150);
         showToast('🛺 Pink Auto booked! Traveling in true Bhubaneswar style.');
@@ -1898,7 +2329,7 @@
   }
 
   /* =========================================================================
-     11. WEATHER & STATS
+     11. WEATHER, STATS & FIGHTKARO
      ========================================================================= */
   let isStorming = false;
   const rainCount = 1400;
@@ -2075,7 +2506,6 @@
     ctx.fillStyle = '#0e0a1a';
     ctx.fillRect(0, 0, w, h);
 
-    // Range rings
     ctx.strokeStyle = 'rgba(0, 229, 255, 0.2)';
     ctx.lineWidth = 1;
     ctx.beginPath();
@@ -2086,14 +2516,12 @@
     const px = playerGroup.position.x;
     const pz = playerGroup.position.z;
 
-    // Roads
     ctx.fillStyle = '#262432';
     const roadX = cx + (0 - px) * scale;
     ctx.fillRect(roadX - 14 * scale, 0, 28 * scale, h);
     const roadZ = cy + (0 - pz) * scale;
     ctx.fillRect(0, roadZ - 14 * scale, w, 28 * scale);
 
-    // Hotspot Icons
     hotspots.forEach(spot => {
       const sx = cx + (spot.x - px) * scale;
       const sy = cy + (spot.z - pz) * scale;
@@ -2103,7 +2531,6 @@
       ctx.fillText(spot.data.avatar, sx, sy);
     });
 
-    // Traffic (Buses & Cows)
     trafficAgents.forEach(t => {
       const tx = cx + (t.mesh.position.x - px) * scale;
       const ty = cy + (t.mesh.position.z - pz) * scale;
@@ -2113,7 +2540,6 @@
       ctx.fill();
     });
 
-    // Player Marker Arrow
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate(playerAngle);
@@ -2136,11 +2562,19 @@
   window.addEventListener('keydown', e => {
     const k = e.key.toLowerCase();
     keys[k] = true;
+
+    if (CutsceneSystem.active) {
+      if (e.key === ' ' || e.key === 'Enter') CutsceneSystem.nextStep();
+      if (e.key === 'Escape') CutsceneSystem.skip();
+      return;
+    }
+
     if (k === 'h') playHorn();
     if (k === 'v') switchVehicle();
     if (k === 'g') toggleAntigravity();
     if (k === 'q' || k === 'b') triggerAntigravPulse();
     if (k === 't') cycleTimeOfDay();
+    if (k === 'x') CutsceneSystem.play('intro');
     if (k === 'c') toggleCinematicMode();
     if (k === 'l') cycleLanguage();
     if (k === 'e' && nearHotspot && !modalOpen) openActiveHotspot();
@@ -2165,7 +2599,7 @@
   bindTouch('btn-thrust-down', 'shift');
 
   /* =========================================================================
-     14. 60 FPS MAIN LOOP
+     14. 60 FPS MAIN RENDER LOOP WITH CUTSCENE CHOREOGRAPHY
      ========================================================================= */
   let playerSpeed = 0;
   let playerAngle = 0;
@@ -2174,6 +2608,32 @@
   function animate() {
     requestAnimationFrame(animate);
 
+    // If cutscene is active, freeze driving physics and interpolate camera along scripted spline
+    if (CutsceneSystem.active) {
+      CutsceneSystem.stepTimer += 0.016;
+      const sc = CutsceneSystem.scenes[CutsceneSystem.currentSceneId];
+      if (sc && sc.steps[CutsceneSystem.stepIdx]) {
+        const st = sc.steps[CutsceneSystem.stepIdx];
+        const progress = Math.min(1.0, CutsceneSystem.stepTimer / (st.duration || 5.0));
+        // Smoothstep cubic easing
+        const smoothT = progress * progress * (3 - 2 * progress);
+
+        camera.position.x = THREE.MathUtils.lerp(st.camStart.x, st.camEnd.x, smoothT);
+        camera.position.y = THREE.MathUtils.lerp(st.camStart.y, st.camEnd.y, smoothT);
+        camera.position.z = THREE.MathUtils.lerp(st.camStart.z, st.camEnd.z, smoothT);
+
+        camera.lookAt(st.lookAt.x, st.lookAt.y, st.lookAt.z);
+
+        if (progress >= 1.0 && !CutsceneSystem.currentUtterance) {
+          // If speech is done, auto advance
+          CutsceneSystem.nextStep();
+        }
+      }
+      renderer.render(scene, camera);
+      return;
+    }
+
+    // Normal driving & antigravity kinematics
     if (!modalOpen) {
       const maxSpeed = isPinkAuto ? 0.58 : 0.75;
       const accel = isPinkAuto ? 0.020 : 0.028;
@@ -2391,9 +2851,7 @@
       camera.lookAt(playerGroup.position.x, playerGroup.position.y + 1.8, playerGroup.position.z);
     }
 
-    // Render Minimap
     drawMinimap();
-
     renderer.render(scene, camera);
   }
 

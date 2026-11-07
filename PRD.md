@@ -1,6 +1,6 @@
 # Product Requirements Document (PRD)
 ## BHUBANESWAR 3D: AMA GADI, AMA RASTA
-### (Benglooru × FightKaro × Delhi Metro × Odia Odyssey Cinematic Textures & Antigravity Edition)
+### (Benglooru × FightKaro × Delhi Metro × Odia Odyssey Cinematic Cutscenes & Sync Audio Edition)
 **A 3D Hyper-Local Open-World Driving, Antigravity Levitation, Procedural Canvas Textures & Cinematic Street Satire Sandbox**
 
 ---
@@ -133,3 +133,6 @@ flowchart LR
 | **Sound Horn** | `H` | **📢 HORN** Button | Plays horn; triggers hilarious comedic responses |
 | **Interact / Brawl** | `E` / `Enter`| **💥 ACT** Button | Interacts with hotspots or starts 3D fight |
 | **Language Switch** | `L` | **🌐 🌐** Button | Cycles Odia (`ଓଡ଼ିଆ`), Hindi (`हिंदी`), English |
+| **Intro Cutscene** | `X` | **🎬 INTRO** Pill | Triggers cinematic opening cutscene |
+| **Cutscene Advance** | `Space` / `Enter` | **⏭️ NEXT** Button | Advances to next dialogue line |
+| **Cutscene Skip** | `Esc` | **⏩ SKIP** Button | Skips current cutscene back to driving |

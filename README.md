@@ -1,5 +1,5 @@
 # BHUBANESWAR 3D: AMA GADI, AMA RASTA
-### (Benglooru × FightKaro × Delhi Metro × Odia Odyssey Cinematic Textures & Antigravity Edition)
+### (Benglooru × FightKaro × Delhi Metro × Odia Odyssey Cinematic Cutscenes & Sync Audio Edition)
 **A 3D Hyper-Local Open-World Driving, Antigravity Levitation, Procedural Canvas Textures & Cinematic Street Satire Sandbox**
 
 [![GitHub Pages](https://img.shields.io/badge/Live-GitHub%20Pages-success?style=for-the-badge&logo=github)](https://forbesayush.github.io/odisha-simulator/)
@@ -88,8 +88,28 @@ Zero external texture downloads. All textures are generated mathematically at ru
 | **Sound Horn** | `H` | **📢 HORN** Button | Honks horn; triggers hilarious city reactions |
 | **Interact / Brawl** | `E` / `Enter` | **💥 ACT** Button | Interacts with hotspots or starts 3D fight |
 | **Language Switcher** | `L` | **🌐 🌐** Button | Cycles Odia (`ଓଡ଼ିଆ`), Hindi (`हिंदी`), English |
+| **Play Intro Cutscene** | `X` | **🎬 INTRO** Pill | Plays the cinematic story intro |
+| **Cutscene Advance** | `Space` / `Enter` | **⏭️ NEXT** Button | Advances dialog during cutscene |
+| **Cutscene Skip** | `Esc` | **⏩ SKIP** Button | Skips cutscene immediately |
 
 ---
+
+
+---
+
+## 🎬 Cinematic 3D Cutscenes & Synchronized Voice Audio
+
+Experience story-driven narrative cutscenes with synchronized voice acting in **Hindi** and **Indian English**:
+- **Widescreen Anamorphic Bars (`10.5vh`):** Cinematic letterboxing that smoothly transitions into dramatic camera angles.
+- **Synchronized Web Speech Engine:** Live `SpeechSynthesis` vocalization with character-tailored pitch and cadence (`hi-IN` and `en-IN`).
+- **Interactive Cutscene Player:** Replay voice lines, toggle audio languages on the fly, skip scenes, or press `Space`/`Enter` to advance.
+- **6 Rich Story Moments:**
+  1. 🌅 **Twin City Awakens:** Aerial drone tour down Janpath into morning traffic.
+  2. 🍲 **Saheed Nagar Dahibara:** Bidyadhar Mausa's secret spiced curd water recipe.
+  3. 🍃 **Omfed Tookna Bhai's Khatti:** Evening roadside tea adda and local political debates.
+  4. 🏢 **Patia Bachelor Flat Scam:** 6-month rent deposit & 9 PM curfew negotiations.
+  5. 🛺 **Master Canteen Pink Auto Syndicate:** Confronting ₹150 flat-fare auto extortion.
+  6. 🛸 **Zero-G Antigravity Ignition:** Skyward liftoff with glowing plasma thrusters.
 
 ## 🌐 Trilingual Localization
 
