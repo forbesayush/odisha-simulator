@@ -1,122 +1,47 @@
-# BHUBANESWAR 3D: AMA GADI, AMA RASTA
-### (Benglooru × FightKaro × Delhi Metro × Odia Odyssey Cinematic Cutscenes & Sync Audio Edition)
-**A 3D Hyper-Local Open-World Driving, Antigravity Levitation, Procedural Canvas Textures & Cinematic Street Satire Sandbox**
+# Amara Odisha Adventures — Bhubaneswar (ଆମ ଓଡ଼ିଶା)
+
+A small 3D open-world browser game set in Bhubaneswar, where the player is **Babu**, a newcomer who arrives at Baramunda Bus Terminal, explores the streets on foot, and drives an auto-rickshaw to Master Canteen.
 
 [![GitHub Pages](https://img.shields.io/badge/Live-GitHub%20Pages-success?style=for-the-badge&logo=github)](https://forbesayush.github.io/odisha-simulator/)
 [![Three.js](https://img.shields.io/badge/Three.js-r128-black?style=for-the-badge&logo=three.js)](https://threejs.org/)
 [![Web Audio API](https://img.shields.io/badge/Audio-Procedural%20Synthesis-orange?style=for-the-badge)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
-[![Localization](https://img.shields.io/badge/Languages-Odia%20%7C%20Hindi%20%7C%20English-blue?style=for-the-badge)](#trilingual-localization)
 
 🚀 **Play Live Now:** [https://forbesayush.github.io/odisha-simulator/](https://forbesayush.github.io/odisha-simulator/)  
-📁 **Project PRD:** [PRD.md](file:///C:/Users/Ayush%20Chatterjee/.gemini/antigravity/scratch/odisha-simulator/PRD.md)
+📁 **Project PRD:** [PRD.md](PRD.md)
 
 ---
 
-## 🌟 What is Bhubaneswar 3D?
+## 🌟 Core Gameplay & Story Experience
 
-Inspired by the stunning visual and cultural authenticity of **[Odia Odyssey](https://odia-odyssey--8jaliw8a.preview.emergentagent.com/)**, **[FightKaro.com](https://fightkaro.com)**, **[Benglooru.com](https://benglooru.com)**, and **[DelhiMetroGame.com](https://delhimetrogame.com)**, **Bhubaneswar 3D: Ama Gadi, Ama Rasta** is an authentic 3D open-world browser experience combining procedural canvas textures, cinematic widescreen presentation, hyper-local Odia urban satire, arcade brawls, and groundbreaking **Antigravity Zero-G & Emergent Physics Sandbox mechanics**.
-
-Cruise down **Janpath** on a nimble **White Activa 6G** or the iconic **1998 Pink Vikram Auto**, dodge green **Mo Buses** and sacred cows, admire towering **Kalinga Temple Deula** towers and roadside palm trees, engage in street brawls outside **Saheed Nagar Dahibara** and **Omfed Tookna Khatti**, flip gravity to fly 45 meters into the sky, and unleash electromagnetic **Repulsor Pulses** that launch street pots, potato sacks, and police barricades into weightless zero-G orbit!
-
----
-
-## 🎨 Procedural High-Fidelity Canvas Textures
-
-Zero external texture downloads. All textures are generated mathematically at runtime via HTML5 Canvas:
-- **Speckled Asphalt (`asphaltTex`):** Multi-tone aggregate aggregate tarmac with subtle elliptical road wear patches and oil stains.
-- **Odisha Laterite Soil (`groundTex`):** Coastal Odisha laterite earth and vegetation with organic multi-color speckles.
-- **Concrete Sidewalk Paving (`pavementTex`):** Staggered paving slabs with mortar grid lines.
-- **Odisha Laterite Stone Blocks (`lateriteTex`):** Traditional red laterite masonry blocks with HSL hue variations, used on temple towers and boundary walls.
-- **Urban Facades (`facadeTex`):** Multi-pane building windows with sunshades (`chhajjas`), security bars, and lintels.
-- **Corrugated Shop Shutters (`shutterTex`):** Metallic horizontal corrugated ribs for street markets.
-- **High-Res Storefront Signboards (`signTex`):** Golden-bordered storefront signs with bold Odia script typography (`Noto Sans Oriya`) for iconic spots: `ଦହିବରା ଆଳୁଦମ୍`, `ଓମ୍ଫେଡ୍ ପାନ ଖଟି`, `ଜଗନ୍ନାଥ ମେଡିକାଲ୍`, `ସମ୍ବଲପୁରୀ ଶାଢ଼ୀ ଭଣ୍ଡାର`.
-- **Official Mo Bus Livery (`busSideTex`):** Green bottom band, red pinstripe, tinted passenger windows, and `ମୋ ବସ୍ • MO BUS BHUBANESWAR`.
-- **Sambalpuri & Handloom Cloth (`clothTex`):** Check and ikat weaving patterns for sarees and shirts.
+1. **Title Screen:** Warm Pattachitra palette, soft relaxing flute and tanpura ambience, language selector (Odia, Hindi, English), and "Tap to Start".
+2. **Opening Arrival Cinematic:** Swooping crane shot over Bhubaneswar dawn into Baramunda Bus Terminal as a green Mo Bus pulls up. Spoken arrival lines with synchronized subtitles.
+3. **Free Roam on Foot:** Walk around Baramunda as Babu wearing an authentic blue check shirt, white lungi with red border, and gamucha.
+4. **Auto Stand Dialogue & Bargaining:** Talk to Babula Bhai at the auto stand. Bargain the fare from ₹50 down to ₹40 ("ଆଜିର ପ୍ରଥମ ବୋହଣୀ!") and board the auto.
+5. **Driving Mission "Reach Master Canteen — 1.2 km":**
+   - **Cow Crossing (~800m):** Sacred cow steps onto road; driver shouts *"ଆରେ! ଧୀରେ ଧୀରେ! ଆଗରେ ଗାଈ!"*. Braking in time gives **+50 XP**; collision costs **-20 XP**.
+   - **Motorcycle Overtake (~500m):** Bike speeds past shouting *"ଭାଇ! ସାଇଡ୍ ଦିଅ!"*. Lane discipline gives **+30 XP**.
+   - **Tea Stall Stop (~250m):** Stop for ₹10 hot tea for sipping sound, +25 stamina, and turbo speed boost!
+6. **Arrival & Mission Complete:** Crossing into Master Canteen roundabout triggers arrival fanfare, driver & Babu closing lines, score breakdown, and ₹100 coins reward.
+7. **Puri Adventure Teaser Map:** Highlights Bhubaneswar to Dhauli to Pipili to Puri Sea Beach for Mission 02!
+8. **Emergent Map Atlas ([M]):** Interactive 8-sector tactical map with live telemetry and spoken audio guides by the Emergent City Navigator.
+9. **12 Scripted 3D Cutscenes:** Story scenes covering Baramunda, Dahibara, Omfed, Patia, Master Canteen, Lingaraj, Rasulgarh, KIIT, Chhena Poda, Barabati, and Antigravity Zero-G!
 
 ---
 
-## 🧭 Konark GPS Circular Minimap & Day-Night System
+## 🎮 Controls
 
-- **Konark GPS Circular Minimap:** Real-time top-down 120px circular radar tracking player orientation, roads, live Mo Buses, cows, and landmark pins (🍲 Dahibara, 🍃 Tookna Paan, 🏢 Patia House, 🛺 Master Canteen Auto, 🛕 Temple).
-- **Dynamic Day-Night Cycle [T]:** Instant toggle between 09:15 AM Morning Sun, 01:30 PM High Noon, 05:45 PM Golden Dusk, 10:30 PM Cyber Night, and Kalabaisakhi Storm with vehicle headlights and illuminated streetlamps.
-- **Story Missions / Quest Tracker:** 5 guided story missions with audio fanfares, rewards (+Stamina, +Jugaad, +Karma), and the title of **Bhubaneswar Legend**.
-
-## 🎥 Anamorphic Cinematic Widescreen Presentation
-
-- **2.39:1 Cinematic Letterbox Bars:** Top and bottom black widescreen bars (`height: 9.5vh`) that smoothly slide in when toggling `[C]` or clicking **🎥 CINEMATIC**.
-- **Dynamic Camera Modes:**
-  1. **Low-Angle Street Cam (`LOW_STREET`):** Low-altitude tracking shot capturing road asphalt grain, wheel rotation, and passing coconut palms.
-  2. **Aerial Drone Cam (`AERIAL_DRONE`):** High sweeping 22m bird's-eye view orbiting the city grid, flyover, and temple towers.
-  3. **360 Orbit Cam (`ORBIT_PAN`):** Continuous 360-degree vehicle orbit.
-  4. **Fight Arena Cam (`FIGHT_ARENA`):** Dynamic side-view combat perspective with physical impact shake.
-- **Cinematic Location & Quote Overlays:** Elegant serif and Odia script title cards displaying the active landmark and quotes.
-
----
-
-## 🛸 Antigravity Mechanics (ଶୂନ୍ୟ ମାଧ୍ୟାକର୍ଷଣ)
-
-- **Zero-G Toggle (`[G]`):** Invert or neutralize gravity at any time. Glowing cyan/magenta plasma repulsor fields ignite beneath vehicle wheels.
-- **Vertical Thruster Flight:** Press `Space` to engage upward repulsor thrusters (hover up to 45m above Janpath), and `Shift` to dive back down.
-- **Rooftop & Flyover Cruising:** Fly above Rasulgarh flyovers, land on high-rise helipads, and glide over gridlocked city traffic.
-- **Electromagnetic Shockwave Pulse (`[Q]` / `[B]`):** Unleashes an omnidirectional repulsor shockwave, hurling all movable physics debris within a 36m radius into high-speed zero-G orbit!
-
----
-
-## 💥 Emergent Physics Sandbox (ଭୌତିକ ବିଜ୍ଞାନ ଜୁଗାଡ଼)
-
-- **Dynamic Rigid Bodies:** Aluminum Dahibara Handis (ବାସନ), 50kg Potato/Rice Sacks (ବସ୍ତା), Yellow Police Barricades, Tookna wooden crates, and flying tin roofs.
-- **Complex Multi-Body Interactions:** Objects possess mass, velocity, restitution, and rotational momentum. Ramming into a sack rolls it into traffic; bumping a handi clatters it against barricades; triggering a pulse sets off chaotic cascading chain reactions.
-- **Weightless Cow Levitation:** Nearby cows caught in the pulse gently float upside-down in zero-G with comedic Odia charm.
-
----
-
-## 🎮 Desktop & Mobile Controls
-
-| Action | Desktop Key | Mobile Touch Control | Description |
+| Action | Desktop Key | Mobile Touch | Function |
 | :--- | :--- | :--- | :--- |
-| **Drive / Pitch Down** | `W` / `↑` | **▲ UP** Button | Accelerates forward / tilts nose down in air |
-| **Brake / Reverse** | `S` / `↓` | **▼ DOWN** Button | Brakes, reverses, or slows flight |
-| **Steer Left** | `A` / `←` | **◀ LEFT** Button | Steers left / yaw left in zero-G |
-| **Steer Right** | `D` / `→` | **▶ RIGHT** Button | Steers right / yaw right in zero-G |
-| **Antigravity Thruster Lift**| `Space` | **🚀 LIFT** Button | Fires vertical thrusters to float into sky |
-| **Antigravity Descent** | `Shift` | **🛬 DIVE** Button | Descends smoothly toward road or rooftop |
-| **Toggle Antigrav Mode** | `G` | **🛸 ZERO-G** Button| Switches between ground driving and zero-G flight |
-| **Repulsor Shockwave Pulse**| `Q` / `B` | **⚡ PULSE** Button| Emits shockwave launching debris into air |
-| **Cinematic Camera Mode** | `C` | **🎥 CINEMATIC** Button| Cycles Low Street, Aerial Drone, and Orbit cams |
-| **Exit Cinematic Mode** | `Esc` / `C` | **✕ EXIT** Button | Restores normal third-person follow camera |
-| **Swap Vehicle** | `V` | **🔄 SWAP** Button | Activa 6G $\leftrightarrow$ 1998 Pink Vikram Auto |
-| **Sound Horn** | `H` | **📢 HORN** Button | Honks horn; triggers hilarious city reactions |
-| **Interact / Brawl** | `E` / `Enter` | **💥 ACT** Button | Interacts with hotspots or starts 3D fight |
-| **Language Switcher** | `L` | **🌐 🌐** Button | Cycles Odia (`ଓଡ଼ିଆ`), Hindi (`हिंदी`), English |
-| **Play Intro Cutscene** | `X` | **🎬 INTRO** Pill | Plays the cinematic story intro |
-| **Cutscene Advance** | `Space` / `Enter` | **⏭️ NEXT** Button | Advances dialog during cutscene |
-| **Cutscene Skip** | `Esc` | **⏩ SKIP** Button | Skips cutscene immediately |
-
----
-
-
----
-
-## 🎬 Cinematic 3D Cutscenes & Synchronized Voice Audio
-
-Experience story-driven narrative cutscenes with synchronized voice acting in **Hindi** and **Indian English**:
-- **Widescreen Anamorphic Bars (`10.5vh`):** Cinematic letterboxing that smoothly transitions into dramatic camera angles.
-- **Synchronized Web Speech Engine:** Live `SpeechSynthesis` vocalization with character-tailored pitch and cadence (`hi-IN` and `en-IN`).
-- **Interactive Cutscene Player:** Replay voice lines, toggle audio languages on the fly, skip scenes, or press `Space`/`Enter` to advance.
-- **6 Rich Story Moments:**
-  1. 🌅 **Twin City Awakens:** Aerial drone tour down Janpath into morning traffic.
-  2. 🍲 **Saheed Nagar Dahibara:** Bidyadhar Mausa's secret spiced curd water recipe.
-  3. 🍃 **Omfed Tookna Bhai's Khatti:** Evening roadside tea adda and local political debates.
-  4. 🏢 **Patia Bachelor Flat Scam:** 6-month rent deposit & 9 PM curfew negotiations.
-  5. 🛺 **Master Canteen Pink Auto Syndicate:** Confronting ₹150 flat-fare auto extortion.
-  6. 🛸 **Zero-G Antigravity Ignition:** Skyward liftoff with glowing plasma thrusters.
-
-## 🌐 Trilingual Localization
-
-Easily toggle between three languages on the fly:
-- **Odia (`ଓଡ଼ିଆ`):** Authentic vernacular with Noto Sans Oriya typography (`ଶୂନ୍ୟ ମାଧ୍ୟାକର୍ଷଣ`, `ପଖାଳ ଷ୍ଟାମିନା`, `ଭାଇଚାରା ଜୁଗାଡ଼`, `ସିନେମାଟିକ୍ ଟେକ୍ସଚର୍`).
-- **Hindi (`हिंदी`):** Hindi urban street adaptation (`एंटी-ग्रेविटी मोड`, `पखाल स्टेमिना`, `जुगाड़ लेवल`, `सिनेमैटिक टेक्सचर`).
-- **English:** Clean retro arcade HUD strings and internationalized indicators.
+| **Move / Drive** | `W/A/S/D` | **▲ ▼ ◀ ▶** | Walk on foot / drive vehicle |
+| **Interact / Action** | `E` / `Enter` | **ACT [E]** | Talk to driver, bargain, buy tea |
+| **Brake / Sprint** | `Space` / `Shift`| **BRAKE** | Apply vehicle brakes / sprint on foot |
+| **Open Emergent Map** | `M` | **MAP [M]** | Opens 8-sector map with spoken guide |
+| **Play Cutscenes** | `X` | **SCENE [X]** | Watch opening story cutscene |
+| **Advance Cutscene** | `Space` / `Enter`| **⏭️ NEXT** | Next dialogue step |
+| **Skip Cutscene** | `Esc` | **⏩ SKIP** | Skip cutscene |
+| **Vehicle Horn** | `H` | **📢 HORN** | Sound auto-rickshaw horn |
+| **Zero-G Mode** | `G` | **🛸 ZERO-G** | Toggles sandbox antigravity levitation |
+| **Switch Language** | `L` | **🌐 LANG** | Toggles Odia / Hindi / English |
 
 ---
 
@@ -130,4 +55,4 @@ cd odisha-simulator
 # Open index.html directly in any browser!
 start index.html
 ```
-Or view the live hosted GitHub Pages build at **[https://forbesayush.github.io/odisha-simulator/](https://forbesayush.github.io/odisha-simulator/)**.
+Or view the live build at **[https://forbesayush.github.io/odisha-simulator/](https://forbesayush.github.io/odisha-simulator/)**.
