@@ -22,6 +22,11 @@
 
 ## 2. Core Architectural Pillars
 
+- **Konark GPS Circular Minimap:** 120px circular radar with range rings, rotating player arrow, road networks, and live landmark & traffic pins.
+- **Dynamic Day-Night Cycle:** 5 atmospheric lighting presets (Morning Sun, High Noon, Golden Dusk, Cyber Night, Kalabaisakhi Storm) with active vehicle headlights and roadside streetlights.
+- **5-Act Story Missions:** Progressive quest system with rewards, level badges, and celebratory victory fanfares.
+
+
 ```
 +------------------------------------------------------------------------------------------------------------------+
 |                                           BHUBANESWAR 3D CORE PILLARS                                             |

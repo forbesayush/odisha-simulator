@@ -35,6 +35,12 @@ Zero external texture downloads. All textures are generated mathematically at ru
 
 ---
 
+## 🧭 Konark GPS Circular Minimap & Day-Night System
+
+- **Konark GPS Circular Minimap:** Real-time top-down 120px circular radar tracking player orientation, roads, live Mo Buses, cows, and landmark pins (🍲 Dahibara, 🍃 Tookna Paan, 🏢 Patia House, 🛺 Master Canteen Auto, 🛕 Temple).
+- **Dynamic Day-Night Cycle [T]:** Instant toggle between 09:15 AM Morning Sun, 01:30 PM High Noon, 05:45 PM Golden Dusk, 10:30 PM Cyber Night, and Kalabaisakhi Storm with vehicle headlights and illuminated streetlamps.
+- **Story Missions / Quest Tracker:** 5 guided story missions with audio fanfares, rewards (+Stamina, +Jugaad, +Karma), and the title of **Bhubaneswar Legend**.
+
 ## 🎥 Anamorphic Cinematic Widescreen Presentation
 
 - **2.39:1 Cinematic Letterbox Bars:** Top and bottom black widescreen bars (`height: 9.5vh`) that smoothly slide in when toggling `[C]` or clicking **🎥 CINEMATIC**.
