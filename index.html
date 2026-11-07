@@ -85,7 +85,7 @@
       position: fixed;
       inset: 0;
       z-index: 100;
-      background: radial-gradient(circle at center, rgba(41, 37, 36, 0.94) 0%, rgba(12, 10, 9, 0.98) 100%);
+      background: radial-gradient(circle at center, rgba(28, 25, 23, 0.45) 0%, rgba(12, 10, 9, 0.82) 100%); backdrop-filter: blur(4px);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -740,6 +740,11 @@
 <body>
   <div class="cine-bar top"></div>
   <div class="cine-bar bottom"></div>
+  <div id="cinematic-overlay" style="display:none; position:fixed; bottom:12vh; left:50%; transform:translateX(-50%); z-index:40; pointer-events:auto;">
+    <button class="hud-pill-btn" onclick="nextCinematicStep()" style="font-size:13px; font-weight:700; padding:8px 20px; background:rgba(28,25,23,0.85); border:2px solid #D9A05B; color:#FFFBEB; cursor:pointer; border-radius:30px; box-shadow:0 4px 15px rgba(0,0,0,0.6);">
+      ⏩ CONTINUE [SPACE] • SKIP [ESC]
+    </button>
+  </div>
 
   <canvas id="webgl-canvas"></canvas>
 
@@ -1298,6 +1303,7 @@
   // VEHICLE ENGINE ACCELERATION HUM
   let engine = null;
   function engineSound(on, speed = 0) {
+    if (!on && !engine) return;
     const c = audioCtx();
     if (on && !engine) {
       const o = c.createOscillator();
@@ -1694,6 +1700,66 @@
     return { colliders, bus, flag: tA.flag };
   }
 
+
+  
+  /* =========================================================================
+     THREE.JS ENGINE INITIALIZATION: SCENE, CAMERA, RENDERER, LIGHTS & SKY
+     ========================================================================= */
+  const canvas = document.getElementById('webgl-canvas');
+  const renderer = new THREE.WebGLRenderer({
+    canvas,
+    antialias: true,
+    powerPreference: 'high-performance'
+  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  if (THREE.ACESFilmicToneMapping) renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.Fog('#f0c08e', 110, 480);
+
+  const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 1500);
+  camera.position.set(-60, 42, 65);
+  camera.lookAt(-10, 4, 15);
+
+  // Atmospheric Sky Dome with sunrise/sunset gradient
+  const skyGeo = new THREE.SphereGeometry(800, 24, 12);
+  const skyMat = new THREE.ShaderMaterial({
+    side: THREE.BackSide,
+    depthWrite: false,
+    fog: false,
+    uniforms: {
+      top: { value: new THREE.Color("#5b8fc7") },
+      mid: { value: new THREE.Color("#f6c48a") },
+      bot: { value: new THREE.Color("#f0c08e") }
+    },
+    vertexShader: "varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }",
+    fragmentShader: "uniform vec3 top; uniform vec3 mid; uniform vec3 bot; varying vec3 vP; void main(){ float h = vP.y; vec3 c = h > 0.0 ? mix(mid, top, smoothstep(0.02, 0.55, h)) : bot; c = mix(bot, c, smoothstep(-0.02, 0.06, h)); float sun = pow(max(dot(normalize(vP), normalize(vec3(-0.8,0.25,0.4))),0.0), 220.0); c += vec3(1.0,0.85,0.55)*sun*1.5; gl_FragColor = vec4(c,1.0); }"
+  });
+  const skyMesh = new THREE.Mesh(skyGeo, skyMat);
+  scene.add(skyMesh);
+
+  // Lighting
+  const hemiLight = new THREE.HemisphereLight("#ffe7c2", "#8a6a48", 1.5);
+  scene.add(hemiLight);
+  const ambLight = new THREE.AmbientLight("#ffffff", 0.65);
+  scene.add(ambLight);
+
+  const sunLight = new THREE.DirectionalLight("#ffd29a", 2.6);
+  sunLight.castShadow = true;
+  sunLight.shadow.mapSize.set(1024, 1024);
+  sunLight.position.set(-70, 60, 35);
+  scene.add(sunLight);
+  scene.add(sunLight.target);
+
+  // Build the entire city environment (Baramunda, Janpath, Master Canteen, Tea stalls, Temples, Hills)
+  const worldData = buildWorld(scene);
+  window.__scene = scene;
+  window.__camera = camera;
+  window.__renderer = renderer;
 
   /* =========================================================================
      PART 5: BABU CHARACTER, NPCS, DUAL KINEMATICS & SCRIPTED EVENTS
@@ -2396,20 +2462,32 @@
   let cinematicStep = 0;
   function startOpeningCinematic() {
     document.body.classList.add('cinematic-active');
+    const cineBtn = document.getElementById('cinematic-overlay');
+    if (cineBtn) cineBtn.style.display = 'block';
     state.screen = 'cinematic';
     cinematicStep = 0;
     playNextCinematicStep();
   }
 
+  let cineTimer = null;
   function playNextCinematicStep() {
+    if (cineTimer) { clearTimeout(cineTimer); cineTimer = null; }
     if (cinematicStep === 0) {
-      camera.position.set(-60, 42, 65);
+      camera.position.set(-55, 32, 55);
       camera.lookAt(-10, 4, 15);
-      playVoiceLine('announcer');
+      playVoiceLine('announcer').then(() => {
+        if (state.screen === 'cinematic' && cinematicStep === 0) {
+          cineTimer = setTimeout(() => nextCinematicStep(), 1200);
+        }
+      });
     } else if (cinematicStep === 1) {
-      camera.position.set(-15, 3.5, 22);
+      camera.position.set(-14, 3.2, 19);
       camera.lookAt(POI.babuSpawn[0], 1.5, POI.babuSpawn[1]);
-      playVoiceLine('babu_arrival');
+      playVoiceLine('babu_arrival').then(() => {
+        if (state.screen === 'cinematic' && cinematicStep === 1) {
+          cineTimer = setTimeout(() => skipCinematic(), 1500);
+        }
+      });
     } else {
       skipCinematic();
     }
@@ -2421,8 +2499,11 @@
   }
 
   function skipCinematic() {
+    if (cineTimer) { clearTimeout(cineTimer); cineTimer = null; }
     stopVoice();
     document.body.classList.remove('cinematic-active');
+    const cineBtn = document.getElementById('cinematic-overlay');
+    if (cineBtn) cineBtn.style.display = 'none';
     state.screen = 'game';
     popup('🚶 ' + tr(OBJ.autoStand));
     updateHudLabels();
@@ -2515,13 +2596,23 @@
   let clock = new THREE.Clock();
   function animate() {
     requestAnimationFrame(animate);
-    const dt = clock.getDelta();
+    const dt = Math.min(clock.getDelta(), 0.1);
 
     // Cow animation
-    sacredCow.update(dt, true);
+    if (sacredCow && sacredCow.update) sacredCow.update(dt, true);
 
     // Update player movement
     updatePlayerKinematics(dt);
+
+    // Sky follows camera
+    if (skyMesh) skyMesh.position.copy(camera.position);
+
+    // Lighting follows target
+    if (sunLight) {
+      const focus = state.mode === 'drive' ? playerAuto.group.position : babuGroup.position;
+      sunLight.position.set(focus.x - 70, 60, focus.z + 35);
+      sunLight.target.position.set(focus.x, 0, focus.z);
+    }
 
     // Camera follow lerp
     if (state.screen === 'game') {
@@ -2532,6 +2623,19 @@
       const camZ = targetPos.z - Math.cos(playerAngle) * camDist;
       camera.position.lerp(new THREE.Vector3(camX, targetPos.y + camH, camZ), 0.12);
       camera.lookAt(targetPos.x, targetPos.y + 1.4, targetPos.z);
+    } else if (state.screen === 'title') {
+      // Gentle cinematic orbit of Baramunda Terminal during title screen
+      const t = Date.now() * 0.00025;
+      camera.position.set(-10 + Math.cos(t) * 36, 20 + Math.sin(t * 0.7) * 3, 15 + Math.sin(t) * 36);
+      camera.lookAt(-10, 3.5, 12);
+    } else if (state.screen === 'cinematic') {
+      if (cinematicStep === 0) {
+        camera.position.lerp(new THREE.Vector3(-45, 24, 45), 0.04);
+        camera.lookAt(-10, 4, 15);
+      } else if (cinematicStep === 1) {
+        camera.position.lerp(new THREE.Vector3(-12, 3.2, 18), 0.06);
+        camera.lookAt(POI.babuSpawn[0], 1.6, POI.babuSpawn[1]);
+      }
     }
 
     drawMinimap();
