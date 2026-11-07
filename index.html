@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>BHUBANESWAR 3D: Ama Gadi, Ama Rasta (Antigravity & Emergent Physics Edition)</title>
+  <title>BHUBANESWAR 3D: Ama Gadi, Ama Rasta (Cinematic Textures & Antigravity Edition)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Noto+Sans+Oriya:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Noto+Sans+Oriya:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     :root {
@@ -16,15 +16,16 @@
       --green: #00e676;
       --odia: #ff6d00;
       --neon-purple: #c026d3;
-      --dark: rgba(12, 9, 24, 0.90);
+      --gold: #f59e0b;
+      --dark: rgba(14, 10, 26, 0.92);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     body, html {
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #06040a;
-      font-family: 'VT323', 'Noto Sans Oriya', monospace, sans-serif;
+      background: #08060d;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Oriya', 'VT323', sans-serif;
       color: #fff;
     }
     #webgl-canvas {
@@ -34,6 +35,52 @@
       width: 100vw;
       height: 100vh;
       z-index: 1;
+    }
+
+    /* CINEMATIC LETTERBOX BARS */
+    .cine-bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      height: 0;
+      background: #000;
+      z-index: 15;
+      transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+    .cine-bar.top { top: 0; border-bottom: 2px solid rgba(255, 204, 0, 0.2); }
+    .cine-bar.bottom { bottom: 0; border-top: 2px solid rgba(255, 204, 0, 0.2); }
+    body.cinematic-active .cine-bar {
+      height: 9.5vh;
+    }
+
+    /* CINEMATIC TITLE OVERLAY */
+    #cine-overlay {
+      position: fixed;
+      bottom: 12vh;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 16;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    body.cinematic-active #cine-overlay { opacity: 1; }
+    .cine-main-title {
+      font-family: 'Cinzel', serif;
+      font-size: 24px;
+      letter-spacing: 4px;
+      color: #ffd166;
+      text-shadow: 0 0 15px rgba(255, 209, 102, 0.8), 2px 2px 0 #000;
+    }
+    .cine-sub-title {
+      font-family: 'Noto Sans Oriya', sans-serif;
+      font-size: 18px;
+      color: #ffffff;
+      margin-top: 4px;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 3px #000;
     }
 
     /* HUD OVERLAY */
@@ -46,6 +93,13 @@
       flex-direction: column;
       justify-content: space-between;
       padding: 12px;
+      transition: opacity 0.4s ease;
+    }
+    body.cinematic-active #hud {
+      opacity: 0.25;
+    }
+    body.cinematic-active #hud:hover {
+      opacity: 0.95;
     }
     .interactive { pointer-events: auto; }
 
@@ -62,13 +116,15 @@
       border: 3px solid var(--accent);
       box-shadow: 4px 4px 0 #000;
       padding: 8px 12px;
+      backdrop-filter: blur(6px);
     }
     .brand-box h1 {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 11px;
+      font-family: 'Cinzel', 'Press Start 2P', serif;
+      font-size: 13px;
+      letter-spacing: 1px;
       color: var(--accent);
       margin-bottom: 4px;
-      line-height: 1.4;
+      line-height: 1.3;
       text-shadow: 2px 2px 0 #000;
     }
     .status-pill-row {
@@ -78,26 +134,27 @@
       flex-wrap: wrap;
     }
     .weather-pill {
-      font-size: 16px;
+      font-size: 15px;
       color: var(--cyan);
       display: flex;
       align-items: center;
       gap: 6px;
-      background: rgba(0,0,0,0.4);
-      padding: 2px 6px;
+      background: rgba(0,0,0,0.5);
+      padding: 3px 8px;
       border: 1px solid #334;
+      font-family: 'JetBrains Mono', monospace;
     }
     .mini-btn {
       background: #231a38;
       color: #fff;
       border: 1px solid var(--cyan);
-      padding: 4px 8px;
-      font-family: 'VT323', 'Noto Sans Oriya', monospace;
-      font-size: 16px;
+      padding: 4px 9px;
+      font-family: 'Noto Sans Oriya', 'Plus Jakarta Sans', monospace;
+      font-size: 14px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
       transition: all 0.15s;
     }
     .mini-btn:hover { background: var(--cyan); color: #000; }
@@ -105,7 +162,7 @@
       background: var(--neon-purple);
       border-color: #f43f5e;
       color: #fff;
-      box-shadow: 0 0 10px #c026d3;
+      box-shadow: 0 0 12px #c026d3;
     }
 
     /* ANTIGRAV SUPER GAUGE */
@@ -113,17 +170,18 @@
       background: var(--dark);
       border: 2px solid var(--cyan);
       box-shadow: 4px 4px 0 #000;
-      padding: 6px 10px;
-      min-width: 170px;
+      padding: 6px 12px;
+      min-width: 180px;
+      backdrop-filter: blur(6px);
     }
     .antigrav-title {
-      font-size: 14px;
       color: var(--cyan);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-family: 'Press Start 2P', cursive;
-      font-size: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
     }
     .plasma-bar {
       width: 100%;
@@ -148,8 +206,9 @@
       background: var(--dark);
       border: 3px solid #49386e;
       box-shadow: 4px 4px 0 #000;
-      padding: 6px 10px;
+      padding: 6px 12px;
       flex-wrap: wrap;
+      backdrop-filter: blur(6px);
     }
     .stat-item {
       min-width: 95px;
@@ -159,10 +218,12 @@
       color: #bbb;
       display: flex;
       justify-content: space-between;
+      font-family: 'Noto Sans Oriya', 'Plus Jakarta Sans', sans-serif;
     }
     .stat-val {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
       color: var(--accent);
     }
     .progress {
@@ -184,9 +245,9 @@
       align-self: center;
       background: rgba(0, 0, 0, 0.94);
       border: 3px solid var(--accent);
-      padding: 8px 16px;
+      padding: 10px 20px;
       text-align: center;
-      box-shadow: 0 0 18px rgba(255, 204, 0, 0.6);
+      box-shadow: 0 0 22px rgba(255, 204, 0, 0.7);
       display: none;
       animation: pulseBox 0.8s infinite alternate;
       cursor: pointer;
@@ -196,15 +257,18 @@
       to { transform: scale(1.04); }
     }
     #hotspot-prompt .title {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 11px;
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
       color: var(--accent);
       display: block;
       margin-bottom: 3px;
     }
     #hotspot-prompt .sub {
-      font-size: 18px;
+      font-size: 17px;
       color: #fff;
+      font-family: 'Noto Sans Oriya', sans-serif;
     }
 
     /* MODAL FOR DIALOGUE & FIGHTKARO COMBAT */
@@ -214,12 +278,12 @@
       left: 50%;
       transform: translate(-50%, -50%);
       width: 92%;
-      max-width: 720px;
-      background: rgba(17, 12, 28, 0.97);
+      max-width: 740px;
+      background: rgba(17, 12, 28, 0.98);
       border: 4px solid var(--accent);
-      box-shadow: 0 0 0 4px #000, 10px 10px 0 #000;
-      padding: 16px;
-      z-index: 10;
+      box-shadow: 0 0 0 4px #000, 12px 12px 0 #000;
+      padding: 18px;
+      z-index: 25;
       display: none;
     }
     .modal-header {
@@ -227,66 +291,71 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 2px solid #3f2e63;
-      padding-bottom: 6px;
-      margin-bottom: 10px;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
     }
     .modal-title {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 12px;
+      font-family: 'Cinzel', 'Noto Sans Oriya', serif;
+      font-size: 15px;
+      font-weight: 700;
       color: var(--accent);
+      letter-spacing: 1px;
     }
     .close-btn {
       background: var(--danger);
       color: #fff;
       border: 2px solid #fff;
-      padding: 2px 8px;
-      font-family: 'Press Start 2P', cursive;
-      font-size: 9px;
+      padding: 3px 10px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
       cursor: pointer;
     }
     .modal-body {
       display: flex;
-      gap: 14px;
+      gap: 16px;
       align-items: flex-start;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
     .npc-portrait {
-      width: 80px;
-      height: 80px;
+      width: 85px;
+      height: 85px;
       border: 3px solid var(--cyan);
       background: #1e1333;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 38px;
+      font-size: 42px;
       flex-shrink: 0;
+      box-shadow: 4px 4px 0 #000;
     }
     .dialogue-text {
-      font-size: 18px;
-      line-height: 1.35;
+      font-size: 16px;
+      line-height: 1.45;
       color: #f0e6ff;
     }
     .quote-bubble {
-      margin-top: 6px;
-      padding: 6px 10px;
+      margin-top: 8px;
+      padding: 8px 12px;
       background: #251642;
-      border-left: 3px solid var(--odia);
+      border-left: 4px solid var(--odia);
       font-style: italic;
       color: #ffb74d;
       font-size: 17px;
+      font-family: 'Noto Sans Oriya', sans-serif;
     }
     .modal-choices {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
     }
     .choice-btn {
       background: #1f1435;
       color: #fff;
       border: 2px solid #5a4282;
-      padding: 8px 12px;
-      font-family: 'VT323', 'Noto Sans Oriya', monospace;
-      font-size: 18px;
+      padding: 10px 14px;
+      font-family: 'Noto Sans Oriya', 'Plus Jakarta Sans', sans-serif;
+      font-size: 16px;
       text-align: left;
       cursor: pointer;
       display: flex;
@@ -301,10 +370,10 @@
       transform: translateX(4px);
     }
     .choice-btn .tag-pill {
-      font-size: 14px;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 2px 6px;
-      border: 1px solid #666;
+      font-size: 13px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 3px 8px;
+      border: 1px solid #777;
     }
 
     /* FIGHTKARO BRAWL UI */
@@ -315,19 +384,20 @@
     .fighter-meters {
       display: flex;
       justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 10px;
+      gap: 12px;
+      margin-bottom: 12px;
     }
     .fighter-box { flex: 1; }
     .fighter-name {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
       margin-bottom: 4px;
       display: flex;
       justify-content: space-between;
     }
     .fighter-bar {
-      height: 14px;
+      height: 16px;
       background: #000;
       border: 2px solid #fff;
     }
@@ -338,27 +408,29 @@
     }
     .fighter-fill.player { background: var(--green); }
     .fight-log {
-      min-height: 40px;
+      min-height: 42px;
       background: #0c0717;
       border: 2px solid #443166;
-      padding: 6px 10px;
-      font-size: 17px;
+      padding: 8px 12px;
+      font-size: 16px;
       color: #ffcc00;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      font-family: 'Noto Sans Oriya', sans-serif;
     }
     .fight-actions {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
+      gap: 8px;
     }
     .atk-btn {
       background: #391122;
       color: #fff;
       border: 2px solid var(--danger);
-      padding: 7px;
-      font-family: 'VT323', 'Noto Sans Oriya', monospace;
-      font-size: 17px;
+      padding: 9px;
+      font-family: 'Noto Sans Oriya', 'Plus Jakarta Sans', sans-serif;
+      font-size: 15px;
       cursor: pointer;
+      font-weight: 600;
     }
     .atk-btn:hover {
       background: var(--danger);
@@ -377,28 +449,32 @@
       background: var(--dark);
       border: 3px solid var(--accent);
       box-shadow: 4px 4px 0 #000;
-      padding: 6px 12px;
+      padding: 8px 14px;
       display: flex;
-      gap: 12px;
+      gap: 14px;
       align-items: center;
+      backdrop-filter: blur(6px);
     }
     .speedo {
       text-align: center;
     }
     .speed-number {
-      font-family: 'Press Start 2P', cursive;
-      font-size: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 24px;
+      font-weight: 800;
       color: var(--accent);
     }
-    .speed-unit { font-size: 15px; color: #aaa; }
+    .speed-unit { font-size: 13px; color: #aaa; font-family: 'JetBrains Mono', monospace; }
     .toast-box {
-      background: rgba(0, 0, 0, 0.88);
+      background: rgba(0, 0, 0, 0.90);
       border-left: 4px solid var(--cyan);
-      padding: 6px 10px;
-      font-size: 16px;
+      padding: 8px 14px;
+      font-size: 15px;
       color: #fff;
-      max-width: 440px;
-      min-height: 30px;
+      max-width: 480px;
+      min-height: 36px;
+      backdrop-filter: blur(6px);
+      box-shadow: 4px 4px 0 #000;
     }
 
     /* ON-SCREEN TOUCH BUTTONS */
@@ -409,16 +485,17 @@
     }
     .d-pad {
       display: grid;
-      grid-template-columns: repeat(3, 42px);
-      grid-template-rows: repeat(2, 42px);
+      grid-template-columns: repeat(3, 44px);
+      grid-template-rows: repeat(2, 44px);
       gap: 4px;
     }
     .d-btn {
-      background: rgba(26, 17, 43, 0.9);
+      background: rgba(26, 17, 43, 0.92);
       border: 2px solid var(--accent);
       color: #fff;
-      font-family: 'Press Start 2P', cursive;
-      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -433,12 +510,12 @@
       gap: 4px;
     }
     .act-btn {
-      background: rgba(26, 17, 43, 0.9);
+      background: rgba(26, 17, 43, 0.92);
       border: 2px solid var(--cyan);
       color: #fff;
-      padding: 6px 10px;
-      font-family: 'VT323', 'Noto Sans Oriya', monospace;
-      font-size: 16px;
+      padding: 7px 11px;
+      font-family: 'Noto Sans Oriya', 'Plus Jakarta Sans', monospace;
+      font-size: 14px;
       border-radius: 4px;
       cursor: pointer;
       display: flex;
@@ -456,31 +533,51 @@
       background-image: repeating-linear-gradient(
         45deg,
         #ff6d00 0,
-        #ff6d00 5px,
-        #000 5px,
-        #000 10px,
-        #ffcc00 10px,
-        #ffcc00 15px,
-        #00e5ff 15px,
-        #00e5ff 20px
+        #ff6d00 6px,
+        #000 6px,
+        #000 12px,
+        #ffcc00 12px,
+        #ffcc00 18px,
+        #00e5ff 18px,
+        #00e5ff 24px
       );
       height: 4px;
       width: 100%;
-      margin: 4px 0;
+      margin: 5px 0;
     }
 
-    @media (max-width: 600px) {
-      .brand-box h1 { font-size: 9px; }
-      .stat-item { min-width: 75px; }
-      .d-pad { grid-template-columns: repeat(3, 36px); grid-template-rows: repeat(2, 36px); }
-      .speed-number { font-size: 16px; }
-      .toast-box { max-width: 260px; font-size: 14px; }
+    /* SKIP CINEMATIC BUTTON */
+    #btn-skip-cine {
+      position: fixed;
+      top: 11vh;
+      right: 20px;
+      z-index: 20;
+      background: rgba(0,0,0,0.85);
+      border: 2px solid var(--accent);
+      color: #fff;
+      padding: 6px 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      cursor: pointer;
+      display: none;
     }
+    body.cinematic-active #btn-skip-cine { display: block; }
   </style>
 </head>
 <body>
 
 <canvas id="webgl-canvas"></canvas>
+
+<!-- CINEMATIC ANAMORPHIC WIDESCREEN BARS -->
+<div class="cine-bar top"></div>
+<div class="cine-bar bottom"></div>
+
+<div id="cine-overlay">
+  <div class="cine-main-title" id="cine-title">BHUBANESWAR • 2026</div>
+  <div class="cine-sub-title" id="cine-subtitle">ଜନପଥ ରାସ୍ତା • ଶହୀଦ ନଗର • ଏକାମ୍ର କ୍ଷେତ୍ର</div>
+</div>
+
+<button id="btn-skip-cine" class="interactive" onclick="toggleCinematicMode(false)">✕ EXIT CINEMATIC [C / ESC]</button>
 
 <!-- HUD -->
 <div id="hud">
@@ -495,11 +592,12 @@
           <span id="weather-text">34°C • HUMID</span>
         </div>
         <button class="mini-btn" id="btn-kalabaisakhi" onclick="toggleKalabaisakhi()">⛈️ KALABAISAKHI</button>
+        <button class="mini-btn" id="btn-cine" onclick="toggleCinematicMode()">🎥 <span id="cine-btn-lbl">CINEMATIC [C]</span></button>
         <button class="mini-btn" id="btn-lang" onclick="cycleLanguage()">🌐 <span id="lang-label">ଓଡ଼ିଆ</span></button>
       </div>
       <div class="sambalpuri-border"></div>
-      <div style="font-size: 14px; color: #ffcc00;" id="sub-tagline">
-        ଖଟି • ଦହିବରା • ପିଙ୍କ୍ ଅଟୋ • ଶୂନ୍ୟ ମାଧ୍ୟାକର୍ଷଣ
+      <div style="font-size: 14px; color: #ffcc00; font-family: 'Noto Sans Oriya', sans-serif;" id="sub-tagline">
+        ଖଟି • ଦହିବରା • ପିଙ୍କ୍ ଅଟୋ • ଶୂନ୍ୟ ମାଧ୍ୟାକର୍ଷଣ • ସିନେମାଟିକ୍ ଟେକ୍ସଚର୍
       </div>
     </div>
 
@@ -513,8 +611,8 @@
         <div class="plasma-fill" id="plasma-fill"></div>
       </div>
       <div style="display: flex; gap: 4px; margin-top: 5px;">
-        <button class="mini-btn" id="btn-ag-toggle" onclick="toggleAntigravity()" style="flex: 1; font-size: 14px; padding: 2px 4px;">🚀 TOGGLE [G]</button>
-        <button class="mini-btn pulse" id="btn-ag-pulse" onclick="triggerAntigravPulse()" style="flex: 1; font-size: 14px; padding: 2px 4px; border-color: #ff2a55;">⚡ PULSE [Q]</button>
+        <button class="mini-btn" id="btn-ag-toggle" onclick="toggleAntigravity()" style="flex: 1; font-size: 13px; padding: 3px 5px;">🚀 ZERO-G [G]</button>
+        <button class="mini-btn pulse" id="btn-ag-pulse" onclick="triggerAntigravPulse()" style="flex: 1; font-size: 13px; padding: 3px 5px; border-color: #ff2a55;">⚡ PULSE [Q]</button>
       </div>
     </div>
 
@@ -525,8 +623,8 @@
         <div class="progress"><div class="progress-fill" id="bar-stamina" style="width: 85%;"></div></div>
       </div>
       <div class="stat-item">
-        <div class="stat-label"><span id="lbl-jugaad">ଜୁଗାଡ଼</span> <span class="stat-val" id="ui-jugaad">40</span></div>
-        <div class="progress"><div class="progress-fill" id="bar-jugaad" style="width: 40%; background: var(--green);"></div></div>
+        <div class="stat-label"><span id="lbl-jugaad">ଜୁଗାଡ଼</span> <span class="stat-val" id="ui-jugaad">45</span></div>
+        <div class="progress"><div class="progress-fill" id="bar-jugaad" style="width: 45%; background: var(--green);"></div></div>
       </div>
       <div class="stat-item">
         <div class="stat-label"><span id="lbl-karma">ଶାନ୍ତି</span> <span class="stat-val" id="ui-karma">80</span></div>
@@ -554,8 +652,8 @@
         <div class="speed-unit">KM/H</div>
       </div>
       <div>
-        <div style="font-family:'Press Start 2P'; font-size: 9px; color: var(--accent);" id="vehicle-label">🛵 WHITE ACTIVA 6G</div>
-        <div style="font-size: 15px; color: #88e5ff;" id="zone-indicator">LOC: JANPATH (SAHEED NAGAR)</div>
+        <div style="font-family:'Cinzel', 'Noto Sans Oriya', serif; font-size: 11px; font-weight:700; color: var(--accent);" id="vehicle-label">🛵 WHITE ACTIVA 6G</div>
+        <div style="font-size: 14px; color: #88e5ff; font-family: 'JetBrains Mono', monospace;" id="zone-indicator">LOC: JANPATH (SAHEED NAGAR)</div>
         <div style="display: flex; gap: 4px; margin-top: 4px;">
           <button class="mini-btn" onclick="switchVehicle()">🔄 SWAP [V]</button>
           <button class="mini-btn" onclick="playHorn()">📢 HORN [H]</button>
@@ -565,7 +663,7 @@
 
     <!-- TOAST FEEDBACK -->
     <div class="toast-box interactive" id="toast-box">
-      <span id="toast-msg">🎮 WASD/Arrows to drive • [G] Antigravity Zero-G • [Q] Pulse • Space/Shift Fly</span>
+      <span id="toast-msg">🎮 WASD/Arrows to drive • [G] Antigrav Flight • [Q] Shockwave • [C] Cinematic Camera</span>
     </div>
 
     <!-- TOUCH CONTROLS FOR MOBILE -->
@@ -633,13 +731,214 @@
 
 <script>
   /* =========================================================================
-     1. TRILINGUAL LOCALIZATION STRINGS (ODIA, HINDI, ENGLISH)
+     1. PROCEDURAL CANVAS TEXTURE ENGINE (Asphalt, Laterite, Facades, Signs, Cloth)
+     ========================================================================= */
+  const texCache = new Map();
+
+  function canvasTex(key, w, h, draw, repeat = null) {
+    if (texCache.has(key)) return texCache.get(key);
+    const c = document.createElement('canvas');
+    c.width = w;
+    c.height = h;
+    const ctx = c.getContext('2d');
+    draw(ctx, w, h);
+    const t = new THREE.CanvasTexture(c);
+    t.anisotropy = 4;
+    if (repeat) {
+      t.wrapS = THREE.RepeatWrapping;
+      t.wrapT = THREE.RepeatWrapping;
+      t.repeat.set(repeat[0], repeat[1]);
+    }
+    texCache.set(key, t);
+    return t;
+  }
+
+  function speckle(g, w, h, n, colors, size = 2) {
+    for (let i = 0; i < n; i++) {
+      g.fillStyle = colors[i % colors.length];
+      g.globalAlpha = 0.08 + Math.random() * 0.18;
+      g.fillRect(Math.random() * w, Math.random() * h, size, size);
+    }
+    g.globalAlpha = 1;
+  }
+
+  // A. Realistic Asphalt Tarmac with aggregate speckles and subtle wear
+  const asphaltTex = () => canvasTex('asphalt', 256, 256, (g, w, h) => {
+    g.fillStyle = '#3a3836';
+    g.fillRect(0, 0, w, h);
+    speckle(g, w, h, 4000, ['#242220', '#56514b', '#484440', '#6e6862'], 2);
+    g.globalAlpha = 0.14;
+    g.fillStyle = '#171615';
+    for (let i = 0; i < 5; i++) {
+      g.beginPath();
+      g.ellipse(Math.random() * w, Math.random() * h, 28, 12, Math.random() * 3, 0, 7);
+      g.fill();
+    }
+    g.globalAlpha = 1;
+  }, [1, 1]);
+
+  // B. Odisha Laterite Red-Brown Soil Ground
+  const groundTex = () => canvasTex('ground', 256, 256, (g, w, h) => {
+    g.fillStyle = '#5a3d2e';
+    g.fillRect(0, 0, w, h);
+    speckle(g, w, h, 5000, ['#432b1f', '#734c38', '#586b2f', '#875d42'], 3);
+  }, [80, 80]);
+
+  // C. Concrete Sidewalk Pavement with mortar grid
+  const pavementTex = () => canvasTex('pavement', 128, 128, (g, w, h) => {
+    g.fillStyle = '#ab9378';
+    g.fillRect(0, 0, w, h);
+    g.strokeStyle = '#7c644d';
+    g.lineWidth = 2;
+    for (let y = 0; y < h; y += 32) {
+      for (let x = 0; x < w; x += 32) {
+        g.strokeRect(x + (y / 32 % 2) * 16, y, 32, 32);
+      }
+    }
+    speckle(g, w, h, 800, ['#6b5441', '#beaa92'], 2);
+  }, [2, 2]);
+
+  // D. Odisha Laterite Stone Blocks (for Temple Deula & Boundary Walls)
+  const lateriteTex = () => canvasTex('laterite', 256, 256, (g, w, h) => {
+    g.fillStyle = '#94441f';
+    g.fillRect(0, 0, w, h);
+    for (let y = 0; y < h; y += 24) {
+      for (let x = 0; x < w; x += 48) {
+        g.fillStyle = `hsl(${16 + Math.random() * 8}, ${48 + Math.random() * 14}%, ${30 + Math.random() * 10}%)`;
+        g.fillRect(x + (y / 24 % 2) * 24 + 1, y + 1, 46, 22);
+      }
+    }
+    speckle(g, w, h, 2800, ['#54210e', '#bf6432', '#3a1608'], 2);
+  }, [2, 2]);
+
+  // E. Urban Building Facade with Windows & Sunshades
+  const facadeTex = (base) => canvasTex('facade' + base, 128, 128, (g, w, h) => {
+    g.fillStyle = base;
+    g.fillRect(0, 0, w, h);
+    speckle(g, w, h, 1400, ['#000000', '#ffffff', '#6a5a40'], 3);
+    g.fillStyle = 'rgba(50,30,10,0.12)';
+    g.fillRect(0, h - 14, w, 14);
+    // Window frame
+    g.fillStyle = '#22303a';
+    g.fillRect(34, 30, 60, 50);
+    // Tinted Glass Panes
+    g.fillStyle = '#507282';
+    g.fillRect(38, 34, 24, 42);
+    g.fillRect(66, 34, 24, 42);
+    g.strokeStyle = '#322214';
+    g.lineWidth = 4;
+    g.strokeRect(34, 30, 60, 50);
+    // Sunshade (chhajja)
+    g.fillStyle = 'rgba(255,255,255,0.22)';
+    g.fillRect(28, 24, 72, 6);
+    // Security window bars
+    g.strokeStyle = '#222';
+    g.lineWidth = 2;
+    for (let x = 40; x < 92; x += 8) {
+      g.beginPath();
+      g.moveTo(x, 30);
+      g.lineTo(x, 80);
+      g.stroke();
+    }
+  }, [1, 1]);
+
+  // F. Corrugated Metal Shop Rolling Shutter
+  const shutterTex = () => canvasTex('shutter', 64, 64, (g, w, h) => {
+    g.fillStyle = '#787d82';
+    g.fillRect(0, 0, w, h);
+    for (let y = 0; y < h; y += 4) {
+      g.fillStyle = y % 8 === 0 ? '#54585c' : '#9ea3a8';
+      g.fillRect(0, y, w, 2);
+    }
+  }, [1, 1]);
+
+  // G. Authentic High-Res Storefront Signboards with Odia Typography
+  function signTex(odiaText, engText, bg = '#b71c1c', fg = '#fffbeb') {
+    return canvasTex('sign_' + odiaText + bg, 512, 128, (g, w, h) => {
+      g.fillStyle = bg;
+      g.fillRect(0, 0, w, h);
+      g.strokeStyle = '#eab308';
+      g.lineWidth = 6;
+      g.strokeRect(4, 4, w - 8, h - 8);
+      // Odia Main Heading
+      g.fillStyle = fg;
+      g.font = '700 40px "Noto Sans Oriya", sans-serif';
+      g.textAlign = 'center';
+      g.fillText(odiaText, w / 2, 52);
+      // English Subtitle
+      if (engText) {
+        g.font = '600 22px "Plus Jakarta Sans", sans-serif';
+        g.fillStyle = '#fde68a';
+        g.fillText(engText, w / 2, 94);
+      }
+    });
+  }
+
+  // H. Mo Bus Authentic Green & Cream Livery with Tinted Windows
+  function busSideTex() {
+    return canvasTex('busSide', 1024, 256, (g, w, h) => {
+      g.fillStyle = '#f6f4ee';
+      g.fillRect(0, 0, w, h);
+      // Green bottom band
+      g.fillStyle = '#008744';
+      g.fillRect(0, 160, w, 32);
+      // Red divider pinstripe
+      g.fillStyle = '#d62d20';
+      g.fillRect(0, 192, w, 10);
+      // Tinted Passenger Windows
+      g.fillStyle = '#1e2830';
+      for (let x = 35; x < w - 60; x += 110) {
+        g.fillRect(x, 38, 96, 92);
+      }
+      // Odia & English Branding
+      g.fillStyle = '#005f32';
+      g.font = '700 36px "Noto Sans Oriya", sans-serif';
+      g.fillText('ମୋ ବସ୍ • MO BUS BHUBANESWAR', 55, 238);
+    });
+  }
+
+  // I. Sambalpuri & Handloom Cloth Texture
+  function clothTex(kind, c1, c2 = '#ffffff') {
+    return canvasTex(`cloth_${kind}_${c1}_${c2}`, 128, 128, (g, w, h) => {
+      g.fillStyle = c1;
+      g.fillRect(0, 0, w, h);
+      if (kind === 'check') {
+        g.globalAlpha = 0.55;
+        g.fillStyle = c2;
+        for (let i = 0; i < w; i += 32) {
+          g.fillRect(i, 0, 10, h);
+          g.fillRect(0, i, w, 10);
+        }
+        g.globalAlpha = 0.3;
+        for (let i = 16; i < w; i += 32) {
+          g.fillRect(i, 0, 3, h);
+          g.fillRect(0, i, w, 3);
+        }
+      } else if (kind === 'saree') {
+        g.fillStyle = c2;
+        g.fillRect(0, h - 30, w, 30);
+        g.fillStyle = '#eab308';
+        for (let x = 4; x < w; x += 16) {
+          g.beginPath();
+          g.moveTo(x, h - 4);
+          g.lineTo(x + 6, h - 24);
+          g.lineTo(x + 12, h - 4);
+          g.fill();
+        }
+      }
+      g.globalAlpha = 1;
+      speckle(g, w, h, 800, ['#000', '#fff'], 1);
+    });
+  }
+
+  /* =========================================================================
+     2. TRILINGUAL LOCALIZATION STRINGS
      ========================================================================= */
   const I18N = {
     odia: {
       langName: "ଓଡ଼ିଆ",
       brandTitle: "ଭୁବନେଶ୍ୱର 3D: ଆମ ଗାଡ଼ି ଆମ ରାସ୍ତା",
-      subTagline: "ଖଟି • ଦହିବରା • ପିଙ୍କ୍ ଅଟୋ • ଶୂନ୍ୟ ମାଧ୍ୟାକର୍ଷଣ",
+      subTagline: "ଖଟି • ଦହିବରା • ପିଙ୍କ୍ ଅଟୋ • ଶୂନ୍ୟ ମାଧ୍ୟାକର୍ଷଣ • ସିନେମାଟିକ୍ ଟେକ୍ସଚର୍",
       stamina: "ପଖାଳ",
       jugaad: "ଜୁଗାଡ଼",
       karma: "ଶାନ୍ତି",
@@ -657,7 +956,7 @@
     hindi: {
       langName: "हिंदी",
       brandTitle: "भुवनेश्वर 3D: हमारी गाड़ी, हमारा रास्ता",
-      subTagline: "खट्टी • दहीबड़ा • पिंक ऑटो • एंटी-ग्रेविटी मोड",
+      subTagline: "खट्टी • दहीबड़ा • पिंक ऑटो • एंटी-ग्रेविटी मोड • सिनेमैटिक टेक्सचर",
       stamina: "पखाल",
       jugaad: "जुगाड़",
       karma: "शांति",
@@ -675,7 +974,7 @@
     en: {
       langName: "ENG",
       brandTitle: "BHUBANESWAR 3D: AMA GADI, AMA RASTA",
-      subTagline: "KHATTI • DAHIBARA • PINK AUTO • ANTIGRAV ZERO-G",
+      subTagline: "KHATTI • DAHIBARA • PINK AUTO • ANTIGRAV ZERO-G • CINEMATIC 3D",
       stamina: "STAMINA",
       jugaad: "JUGAAD",
       karma: "KARMA",
@@ -714,7 +1013,7 @@
   }
 
   /* =========================================================================
-     2. PROCEDURAL WEB AUDIO SYNTHESIZER (No external audio files!)
+     3. PROCEDURAL WEB AUDIO SYNTHESIZER
      ========================================================================= */
   const AudioCtx = window.AudioContext || window.webkitAudioContext;
   let audioCtx = null;
@@ -779,7 +1078,6 @@
     showToast(isPinkAuto ? I18N[currentLang].autoHorn : I18N[currentLang].cowsIgnored);
   }
 
-  // Antigravity Thruster Jet Sound
   function playThrusterSound(isUp) {
     initAudio();
     const o = audioCtx.createOscillator();
@@ -795,10 +1093,8 @@
     o.start(); o.stop(audioCtx.currentTime + 0.26);
   }
 
-  // Antigravity Electromagnetic Repulsor Pulse (Shockwave)
   function playShockwaveSound() {
     initAudio();
-    // Sub bass drop
     const o = audioCtx.createOscillator();
     const g = audioCtx.createGain();
     o.type = 'sawtooth';
@@ -808,20 +1104,8 @@
     g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
     o.connect(g); g.connect(audioCtx.destination);
     o.start(); o.stop(audioCtx.currentTime + 0.52);
-
-    // High sci-fi chime
-    const o2 = audioCtx.createOscillator();
-    const g2 = audioCtx.createGain();
-    o2.type = 'triangle';
-    o2.frequency.setValueAtTime(1200, audioCtx.currentTime);
-    o2.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.3);
-    g2.gain.setValueAtTime(0.3, audioCtx.currentTime);
-    g2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-    o2.connect(g2); g2.connect(audioCtx.destination);
-    o2.start(); o2.stop(audioCtx.currentTime + 0.32);
   }
 
-  // Debris collision acoustic clack
   function playDebrisClack(type) {
     if (!audioCtx) return;
     const o = audioCtx.createOscillator();
@@ -835,45 +1119,75 @@
   }
 
   /* =========================================================================
-     3. THREE.JS 3D OPEN-WORLD BHUBANESWAR SCENE
+     4. THREE.JS 3D OPEN-WORLD BHUBANESWAR SCENE & CINEMATIC SETUP
      ========================================================================= */
   const canvas = document.getElementById('webgl-canvas');
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xff9e6d);
-  scene.fog = new THREE.FogExp2(0xff9e6d, 0.006);
+  scene.background = new THREE.Color(0xffa875);
+  scene.fog = new THREE.FogExp2(0xffa875, 0.0055);
 
-  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 500);
+  const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 550);
 
-  // Lights
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
+  // Lighting
+  const ambientLight = new THREE.AmbientLight(0xfff5ea, 0.72);
   scene.add(ambientLight);
 
-  const sunLight = new THREE.DirectionalLight(0xffe6b3, 1.15);
-  sunLight.position.set(70, 110, 60);
+  const sunLight = new THREE.DirectionalLight(0xffdfa8, 1.25);
+  sunLight.position.set(80, 120, 60);
   sunLight.castShadow = true;
+  sunLight.shadow.mapSize.width = 1024;
+  sunLight.shadow.mapSize.height = 1024;
   scene.add(sunLight);
 
-  // Odisha Laterite Soil Ground
+  // Ground with Laterite Soil Canvas Texture
   const groundGeo = new THREE.PlaneGeometry(600, 600);
-  const groundMat = new THREE.MeshLambertMaterial({ color: 0x3d271e });
+  const groundMat = new THREE.MeshStandardMaterial({
+    map: groundTex(),
+    roughness: 0.95
+  });
   const ground = new THREE.Mesh(groundGeo, groundMat);
   ground.rotation.x = -Math.PI / 2;
   ground.receiveShadow = true;
   scene.add(ground);
 
-  // Main Intersecting Roads (Janpath N-S & NH-16 E-W)
+  // Main Intersecting Roads (Janpath N-S & NH-16 E-W) with Asphalt Canvas Texture
   function createRoad(w, h, x, z) {
+    const asp = asphaltTex().clone();
+    asp.repeat.set(w > h ? 18 : 2, w > h ? 2 : 18);
+    asp.wrapS = asp.wrapT = THREE.RepeatWrapping;
+    asp.needsUpdate = true;
+
     const r = new THREE.Mesh(
       new THREE.PlaneGeometry(w, h),
-      new THREE.MeshPhongMaterial({ color: 0x22232a, shininess: 20 })
+      new THREE.MeshStandardMaterial({
+        map: asp,
+        roughness: 0.85
+      })
     );
     r.rotation.x = -Math.PI / 2;
     r.position.set(x, 0.03, z);
+    r.receiveShadow = true;
     scene.add(r);
+
+    // Concrete Sidewalks alongside road
+    if (w < h) {
+      // N-S road sidewalks
+      [-w/2 - 2, w/2 + 2].forEach(sx => {
+        const sw = new THREE.Mesh(
+          new THREE.PlaneGeometry(4, h),
+          new THREE.MeshStandardMaterial({ map: pavementTex(), roughness: 0.8 })
+        );
+        sw.rotation.x = -Math.PI / 2;
+        sw.position.set(sx, 0.05, z);
+        sw.receiveShadow = true;
+        scene.add(sw);
+      });
+    }
   }
   createRoad(28, 560, 0, 0);   // Janpath
   createRoad(560, 28, 0, 0);   // NH-16
@@ -883,77 +1197,145 @@
     if (Math.abs(i) < 20) continue;
     const divNS = new THREE.Mesh(
       new THREE.BoxGeometry(0.7, 0.45, 6),
-      new THREE.MeshLambertMaterial({ color: i % 28 === 0 ? 0xffcc00 : 0xffffff })
+      new THREE.MeshStandardMaterial({ color: i % 28 === 0 ? 0xffcc00 : 0xffffff, roughness: 0.6 })
     );
     divNS.position.set(0, 0.22, i);
+    divNS.castShadow = true;
     scene.add(divNS);
 
     const divEW = new THREE.Mesh(
       new THREE.BoxGeometry(6, 0.45, 0.7),
-      new THREE.MeshLambertMaterial({ color: i % 28 === 0 ? 0xffcc00 : 0xffffff })
+      new THREE.MeshStandardMaterial({ color: i % 28 === 0 ? 0xffcc00 : 0xffffff, roughness: 0.6 })
     );
     divEW.position.set(i, 0.22, 0);
+    divEW.castShadow = true;
     scene.add(divEW);
   }
 
-  // Overhead Rasulgarh Flyover Bridge (Drive or Fly under/over!)
+  // Overhead Rasulgarh Flyover Bridge with Laterite Concrete
   const flyover = new THREE.Mesh(
     new THREE.BoxGeometry(220, 2, 20),
-    new THREE.MeshLambertMaterial({ color: 0x4a4f59 })
+    new THREE.MeshStandardMaterial({ map: asphaltTex(), roughness: 0.8 })
   );
   flyover.position.set(0, 16, -110);
+  flyover.castShadow = true;
   scene.add(flyover);
 
-  // Flyover Pillars
   [-80, -35, 35, 80].forEach(px => {
     const pillar = new THREE.Mesh(
-      new THREE.CylinderGeometry(1.5, 1.8, 16, 12),
-      new THREE.MeshLambertMaterial({ color: 0x33373d })
+      new THREE.CylinderGeometry(1.6, 1.8, 16, 16),
+      new THREE.MeshStandardMaterial({ color: 0x5a554e, roughness: 0.9 })
     );
     pillar.position.set(px, 8, -110);
+    pillar.castShadow = true;
     scene.add(pillar);
   });
 
+  // Authentic Kalinga Temple Deula (Tower) with Laterite Stone
+  function createKalingaTemple(x, z, scale = 1) {
+    const g = new THREE.Group();
+    const lat = lateriteTex().clone();
+    lat.repeat.set(4, 8);
+    lat.wrapS = lat.wrapT = THREE.RepeatWrapping;
+    lat.needsUpdate = true;
+    const stone = new THREE.MeshStandardMaterial({ map: lat, roughness: 0.95 });
+
+    // Rekha Deula curvilinear profile
+    const pts = [
+      new THREE.Vector2(7.0, 0),
+      new THREE.Vector2(7.0, 1.2),
+      new THREE.Vector2(6.4, 1.4),
+      new THREE.Vector2(6.4, 7)
+    ];
+    for (let i = 0; i <= 10; i++) {
+      const t = i / 10;
+      pts.push(new THREE.Vector2(6.4 - Math.pow(t, 1.8) * 3.6, 7 + t * 24));
+    }
+    pts.push(new THREE.Vector2(2.0, 31), new THREE.Vector2(0, 31));
+
+    const tower = new THREE.Mesh(new THREE.LatheGeometry(pts, 4), stone);
+    tower.rotation.y = Math.PI / 4;
+    g.add(tower);
+
+    // Amalaka (Ribbed crown disc)
+    const amalaka = new THREE.Mesh(
+      new THREE.CylinderGeometry(2.4, 2.7, 1.4, 16),
+      new THREE.MeshStandardMaterial({ color: 0xd47343, roughness: 0.9 })
+    );
+    amalaka.position.y = 31.7;
+    g.add(amalaka);
+
+    // Kalasha finial (Gold pot)
+    const kalasha = new THREE.Mesh(
+      new THREE.SphereGeometry(0.85, 12, 12),
+      new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.6, roughness: 0.3 })
+    );
+    kalasha.position.y = 33.2;
+    g.add(kalasha);
+
+    g.position.set(x, 0, z);
+    g.scale.set(scale, scale, scale);
+    scene.add(g);
+  }
+  createKalingaTemple(-75, -200, 0.9);
+  createKalingaTemple(75, 180, 0.75);
+
   /* =========================================================================
-     4. BUILD PLAYER VEHICLES & NEON ANTIGRAV THRUSTERS
+     5. DETAILED VEHICLES WITH WHEELS & NEON ANTIGRAV THRUSTERS
      ========================================================================= */
   const playerGroup = new THREE.Group();
   scene.add(playerGroup);
 
-  // A. White Activa 6G
+  // A. White Activa 6G Mesh Group
   const scooterMesh = new THREE.Group();
-  const sBody = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.0, 2.2), new THREE.MeshLambertMaterial({ color: 0xf5f5f5 }));
+  const sBody = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.0, 2.2), new THREE.MeshStandardMaterial({ color: 0xf8f9fa, roughness: 0.3 }));
   sBody.position.y = 0.7;
+  sBody.castShadow = true;
   scooterMesh.add(sBody);
-  const sHandle = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.2, 0.2), new THREE.MeshLambertMaterial({ color: 0x333333 }));
+  const sHandle = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.18, 0.18), new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.7 }));
   sHandle.position.set(0, 1.5, 0.7);
   scooterMesh.add(sHandle);
-  const sRider = new THREE.Mesh(new THREE.BoxGeometry(0.75, 1.3, 0.75), new THREE.MeshLambertMaterial({ color: 0x00d1b2 }));
+  const sRider = new THREE.Mesh(new THREE.BoxGeometry(0.75, 1.3, 0.75), new THREE.MeshStandardMaterial({ map: clothTex('check', '#00b4d8', '#ffffff'), roughness: 0.7 }));
   sRider.position.set(0, 1.55, -0.1);
+  sRider.castShadow = true;
   scooterMesh.add(sRider);
-  const sHelmet = new THREE.Mesh(new THREE.SphereGeometry(0.38, 12, 12), new THREE.MeshLambertMaterial({ color: 0xffcc00 }));
+  const sHelmet = new THREE.Mesh(new THREE.SphereGeometry(0.38, 14, 14), new THREE.MeshStandardMaterial({ color: 0xffcc00, roughness: 0.2 }));
   sHelmet.position.set(0, 2.4, -0.1);
   scooterMesh.add(sHelmet);
   playerGroup.add(scooterMesh);
 
-  // B. 1998 Pink Vikram Auto
+  // B. 1998 Pink Vikram Auto Mesh Group
   const pinkAutoMesh = new THREE.Group();
-  const aCabin = new THREE.Mesh(new THREE.BoxGeometry(2.3, 2.1, 3.2), new THREE.MeshLambertMaterial({ color: 0xff2a85 }));
-  aCabin.position.y = 1.25;
+  // Lower Metal Cabin
+  const aCabin = new THREE.Mesh(new THREE.BoxGeometry(2.3, 1.9, 3.2), new THREE.MeshStandardMaterial({ color: 0xff1493, metalness: 0.25, roughness: 0.45 }));
+  aCabin.position.y = 1.15;
+  aCabin.castShadow = true;
   pinkAutoMesh.add(aCabin);
-  const aRoof = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.25, 3.3), new THREE.MeshLambertMaterial({ color: 0xffcc00 }));
-  aRoof.position.y = 2.4;
+  // Yellow Canvas Roof
+  const aRoof = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.3, 3.3), new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.8 }));
+  aRoof.position.y = 2.3;
   pinkAutoMesh.add(aRoof);
-  const aWindshield = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.9, 0.1), new THREE.MeshLambertMaterial({ color: 0x88e5ff }));
-  aWindshield.position.set(0, 1.6, 1.62);
+  // Glass Windshield
+  const aWindshield = new THREE.Mesh(
+    new THREE.BoxGeometry(2.0, 0.85, 0.08),
+    new THREE.MeshStandardMaterial({ color: 0x9be8ff, transparent: true, opacity: 0.45, roughness: 0.1 })
+  );
+  aWindshield.position.set(0, 1.6, 1.6);
   pinkAutoMesh.add(aWindshield);
+  // Headlight with emissive glow
+  const aLight = new THREE.Mesh(
+    new THREE.SphereGeometry(0.18, 12, 12),
+    new THREE.MeshStandardMaterial({ color: 0xfff6d0, emissive: 0xfff6d0, emissiveIntensity: 1.2 })
+  );
+  aLight.position.set(0, 1.1, 1.68);
+  pinkAutoMesh.add(aLight);
   pinkAutoMesh.visible = false;
   playerGroup.add(pinkAutoMesh);
 
-  // C. Antigravity Plasma Repulsor Rings (Glow underneath wheels)
+  // C. Glowing Antigravity Repulsor Plasma Rings
   const thrusterRings = [];
   function createThrusterRing(x, y, z) {
-    const ringGeo = new THREE.RingGeometry(0.4, 0.85, 24);
+    const ringGeo = new THREE.RingGeometry(0.4, 0.88, 28);
     const ringMat = new THREE.MeshBasicMaterial({
       color: 0x00e5ff,
       side: THREE.DoubleSide,
@@ -967,10 +1349,10 @@
     playerGroup.add(ring);
     thrusterRings.push(ring);
   }
-  createThrusterRing(0, 0.12, 0.9);   // Front thruster
-  createThrusterRing(0, 0.12, -0.9);  // Rear thruster
-  createThrusterRing(0.9, 0.12, -0.6); // Auto side right
-  createThrusterRing(-0.9, 0.12, -0.6); // Auto side left
+  createThrusterRing(0, 0.12, 0.9);   // Front
+  createThrusterRing(0, 0.12, -0.9);  // Rear
+  createThrusterRing(0.95, 0.12, -0.6); // Auto Right
+  createThrusterRing(-0.95, 0.12, -0.6); // Auto Left
 
   let isPinkAuto = false;
   function switchVehicle() {
@@ -981,7 +1363,7 @@
     playHorn();
   }
 
-  // Antigravity state variables
+  // Antigravity variables
   let isAntigrav = false;
   let playerAltitude = 0;
   let verticalVelocity = 0;
@@ -992,7 +1374,7 @@
     const btn = document.getElementById('btn-ag-toggle');
     if (isAntigrav) {
       btn.classList.add('active');
-      verticalVelocity = 0.12;
+      verticalVelocity = 0.15;
       playThrusterSound(true);
       showToast(I18N[currentLang].agOn + " • [Space/Shift] Fly • [Q] Pulse");
     } else {
@@ -1003,7 +1385,249 @@
   }
 
   /* =========================================================================
-     5. EMERGENT PHYSICS SANDBOX (Movable Handis, Barricades, Sacks & Chain Reactions)
+     6. PROCEDURAL ROADSIDE SHOPS WITH SIGNBOARDS & VEGETATION
+     ========================================================================= */
+  // Textured Urban Buildings & Street Stores
+  const shopData = [
+    { o: "ଦହିବରା ଆଳୁଦମ୍", e: "DAHIBARA ALOODUM", bg: "#b71c1c" },
+    { o: "ଓମ୍ଫେଡ୍ ଟୁକନା ପାନ", e: "OMFED PAAN KHATTI", bg: "#1f7a3c" },
+    { o: "ଜଗନ୍ନାଥ ମେଡିକାଲ୍", e: "JAGANNATH MEDICAL", bg: "#1d4e89" },
+    { o: "ମା ତାରିଣୀ ହୋଟେଲ୍", e: "MAA TARINI HOTEL", bg: "#d97706" },
+    { o: "ସମ୍ବଲପୁରୀ ଶାଢ଼ୀ ଘର", e: "SAMBALPURI HANDLOOM", bg: "#6a1b9a" },
+    { o: "ଛେନା ପୋଡ଼ ମିଠା ଦୋକାନ", e: "SWEET SHOP", bg: "#c2410c" },
+    { o: "ଭଡ଼ା ପାଇଁ ରୁମ୍ - PATIA", e: "ROOM FOR RENT", bg: "#b71c1c" },
+    { o: "ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଅଟୋ", e: "MASTER CANTEEN AUTO", bg: "#ff2a85" }
+  ];
+
+  const buildingWalls = ['#e9d8b4', '#f1c27d', '#e7b9a4', '#cfe0b8', '#f3e6c8', '#bfd8d2'];
+
+  let sIdx = 0;
+  for (let bx = -180; bx <= 180; bx += 40) {
+    for (let bz = -180; bz <= 180; bz += 40) {
+      if (Math.abs(bx) < 28 || Math.abs(bz) < 28) continue;
+      const bH = 14 + (Math.abs(bx * 7 + bz * 13) % 24);
+      const wallColor = buildingWalls[(Math.abs(bx + bz) / 40) % buildingWalls.length];
+
+      // Building Structure with Facade Texture
+      const bMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(22, bH, 22),
+        new THREE.MeshStandardMaterial({
+          map: facadeTex(wallColor),
+          roughness: 0.85
+        })
+      );
+      bMesh.position.set(bx, bH / 2, bz);
+      bMesh.castShadow = true;
+      bMesh.receiveShadow = true;
+      scene.add(bMesh);
+
+      // Shop Signboard facing the road
+      const facingX = Math.abs(bx) < Math.abs(bz);
+      const signInfo = shopData[sIdx % shopData.length];
+      sIdx++;
+
+      const sPlane = new THREE.Mesh(
+        new THREE.PlaneGeometry(8, 2.2),
+        new THREE.MeshStandardMaterial({
+          map: signTex(signInfo.o, signInfo.e, signInfo.bg),
+          roughness: 0.5
+        })
+      );
+      if (facingX) {
+        sPlane.position.set(bx, 4.2, bz + (bz > 0 ? -11.1 : 11.1));
+        if (bz > 0) sPlane.rotation.y = Math.PI;
+      } else {
+        sPlane.position.set(bx + (bx > 0 ? -11.1 : 11.1), 4.2, bz);
+        sPlane.rotation.y = bx > 0 ? -Math.PI / 2 : Math.PI / 2;
+      }
+      scene.add(sPlane);
+
+      // Shop Rolling Shutter on Ground Floor
+      const shut = new THREE.Mesh(
+        new THREE.PlaneGeometry(6, 3.2),
+        new THREE.MeshStandardMaterial({ map: shutterTex(), roughness: 0.6 })
+      );
+      if (facingX) {
+        shut.position.set(bx, 1.6, bz + (bz > 0 ? -11.08 : 11.08));
+        if (bz > 0) shut.rotation.y = Math.PI;
+      } else {
+        shut.position.set(bx + (bx > 0 ? -11.08 : 11.08), 1.6, bz);
+        shut.rotation.y = bx > 0 ? -Math.PI / 2 : Math.PI / 2;
+      }
+      scene.add(shut);
+    }
+  }
+
+  // Coconut Palm Trees lining Janpath & NH-16
+  function createPalmTree(x, z) {
+    const palm = new THREE.Group();
+    // Curved trunk
+    const trunk = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.2, 0.35, 7.5, 8),
+      new THREE.MeshStandardMaterial({ color: 0x6e523b, roughness: 0.9 })
+    );
+    trunk.position.y = 3.75;
+    trunk.rotation.z = (Math.random() - 0.5) * 0.12;
+    trunk.castShadow = true;
+    palm.add(trunk);
+
+    // 8 Fronds
+    for (let f = 0; f < 8; f++) {
+      const frond = new THREE.Mesh(
+        new THREE.BoxGeometry(0.65, 0.05, 3.4),
+        new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 0.7 })
+      );
+      frond.position.set(0, 7.5, 0);
+      frond.rotation.set(0.38, (f / 8) * Math.PI * 2, 0, 'YXZ');
+      frond.castShadow = true;
+      palm.add(frond);
+    }
+    palm.position.set(x, 0, z);
+    scene.add(palm);
+  }
+
+  for (let z = -200; z <= 200; z += 28) {
+    if (Math.abs(z) < 25) continue;
+    createPalmTree(17, z);
+    createPalmTree(-17, z);
+    createPalmTree(z, 17);
+    createPalmTree(z, -17);
+  }
+
+  /* =========================================================================
+     7. MO BUSES, SACRED COWS & INTERACTIVE HOTSPOTS
+     ========================================================================= */
+  const trafficAgents = [];
+
+  function createMoBus(z, dir) {
+    const bus = new THREE.Group();
+    const sideMat = new THREE.MeshStandardMaterial({ map: busSideTex(), roughness: 0.5 });
+    const plainMat = new THREE.MeshStandardMaterial({ color: 0xf4f1ea, roughness: 0.5 });
+    const frontMat = new THREE.MeshStandardMaterial({
+      map: signTex("ଭୁବନେଶ୍ୱର", "MO BUS • ROUTE 20", "#008744"),
+      roughness: 0.5
+    });
+
+    // 6-sided multi-material box
+    const body = new THREE.Mesh(
+      new THREE.BoxGeometry(3.2, 3.4, 11),
+      [sideMat, sideMat, plainMat, plainMat, frontMat, plainMat]
+    );
+    body.position.y = 1.9;
+    body.castShadow = true;
+    bus.add(body);
+
+    bus.position.set(dir > 0 ? 6.5 : -6.5, 0, z);
+    scene.add(bus);
+    trafficAgents.push({ mesh: bus, speed: 0.22 + Math.random() * 0.1, dir, isCow: false });
+  }
+  createMoBus(-130, 1);
+  createMoBus(40, -1);
+  createMoBus(170, 1);
+
+  // Sacred Cows roaming Janpath
+  for (let c = 0; c < 5; c++) {
+    const cow = new THREE.Group();
+    const cowBody = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.4, 2.2), new THREE.MeshStandardMaterial({ color: 0xefefef, roughness: 0.8 }));
+    cowBody.position.y = 1.0;
+    cow.add(cowBody);
+    const cowHead = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 1.0), new THREE.MeshStandardMaterial({ color: 0xdcdcdc, roughness: 0.8 }));
+    cowHead.position.set(0, 1.5, 1.3);
+    cow.add(cowHead);
+    cow.position.set((Math.random() - 0.5) * 20, 0, (Math.random() - 0.5) * 200);
+    cow.castShadow = true;
+    scene.add(cow);
+    trafficAgents.push({ mesh: cow, speed: 0.02, dir: 1, isCow: true, isFloating: false, floatYVel: 0 });
+  }
+
+  // 4 Interactive Landmarks
+  const hotspots = [];
+  function createHotspotZone(x, z, radius, color, id, title, npcColor, data) {
+    const ringGeo = new THREE.RingGeometry(radius - 0.6, radius, 32);
+    const ringMat = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide, transparent: true, opacity: 0.85 });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.set(x, 0.08, z);
+    scene.add(ring);
+
+    const npcGroup = new THREE.Group();
+    const torso = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.6, 0.8), new THREE.MeshStandardMaterial({ color: npcColor }));
+    torso.position.y = 1.2;
+    npcGroup.add(torso);
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.45, 12, 12), new THREE.MeshStandardMaterial({ color: 0xffcfa3 }));
+    head.position.y = 2.35;
+    npcGroup.add(head);
+    npcGroup.position.set(x, 0, z);
+    npcGroup.castShadow = true;
+    scene.add(npcGroup);
+
+    hotspots.push({ x, z, radius, id, title, ring, npcGroup, data });
+  }
+
+  // 1. Saheed Nagar Dahibara
+  createHotspotZone(22, -30, 7.5, 0xffcc00, 'dahibara', 'SAHEED NAGAR DAHIBARA', 0xd91e36, {
+    avatar: '🍲',
+    desc: 'Bidyadhar Mausa has been beating his aluminum handi with a spoon since 1989. The smell of hing and fried curry leaves fills the air.',
+    quote: '"ପାଣି ଟିକେ ମାରିବି କି ବାବୁ? ଲଙ୍କା କେତେ ଖାଇବ?"',
+    choices: [
+      { text: 'Have Double Plate Dahibara Aloodum (-₹40)', tag: '+35 Stamina', fn: () => {
+        playDahibaraClang();
+        updateStats(35, 5, 10, -40);
+        showToast('🍲 Authentic Dahibara savored! Pakhala stamina refreshed (+35%).');
+        closeModal();
+      }},
+      { text: 'Complain about lack of Sev in Guguni', tag: '⚔️ FightKaro Brawl', fn: () => start3DFight('Bidyadhar Mausa') }
+    ]
+  });
+
+  // 2. Omfed Tookna Khatti
+  createHotspotZone(-22, 15, 7.5, 0x00e676, 'omfed', 'OMFED TOOKNA PAAN KHATTI', 0x2e7d32, {
+    avatar: '🍃',
+    desc: 'Bhubaneswar evening Khatti headquarters. Tookna Bhai is rubbing lime paste on his palm while debating politics with university juniors.',
+    quote: '"ଆରେ ଭାଇ! ଏଠି କଣ ମିଟିଙ୍ଗ୍ ବସିଛି? ପାନ ଖାଇବ ନା ଘରକୁ ଯିବ?"',
+    choices: [
+      { text: 'Grab Meetha Paan & Gold Leaf Tea (-₹25)', tag: '+15 Jugaad', fn: () => {
+        playTooknaClap();
+        updateStats(10, 15, 5, -25);
+        showToast('🍃 Meetha Paan enjoyed. Street Jugaad increased (+15).');
+        closeModal();
+      }},
+      { text: 'Challenge Tookna to a Slap Showdown', tag: '⚔️ FightKaro Brawl', fn: () => start3DFight('Tookna Bhai') }
+    ]
+  });
+
+  // 3. Patia Bachelor Rent Scam
+  createHotspotZone(-30, -90, 8.5, 0x00e5ff, 'patia', 'PATIA G+2 BACHELOR HOUSE', 0x1565c0, {
+    avatar: '🏢',
+    desc: 'Ramesh Broker is asking for 6 months advance and demanding no cooking non-veg on Tuesdays, Thursdays, and Saturdays.',
+    quote: '"ସାର୍! ବ୍ୟାଚେଲର୍ସ ପାଇଁ ଘର ନାହିଁ! ଆଉ ପାଖାଳ ଖାଇଲେ ଏକ୍ସଟ୍ରା ₹୨୦୦୦ ମେଣ୍ଟେନାନ୍ସ!"',
+    choices: [
+      { text: 'Pay 1 Month Security Deposit (-₹300)', tag: '+30 Jugaad', fn: () => {
+        updateStats(-5, 30, -5, -300);
+        showToast('🏢 Broker convinced with Jugaad cash. House unlocked.');
+        closeModal();
+      }},
+      { text: 'Argue Rent Agreement Injustice', tag: '⚔️ FightKaro Brawl', fn: () => start3DFight('Ramesh Broker') }
+    ]
+  });
+
+  // 4. Master Canteen Pink Vikram Auto Boss
+  createHotspotZone(30, 85, 8.5, 0xff2a85, 'mastercanteen', 'MASTER CANTEEN AUTO STAND', 0xc2185b, {
+    avatar: '🛺',
+    desc: 'The legendary Master Canteen Pink Vikram Auto union chief stands beside his turbo-charged diesel three-wheeler.',
+    quote: '"ବାଣୀବିହାର ଯିବ? ₹୧୫୦ ଫିକ୍ସ! କୌଣସି ବାକି ନାହିଁ!"',
+    choices: [
+      { text: 'Hire Auto for City Tour (-₹150)', tag: '+25 Karma', fn: () => {
+        updateStats(10, 15, 25, -150);
+        showToast('🛺 Pink Auto booked! Traveling in true Bhubaneswar style.');
+        closeModal();
+      }},
+      { text: 'Bargain for ₹50 Meter Fare', tag: '⚔️ FightKaro Brawl', fn: () => start3DFight('Pink Auto Union Boss') }
+    ]
+  });
+
+  /* =========================================================================
+     8. EMERGENT PHYSICS DEBRIS & PULSE SHOCKWAVE
      ========================================================================= */
   const physicsObjects = [];
 
@@ -1013,61 +1637,49 @@
     let mass = 15;
 
     if (type === 'handi') {
-      // Aluminum Dahibara Handi with red cloth cover
       mesh = new THREE.Group();
       const pot = new THREE.Mesh(
         new THREE.CylinderGeometry(0.7, 0.9, 1.2, 16),
-        new THREE.MeshLambertMaterial({ color: 0xd91e36 })
+        new THREE.MeshStandardMaterial({ color: 0xd91e36, roughness: 0.6 })
       );
       pot.position.y = 0.6;
       mesh.add(pot);
       const lid = new THREE.Mesh(
         new THREE.SphereGeometry(0.5, 12, 8),
-        new THREE.MeshLambertMaterial({ color: 0xdddddd })
+        new THREE.MeshStandardMaterial({ color: 0xdddddd, metalness: 0.7, roughness: 0.3 })
       );
       lid.position.y = 1.25;
       mesh.add(lid);
       radius = 0.9;
       mass = 12;
     } else if (type === 'sack') {
-      // 50kg Heavy Potato/Rice Sack (ବସ୍ତା)
       mesh = new THREE.Mesh(
         new THREE.BoxGeometry(1.2, 0.8, 1.6),
-        new THREE.MeshLambertMaterial({ color: 0x997950 })
+        new THREE.MeshStandardMaterial({ map: clothTex('plain', '#8d6e63'), roughness: 0.95 })
       );
       mesh.position.y = 0.4;
       radius = 1.0;
       mass = 50;
     } else if (type === 'barricade') {
-      // Yellow Police Traffic Barricade
       mesh = new THREE.Mesh(
         new THREE.BoxGeometry(2.4, 1.1, 0.5),
-        new THREE.MeshLambertMaterial({ color: 0xffcc00 })
+        new THREE.MeshStandardMaterial({ color: 0xffcc00, roughness: 0.5 })
       );
       mesh.position.y = 0.55;
       radius = 1.2;
       mass = 22;
     } else if (type === 'crate') {
-      // Tookna Wooden Paan/Tea Stall Crate
       mesh = new THREE.Mesh(
         new THREE.BoxGeometry(1.3, 1.3, 1.3),
-        new THREE.MeshLambertMaterial({ color: 0x6e4726 })
+        new THREE.MeshStandardMaterial({ color: 0x6e4726, roughness: 0.9 })
       );
       mesh.position.y = 0.65;
       radius = 1.0;
       mass = 18;
-    } else if (type === 'tinroof') {
-      // Flying Kalabaisakhi Tin Roof
-      mesh = new THREE.Mesh(
-        new THREE.BoxGeometry(3.2, 0.1, 2.2),
-        new THREE.MeshLambertMaterial({ color: 0x88929e })
-      );
-      mesh.position.y = 0.1;
-      radius = 1.8;
-      mass = 8;
     }
 
     mesh.position.set(x, 0, z);
+    mesh.castShadow = true;
     scene.add(mesh);
 
     physicsObjects.push({
@@ -1082,7 +1694,6 @@
     });
   }
 
-  // Populate Janpath & NH-16 intersections with emergent debris
   const spawnCoords = [
     { type: 'handi', x: 18, z: -25 },
     { type: 'handi', x: 24, z: -35 },
@@ -1095,13 +1706,11 @@
     { type: 'barricade', x: 10, z: 90 },
     { type: 'crate', x: -18, z: 12 },
     { type: 'crate', x: -22, z: 18 },
-    { type: 'crate', x: 16, z: -90 },
-    { type: 'tinroof', x: -30, z: -110 },
-    { type: 'tinroof', x: 30, z: 120 }
+    { type: 'crate', x: 16, z: -90 }
   ];
   spawnCoords.forEach(c => spawnPhysicsObject(c.type, c.x, c.z));
 
-  // Electromagnetic Antigravity Pulse Shockwave Ring Mesh
+  // Pulse Mesh
   const pulseRingGeo = new THREE.RingGeometry(0.5, 1.8, 32);
   const pulseRingMat = new THREE.MeshBasicMaterial({
     color: 0x00e5ff,
@@ -1128,7 +1737,6 @@
     cameraShake = 16;
     showToast(I18N[currentLang].pulseToast);
 
-    // Apply radial outward & upward impulse to all physics debris in 35-unit radius
     const pPos = playerGroup.position;
     physicsObjects.forEach(obj => {
       const dx = obj.pos.x - pPos.x;
@@ -1138,7 +1746,7 @@
         const force = (36 - dist) / 36 * 0.75;
         obj.vel.x += (dx / dist) * force;
         obj.vel.z += (dz / dist) * force;
-        obj.vel.y += 0.35 + Math.random() * 0.45; // Pop straight into the sky!
+        obj.vel.y += 0.35 + Math.random() * 0.45;
         obj.rotVel.x += (Math.random() - 0.5) * 0.2;
         obj.rotVel.y += (Math.random() - 0.5) * 0.2;
         obj.rotVel.z += (Math.random() - 0.5) * 0.2;
@@ -1146,7 +1754,6 @@
       }
     });
 
-    // Nearby cows also get lifted!
     trafficAgents.forEach(t => {
       if (t.isCow) {
         const cDist = Math.hypot(t.mesh.position.x - pPos.x, t.mesh.position.z - pPos.z);
@@ -1159,160 +1766,33 @@
   }
 
   /* =========================================================================
-     6. BHUBANESWAR LANDMARKS & INTERACTIVE HOTSPOTS
+     9. CINEMATIC CAMERA SYSTEM (Chase, Low Street, Aerial Drone, Fight)
      ========================================================================= */
-  const hotspots = [];
+  let isCinematic = false;
+  let cinematicModeIndex = 0;
+  const CINE_MODES = ['LOW_STREET', 'AERIAL_DRONE', 'ORBIT_PAN'];
 
-  function createHotspotZone(x, z, radius, color, id, title, npcColor, data) {
-    const ringGeo = new THREE.RingGeometry(radius - 0.6, radius, 32);
-    const ringMat = new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide, transparent: true, opacity: 0.8 });
-    const ring = new THREE.Mesh(ringGeo, ringMat);
-    ring.rotation.x = -Math.PI / 2;
-    ring.position.set(x, 0.08, z);
-    scene.add(ring);
+  function toggleCinematicMode(forceState = null) {
+    if (forceState !== null) isCinematic = forceState;
+    else isCinematic = !isCinematic;
 
-    const npcGroup = new THREE.Group();
-    const torso = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.6, 0.8), new THREE.MeshLambertMaterial({ color: npcColor }));
-    torso.position.y = 1.2;
-    npcGroup.add(torso);
-    const head = new THREE.Mesh(new THREE.SphereGeometry(0.45, 12, 12), new THREE.MeshLambertMaterial({ color: 0xffcfa3 }));
-    head.position.y = 2.35;
-    npcGroup.add(head);
-    npcGroup.position.set(x, 0, z);
-    scene.add(npcGroup);
-
-    hotspots.push({ x, z, radius, id, title, ring, npcGroup, data });
-  }
-
-  // LANDMARK 1: Saheed Nagar Dahibara Cart (Bidyadhar Mausa)
-  createHotspotZone(22, -30, 7.5, 0xffcc00, 'dahibara', 'SAHEED NAGAR DAHIBARA', 0xd91e36, {
-    avatar: '🍲',
-    desc: 'Bidyadhar Mausa has been beating his aluminum handi with a spoon since 1989. The smell of hing and fried curry leaves fills the air.',
-    quote: '"ପାଣି ଟିକେ ମାରିବି କି ବାବୁ? ଲଙ୍କା କେତେ ଖାଇବ?"',
-    choices: [
-      { text: 'Have Double Plate Dahibara Aloodum (-₹40)', tag: '+35 Stamina', fn: () => {
-        playDahibaraClang();
-        updateStats(35, 5, 10, -40);
-        showToast('🍲 Authentic Dahibara savored! Pakhala stamina refreshed (+35%).');
-        closeModal();
-      }},
-      { text: 'Complain about lack of Sev in Guguni', tag: '⚔️ FightKaro Brawl', fn: () => start3DFight('Bidyadhar Mausa') }
-    ]
-  });
-
-  // LANDMARK 2: Omfed Tookna Paan Khatti
-  createHotspotZone(-22, 15, 7.5, 0x00e676, 'omfed', 'OMFED TOOKNA PAAN KHATTI', 0x2e7d32, {
-    avatar: '🍃',
-    desc: 'Bhubaneswar evening Khatti headquarters. Tookna Bhai is rubbing lime paste on his palm while debating politics with university juniors.',
-    quote: '"ଆରେ ଭାଇ! ଏଠି କଣ ମିଟିଙ୍ଗ୍ ବସିଛି? ପାନ ଖାଇବ ନା ଘରକୁ ଯିବ?"',
-    choices: [
-      { text: 'Grab Meetha Paan & Gold Leaf Tea (-₹25)', tag: '+15 Jugaad', fn: () => {
-        playTooknaClap();
-        updateStats(10, 15, 5, -25);
-        showToast('🍃 Meetha Paan enjoyed. Street Jugaad increased (+15).');
-        closeModal();
-      }},
-      { text: 'Challenge Tookna to a Slap Showdown', tag: '⚔️ FightKaro Brawl', fn: () => start3DFight('Tookna Bhai') }
-    ]
-  });
-
-  // LANDMARK 3: Patia Bachelor Rent Scam
-  createHotspotZone(-30, -90, 8.5, 0x00e5ff, 'patia', 'PATIA G+2 BACHELOR HOUSE', 0x1565c0, {
-    avatar: '🏢',
-    desc: 'Ramesh Broker is asking for 6 months advance and demanding no cooking non-veg on Tuesdays, Thursdays, and Saturdays.',
-    quote: '"ସାର୍! ବ୍ୟାଚେଲର୍ସ ପାଇଁ ଘର ନାହିଁ! ଆଉ ପାଖାଳ ଖାଇଲେ ଏକ୍ସଟ୍ରା ₹୨୦୦୦ ମେଣ୍ଟେନାନ୍ସ!"',
-    choices: [
-      { text: 'Pay 1 Month Security Deposit (-₹300)', tag: '+30 Jugaad', fn: () => {
-        updateStats(-5, 30, -5, -300);
-        showToast('🏢 Broker convinced with Jugaad cash. House unlocked.');
-        closeModal();
-      }},
-      { text: 'Argue Rent Agreement Injustice', tag: '⚔️ FightKaro Brawl', fn: () => start3DFight('Ramesh Broker') }
-    ]
-  });
-
-  // LANDMARK 4: Master Canteen Pink Vikram Auto Boss
-  createHotspotZone(30, 85, 8.5, 0xff2a85, 'mastercanteen', 'MASTER CANTEEN AUTO STAND', 0xc2185b, {
-    avatar: '🛺',
-    desc: 'The legendary Master Canteen Pink Vikram Auto union chief stands beside his turbo-charged diesel three-wheeler.',
-    quote: '"ବାଣୀବିହାର ଯିବ? ₹୧୫୦ ଫିକ୍ସ! କୌଣସି ବାକି ନାହିଁ!"',
-    choices: [
-      { text: 'Hire Auto for City Tour (-₹150)', tag: '+25 Karma', fn: () => {
-        updateStats(10, 15, 25, -150);
-        showToast('🛺 Pink Auto booked! Traveling in true Bhubaneswar style.');
-        closeModal();
-      }},
-      { text: 'Bargain for ₹50 Meter Fare', tag: '⚔️ FightKaro Brawl', fn: () => start3DFight('Pink Auto Union Boss') }
-    ]
-  });
-
-  /* =========================================================================
-     7. ROADSIDE ARCHITECTURE & AMBIENT URBAN LIFE (Mo Buses & Cows)
-     ========================================================================= */
-  // City Buildings with Neon Billboards
-  const buildingColors = [0x2c1f3d, 0x1f2738, 0x3d2b1f, 0x1c3128];
-  for (let bx = -180; bx <= 180; bx += 40) {
-    for (let bz = -180; bz <= 180; bz += 40) {
-      if (Math.abs(bx) < 28 || Math.abs(bz) < 28) continue;
-      const bH = 14 + Math.random() * 32;
-      const bMesh = new THREE.Mesh(
-        new THREE.BoxGeometry(20, bH, 20),
-        new THREE.MeshLambertMaterial({ color: buildingColors[Math.floor(Math.random() * buildingColors.length)] })
-      );
-      bMesh.position.set(bx, bH / 2, bz);
-      scene.add(bMesh);
-
-      // Random Rooftop Helipad / Hoverpad
-      if (Math.random() > 0.6) {
-        const pad = new THREE.Mesh(
-          new THREE.RingGeometry(3, 6, 16),
-          new THREE.MeshBasicMaterial({ color: 0x00e5ff, side: THREE.DoubleSide })
-        );
-        pad.rotation.x = -Math.PI / 2;
-        pad.position.set(bx, bH + 0.1, bz);
-        scene.add(pad);
-      }
+    if (isCinematic) {
+      document.body.classList.add('cinematic-active');
+      cinematicModeIndex = (cinematicModeIndex + 1) % CINE_MODES.length;
+      document.getElementById('btn-cine').classList.add('active');
+      showToast("🎥 CINEMATIC WIDESCREEN ACTIVE: " + CINE_MODES[cinematicModeIndex]);
+    } else {
+      document.body.classList.remove('cinematic-active');
+      document.getElementById('btn-cine').classList.remove('active');
+      showToast("🎮 NORMAL DRIVING CAMERA RESTORED");
     }
   }
 
-  // Mo Buses (Green Bhubaneswar Transit) & Sacred Street Cows
-  const trafficAgents = [];
-
-  function createMoBus(z, dir) {
-    const bus = new THREE.Group();
-    const body = new THREE.Mesh(new THREE.BoxGeometry(3.2, 3.4, 9.2), new THREE.MeshLambertMaterial({ color: 0x00a86b }));
-    body.position.y = 1.9;
-    bus.add(body);
-    const roof = new THREE.Mesh(new THREE.BoxGeometry(3.3, 0.3, 9.3), new THREE.MeshLambertMaterial({ color: 0xffffff }));
-    roof.position.y = 3.65;
-    bus.add(roof);
-    bus.position.set(dir > 0 ? 6.5 : -6.5, 0, z);
-    scene.add(bus);
-    trafficAgents.push({ mesh: bus, speed: 0.18 + Math.random() * 0.12, dir, isCow: false });
-  }
-  createMoBus(-120, 1);
-  createMoBus(50, -1);
-  createMoBus(160, 1);
-
-  // Sacred Cows roaming Janpath
-  for (let c = 0; c < 5; c++) {
-    const cow = new THREE.Group();
-    const cowBody = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.4, 2.2), new THREE.MeshLambertMaterial({ color: 0xeeeeee }));
-    cowBody.position.y = 1.0;
-    cow.add(cowBody);
-    const cowHead = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 1.0), new THREE.MeshLambertMaterial({ color: 0xdddddd }));
-    cowHead.position.set(0, 1.5, 1.3);
-    cow.add(cowHead);
-    cow.position.set((Math.random() - 0.5) * 20, 0, (Math.random() - 0.5) * 200);
-    scene.add(cow);
-    trafficAgents.push({ mesh: cow, speed: 0.02, dir: 1, isCow: true, isFloating: false, floatYVel: 0 });
-  }
-
   /* =========================================================================
-     8. KALABAISAKHI STORM & WEATHER SIMULATION
+     10. WEATHER, SURVIVAL STATS & FIGHT ENGINE
      ========================================================================= */
   let isStorming = false;
-  const rainCount = 1200;
+  const rainCount = 1400;
   const rainGeo = new THREE.BufferGeometry();
   const rainPos = new Float32Array(rainCount * 3);
   for (let i = 0; i < rainCount * 3; i += 3) {
@@ -1321,7 +1801,7 @@
     rainPos[i + 2] = (Math.random() - 0.5) * 160;
   }
   rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
-  const rainMat = new THREE.PointsMaterial({ color: 0x88ccff, size: 0.35, transparent: true, opacity: 0.75 });
+  const rainMat = new THREE.PointsMaterial({ color: 0x9be8ff, size: 0.35, transparent: true, opacity: 0.75 });
   const rainSystem = new THREE.Points(rainGeo, rainMat);
   rainSystem.visible = false;
   scene.add(rainSystem);
@@ -1334,21 +1814,20 @@
       btn.classList.add('active');
       scene.background.setHex(0x110c1e);
       scene.fog.color.setHex(0x110c1e);
-      sunLight.intensity = 0.3;
+      sunLight.intensity = 0.35;
       showToast(I18N[currentLang].stormActive);
     } else {
       btn.classList.remove('active');
-      scene.background.setHex(0xff9e6d);
-      scene.fog.color.setHex(0xff9e6d);
-      sunLight.intensity = 1.15;
+      scene.background.setHex(0xffa875);
+      scene.fog.color.setHex(0xffa875);
+      sunLight.intensity = 1.25;
       showToast(I18N[currentLang].stormCalm);
     }
   }
 
-  // Fetch real Bhubaneswar weather from Open-Meteo REST API
   async function fetchBhubaneswarWeather() {
     try {
-      const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=20.2961&longitude=85.8245&current=temperature_2m,relative_humidity_2m,weather_code');
+      const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=20.2961&longitude=85.8245&current=temperature_2m,relative_humidity_2m');
       const data = await res.json();
       if (data && data.current) {
         const temp = Math.round(data.current.temperature_2m);
@@ -1357,51 +1836,13 @@
         if (hum > 85) toggleKalabaisakhi();
       }
     } catch (e) {
-      console.log('Weather API fallback active:', e);
+      console.log('Weather API fallback active');
     }
   }
   fetchBhubaneswarWeather();
 
-  /* =========================================================================
-     9. CONTROLS & EVENT LISTENERS
-     ========================================================================= */
-  const keys = {};
-  window.addEventListener('keydown', e => {
-    const k = e.key.toLowerCase();
-    keys[k] = true;
-    if (k === 'h') playHorn();
-    if (k === 'v') switchVehicle();
-    if (k === 'g') toggleAntigravity();
-    if (k === 'q' || k === 'b') triggerAntigravPulse();
-    if (k === 'l') cycleLanguage();
-    if (k === 'e' && nearHotspot && !modalOpen) openActiveHotspot();
-    if (e.key === 'Escape' && modalOpen) closeModal();
-  });
-  window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
-
-  // Mobile Touch Controls
-  function bindTouch(id, keyName) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.addEventListener('touchstart', e => { e.preventDefault(); keys[keyName] = true; });
-    el.addEventListener('touchend', e => { e.preventDefault(); keys[keyName] = false; });
-  }
-  bindTouch('btn-up', 'w');
-  bindTouch('btn-down', 's');
-  bindTouch('btn-left', 'a');
-  bindTouch('btn-right', 'd');
-  bindTouch('btn-thrust-up', ' ');
-  bindTouch('btn-thrust-down', 'shift');
-
-  let playerSpeed = 0;
-  let playerAngle = 0;
-  let nearHotspot = null;
-  let modalOpen = false;
-  let in3DCombat = false;
-  let cameraShake = 0;
-
-  // Stats
-  const gameStats = { stamina: 85, jugaad: 40, karma: 80, wallet: 500 };
+  // Survival stats
+  const gameStats = { stamina: 85, jugaad: 45, karma: 80, wallet: 500 };
   function updateStats(s, j, k, w) {
     gameStats.stamina = Math.max(0, Math.min(100, gameStats.stamina + s));
     gameStats.jugaad = Math.max(0, Math.min(100, gameStats.jugaad + j));
@@ -1420,6 +1861,11 @@
   function showToast(txt) {
     document.getElementById('toast-msg').innerText = txt;
   }
+
+  let nearHotspot = null;
+  let modalOpen = false;
+  let in3DCombat = false;
+  let cameraShake = 0;
 
   function openActiveHotspot() {
     if (!nearHotspot) return;
@@ -1452,11 +1898,7 @@
     document.getElementById('interaction-modal').style.display = 'none';
   }
 
-  /* =========================================================================
-     10. 3D FIGHTKARO BRAWL ENGINE
-     ========================================================================= */
   let fightState = { pHp: 100, eHp: 100, bossName: "" };
-
   function start3DFight(bossName) {
     in3DCombat = true;
     fightState = { pHp: 100, eHp: 100, bossName };
@@ -1506,14 +1948,52 @@
   }
 
   /* =========================================================================
-     11. 60 FPS MAIN LOOP: PHYSICS, ZERO-G LEVITATION, CAMERA & RENDERING
+     11. CONTROLS & EVENT LISTENERS
      ========================================================================= */
+  const keys = {};
+  window.addEventListener('keydown', e => {
+    const k = e.key.toLowerCase();
+    keys[k] = true;
+    if (k === 'h') playHorn();
+    if (k === 'v') switchVehicle();
+    if (k === 'g') toggleAntigravity();
+    if (k === 'q' || k === 'b') triggerAntigravPulse();
+    if (k === 'c') toggleCinematicMode();
+    if (k === 'l') cycleLanguage();
+    if (k === 'e' && nearHotspot && !modalOpen) openActiveHotspot();
+    if (e.key === 'Escape') {
+      if (modalOpen) closeModal();
+      else if (isCinematic) toggleCinematicMode(false);
+    }
+  });
+  window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+
+  function bindTouch(id, keyName) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('touchstart', e => { e.preventDefault(); keys[keyName] = true; });
+    el.addEventListener('touchend', e => { e.preventDefault(); keys[keyName] = false; });
+  }
+  bindTouch('btn-up', 'w');
+  bindTouch('btn-down', 's');
+  bindTouch('btn-left', 'a');
+  bindTouch('btn-right', 'd');
+  bindTouch('btn-thrust-up', ' ');
+  bindTouch('btn-thrust-down', 'shift');
+
+  /* =========================================================================
+     12. 60 FPS MAIN LOOP: KINEMATICS, ZERO-G FLIGHT, EMERGENCE & CINEMATICS
+     ========================================================================= */
+  let playerSpeed = 0;
+  let playerAngle = 0;
+  let cineOrbitTimer = 0;
+
   function animate() {
     requestAnimationFrame(animate);
 
     // 1. Vehicle Driving & Antigravity Mechanics
     if (!modalOpen) {
-      const maxSpeed = isPinkAuto ? 0.58 : 0.74;
+      const maxSpeed = isPinkAuto ? 0.58 : 0.75;
       const accel = isPinkAuto ? 0.020 : 0.028;
 
       if (keys['w'] || keys['arrowup']) playerSpeed = Math.min(maxSpeed, playerSpeed + accel);
@@ -1531,23 +2011,19 @@
         if (keys[' '] || keys['space']) {
           verticalVelocity = Math.min(0.55, verticalVelocity + 0.035);
           if (Math.random() > 0.6) playThrusterSound(true);
-        } else if (keys['shift'] || keys['c']) {
+        } else if (keys['shift']) {
           verticalVelocity = Math.max(-0.45, verticalVelocity - 0.035);
         } else {
-          verticalVelocity *= 0.92; // Atmospheric damping
+          verticalVelocity *= 0.92;
         }
 
-        playerAltitude = Math.max(0.2, Math.min(42.0, playerAltitude + verticalVelocity));
+        playerAltitude = Math.max(0.2, Math.min(45.0, playerAltitude + verticalVelocity));
         playerGroup.position.y = playerAltitude;
 
-        // Smooth flight pitch tilt
         playerGroup.rotation.x = -playerSpeed * 0.45;
         playerGroup.rotation.z = -(keys['a'] ? 0.12 : (keys['d'] ? -0.12 : 0));
-
-        // Spin glowing repulsor rings
         thrusterRings.forEach(r => r.rotation.z += 0.25);
       } else {
-        // Normal ground gravity settle
         if (playerAltitude > 0) {
           playerAltitude = Math.max(0, playerAltitude - 0.35);
           playerGroup.position.y = playerAltitude;
@@ -1562,7 +2038,6 @@
       playerGroup.position.z += Math.cos(playerAngle) * playerSpeed;
       playerGroup.rotation.y = playerAngle;
 
-      // Update Speedometer & Altitude UI
       const kmh = Math.round(Math.abs(playerSpeed) * 95);
       document.getElementById('speed-val').innerText = kmh;
       document.getElementById('ag-alt').innerText = `ALT: ${playerAltitude.toFixed(1)}m`;
@@ -1582,15 +2057,13 @@
     // 3. Emergent Physics Objects Simulation Loop
     const pPos = playerGroup.position;
     physicsObjects.forEach(obj => {
-      // Vehicle to Object Ramming Collision
       const dx = obj.pos.x - pPos.x;
       const dz = obj.pos.z - pPos.z;
       const dy = obj.pos.y - pPos.y;
       const distXZ = Math.hypot(dx, dz);
 
       if (distXZ < obj.radius + 1.4 && Math.abs(dy) < 2.0) {
-        // Elastic momentum transfer
-        const pushForce = Math.max(0.18, Math.abs(playerSpeed) * 0.95);
+        const pushForce = Math.max(0.20, Math.abs(playerSpeed) * 0.95);
         obj.vel.x += (dx / (distXZ || 1)) * pushForce;
         obj.vel.z += (dz / (distXZ || 1)) * pushForce;
         obj.vel.y += isAntigrav ? 0.25 : 0.12;
@@ -1599,23 +2072,17 @@
         playDebrisClack(obj.type);
       }
 
-      // Physics Gravity & Zero-G behavior
       if (isAntigrav) {
-        // Nearby objects drift weightlessly in zero-G
         const distToPlayer = Math.hypot(dx, dz);
         if (distToPlayer < 45) {
           obj.isFloating = true;
-          obj.vel.y += (Math.random() - 0.48) * 0.008; // Gentle floating drift
+          obj.vel.y += (Math.random() - 0.48) * 0.008;
           obj.vel.y = Math.max(-0.15, Math.min(0.2, obj.vel.y));
         }
       } else {
-        // Standard gravity
-        if (obj.pos.y > 0) {
-          obj.vel.y -= 0.018; // 9.8 m/s^2 scaled
-        }
+        if (obj.pos.y > 0) obj.vel.y -= 0.018;
       }
 
-      // Integrate position & rotation
       obj.pos.x += obj.vel.x;
       obj.pos.y += obj.vel.y;
       obj.pos.z += obj.vel.z;
@@ -1623,26 +2090,20 @@
       obj.mesh.rotation.y += obj.rotVel.y;
       obj.mesh.rotation.z += obj.rotVel.z;
 
-      // Ground bounce & restitution
       if (obj.pos.y <= 0) {
         obj.pos.y = 0;
-        if (Math.abs(obj.vel.y) > 0.05) {
-          obj.vel.y = -obj.vel.y * 0.45; // Bounce
-        } else {
-          obj.vel.y = 0;
-        }
-        obj.vel.x *= 0.93; // Ground friction
+        if (Math.abs(obj.vel.y) > 0.05) obj.vel.y = -obj.vel.y * 0.45;
+        else obj.vel.y = 0;
+        obj.vel.x *= 0.93;
         obj.vel.z *= 0.93;
         obj.rotVel.multiplyScalar(0.92);
       } else {
-        // Air resistance
         obj.vel.x *= 0.985;
         obj.vel.z *= 0.985;
         obj.vel.y *= 0.985;
         obj.rotVel.multiplyScalar(0.98);
       }
 
-      // World boundaries bounce
       if (Math.abs(obj.pos.x) > 280) obj.vel.x = -obj.vel.x;
       if (Math.abs(obj.pos.z) > 280) obj.vel.z = -obj.vel.z;
     });
@@ -1683,6 +2144,8 @@
       promptEl.style.display = 'block';
       document.getElementById('prompt-title').innerText = nearHotspot.title;
       document.getElementById('zone-indicator').innerText = "NEAR: " + nearHotspot.title;
+      document.getElementById('cine-title').innerText = nearHotspot.title;
+      document.getElementById('cine-subtitle').innerText = nearHotspot.data.quote.replace(/"/g, '');
     } else {
       promptEl.style.display = 'none';
     }
@@ -1699,13 +2162,46 @@
       rainSystem.position.z = playerGroup.position.z;
     }
 
-    // 7. Dynamic Camera Tracking (Chase Cam or FightKaro Arena Cam)
+    // 7. Dynamic Camera Tracking (Chase, Low Street, Aerial Drone, or Fight Arena)
     if (in3DCombat && nearHotspot) {
       const midX = (playerGroup.position.x + nearHotspot.x) / 2;
       const midZ = (playerGroup.position.z + nearHotspot.z) / 2;
       camera.position.lerp(new THREE.Vector3(midX + 11, playerAltitude + 4.5, midZ + 11), 0.08);
       camera.lookAt(midX, playerAltitude + 1.5, midZ);
+    } else if (isCinematic) {
+      cineOrbitTimer += 0.012;
+      const currentMode = CINE_MODES[cinematicModeIndex];
+
+      if (currentMode === 'LOW_STREET') {
+        // Dramatic low-angle asphalt tracking shot
+        const lowCamPos = new THREE.Vector3(
+          playerGroup.position.x - Math.sin(playerAngle + 0.4) * 6.5,
+          playerGroup.position.y + 1.2,
+          playerGroup.position.z - Math.cos(playerAngle + 0.4) * 6.5
+        );
+        camera.position.lerp(lowCamPos, 0.08);
+        camera.lookAt(playerGroup.position.x, playerGroup.position.y + 1.2, playerGroup.position.z);
+      } else if (currentMode === 'AERIAL_DRONE') {
+        // High sweeping aerial drone view
+        const dronePos = new THREE.Vector3(
+          playerGroup.position.x - Math.sin(cineOrbitTimer) * 28,
+          playerGroup.position.y + 22,
+          playerGroup.position.z - Math.cos(cineOrbitTimer) * 28
+        );
+        camera.position.lerp(dronePos, 0.05);
+        camera.lookAt(playerGroup.position.x, playerGroup.position.y + 2, playerGroup.position.z);
+      } else {
+        // 360 cinematic vehicle orbit
+        const orbitPos = new THREE.Vector3(
+          playerGroup.position.x + Math.sin(cineOrbitTimer * 1.5) * 12,
+          playerGroup.position.y + 4.5,
+          playerGroup.position.z + Math.cos(cineOrbitTimer * 1.5) * 12
+        );
+        camera.position.lerp(orbitPos, 0.08);
+        camera.lookAt(playerGroup.position.x, playerGroup.position.y + 1.5, playerGroup.position.z);
+      }
     } else {
+      // Standard smooth Third-Person Follow Camera
       const camHeight = Math.max(5.5, playerAltitude + 5.5);
       const camDist = 11;
       const targetCamPos = new THREE.Vector3(
