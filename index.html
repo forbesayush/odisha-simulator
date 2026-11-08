@@ -3104,18 +3104,23 @@
     if (_isFileProtocol) { _pbrCache[key] = null; return null; }
 
     const base = _pbrBase + name + '/';
-    const texOrNull = (file) => {
-      const t = _texLoader.load(base + file, undefined, undefined, () => { /* missing — ignore */ });
+    const texOrNull = (baseName) => {
+      const t = _texLoader.load(base + baseName + '.jpg', undefined, undefined, () => {
+        _texLoader.load(base + baseName + '.webp', (loaded) => {
+          t.image = loaded.image;
+          t.needsUpdate = true;
+        }, undefined, () => { /* missing — ignore */ });
+      });
       t.wrapS = t.wrapT = THREE.RepeatWrapping;
       t.repeat.set(repeatX, repeatY);
       t.anisotropy = 4;
       return t;
     };
     const result = {
-      albedo: texOrNull('albedo.webp'),
-      normal: texOrNull('normal.webp'),
-      rough:  texOrNull('roughness.webp'),
-      ao:     texOrNull('ao.webp')
+      albedo: texOrNull('albedo'),
+      normal: texOrNull('normal'),
+      rough:  texOrNull('roughness'),
+      ao:     texOrNull('ao')
     };
     _pbrCache[key] = result;
     return result;
@@ -3169,8 +3174,13 @@
       if (isFile) { cache[key] = null; return null; }
 
       const base = './textures/' + name + '/';
-      const mk = (file, colorSpace) => {
-        const t = loader.load(base + file, undefined, undefined, () => {});
+      const mk = (baseName, colorSpace) => {
+        const t = loader.load(base + baseName + '.jpg', undefined, undefined, () => {
+          loader.load(base + baseName + '.webp', (loaded) => {
+            t.image = loaded.image;
+            t.needsUpdate = true;
+          }, undefined, () => {});
+        });
         t.wrapS = t.wrapT = THREE.RepeatWrapping;
         t.repeat.set(repeatX, repeatY);
         t.anisotropy = 4;
@@ -3178,10 +3188,10 @@
         return t;
       };
       const set = {
-        albedo: mk('albedo.webp', 'srgb'),
-        normal: mk('normal.webp'),
-        rough:  mk('roughness.webp'),
-        ao:     mk('ao.webp')
+        albedo: mk('albedo', 'srgb'),
+        normal: mk('normal'),
+        rough:  mk('roughness'),
+        ao:     mk('ao')
       };
       cache[key] = set;
       return set;
@@ -5128,11 +5138,23 @@ let __weave=null;
     const key = name + '_' + repeatX + 'x' + repeatY;
     if (_texCache[key]) return _texCache[key];
 
-    // Try loading real texture; fall back to procedural canvas
+    // Try loading real texture (.jpg or .webp); fall back to procedural canvas
     if (!_isFile) {
       try {
-        const t = _texLoader2.load('./textures/' + name + '/albedo.webp',
-          undefined, undefined, () => { /* 404 — silently use procedural */ });
+        const t = _texLoader2.load('./textures/' + name + '/albedo.jpg',
+          undefined,
+          undefined,
+          () => {
+            _texLoader2.load('./textures/' + name + '/albedo.webp',
+              (loaded) => {
+                t.image = loaded.image;
+                t.needsUpdate = true;
+              },
+              undefined,
+              () => { /* 404 — silently use procedural */ }
+            );
+          }
+        );
         t.wrapS = t.wrapT = THREE.RepeatWrapping;
         t.repeat.set(repeatX, repeatY);
         t.anisotropy = 4;
