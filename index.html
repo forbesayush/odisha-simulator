@@ -240,22 +240,33 @@
     }
 
     /* =========================================================================
-       TITLE SCREEN & CINEMATIC GAME LAUNCHER
+       TITLE SCREEN — MODERN EDITORIAL (2026 redesign)
        ========================================================================= */
     #title-screen {
       position: fixed;
       inset: 0;
       z-index: 100;
-      background: radial-gradient(circle at center 45%, rgba(12, 10, 8, 0.72) 0%, rgba(5, 4, 3, 0.94) 85%);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      background: #FAF9F6;
+      color: #1A1A1A;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 24px;
+      padding: 32px 24px;
       text-align: center;
+      overflow-y: auto;
       transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.7s;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+    /* Subtle paper grain overlay for texture without clutter */
+    #title-screen::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 15% 20%, rgba(245, 158, 11, 0.06), transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(180, 83, 9, 0.05), transparent 45%);
+      pointer-events: none;
     }
     #title-screen.hidden {
       opacity: 0;
@@ -264,177 +275,204 @@
     }
 
     .title-box {
-      max-width: 840px;
-      width: 95%;
-      padding: 40px 32px 32px;
-      border-radius: 24px;
+      max-width: 620px;
+      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
+      position: relative;
+      z-index: 1;
     }
 
+    /* Minimal SVG icon in place of emoji */
     .title-emblem {
-      font-size: 46px;
-      line-height: 1;
-      margin-bottom: 12px;
-      filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.7));
-      animation: emblemFloat 4s ease-in-out infinite;
-    }
-    @keyframes emblemFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
-
-    .main-odia-title {
-      font-family: 'Cinzel', 'Noto Sans Oriya', 'Kalinga', serif;
-      font-size: clamp(30px, 5.2vw, 52px);
-      font-weight: 900;
-      letter-spacing: 2.5px;
-      background: linear-gradient(135deg, #FFFDF5 0%, #FCD34D 45%, #F59E0B 80%, #E0A96D 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.9));
-      margin-bottom: 4px;
-      line-height: 1.15;
-    }
-
-    .title-subtitle {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(12px, 1.8vw, 16px);
-      letter-spacing: 4px;
-      color: var(--light-jute-ochre);
-      text-transform: uppercase;
-      font-weight: 700;
-      margin-bottom: 16px;
+      width: 64px;
+      height: 64px;
+      margin-bottom: 28px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: center;
+      border: 2px solid #1A1A1A;
+      border-radius: 50%;
+      background: #F59E0B;
+    }
+    .title-emblem svg {
+      width: 34px;
+      height: 34px;
+      color: #1A1A1A;
+    }
+
+    /* Big editorial title — solid ink, tight tracking */
+    .main-odia-title {
+      font-family: 'Cinzel', 'Noto Sans Oriya', serif;
+      font-size: clamp(34px, 5.5vw, 60px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.02;
+      color: #1A1A1A;
+      margin: 0 0 8px;
+      -webkit-text-fill-color: #1A1A1A;
+      background: none;
+      filter: none;
+    }
+    .main-odia-title em {
+      font-style: italic;
+      font-family: 'Cinzel', serif;
+      color: #F59E0B;
+    }
+
+    /* Small caps subtitle */
+    .title-subtitle {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      color: #78716C;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 32px;
+      padding-bottom: 0;
     }
     .title-subtitle::before, .title-subtitle::after {
-      content: '❖';
-      font-size: 11px;
-      color: var(--pattachitra-gold);
+      content: none;
     }
 
+    /* One single line of body copy — not three */
     .title-tagline {
-      font-size: 14.5px;
-      color: #E2E8F0;
-      line-height: 1.65;
-      margin-bottom: 22px;
-      max-width: 650px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #57534E;
+      margin-bottom: 40px;
+      max-width: 460px;
+      font-weight: 400;
+    }
+    .title-tagline em {
+      font-style: italic;
+      color: #1A1A1A;
+      font-weight: 500;
     }
 
-    /* Feature Highlights Chips */
-    .title-features-chips {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 24px;
-      max-width: 720px;
-    }
-    .feat-chip {
-      background: rgba(30, 26, 23, 0.75);
-      border: 1px solid rgba(245, 158, 11, 0.28);
-      border-radius: 20px;
-      padding: 5px 12px;
-      font-size: 11.5px;
-      font-weight: 600;
-      color: #F1F5F9;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      backdrop-filter: blur(10px);
-    }
-    .feat-chip b {
-      color: var(--pattachitra-gold);
-    }
+    /* Remove feature chips entirely — replaced by inline spec line */
+    .title-features-chips { display: none; }
+    .feat-chip { display: none; }
 
+    /* Language toggle — segmented pill, tiny */
     .lang-row {
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-      margin-bottom: 24px;
+      display: inline-flex;
+      background: #F5F1EA;
+      border: 1px solid #E7E1D5;
+      border-radius: 999px;
+      padding: 3px;
+      margin-bottom: 28px;
+      gap: 0;
     }
     .lang-btn {
-      background: rgba(28, 25, 23, 0.85);
-      border: 1.5px solid var(--hud-border);
-      color: var(--warm-ivory);
-      padding: 10px 22px;
-      border-radius: 24px;
-      font-size: 13.5px;
-      font-weight: 700;
+      background: transparent;
+      border: none;
+      color: #78716C;
+      padding: 7px 16px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.25s ease;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      transition: background 0.15s, color 0.15s;
+      letter-spacing: 0.02em;
     }
-    .lang-btn:hover {
-      border-color: var(--pattachitra-gold);
-      background: rgba(245, 158, 11, 0.15);
-      transform: translateY(-2px);
-    }
+    .lang-btn span { display: none; }
+    .lang-btn:hover { color: #1A1A1A; }
     .lang-btn.active {
-      background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
-      border-color: var(--pattachitra-gold);
-      color: #fff;
-      box-shadow: 0 0 20px rgba(220, 38, 38, 0.55);
+      background: #1A1A1A;
+      color: #FAF9F6;
+      box-shadow: none;
+      transform: none;
     }
 
+    /* Primary CTA — solid ink, big, one thing */
     .title-btn-group {
       display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 8px;
     }
 
     .btn-start {
-      background: linear-gradient(135deg, #DC2626 0%, #D97706 50%, #F59E0B 100%);
-      color: #fff;
-      font-family: 'Cinzel', 'Noto Sans Oriya', 'Kalinga', serif;
-      font-size: clamp(15px, 2.1vw, 19px);
-      font-weight: 900;
-      padding: 15px 42px;
-      border: 2px solid var(--gold-bright);
-      border-radius: 14px;
+      background: #1A1A1A;
+      color: #FAF9F6;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      padding: 18px 44px;
+      border: none;
+      border-radius: 999px;
       cursor: pointer;
-      box-shadow: 0 8px 30px rgba(220, 38, 38, 0.65), 0 0 25px rgba(245, 158, 11, 0.4);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      letter-spacing: 1.5px;
-      display: flex;
+      transition: background 0.2s, transform 0.1s;
+      display: inline-flex;
       align-items: center;
-      gap: 12px;
+      justify-content: center;
+      gap: 10px;
+      min-width: 280px;
+      box-shadow: 0 2px 0 rgba(0,0,0,0.9);
+      transform: translateY(-1px);
     }
     .btn-start:hover {
-      transform: translateY(-3px) scale(1.03);
-      box-shadow: 0 12px 40px rgba(245, 158, 11, 0.8), 0 0 35px rgba(220, 38, 38, 0.6);
-      border-color: #fff;
+      background: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 0 rgba(0,0,0,0.9);
     }
     .btn-start:active {
-      transform: translateY(0) scale(0.98);
+      transform: translateY(1px);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.9);
     }
 
     .btn-continue {
-      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-      border-color: #6EE7B7;
+      background: transparent;
+      color: #1A1A1A;
+      border: 1.5px solid #1A1A1A;
+      box-shadow: none;
+      padding: 15px 40px;
+      min-width: 280px;
       display: none;
     }
+    .btn-continue:hover {
+      background: #1A1A1A;
+      color: #FAF9F6;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+    }
 
+    /* Bottom keyboard hint — single line, no chips */
     .title-controls-preview {
-      margin-top: 22px;
+      margin-top: 32px;
       font-size: 11.5px;
-      color: #94A3B8;
-      font-family: 'JetBrains Mono', monospace;
-      letter-spacing: 0.5px;
+      color: #A8A29E;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      letter-spacing: 0.01em;
+      font-weight: 400;
     }
     .title-controls-preview span {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 4px;
-      padding: 2px 6px;
-      color: var(--warm-ivory);
+      background: transparent;
+      border: none;
+      color: #57534E;
+      font-weight: 500;
+      padding: 0;
       margin: 0 2px;
+    }
+
+    /* Old float animation removed */
+    @keyframes emblemFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(0); }
+    }
+
+    /* Responsive tightening */
+    @media (max-width: 600px) {
+      .title-emblem { width: 52px; height: 52px; margin-bottom: 20px; }
+      .title-emblem svg { width: 26px; height: 26px; }
+      .title-tagline { font-size: 14px; margin-bottom: 32px; }
+      .btn-start, .btn-continue { min-width: 240px; padding: 16px 32px; font-size: 15px; }
+      .title-subtitle { font-size: 10px; letter-spacing: 0.22em; margin-bottom: 26px; }
     }
 
     /* =========================================================================
@@ -1418,9 +1456,61 @@
       font-size: 22px;
       font-weight: 800;
     }
+  
+    /* =========================================================================
+       INTRO SEQUENCE — minimal 3-second brand reveal
+       ========================================================================= */
+    #intro-reveal {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: #0F0E0C;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+    #intro-reveal.hidden {
+      opacity: 0;
+    }
+    #intro-reveal .intro-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 500;
+      color: #FAF9F6;
+      letter-spacing: 0.12em;
+      opacity: 0;
+      animation: introTitle 3.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    #intro-reveal .intro-rule {
+      width: 0;
+      height: 1px;
+      background: #F59E0B;
+      margin-top: 16px;
+      animation: introRule 2.6s 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes introTitle {
+      0% { opacity: 0; letter-spacing: 0.3em; }
+      40% { opacity: 1; letter-spacing: 0.12em; }
+      75% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes introRule {
+      0% { width: 0; opacity: 0; }
+      50% { width: 80px; opacity: 1; }
+      100% { width: 80px; opacity: 0; }
+    }
   </style>
 </head>
 <body>
+  <!-- INTRO BRAND REVEAL -->
+  <div id="intro-reveal">
+    <div class="intro-title">ଆମ ଓଡ଼ିଶା</div>
+    <div class="intro-rule"></div>
+  </div>
+
 
   <!-- LOADING SCREEN WITH CULTURAL TRIVIA -->
   <div id="loading-screen">
@@ -1458,56 +1548,48 @@
   <!-- 3D WEBGL CANVAS -->
   <canvas id="webgl-canvas"></canvas>
 
-  <!-- TITLE SCREEN / CINEMATIC LAUNCHER -->
+  <!-- TITLE SCREEN — MODERN EDITORIAL -->
   <div id="title-screen">
-    <div class="title-box pat-card">
-      <div class="pat-tag">ODISHA OPEN WORLD SIMULATOR</div>
-      <div class="title-emblem">🛕</div>
-      <h1 class="main-odia-title">AMARA ODISHA ADVENTURES</h1>
-      <div class="title-subtitle">BHUBANESWAR METROPOLIS LEVEL</div>
+    <div class="title-box">
 
-      <p class="title-tagline" style="line-height: 1.6;">
-        <span style="display:block; color:#F8FAFC; margin-bottom:4px; font-weight:500;">Taste legendary Dahibara-Aloodum across 5 stalls, cruise at 30–40 km/h on an Activa scooty, bargain auto fares at Baramunda, bust Saheed Nagar PG scams, and explore ancient Khandagiri rock caves!</span>
-        <span style="font-family:'Noto Sans Oriya', serif; color:#FEF08A; font-size:13px; display:block; margin-bottom:2px;">ବାରମୁଣ୍ଡା ରଘୁ ଦହିବରା-ଆଳୁଦମ୍, ଅଟୋ ଦରଦାମ୍, ୩୫ କି.ମି. ସ୍କୁଟି ରାଇଡ୍, ପିଜି ସ୍କାମ୍ ରହସ୍ୟ ଓ ରାମ ମନ୍ଦିର!</span>
-        <span style="font-family:'Noto Sans Devanagari', sans-serif; color:#CBD5E1; font-size:12.5px; display:block;">बारामुंडा रघु दहीबड़ा-आलूदम, ऑटो मोलभाव, 35 किमी स्कूटी राइड, पीजी स्कैम पर्दाफाश और राम मंदिर!</span>
-      </p>
-
-      <div class="title-features-chips">
-        <div class="feat-chip">🍛 <b>Dahibara-Aloodum</b> 5-Stall Trail</div>
-        <div class="feat-chip">🛵 <b>30–40 KM/H</b> Scooty Cruising</div>
-        <div class="feat-chip">🛺 <b>Baramunda</b> Auto Bargaining</div>
-        <div class="feat-chip">👵 <b>PG Rent Scam</b> & Meme Sounds</div>
-        <div class="feat-chip">🏛️ <b>Khandagiri</b> Ancient Rock Caves</div>
-        <div class="feat-chip">🌦️ <b>Monsoon</b> Dynamic Weather</div>
+      <!-- Minimal geometric rickshaw icon -->
+      <div class="title-emblem" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 17h18"/>
+          <circle cx="7" cy="19" r="2"/>
+          <circle cx="17" cy="19" r="2"/>
+          <path d="M3 17V9h4l3 4h8l3 4"/>
+          <path d="M7 9V5h6l4 8"/>
+        </svg>
       </div>
 
-      <div class="lang-row">
-        <button class="lang-btn active" id="lang-btn-or" onclick="setLanguage('or')">
-          <span>🇮🇳</span> ଓଡ଼ିଆ (Odia)
-        </button>
-        <button class="lang-btn" id="lang-btn-hi" onclick="setLanguage('hi')">
-          <span>🇮🇳</span> हिंदी (Hindi)
-        </button>
-        <button class="lang-btn" id="lang-btn-en" onclick="setLanguage('en')">
-          <span>🇬🇧</span> English
-        </button>
-        <button class="lang-btn" id="lang-btn-all" onclick="setLanguage('all')">
-          <span>🌐</span> ALL 3 (SIDE-BY-SIDE)
-        </button>
+      <h1 class="main-odia-title">Amara <em>Odisha</em><br>Adventures</h1>
+      <div class="title-subtitle">Bhubaneswar · Open World</div>
+
+      <p class="title-tagline">
+        Arrive in the temple city with ₹200 and one scooter. Taste the dahibara, learn the streets, and earn your name — one delivery at a time.
+      </p>
+
+      <div class="lang-row" role="tablist">
+        <button class="lang-btn" id="lang-btn-or" onclick="setLanguage('or')">ଓଡ଼ିଆ</button>
+        <button class="lang-btn" id="lang-btn-hi" onclick="setLanguage('hi')">हिंदी</button>
+        <button class="lang-btn active" id="lang-btn-en" onclick="setLanguage('en')">English</button>
+        <button class="lang-btn" id="lang-btn-all" onclick="setLanguage('all')">All</button>
       </div>
 
       <div class="title-btn-group">
         <button class="btn-start" onclick="startGame()">
-          <span>▶</span> <span>ENTER BHUBANESWAR • ଆରମ୍ଭ କରନ୍ତୁ • प्रवेश करें</span>
+          Begin →
         </button>
-        <button class="btn-start btn-continue" id="btn-continue-game" onclick="resumeGame()">
-          <span>↺</span> <span id="continue-game-lbl">CONTINUE ADVENTURE</span>
+        <button class="btn-continue" id="btn-continue-game" onclick="resumeGame()">
+          <span id="continue-game-lbl">Continue where you left off</span>
         </button>
       </div>
 
       <div class="title-controls-preview">
-        <span>W</span><span>A</span><span>S</span><span>D</span> Move & Drive • <span>SHIFT</span> Boost • <span>E</span> Interact • <span>M</span> Map • <span>C</span> Cinema • <span>O</span> Settings
+        <span>WASD</span> Move · <span>Shift</span> Boost · <span>E</span> Interact · <span>M</span> Map · <span>Esc</span> Menu
       </div>
+
     </div>
   </div>
 
@@ -9107,6 +9189,20 @@ T(()=>{
   }, 6000);
   animate();
   runInitialLoading();
+
+  // Auto-dismiss intro after 3.2 seconds
+  (function introDismiss() {
+    if (typeof document === 'undefined') return;
+    const el = document.getElementById('intro-reveal');
+    if (!el) return;
+    setTimeout(() => {
+      if (el.classList && el.classList.add) el.classList.add('hidden');
+      setTimeout(() => {
+        if (typeof el.remove === 'function') el.remove();
+        else if (el.parentNode) el.parentNode.removeChild(el);
+      }, 1400);
+    }, 3200);
+  })();
 </script>
 </body>
 </html>
