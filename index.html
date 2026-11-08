@@ -1398,6 +1398,9 @@
         Cuttack & Bhubaneswar Dahibara Aloodum is an intangible culinary wonder, served with spicy Aloo Dum, Ghuguni, and refreshing Dahi-pani!
       </div>
     </div>
+    <div style="margin-top: 18px; font-size: 11px; color: #94A3B8; letter-spacing: 1px; cursor: pointer; text-decoration: underline;" onclick="document.getElementById('loading-screen').classList.add('hidden')">
+      TAP ANYWHERE TO SKIP • ଆରମ୍ଭ କରିବାକୁ ଟ୍ୟାପ୍ କରନ୍ତୁ ▶
+    </div>
   </div>
 
   <!-- CINEMATIC LETTERBOX BARS -->
@@ -6220,16 +6223,57 @@
     saveGameState();
   }
 
+  // INITIAL LOADING CONTROLLER
+  function runInitialLoading() {
+    const ls = document.getElementById('loading-screen');
+    const fill = document.getElementById('load-bar-fill');
+    const triv = document.getElementById('load-trivia-text');
+    const sub = document.getElementById('load-sub-text');
+    if (!ls) return;
+
+    if (triv && ODISHA_TRIVIA && ODISHA_TRIVIA.length) {
+      triv.innerText = tr(ODISHA_TRIVIA[0]);
+    }
+
+    let p = 0;
+    const iv = setInterval(() => {
+      p += 14;
+      if (fill) fill.style.width = Math.min(100, p) + '%';
+      if (sub && p > 60) {
+        sub.innerText = state.lang === 'or' ? "ଭୁବନେଶ୍ୱର ସମ୍ପୂର୍ଣ୍ଣ ପ୍ରସ୍ତୁତ..." : "भुवनेश्वर पूरी तरह तैयार है...";
+      }
+      if (p >= 100) {
+        clearInterval(iv);
+        setTimeout(() => {
+          ls.classList.add('hidden');
+        }, 250);
+      }
+    }, 70);
+
+    // Safety timeout: guarantee hidden after 1.8 seconds max
+    setTimeout(() => {
+      if (ls && !ls.classList.contains('hidden')) {
+        ls.classList.add('hidden');
+      }
+    }, 1800);
+
+    // Tap to skip
+    ls.addEventListener('click', () => {
+      clearInterval(iv);
+      ls.classList.add('hidden');
+    });
+  }
+
   // GAME INITIALIZATION & SAVE RESUME
   function startGame() {
     audioCtx();
     startFlute();
-    startLoadingScreen(() => {
-      const ts = document.getElementById('title-screen');
-      if (ts) ts.classList.add('hidden');
-      initTutorial();
-      startOpeningCinematic();
-    });
+    const ts = document.getElementById('title-screen');
+    if (ts) ts.classList.add('hidden');
+    const ls = document.getElementById('loading-screen');
+    if (ls) ls.classList.add('hidden');
+    initTutorial();
+    startOpeningCinematic();
   }
 
   function resumeGame() {
@@ -6237,6 +6281,8 @@
     startFlute();
     const ts = document.getElementById('title-screen');
     if (ts) ts.classList.add('hidden');
+    const ls = document.getElementById('loading-screen');
+    if (ls) ls.classList.add('hidden');
     state.screen = 'game';
     updateHudLabels();
     popup(state.lang === 'or' ? 'ପୂର୍ବ ଖେଳ ଲୋଡ୍ ହେଲା!' : 'पिछला खेल लोड हुआ!');
@@ -6359,6 +6405,7 @@
     if (leg) leg.classList.add('faded');
   }, 60000);
   animate();
+  runInitialLoading();
 </script>
 </body>
 </html>
