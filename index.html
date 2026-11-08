@@ -2399,31 +2399,67 @@
   }
 
   function scootyMeterTex() {
-    return makeCanvas(128, 64, (ctx, w, h) => {
-      ctx.fillStyle = "#0f172a";
+    return makeCanvas(256, 128, (ctx, w, h) => {
+      // LCD black base with glow
+      const bg = ctx.createLinearGradient(0, 0, 0, h);
+      bg.addColorStop(0, "#0a1628");
+      bg.addColorStop(0.5, "#0f172a");
+      bg.addColorStop(1, "#050b18");
+      ctx.fillStyle = bg;
       ctx.fillRect(0, 0, w, h);
-      ctx.strokeStyle = "#38bdf8";
-      ctx.lineWidth = 2;
-      ctx.strokeRect(4, 4, w - 8, h - 8);
 
-      // Speed gauge arc
+      // Inner LCD panel with green tint
+      ctx.fillStyle = "rgba(20,40,30,0.5)";
+      ctx.fillRect(10, 10, w-20, h-20);
       ctx.strokeStyle = "#22c55e";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(10, 10, w-20, h-20);
+
+      // "HONDA" chrome top-left
+      ctx.fillStyle = "#cbd5e1";
+      ctx.font = "bold 16px sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText("HONDA", 20, 32);
+
+      // Digital speed readout
+      ctx.fillStyle = "#22c55e";
+      ctx.font = "900 44px monospace";
+      ctx.textAlign = "center";
+      ctx.fillText("35", w/2, 78);
+      ctx.font = "bold 10px monospace";
+      ctx.fillStyle = "#a3e635";
+      ctx.fillText("KM/H", w/2, 90);
+
+      // RPM arc gauge (upper right)
+      ctx.strokeStyle = "#eab308";
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.arc(w / 2, h - 8, 22, Math.PI, 0, false);
+      ctx.arc(w - 40, 40, 20, Math.PI, 0, false);
       ctx.stroke();
-
-      // Digital font label
-      ctx.fillStyle = "#38bdf8";
-      ctx.font = "bold 14px monospace";
-      ctx.textAlign = "center";
-      ctx.fillText("HONDA", w / 2, 22);
-
-      // Fuel bar
-      ctx.fillStyle = "#eab308";
-      ctx.fillRect(14, 46, 24, 6);
       ctx.fillStyle = "#ef4444";
-      ctx.fillRect(w - 38, 46, 24, 6);
+      ctx.font = "bold 10px monospace";
+      ctx.fillText("RPM", w - 40, 55);
+
+      // Fuel bar (bottom right)
+      ctx.fillStyle = "#1e293b";
+      ctx.fillRect(w - 60, 100, 44, 12);
+      ctx.fillStyle = "#22c55e";
+      ctx.fillRect(w - 58, 102, 34, 8);
+      ctx.fillStyle = "#f8fafc";
+      ctx.font = "8px monospace";
+      ctx.fillText("FUEL", w - 40, 122);
+
+      // Time clock
+      ctx.fillStyle = "#38bdf8";
+      ctx.font = "bold 12px monospace";
+      ctx.textAlign = "left";
+      ctx.fillText("07:02", 20, 108);
+
+      // Indicator icons
+      ctx.fillStyle = "#facc15";
+      ctx.font = "14px sans-serif";
+      ctx.fillText("◀", 20, 122);
+      ctx.fillText("▶", 40, 122);
     });
   }
 
@@ -3118,148 +3154,260 @@
   // =========================================================================
 
   function autoFrontHoodTex() {
-    return makeCanvas(512, 256, (ctx, w, h) => {
-      // 1. Canary Yellow Body
-      ctx.fillStyle = "#facc15";
-      ctx.fillRect(0, 0, w, h);
+    return makeCanvas(1024, 512, (ctx, w, h) => {
+      // === Base: glossy black canopy + yellow body (Mumbai/Bhubaneswar auto) ===
+      // Top half = BLACK canopy fairing
+      const blackGrad = ctx.createLinearGradient(0, 0, 0, h*0.45);
+      blackGrad.addColorStop(0, "#0a0a0a");
+      blackGrad.addColorStop(0.55, "#1c1c1c");
+      blackGrad.addColorStop(1, "#2a2a2a");
+      ctx.fillStyle = blackGrad;
+      ctx.fillRect(0, 0, w, h*0.45);
 
-      // Subtle metallic highlight / bevel gradient
-      const grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, "rgba(255, 255, 255, 0.25)");
-      grad.addColorStop(0.5, "rgba(0, 0, 0, 0)");
-      grad.addColorStop(1, "rgba(0, 0, 0, 0.18)");
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, w, h);
+      // Bottom half = YELLOW body
+      const yellowGrad = ctx.createLinearGradient(0, h*0.45, 0, h);
+      yellowGrad.addColorStop(0, "#facc15");
+      yellowGrad.addColorStop(0.7, "#eab308");
+      yellowGrad.addColorStop(1, "#ca8a04");
+      ctx.fillStyle = yellowGrad;
+      ctx.fillRect(0, h*0.45, w, h*0.55);
 
-      // 2. Bold Red Brush Lettering: "FOR   HIRE"
-      ctx.fillStyle = "#b91c1c";
-      ctx.font = "900 36px 'Impact', 'Arial Black', sans-serif";
+      // === Metallic reflection streaks across top (glossy clear-coat) ===
+      const refl = ctx.createLinearGradient(0, 0, w, h*0.5);
+      refl.addColorStop(0, "rgba(255,255,255,0)");
+      refl.addColorStop(0.4, "rgba(255,255,255,0.14)");
+      refl.addColorStop(0.5, "rgba(255,255,255,0.28)");
+      refl.addColorStop(0.6, "rgba(255,255,255,0.14)");
+      refl.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = refl;
+      ctx.fillRect(0, 0, w, h*0.45);
+
+      // === Hand-painted panel seams ===
+      ctx.strokeStyle = "rgba(0,0,0,0.55)";
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(w*0.5, 0); ctx.lineTo(w*0.5, h*0.48); ctx.stroke();
+
+      // === Chrome trim strip where black meets yellow ===
+      ctx.fillStyle = "#c0c0c0";
+      ctx.fillRect(0, h*0.44, w, 8);
+      ctx.fillStyle = "#888888";
+      ctx.fillRect(0, h*0.44 + 8, w, 3);
+
+      // === BOLD red "FOR HIRE" lettering on the black canopy ===
+      ctx.fillStyle = "#dc2626";
+      ctx.font = "900 78px 'Impact', 'Arial Black', sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.shadowColor = "rgba(0,0,0,0.3)";
-      ctx.shadowBlur = 4;
-      ctx.shadowOffsetY = 2;
-      ctx.fillText("FOR   HIRE", w / 2, 46);
+      ctx.shadowColor = "rgba(0,0,0,0.6)";
+      ctx.shadowBlur = 8;
+      ctx.shadowOffsetY = 4;
+      ctx.fillText("FOR  HIRE", w/2, h*0.20);
       ctx.shadowColor = "transparent";
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetY = 0;
 
-      // 3. Central Black Nose Plate: "R2" / "OD 02"
-      const nw = 110, nh = 90, nx = (w - nw) / 2, ny = 95;
-      ctx.fillStyle = "#18181b";
+      // === Central black rubber nose plate "R2 / OD-02" (with chrome screws) ===
+      const nw = 220, nh = 180, nx = (w-nw)/2, ny = h*0.52;
+      ctx.fillStyle = "#111111";
       ctx.fillRect(nx, ny, nw, nh);
-      ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 3;
-      ctx.strokeRect(nx + 3, ny + 3, nw - 6, nh - 6);
-
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 32px sans-serif";
-      ctx.fillText("R₂", w / 2, ny + 38);
-      ctx.font = "bold 18px monospace";
-      ctx.fillText("OD-02", w / 2, ny + 70);
-
-      // 4. Lower-Left Green Diamond "LPG" Eco Sticker
-      ctx.save();
-      const lx = 75, ly = 195;
-      ctx.translate(lx, ly);
-      ctx.rotate(Math.PI / 4);
-      ctx.fillStyle = "#15803d";
-      ctx.fillRect(-26, -26, 52, 52);
-      ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 3;
-      ctx.strokeRect(-23, -23, 46, 46);
-      ctx.restore();
-
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "900 20px sans-serif";
-      ctx.fillText("LPG", lx, ly);
-
-      // 5. Lower-Right RTO Number Plate / Permit
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(w - 145, 175, 125, 42);
-      ctx.strokeStyle = "#18181b";
+      ctx.strokeStyle = "#e5e5e5";
+      ctx.lineWidth = 5;
+      ctx.strokeRect(nx+4, ny+4, nw-8, nh-8);
+      // Inner black bezel
+      ctx.strokeStyle = "#3f3f46";
       ctx.lineWidth = 2;
-      ctx.strokeRect(w - 145, 175, 125, 42);
-      ctx.fillStyle = "#18181b";
-      ctx.font = "bold 15px monospace";
-      ctx.fillText("OD 02 K 4040", w - 82, 201);
+      ctx.strokeRect(nx+12, ny+12, nw-24, nh-24);
+      // "R₂" monogram
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "900 70px serif";
+      ctx.fillText("R₂", w/2, ny + 68);
+      // "OD-02" plate number
+      ctx.font = "bold 38px monospace";
+      ctx.fillStyle = "#eab308";
+      ctx.fillText("OD 02", w/2, ny + 125);
+      ctx.fillStyle = "#a1a1aa";
+      ctx.font = "bold 22px monospace";
+      ctx.fillText("KALIA BHAI", w/2, ny + 155);
+      // 4 chrome mounting screws
+      [[nx+20, ny+20],[nx+nw-20, ny+20],[nx+20, ny+nh-20],[nx+nw-20, ny+nh-20]].forEach(([sx, sy]) => {
+        ctx.fillStyle = "#d4d4d8"; ctx.beginPath(); ctx.arc(sx, sy, 8, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = "#52525b"; ctx.beginPath(); ctx.arc(sx, sy, 4, 0, Math.PI*2); ctx.fill();
+      });
+
+      // === Lower-left LPG diamond sticker (bright green, safety-legal) ===
+      ctx.save();
+      const lx = 150, ly = h*0.78;
+      ctx.translate(lx, ly);
+      ctx.rotate(Math.PI/4);
+      ctx.fillStyle = "#15803d";
+      ctx.fillRect(-58, -58, 116, 116);
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 6;
+      ctx.strokeRect(-52, -52, 104, 104);
+      ctx.restore();
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "900 36px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("LPG", lx, ly + 4);
+      ctx.font = "bold 14px sans-serif";
+      ctx.fillText("ECO-FUEL", lx, ly + 28);
+
+      // === Lower-right RTO permit plate ===
+      ctx.fillStyle = "#f8fafc";
+      ctx.fillRect(w - 320, h*0.70, 280, 90);
+      ctx.strokeStyle = "#111111";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(w - 320, h*0.70, 280, 90);
+      ctx.fillStyle = "#111111";
+      ctx.font = "bold 20px monospace";
+      ctx.textAlign = "left";
+      ctx.fillText("PERMIT: OD-02-KLR-4040", w - 310, h*0.70 + 28);
+      ctx.fillText("VALID: 31-12-2026", w - 310, h*0.70 + 54);
+      ctx.fillText("SEATS: 3 + DRIVER", w - 310, h*0.70 + 80);
+
+      // === Small "Jay Jagannath" decal ===
+      ctx.fillStyle = "rgba(255,255,255,0.85)";
+      ctx.font = "bold 16px sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText("🕉  ଜୟ ଜଗନ୍ନାଥ • JAY JAGANNATH  🕉", 40, h - 28);
     });
   }
 
   function autoSidePanelTex() {
-    return makeCanvas(512, 128, (ctx, w, h) => {
-      // 1. Canary Yellow Base
-      ctx.fillStyle = "#facc15";
-      ctx.fillRect(0, 0, w, h);
+    return makeCanvas(1024, 256, (ctx, w, h) => {
+      // Split: black upper, yellow lower (classic Indian auto side panel)
+      const blackGrad = ctx.createLinearGradient(0, 0, 0, h*0.5);
+      blackGrad.addColorStop(0, "#0a0a0a");
+      blackGrad.addColorStop(1, "#1f1f1f");
+      ctx.fillStyle = blackGrad;
+      ctx.fillRect(0, 0, w, h*0.5);
 
-      // 2. Deep Emerald Green Racing Stripe across middle
-      const sh = 36, sy = (h - sh) / 2;
-      ctx.fillStyle = "#15803d";
-      ctx.fillRect(0, sy, w, sh);
+      const yellowGrad = ctx.createLinearGradient(0, h*0.5, 0, h);
+      yellowGrad.addColorStop(0, "#facc15");
+      yellowGrad.addColorStop(0.75, "#eab308");
+      yellowGrad.addColorStop(1, "#a16207");
+      ctx.fillStyle = yellowGrad;
+      ctx.fillRect(0, h*0.5, w, h*0.5);
 
-      // White Pin-stripes on green band edges
+      // Chrome divider strip
+      ctx.fillStyle = "#d4d4d8";
+      ctx.fillRect(0, h*0.48, w, 6);
+      ctx.fillStyle = "#71717a";
+      ctx.fillRect(0, h*0.48 + 6, w, 2);
+
+      // White pinstripe along yellow panel
+      ctx.fillStyle = "#f8fafc";
+      ctx.fillRect(0, h*0.55, w, 3);
+
+      // === Odia-language livery text ===
       ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, sy - 3, w, 3);
-      ctx.fillRect(0, sy + sh, w, 3);
-
-      // Stylized text inside green band
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 18px sans-serif";
+      ctx.font = "900 34px sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText("BHUBANESWAR • FAST AIR • PASSENGER AUTO", w / 2, h / 2);
+      ctx.fillText("ଭୁବନେଶ୍ୱର • ଫାଷ୍ଟ ଏୟାର • ଯାତ୍ରୀ ସେବା", w/2, h*0.28);
 
-      // Rivets along lower skirt
-      ctx.fillStyle = "#713f12";
-      for (let x = 16; x < w; x += 32) {
-        ctx.beginPath();
-        ctx.arc(x, h - 8, 2.5, 0, Math.PI * 2);
-        ctx.fill();
+      // === English subtitle ===
+      ctx.fillStyle = "#fbbf24";
+      ctx.font = "bold 22px 'Cinzel', serif";
+      ctx.fillText("BHUBANESWAR  •  FAST  •  PASSENGER", w/2, h*0.40);
+
+      // === Safety "HELMET / SEATBELT" reminders painted on lower yellow ===
+      ctx.fillStyle = "#111111";
+      ctx.font = "bold 16px sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText("⚠  DRIVE SAFE  ⚠", 30, h*0.75);
+      ctx.fillText("♥  30–40 KM/H CITY LIMIT", 30, h*0.87);
+
+      // === Hand-painted rivets along lower skirt ===
+      ctx.fillStyle = "#52525b";
+      for (let x = 40; x < w; x += 60) {
+        ctx.beginPath(); ctx.arc(x, h - 18, 3.5, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = "#a1a1aa";
+        ctx.beginPath(); ctx.arc(x-1, h - 19, 1.8, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = "#52525b";
+      }
+
+      // === Subtle rain/road dirt wear near bottom ===
+      for (let d = 0; d < 220; d++) {
+        ctx.fillStyle = `rgba(50,35,15,${0.04 + Math.random()*0.08})`;
+        ctx.fillRect(Math.random()*w, h*0.85 + Math.random()*h*0.15, 3 + Math.random()*10, 2 + Math.random()*6);
       }
     });
   }
 
   function autoSeatBackTex() {
-    return makeCanvas(256, 256, (ctx, w, h) => {
-      // 1. Rich Vintage Brown Leatherette
-      ctx.fillStyle = "#3f1d0b";
+    return makeCanvas(512, 512, (ctx, w, h) => {
+      // Base leatherette
+      const base = ctx.createLinearGradient(0, 0, w, h);
+      base.addColorStop(0, "#3f1d0b");
+      base.addColorStop(0.5, "#2a1208");
+      base.addColorStop(1, "#3f1d0b");
+      ctx.fillStyle = base;
       ctx.fillRect(0, 0, w, h);
 
-      // Vertical leather upholstery creases
-      ctx.strokeStyle = "rgba(0, 0, 0, 0.35)";
-      ctx.lineWidth = 2;
-      for (let x = 32; x < w; x += 32) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, h);
-        ctx.stroke();
+      // Fine leather grain (per-pixel noise)
+      for (let i = 0; i < 4000; i++) {
+        const x = Math.random()*w, y = Math.random()*h;
+        ctx.fillStyle = Math.random() < 0.5
+          ? `rgba(15,6,2,${0.15 + Math.random()*0.25})`
+          : `rgba(100,55,25,${0.08 + Math.random()*0.15})`;
+        ctx.fillRect(x, y, 1.5, 1.5);
       }
 
-      // 2. Decorative Embroidered Wave Trim across middle
-      ctx.strokeStyle = "#fef3c7";
-      ctx.lineWidth = 8;
+      // Vertical upholstery creases (quilted pattern)
+      for (let x = 24; x < w; x += 56) {
+        ctx.strokeStyle = "rgba(0,0,0,0.5)";
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+        ctx.strokeStyle = "rgba(120,70,35,0.35)";
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x+3, 0); ctx.lineTo(x+3, h); ctx.stroke();
+      }
+
+      // Horizontal seams
+      for (let y = 40; y < h; y += 120) {
+        ctx.strokeStyle = "rgba(0,0,0,0.55)";
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+        ctx.strokeStyle = "rgba(120,70,35,0.35)";
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(0, y+3); ctx.lineTo(w, y+3); ctx.stroke();
+      }
+
+      // Yellow embroidered wave accent
+      ctx.strokeStyle = "#facc15";
+      ctx.lineWidth = 5;
       ctx.beginPath();
-      ctx.moveTo(0, h * 0.55);
-      for (let x = 0; x <= w; x += 10) {
-        const y = h * 0.55 + Math.sin(x * 0.08) * 16;
-        ctx.lineTo(x, y);
+      for (let x = 0; x <= w; x += 8) {
+        const y = h*0.55 + Math.sin(x*0.07)*20;
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       }
       ctx.stroke();
 
-      // 3. Central Magenta/Purple Decorative 4-Pointed Star Motif
-      const cx = w / 2, cy = h * 0.42;
-      ctx.fillStyle = "#a855f7";
+      // Central decorative gold/yellow 4-pointed star motif
+      const cx = w/2, cy = h*0.42;
+      ctx.fillStyle = "#fbbf24";
       ctx.beginPath();
-      ctx.moveTo(cx, cy - 36);
-      ctx.quadraticCurveTo(cx + 6, cy - 6, cx + 36, cy);
-      ctx.quadraticCurveTo(cx + 6, cy + 6, cx, cy + 36);
-      ctx.quadraticCurveTo(cx - 6, cy + 6, cx - 36, cy);
-      ctx.quadraticCurveTo(cx - 6, cy - 6, cx - 36, cy);
+      ctx.moveTo(cx, cy - 60);
+      ctx.quadraticCurveTo(cx + 10, cy - 10, cx + 60, cy);
+      ctx.quadraticCurveTo(cx + 10, cy + 10, cx, cy + 60);
+      ctx.quadraticCurveTo(cx - 10, cy + 10, cx - 60, cy);
+      ctx.quadraticCurveTo(cx - 10, cy - 10, cx, cy - 60);
       ctx.fill();
 
-      // Gold center diamond pip
-      ctx.fillStyle = "#facc15";
-      ctx.beginPath();
-      ctx.arc(cx, cy, 7, 0, Math.PI * 2);
-      ctx.fill();
+      // Dark red center pip
+      ctx.fillStyle = "#7f1d1d";
+      ctx.beginPath(); ctx.arc(cx, cy, 12, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = "#fbbf24";
+      ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI*2); ctx.fill();
+
+      // Worn patches (interior aging)
+      for (let w2 = 0; w2 < 8; w2++) {
+        ctx.fillStyle = `rgba(180,120,70,${0.05 + Math.random()*0.08})`;
+        ctx.beginPath();
+        ctx.ellipse(Math.random()*w, Math.random()*h, 20+Math.random()*40, 15+Math.random()*30, Math.random()*Math.PI, 0, Math.PI*2);
+        ctx.fill();
+      }
     });
   }
 
@@ -3284,53 +3432,79 @@
   }
 
   function autoWheelTex() {
-    return makeCanvas(256, 256, (ctx, w, h) => {
-      const cx = w / 2, cy = h / 2;
-      // 1. Black Tyre Rubber
-      ctx.fillStyle = "#151515";
-      ctx.beginPath();
-      ctx.arc(cx, cy, 120, 0, Math.PI * 2);
-      ctx.fill();
+    return makeCanvas(512, 512, (ctx, w, h) => {
+      const cx = w/2, cy = h/2;
 
-      // Radial tyre tread grooves
-      ctx.strokeStyle = "#262626";
-      ctx.lineWidth = 4;
-      for (let a = 0; a < Math.PI * 2; a += Math.PI / 16) {
-        ctx.beginPath();
-        ctx.moveTo(cx + Math.cos(a) * 98, cy + Math.sin(a) * 98);
-        ctx.lineTo(cx + Math.cos(a) * 120, cy + Math.sin(a) * 120);
-        ctx.stroke();
+      // === 1. Tyre rubber base ===
+      ctx.fillStyle = "#0a0a0a";
+      ctx.beginPath(); ctx.arc(cx, cy, 250, 0, Math.PI*2); ctx.fill();
+
+      // Radial tread grooves
+      for (let a = 0; a < Math.PI*2; a += Math.PI / 24) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(a);
+        ctx.fillStyle = "#262626";
+        ctx.fillRect(190, -6, 60, 12);
+        ctx.fillStyle = "#3f3f46";
+        ctx.fillRect(200, -4, 40, 8);
+        ctx.fillStyle = "#1a1a1a";
+        ctx.fillRect(210, -2, 20, 4);
+        ctx.restore();
       }
 
-      // 2. Cyan / Turquoise Painted Wheel Hub Rim
-      ctx.fillStyle = "#38bdf8";
-      ctx.beginPath();
-      ctx.arc(cx, cy, 84, 0, Math.PI * 2);
-      ctx.fill();
+      // Tyre sidewall lettering
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(Math.PI*0.5);
+      ctx.fillStyle = "rgba(230,230,230,0.55)";
+      ctx.font = "bold 12px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("MRF  NYLON  •  3.50-10", 0, -215);
+      ctx.restore();
 
-      ctx.strokeStyle = "#0284c7";
+      // === 2. Chrome hub rim ===
+      const hubGrad = ctx.createRadialGradient(cx-60, cy-60, 20, cx, cy, 170);
+      hubGrad.addColorStop(0, "#f5f5f5");
+      hubGrad.addColorStop(0.4, "#d4d4d8");
+      hubGrad.addColorStop(0.7, "#a1a1aa");
+      hubGrad.addColorStop(1, "#52525b");
+      ctx.fillStyle = hubGrad;
+      ctx.beginPath(); ctx.arc(cx, cy, 170, 0, Math.PI*2); ctx.fill();
+
+      // === 3. Black & yellow painted accent ring ===
+      ctx.strokeStyle = "#facc15";
+      ctx.lineWidth = 8;
+      ctx.beginPath(); ctx.arc(cx, cy, 155, 0, Math.PI*2); ctx.stroke();
+      ctx.strokeStyle = "#111111";
       ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.arc(cx, cy, 84, 0, Math.PI * 2);
-      ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy, 143, 0, Math.PI*2); ctx.stroke();
 
-      // 4 Cutout Bolt Holes in Rim
-      ctx.fillStyle = "#0f172a";
-      for (let a = 0; a < Math.PI * 2; a += Math.PI / 2) {
-        ctx.beginPath();
-        ctx.arc(cx + Math.cos(a) * 48, cy + Math.sin(a) * 48, 12, 0, Math.PI * 2);
-        ctx.fill();
+      // === 4. 6 bolt holes on chrome hub ===
+      for (let b = 0; b < 6; b++) {
+        const ang = (b/6) * Math.PI*2;
+        const bx = cx + Math.cos(ang) * 105;
+        const by = cy + Math.sin(ang) * 105;
+        ctx.fillStyle = "#27272a";
+        ctx.beginPath(); ctx.arc(bx, by, 16, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = "#d4d4d8";
+        ctx.beginPath(); ctx.arc(bx, by, 11, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = "#52525b";
+        ctx.beginPath(); ctx.arc(bx, by, 5, 0, Math.PI*2); ctx.fill();
       }
 
-      // 3. Chrome Center Hub Cap & Nut
-      ctx.fillStyle = "#e2e8f0";
-      ctx.beginPath();
-      ctx.arc(cx, cy, 26, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#94a3b8";
-      ctx.beginPath();
-      ctx.arc(cx, cy, 14, 0, Math.PI * 2);
-      ctx.fill();
+      // === 5. Center hub cap with "R2" logo ===
+      const capGrad = ctx.createRadialGradient(cx-15, cy-15, 5, cx, cy, 55);
+      capGrad.addColorStop(0, "#fafafa");
+      capGrad.addColorStop(0.7, "#71717a");
+      capGrad.addColorStop(1, "#27272a");
+      ctx.fillStyle = capGrad;
+      ctx.beginPath(); ctx.arc(cx, cy, 50, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = "#facc15";
+      ctx.font = "900 32px serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("R₂", cx, cy + 2);
     });
   }
 
@@ -3473,9 +3647,254 @@
   }
 
   // 2. DETAILED 3D SCOOTY (HONDA ACTIVA / TVS JUPITER STYLE BIKE)
+  
+  // Helper: multiply a hex color's brightness
+  function shade(hex, factor) {
+    const m = hex.replace('#', '');
+    const r = parseInt(m.substr(0,2), 16), g = parseInt(m.substr(2,2), 16), b = parseInt(m.substr(4,2), 16);
+    const clamp = v => Math.min(255, Math.max(0, Math.round(v)));
+    return '#' + [clamp(r*factor), clamp(g*factor), clamp(b*factor)].map(v => v.toString(16).padStart(2, '0')).join('');
+  }
+
+  function scootyBodyTex(color = "#2563eb") {
+    return makeCanvas(512, 512, (ctx, w, h) => {
+      // Base gloss color
+      const grad = ctx.createLinearGradient(0, 0, w, h);
+      grad.addColorStop(0, color);
+      grad.addColorStop(0.5, shade(color, 0.85));
+      grad.addColorStop(1, shade(color, 0.65));
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+
+      // Clear-coat reflectivity streaks (top-left highlight)
+      const refl = ctx.createLinearGradient(0, 0, w*0.6, h*0.6);
+      refl.addColorStop(0, "rgba(255,255,255,0.35)");
+      refl.addColorStop(0.4, "rgba(255,255,255,0.05)");
+      refl.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = refl;
+      ctx.fillRect(0, 0, w, h);
+
+      // "HONDA" / "ACTIVA" chrome decal
+      ctx.fillStyle = "#e5e7eb";
+      ctx.font = "900 42px serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("ACTIVA", w/2, h*0.4);
+
+      // 6G emblem
+      ctx.fillStyle = "#ef4444";
+      ctx.font = "bold 22px sans-serif";
+      ctx.fillText("6G", w*0.55, h*0.52);
+
+      // Small RTO style reg tag
+      ctx.fillStyle = "#111111";
+      ctx.fillRect(w*0.75, h*0.82, 100, 30);
+      ctx.fillStyle = "#facc15";
+      ctx.font = "bold 14px monospace";
+      ctx.textAlign = "center";
+      ctx.fillText("OD-02-2026", w*0.75 + 50, h*0.82 + 20);
+    });
+  }
+
+  function cowHideTex() {
+    return makeCanvas(512, 512, (ctx, w, h) => {
+      // Warm sacred Zebu white/cream body
+      const bg = ctx.createLinearGradient(0, 0, 0, h);
+      bg.addColorStop(0, "#f8fafc");
+      bg.addColorStop(0.5, "#f1f5f9");
+      bg.addColorStop(1, "#e2e8f0");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+
+      // Fine hair grain
+      for (let i = 0; i < 3500; i++) {
+        const x = Math.random()*w, y = Math.random()*h;
+        ctx.fillStyle = Math.random() < 0.5 ? "rgba(180,160,140,0.12)" : "rgba(255,255,255,0.25)";
+        ctx.fillRect(x, y, 1, 2);
+      }
+
+      // Soft natural taupe / warm gray markings (traditional Indian cow spots)
+      const spots = [
+        { x: w*0.25, y: h*0.35, rx: 75, ry: 55, a: 0.3 },
+        { x: w*0.70, y: h*0.60, rx: 90, ry: 65, a: -0.4 },
+        { x: w*0.50, y: h*0.25, rx: 45, ry: 35, a: 0.1 },
+        { x: w*0.82, y: h*0.28, rx: 50, ry: 40, a: 0.5 }
+      ];
+      spots.forEach(sp => {
+        const sg = ctx.createRadialGradient(sp.x, sp.y, 10, sp.x, sp.y, sp.rx);
+        sg.addColorStop(0, "rgba(100,80,65,0.75)");
+        sg.addColorStop(0.65, "rgba(140,115,95,0.5)");
+        sg.addColorStop(1, "rgba(200,185,170,0)");
+        ctx.fillStyle = sg;
+        ctx.beginPath();
+        ctx.ellipse(sp.x, sp.y, sp.rx, sp.ry, sp.a, 0, Math.PI*2);
+        ctx.fill();
+      });
+    });
+  }
+
+  function gamuchaFabricTex(baseColor = "#b71c1c") {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      ctx.fillStyle = baseColor;
+      ctx.fillRect(0, 0, w, h);
+      // Traditional Odisha / Sambalpuri woven check pattern
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.45)";
+      ctx.lineWidth = 2;
+      for (let x = 0; x < w; x += 16) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = 0; y < h; y += 16) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+      // Yellow accent pinstripe
+      ctx.strokeStyle = "rgba(250, 204, 21, 0.55)";
+      ctx.lineWidth = 1;
+      for (let x = 8; x < w; x += 32) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = 8; y < h; y += 32) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+    });
+  }
+
+  function makeFaceTexture(opts = {}) {
+    const { skinTone = "#d49b78", hasMustache = false, isFemale = false, hasBeard = false, spectacles = false } = opts;
+    return makeCanvas(512, 512, (ctx, w, h) => {
+      const cx = w/2, cy = h/2;
+
+      // Base skin gradient — forehead brighter, chin darker (subsurface warmth)
+      const skinGrad = ctx.createRadialGradient(cx, cy*0.75, 20, cx, cy, w*0.6);
+      skinGrad.addColorStop(0, shade(skinTone, 1.1));
+      skinGrad.addColorStop(0.6, skinTone);
+      skinGrad.addColorStop(1, shade(skinTone, 0.75));
+      ctx.fillStyle = skinGrad;
+      ctx.fillRect(0, 0, w, h);
+
+      // Pore / freckle micro-detail
+      for (let i = 0; i < 2400; i++) {
+        const x = Math.random()*w, y = Math.random()*h;
+        ctx.fillStyle = Math.random() < 0.5
+          ? `rgba(0,0,0,${0.04 + Math.random()*0.05})`
+          : `rgba(255,200,160,${0.05 + Math.random()*0.06})`;
+        ctx.fillRect(x, y, 1, 1);
+      }
+
+      // Cheek blush (natural redness)
+      [cx - 90, cx + 90].forEach(ex => {
+        const cheekGrad = ctx.createRadialGradient(ex, cy + 40, 5, ex, cy + 40, 60);
+        cheekGrad.addColorStop(0, "rgba(230, 90, 110, 0.28)");
+        cheekGrad.addColorStop(1, "rgba(230, 90, 110, 0)");
+        ctx.fillStyle = cheekGrad;
+        ctx.fillRect(ex - 60, cy - 20, 120, 120);
+      });
+
+      // Nose shadow under the bridge
+      ctx.fillStyle = "rgba(120, 60, 40, 0.22)";
+      ctx.beginPath();
+      ctx.ellipse(cx, cy + 55, 14, 8, 0, 0, Math.PI*2);
+      ctx.fill();
+
+      // Eyes
+      [cx - 100, cx + 100].forEach(ex => {
+        // Eye socket shadow
+        ctx.fillStyle = "rgba(60, 30, 20, 0.20)";
+        ctx.beginPath(); ctx.ellipse(ex, cy - 25, 40, 25, 0, 0, Math.PI*2); ctx.fill();
+        // White
+        ctx.fillStyle = "#f8f4ec";
+        ctx.beginPath(); ctx.ellipse(ex, cy - 25, 32, 20, 0, 0, Math.PI*2); ctx.fill();
+        // Iris
+        ctx.fillStyle = "#5a3a1e";
+        ctx.beginPath(); ctx.arc(ex, cy - 25, 13, 0, Math.PI*2); ctx.fill();
+        // Pupil
+        ctx.fillStyle = "#0a0505";
+        ctx.beginPath(); ctx.arc(ex, cy - 25, 7, 0, Math.PI*2); ctx.fill();
+        // Highlight
+        ctx.fillStyle = "rgba(255,255,255,0.85)";
+        ctx.beginPath(); ctx.arc(ex - 4, cy - 28, 3, 0, Math.PI*2); ctx.fill();
+        // Eyelids
+        ctx.strokeStyle = "#1c0d06";
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(ex, cy - 25, 33, Math.PI*1.08, Math.PI*1.92); ctx.stroke();
+      });
+
+      // Eyebrows
+      [cx - 100, cx + 100].forEach(bx => {
+        ctx.strokeStyle = "#180a04";
+        ctx.lineWidth = isFemale ? 4 : 7;
+        ctx.beginPath();
+        const arch = isFemale ? 6 : 4;
+        ctx.moveTo(bx - 36, cy - 50);
+        ctx.quadraticCurveTo(bx, cy - 58 - arch, bx + 36, cy - 52);
+        ctx.stroke();
+      });
+
+      // Lips / Smile
+      ctx.fillStyle = isFemale ? "rgba(190, 60, 75, 0.75)" : "rgba(160, 75, 60, 0.65)";
+      ctx.beginPath();
+      ctx.ellipse(cx, cy + 95, 34, 10, 0, 0, Math.PI*2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(90, 30, 20, 0.7)";
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(cx - 30, cy + 95); ctx.lineTo(cx + 30, cy + 95); ctx.stroke();
+
+      // Bindi (if female)
+      if (isFemale) {
+        ctx.fillStyle = "#b91c1c";
+        ctx.beginPath(); ctx.arc(cx, cy - 65, 8, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = "#fbbf24";
+        ctx.beginPath(); ctx.arc(cx, cy - 65, 3, 0, Math.PI*2); ctx.fill();
+      }
+
+      // Tilak (if priest or traditional)
+      if (opts.hasTilak) {
+        ctx.fillStyle = "#facc15";
+        ctx.fillRect(cx - 4, cy - 85, 8, 32);
+        ctx.fillStyle = "#dc2626";
+        ctx.beginPath(); ctx.arc(cx, cy - 62, 5, 0, Math.PI*2); ctx.fill();
+      }
+
+      // Mustache
+      if (hasMustache || hasBeard) {
+        ctx.fillStyle = "#180a04";
+        ctx.beginPath();
+        ctx.moveTo(cx - 50, cy + 82);
+        ctx.quadraticCurveTo(cx - 20, cy + 68, cx, cy + 76);
+        ctx.quadraticCurveTo(cx + 20, cy + 68, cx + 50, cy + 82);
+        ctx.quadraticCurveTo(cx + 25, cy + 88, cx, cy + 80);
+        ctx.quadraticCurveTo(cx - 25, cy + 88, cx - 50, cy + 82);
+        ctx.fill();
+      }
+
+      // Beard
+      if (hasBeard) {
+        ctx.fillStyle = "#180a04";
+        ctx.beginPath();
+        ctx.ellipse(cx, cy + 130, 48, 28, 0, 0, Math.PI*2);
+        ctx.fill();
+      }
+
+      // Spectacles
+      if (spectacles) {
+        ctx.strokeStyle = "#eab308";
+        ctx.lineWidth = 4;
+        [cx - 100, cx + 100].forEach(gx => {
+          ctx.beginPath(); ctx.arc(gx, cy - 25, 36, 0, Math.PI*2); ctx.stroke();
+        });
+        ctx.beginPath(); ctx.moveTo(cx - 64, cy - 25); ctx.lineTo(cx + 64, cy - 25); ctx.stroke();
+      }
+    });
+  }
+
   function makeScooty(bodyColor = "#2563eb") {
     const g = new THREE.Group();
-    const bodyMat = M(bodyColor, 0.35, { metalness: 0.35 });
+    const bodyTex = scootyBodyTex(bodyColor);
+    const bodyMat = new THREE.MeshStandardMaterial({
+      map: bodyTex,
+      color: "#ffffff",
+      roughness: 0.28,
+      metalness: 0.45
+    });
 
     // Lower chassis & rubber ribbed floorboard
     addMesh(g, box(0.52, 0.12, 1.6), mats.scootyDark, [0, 0.28, 0]);
@@ -3569,7 +3988,11 @@
   // 3. SACRED COW 3D SCULPTED ZEBU MODEL
   function makeCow() {
     const g = new THREE.Group();
-    const cowSkin = M("#f1f5f9", 0.85);
+    const cowSkin = new THREE.MeshStandardMaterial({
+      map: cowHideTex(),
+      color: "#ffffff",
+      roughness: 0.85
+    });
     const cowMuzzle = M("#fbcfe8", 0.7);
     const hornMat = M("#334155", 0.5, { roughness: 0.4 });
     const hoofMat = M("#0f172a", 0.6);
