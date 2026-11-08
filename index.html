@@ -5030,6 +5030,631 @@ let __weave=null;
   }
 
 
+
+  /* =========================================================================
+     ODISHA ARCHITECTURE & TEXTURE LIBRARY (6 Buildings, 4 Stalls, Flyover, Enterable Interior)
+     ========================================================================= */
+
+  const _texLoader2 = new THREE.TextureLoader();
+  const _texCache = {};
+  const _isFile = typeof location !== 'undefined' && location.protocol === 'file:';
+
+  function texOrProc(name, procFn, repeatX = 1, repeatY = 1) {
+    const key = name + '_' + repeatX + 'x' + repeatY;
+    if (_texCache[key]) return _texCache[key];
+
+    // Try loading real texture; fall back to procedural canvas
+    if (!_isFile) {
+      try {
+        const t = _texLoader2.load('./textures/' + name + '/albedo.webp',
+          undefined, undefined, () => { /* 404 — silently use procedural */ });
+        t.wrapS = t.wrapT = THREE.RepeatWrapping;
+        t.repeat.set(repeatX, repeatY);
+        t.anisotropy = 4;
+        _texCache[key] = t;
+        return t;
+      } catch (e) {}
+    }
+    const p = procFn();
+    p.wrapS = p.wrapT = THREE.RepeatWrapping;
+    p.repeat.set(repeatX, repeatY);
+    _texCache[key] = p;
+    return p;
+  }
+
+  // === Procedural Fallbacks ===
+  function procPlasterOchre() {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      const g = ctx.createLinearGradient(0, 0, 0, h);
+      g.addColorStop(0, "#dcb874"); g.addColorStop(1, "#c99a52");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+      for (let i = 0; i < 1800; i++) {
+        ctx.fillStyle = Math.random() < 0.5 ? "rgba(120,80,30,0.08)" : "rgba(245,215,160,0.08)";
+        ctx.beginPath(); ctx.arc(Math.random()*w, Math.random()*h, 0.5+Math.random()*2, 0, Math.PI*2); ctx.fill();
+      }
+    });
+  }
+
+  function procPlasterWhite() {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      ctx.fillStyle = "#ebe4d5"; ctx.fillRect(0, 0, w, h);
+      for (let i = 0; i < 1500; i++) {
+        ctx.fillStyle = Math.random() < 0.5 ? "rgba(120,105,80,0.05)" : "rgba(255,255,250,0.06)";
+        ctx.beginPath(); ctx.arc(Math.random()*w, Math.random()*h, 0.5+Math.random()*1.8, 0, Math.PI*2); ctx.fill();
+      }
+    });
+  }
+
+  function procSandstoneRed() {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      ctx.fillStyle = "#b8552a"; ctx.fillRect(0, 0, w, h);
+      for (let i = 0; i < 2400; i++) {
+        ctx.fillStyle = Math.random() < 0.5 ? "rgba(70,25,10,0.18)" : "rgba(220,140,90,0.1)";
+        ctx.fillRect(Math.random()*w, Math.random()*h, 1.5, 1.5);
+      }
+      for (let y = 0; y < h; y += 40) {
+        ctx.strokeStyle = "rgba(60,20,5,0.55)"; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+    });
+  }
+
+  function procBrickAged() {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      ctx.fillStyle = "#8b3a2a"; ctx.fillRect(0, 0, w, h);
+      const bw = 32, bh = 16;
+      for (let row = 0; row < h/bh; row++) {
+        const off = (row % 2) * (bw/2);
+        for (let col = -1; col < w/bw + 1; col++) {
+          const x = col*bw + off, y = row*bh;
+          const shade = 100 + Math.random()*50 | 0;
+          ctx.fillStyle = `rgb(${shade},${shade*0.45|0},${shade*0.35|0})`;
+          ctx.fillRect(x+1, y+1, bw-2, bh-2);
+        }
+      }
+      for (let i = 0; i < 400; i++) {
+        ctx.fillStyle = "rgba(30,40,20,0.08)";
+        ctx.beginPath(); ctx.arc(Math.random()*w, Math.random()*h, 3+Math.random()*8, 0, Math.PI*2); ctx.fill();
+      }
+    });
+  }
+
+  function procThatch() {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      ctx.fillStyle = "#8a6a3a"; ctx.fillRect(0, 0, w, h);
+      for (let i = 0; i < 3000; i++) {
+        const x = Math.random()*w, y = Math.random()*h;
+        const len = 8 + Math.random()*16;
+        const ang = -Math.PI/2 + (Math.random()-0.5)*0.4;
+        ctx.strokeStyle = Math.random() < 0.5 ? "rgba(200,160,90,0.35)" : "rgba(80,55,20,0.35)";
+        ctx.lineWidth = 1 + Math.random();
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + Math.cos(ang)*len, y + Math.sin(ang)*len);
+        ctx.stroke();
+      }
+    });
+  }
+
+  function procTinCorrugated() {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      ctx.fillStyle = "#8892a0"; ctx.fillRect(0, 0, w, h);
+      for (let x = 0; x < w; x += 8) {
+        ctx.fillStyle = "rgba(30,35,45,0.4)";
+        ctx.fillRect(x, 0, 4, h);
+        ctx.fillStyle = "rgba(220,225,230,0.15)";
+        ctx.fillRect(x + 4, 0, 2, h);
+      }
+      for (let i = 0; i < 60; i++) {
+        ctx.fillStyle = "rgba(120,70,30,0.15)";
+        ctx.beginPath(); ctx.arc(Math.random()*w, Math.random()*h, 4+Math.random()*12, 0, Math.PI*2); ctx.fill();
+      }
+    });
+  }
+
+  function procBamboo() {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      ctx.fillStyle = "#a08a55"; ctx.fillRect(0, 0, w, h);
+      for (let y = 0; y < h; y += 16) {
+        ctx.strokeStyle = "rgba(80,60,30,0.7)"; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+        ctx.strokeStyle = "rgba(220,200,150,0.35)"; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(0, y+3); ctx.lineTo(w, y+3); ctx.stroke();
+      }
+      for (let x = 0; x < w; x += 32) {
+        ctx.strokeStyle = "rgba(60,45,25,0.35)"; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+    });
+  }
+
+  function procFabricIkat() {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      ctx.fillStyle = "#b0322a"; ctx.fillRect(0, 0, w, h);
+      for (let i = 0; i < 60; i++) {
+        ctx.fillStyle = i % 2 ? "#f0d66a" : "#1a1a1a";
+        ctx.fillRect(Math.random()*w, Math.random()*h, 4+Math.random()*8, 4+Math.random()*8);
+      }
+      ctx.strokeStyle = "rgba(240,200,80,0.4)"; ctx.lineWidth = 1;
+      for (let y = 0; y < h; y += 24) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+    });
+  }
+
+  function procFabricBurlap() {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      ctx.fillStyle = "#b89d6a"; ctx.fillRect(0, 0, w, h);
+      for (let i = 0; i < w; i += 3) {
+        ctx.strokeStyle = Math.random() < 0.5 ? "rgba(60,45,20,0.25)" : "rgba(230,210,160,0.25)";
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, h); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(w, i); ctx.stroke();
+      }
+    });
+  }
+
+  function procConcreteRaw() {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      ctx.fillStyle = "#a0a0a0"; ctx.fillRect(0, 0, w, h);
+      for (let i = 0; i < 2400; i++) {
+        ctx.fillStyle = Math.random() < 0.5 ? "rgba(60,60,60,0.08)" : "rgba(200,200,200,0.06)";
+        ctx.beginPath(); ctx.arc(Math.random()*w, Math.random()*h, 0.5+Math.random()*2.2, 0, Math.PI*2); ctx.fill();
+      }
+    });
+  }
+
+  function procTerracottaRoof() {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      ctx.fillStyle = "#b44426"; ctx.fillRect(0, 0, w, h);
+      for (let y = 0; y < h; y += 16) {
+        ctx.fillStyle = "rgba(60,20,10,0.4)";
+        ctx.fillRect(0, y, w, 3);
+        ctx.fillStyle = "rgba(240,120,70,0.25)";
+        ctx.fillRect(0, y + 3, w, 2);
+      }
+    });
+  }
+
+  function procSauraMural() {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      ctx.fillStyle = "#8a3622"; ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = "#fffdf5";
+      for (let i = 0; i < 18; i++) {
+        const x = 20 + (i % 6) * 42, y = 30 + Math.floor(i / 6) * 70;
+        ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill();
+        ctx.fillRect(x - 2, y + 6, 4, 18);
+        ctx.beginPath(); ctx.moveTo(x - 12, y + 14); ctx.lineTo(x + 12, y + 14); ctx.stroke();
+      }
+    });
+  }
+
+  function procGlassCurtain() {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      const g = ctx.createLinearGradient(0, 0, w, h);
+      g.addColorStop(0, "#1e3a5f"); g.addColorStop(0.5, "#3b82f6"); g.addColorStop(1, "#1d4ed8");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = "#93c5fd"; ctx.lineWidth = 2;
+      for (let x = 0; x < w; x += 32) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = 0; y < h; y += 48) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+    });
+  }
+
+  function procFloorTiles() {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      ctx.fillStyle = "#d4af37"; ctx.fillRect(0, 0, w, h);
+      const s = 32;
+      for (let r = 0; r < h / s; r++) {
+        for (let c = 0; c < w / s; c++) {
+          ctx.fillStyle = (r + c) % 2 === 0 ? "#8b4513" : "#d2b48c";
+          ctx.fillRect(c * s + 1, r * s + 1, s - 2, s - 2);
+        }
+      }
+    });
+  }
+
+  function procWoodFloor() {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      ctx.fillStyle = "#78350f"; ctx.fillRect(0, 0, w, h);
+      for (let y = 0; y < h; y += 24) {
+        ctx.strokeStyle = "rgba(40,15,5,0.6)"; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+    });
+  }
+
+  /* ===== BUILDING MATERIAL FACTORIES (fallback-safe) ===== */
+  const BM = {
+    plasterOchre: () => new THREE.MeshStandardMaterial({ map: texOrProc('plaster_ochre', procPlasterOchre, 2, 2), roughness: 0.92, metalness: 0.02 }),
+    plasterWhite: () => new THREE.MeshStandardMaterial({ map: texOrProc('plaster_white', procPlasterWhite, 2, 2), roughness: 0.9, metalness: 0.02 }),
+    sandstone: () => new THREE.MeshStandardMaterial({ map: texOrProc('sandstone_red', procSandstoneRed, 3, 2), roughness: 0.88, metalness: 0.03 }),
+    brick: () => new THREE.MeshStandardMaterial({ map: texOrProc('brick_aged', procBrickAged, 2, 2), roughness: 0.9, metalness: 0.02 }),
+    woodTeak: () => new THREE.MeshStandardMaterial({ map: texOrProc('wood_teak', procBamboo, 1, 1), roughness: 0.82, metalness: 0.04 }),
+    thatch: () => new THREE.MeshStandardMaterial({ map: texOrProc('thatch', procThatch, 2, 2), roughness: 0.95, metalness: 0 }),
+    tin: () => new THREE.MeshStandardMaterial({ map: texOrProc('tin_corrugated', procTinCorrugated, 3, 1), roughness: 0.55, metalness: 0.65 }),
+    bamboo: () => new THREE.MeshStandardMaterial({ map: texOrProc('bamboo', procBamboo, 1, 3), roughness: 0.85, metalness: 0.02 }),
+    fabricIkat: () => new THREE.MeshStandardMaterial({ map: texOrProc('fabric_ikat', procFabricIkat, 1, 1), roughness: 0.85, metalness: 0.02, side: THREE.DoubleSide }),
+    burlap: () => new THREE.MeshStandardMaterial({ map: texOrProc('fabric_burlap', procFabricBurlap, 1, 1), roughness: 0.92, metalness: 0 }),
+    concrete: () => new THREE.MeshStandardMaterial({ map: texOrProc('concrete_raw', procConcreteRaw, 2, 2), roughness: 0.9, metalness: 0.02 }),
+    asphalt: () => new THREE.MeshStandardMaterial({ map: texOrProc('asphalt_worn', procConcreteRaw, 4, 1), roughness: 0.92, metalness: 0.03 }),
+    terracottaRoof: () => new THREE.MeshStandardMaterial({ map: texOrProc('terracotta_roof', procTerracottaRoof, 4, 4), roughness: 0.85, metalness: 0.02 }),
+    sauraMural: () => new THREE.MeshStandardMaterial({ map: texOrProc('wattle_daub', procSauraMural, 1, 1), roughness: 0.95, metalness: 0 }),
+    glassCurtain: () => new THREE.MeshStandardMaterial({ map: texOrProc('glass_modern', procGlassCurtain, 2, 4), roughness: 0.1, metalness: 0.85 }),
+    floorTile: () => new THREE.MeshStandardMaterial({ map: texOrProc('floor_tiles_02', procFloorTiles, 3, 3), roughness: 0.7, metalness: 0.05 }),
+    woodFloor: () => new THREE.MeshStandardMaterial({ map: texOrProc('wood_floor_deck', procWoodFloor, 2, 2), roughness: 0.75, metalness: 0.04 })
+  };
+
+  /* ===== ODIA BANNER & SIGNAGE LIBRARY ===== */
+  function makeOdiaBanner(odiaText, engText, opts = {}) {
+    const { bg = "#B71C1C", fg = "#FFFBEB", accent = "#F59E0B", w = 512, h = 128, showBorder = true, vertical = false } = opts;
+    return makeCanvas(w, h, (ctx, cw, ch) => {
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, cw, ch);
+      if (showBorder) {
+        ctx.strokeStyle = accent; ctx.lineWidth = Math.max(4, ch * 0.06);
+        ctx.strokeRect(ctx.lineWidth / 2, ctx.lineWidth / 2, cw - ctx.lineWidth, ch - ctx.lineWidth);
+        const dotR = ch * 0.05;
+        [[ch * 0.1, ch * 0.1], [cw - ch * 0.1, ch * 0.1], [ch * 0.1, ch - ch * 0.1], [cw - ch * 0.1, ch - ch * 0.1]].forEach(([dx, dy]) => {
+          ctx.fillStyle = accent;
+          ctx.beginPath(); ctx.arc(dx, dy, dotR, 0, Math.PI * 2); ctx.fill();
+        });
+      }
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      if (vertical) {
+        ctx.save();
+        ctx.translate(cw * 0.5, ch * 0.5);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillStyle = fg;
+        ctx.font = `bold ${Math.floor(ch * 0.28)}px 'Noto Sans Oriya', sans-serif`;
+        ctx.fillText(odiaText, 0, -ch * 0.08);
+        ctx.fillStyle = accent;
+        ctx.font = `bold ${Math.floor(ch * 0.13)}px 'Cinzel', serif`;
+        ctx.fillText(engText, 0, ch * 0.18);
+        ctx.restore();
+      } else {
+        ctx.fillStyle = fg;
+        ctx.font = `bold ${Math.floor(ch * 0.32)}px 'Noto Sans Oriya', 'Plus Jakarta Sans', sans-serif`;
+        ctx.fillText(odiaText, cw * 0.5, ch * 0.38);
+        ctx.fillStyle = accent;
+        ctx.font = `bold ${Math.floor(ch * 0.16)}px 'Cinzel', 'Plus Jakarta Sans', sans-serif`;
+        ctx.fillText(engText, cw * 0.5, ch * 0.72);
+      }
+    });
+  }
+
+  function makeStreetBannerStrip(banners, opts = {}) {
+    const { bannerCount = banners.length, bannerH = 2.6, bannerW = 6.5 } = opts;
+    const g = new THREE.Group();
+    const poleMat = M("#1c1917", 0.5);
+    const totalW = bannerCount * bannerW + (bannerCount + 1) * 0.4;
+    addMesh(g, new THREE.CylinderGeometry(0.03, 0.03, totalW + 4, 6), poleMat, [0, 12, 0], [0, 0, Math.PI / 2], null, false);
+    [-totalW / 2 - 1, totalW / 2 + 1].forEach(x => {
+      addMesh(g, new THREE.CylinderGeometry(0.12, 0.15, 13, 8), poleMat, [x, 6.5, 0]);
+    });
+    banners.forEach((b, i) => {
+      const bx = -totalW / 2 + bannerW / 2 + i * (bannerW + 0.4);
+      const tex = new THREE.MeshStandardMaterial({
+        map: makeOdiaBanner(b.odia, b.eng, { bg: b.bg || "#B71C1C", fg: b.fg || "#FFFBEB", accent: b.accent || "#F59E0B" }),
+        side: THREE.DoubleSide, roughness: 0.85
+      });
+      const panel = addMesh(g, new THREE.PlaneGeometry(bannerW, bannerH), tex, [bx, 11.5, 0]);
+      panel.rotation.z = Math.sin(i * 1.7) * 0.02;
+    });
+    return g;
+  }
+
+  /* ===== 6 ODIA-STYLE BUILDINGS ===== */
+
+  // 1. Odia Shop — 2-Storey with Balcony & Commercial Signboard
+  function makeOdiaShop(wallMat, roofMat, signOdia, signEng, opts = {}) {
+    const { width = 9, depth = 8, floors = 2, balconyColor = "#7C2D12" } = opts;
+    const g = new THREE.Group();
+    const H = floors * 3.4;
+    addMesh(g, box(width, H, depth), [wallMat, wallMat, roofMat, roofMat, wallMat, wallMat], [0, H / 2, 0]);
+    addMesh(g, box(width - 0.4, 0.15, depth - 0.4), M("#8B7355", 0.9), [0, 0.08, 0]);
+    addMesh(g, new THREE.PlaneGeometry(width * 0.65, 2.4), M("#52525b", 0.7, { metalness: 0.4 }), [0, 1.3, depth / 2 + 0.06]);
+    for (let f = 1; f < floors; f++) {
+      const y = f * 3.4 + 1.7;
+      [-width * 0.3, 0, width * 0.3].forEach(x => {
+        addMesh(g, new THREE.PlaneGeometry(1.1, 1.6), M("#0f172a", 0.15, { metalness: 0.7 }), [x, y, depth / 2 + 0.06]);
+        addMesh(g, box(1.25, 1.75, 0.06), M("#4a3a28", 0.6), [x, y, depth / 2 + 0.03]);
+      });
+    }
+    addMesh(g, box(width * 0.9, 0.12, 1.2), M(balconyColor, 0.8), [0, 3.4 + 0.06, depth / 2 + 0.6]);
+    for (let bx = -width * 0.42; bx <= width * 0.42; bx += 0.4) {
+      addMesh(g, box(0.06, 0.85, 0.06), M(balconyColor, 0.8), [bx, 3.4 + 0.5, depth / 2 + 1.2]);
+    }
+    addMesh(g, box(width * 0.9, 0.08, 0.08), M(balconyColor, 0.8), [0, 3.4 + 0.92, depth / 2 + 1.2]);
+    const signTex = new THREE.MeshStandardMaterial({ map: makeOdiaBanner(signOdia, signEng, { bg: opts.bg || "#B71C1C", h: 96, w: 512 }), roughness: 0.6 });
+    addMesh(g, new THREE.PlaneGeometry(width * 0.85, 1.1), signTex, [0, 3.0, depth / 2 + 0.1], null, null, false);
+    const awnMat = new THREE.MeshStandardMaterial({ map: texOrProc('fabric_burlap', procFabricBurlap, 3, 1), roughness: 0.9, side: THREE.DoubleSide });
+    addMesh(g, box(width * 0.95, 0.1, 1.8), awnMat, [0, 2.9, depth / 2 + 0.9], [0.18, 0, 0]);
+    addMesh(g, cyl(0.7, 0.7, 1.2, 12), M("#0f172a", 0.8), [-width * 0.28, H + 0.7, -depth * 0.25]);
+    addMesh(g, box(1.0, 0.6, 0.5), M("#cbd5e1", 0.5, { metalness: 0.4 }), [width * 0.28, H + 0.35, -depth * 0.25]);
+    return { group: g, collider: { w: width, d: depth } };
+  }
+
+  // 2. Odia Cottage — Ekamra Haat Tribal Craft Hut with Saura Murals
+  function makeOdiaCottage(opts = {}) {
+    const { w = 8, d = 7, h = 3.2 } = opts;
+    const g = new THREE.Group();
+    addMesh(g, box(w, h, d), BM.sauraMural(), [0, h / 2, 0]);
+    addMesh(g, new THREE.ConeGeometry(w * 0.78, 2.6, 4), BM.thatch(), [0, h + 1.3, 0], [0, Math.PI / 4, 0]);
+    addMesh(g, new THREE.PlaneGeometry(1.6, 2.2), BM.woodTeak(), [0, 1.1, d / 2 + 0.05]);
+    [-w * 0.45, w * 0.45].forEach(x => {
+      addMesh(g, cyl(0.08, 0.08, h + 0.6, 6), BM.bamboo(), [x, (h + 0.6) / 2, d / 2 + 0.8]);
+    });
+    return { group: g, collider: { w, d } };
+  }
+
+  // 3. Old Town Brick House — Weathered Clay Tile Residential Duplex
+  function makeOldTownBrickHouse(opts = {}) {
+    const { w = 10, d = 9, h = 6.5 } = opts;
+    const g = new THREE.Group();
+    addMesh(g, box(w, h, d), BM.brick(), [0, h / 2, 0]);
+    addMesh(g, box(w + 0.8, 0.4, d + 0.8), BM.terracottaRoof(), [0, h + 0.2, 0]);
+    addMesh(g, box(3.2, 2.8, 1.8), BM.brick(), [0, 1.4, d / 2 + 0.9]);
+    addMesh(g, new THREE.PlaneGeometry(1.4, 2.2), BM.woodTeak(), [0, 1.1, d / 2 + 1.82]);
+    return { group: g, collider: { w, d } };
+  }
+
+  // 4. Colonial White Bungalow — Raj Bhavan Style Heritage Quarters
+  function makeColonialBungalow(opts = {}) {
+    const { w = 14, d = 11, h = 5.2 } = opts;
+    const g = new THREE.Group();
+    addMesh(g, box(w, h, d), BM.plasterWhite(), [0, h / 2, 0]);
+    addMesh(g, box(w + 1, 0.5, d + 1), BM.terracottaRoof(), [0, h + 0.25, 0]);
+    [-w * 0.35, -w * 0.12, w * 0.12, w * 0.35].forEach(x => {
+      addMesh(g, cyl(0.22, 0.25, 3.8, 10), BM.plasterWhite(), [x, 1.9, d / 2 + 1.2]);
+    });
+    addMesh(g, box(w * 0.8, 0.3, 2.4), BM.plasterWhite(), [0, 3.95, d / 2 + 1.2]);
+    return { group: g, collider: { w, d } };
+  }
+
+  // 5. Infocity Glass Tower — Cyber Tech Hub with Antenna Mast
+  function makeInfocityGlassTower(opts = {}) {
+    const { w = 14, d = 14, h = 26 } = opts;
+    const g = new THREE.Group();
+    addMesh(g, box(w, h, d), BM.glassCurtain(), [0, h / 2, 0]);
+    [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sz]) => {
+      addMesh(g, box(0.8, h + 0.5, 0.8), BM.concrete(), [sx * (w / 2), (h + 0.5) / 2, sz * (d / 2)]);
+    });
+    addMesh(g, cyl(0.08, 0.15, 6, 6), M("#ef4444", 0.5), [0, h + 3, 0]);
+    return { group: g, collider: { w, d } };
+  }
+
+  // 6. Temple Annex Matha — Stone Monastic Cloister with Kalasa
+  function makeTempleMatha(opts = {}) {
+    const { w = 12, d = 12, h = 5.5 } = opts;
+    const g = new THREE.Group();
+    addMesh(g, box(w, h, d), BM.sandstone(), [0, h / 2, 0]);
+    addMesh(g, box(w * 0.65, 1.8, d * 0.65), BM.sandstone(), [0, h + 0.9, 0]);
+    addMesh(g, box(w * 0.35, 1.2, d * 0.35), BM.sandstone(), [0, h + 2.4, 0]);
+    addMesh(g, cyl(0.05, 0.45, 1.2, 8), M("#f59e0b", 0.3, { metalness: 0.8 }), [0, h + 3.6, 0]);
+    return { group: g, collider: { w, d } };
+  }
+
+  /* ===== 4 ODISHA STREET STALLS ===== */
+
+  function makeChhenaPodaStall(pos, rot = 0) {
+    const g = new THREE.Group();
+    g.position.set(...pos); g.rotation.y = rot;
+    addMesh(g, box(2.6, 1.0, 1.4), BM.woodTeak(), [0, 0.5, 0]);
+    [-0.6, 0, 0.6].forEach(x => {
+      addMesh(g, cyl(0.28, 0.28, 0.18, 10), M("#451a03", 0.8), [x, 1.1, 0]);
+    });
+    const bTex = new THREE.MeshStandardMaterial({ map: makeOdiaBanner("ପହଳା ଛେନାପୋଡ଼", "PAHALA CHHENA PODA", { bg: "#78350f" }) });
+    addMesh(g, new THREE.PlaneGeometry(2.4, 0.5), bTex, [0, 1.35, 0.72]);
+    return g;
+  }
+
+  function makeHandloomSareeStall(pos, rot = 0) {
+    const g = new THREE.Group();
+    g.position.set(...pos); g.rotation.y = rot;
+    addMesh(g, box(2.8, 1.0, 1.5), BM.woodTeak(), [0, 0.5, 0]);
+    addMesh(g, box(3.0, 0.08, 1.8), BM.fabricIkat(), [0, 2.2, 0]);
+    [-1.3, 1.3].forEach(x => {
+      addMesh(g, cyl(0.05, 0.05, 2.2, 6), BM.bamboo(), [x, 1.1, 0.8]);
+      addMesh(g, cyl(0.05, 0.05, 2.2, 6), BM.bamboo(), [x, 1.1, -0.8]);
+    });
+    const bTex = new THREE.MeshStandardMaterial({ map: makeOdiaBanner("ସମ୍ବଲପୁରୀ ବସ୍ତ୍ରାଳୟ", "SAMBALPURI HANDLOOM", { bg: "#991b1b" }) });
+    addMesh(g, new THREE.PlaneGeometry(2.6, 0.5), bTex, [0, 2.4, 0.9]);
+    return g;
+  }
+
+  function makeCoconutCart(pos, rot = 0) {
+    const g = new THREE.Group();
+    g.position.set(...pos); g.rotation.y = rot;
+    addMesh(g, box(2.2, 0.8, 1.2), BM.woodTeak(), [0, 0.6, 0]);
+    [-0.9, 0.9].forEach(x => {
+      addMesh(g, cyl(0.35, 0.35, 0.08, 10), M("#1c1917", 0.8), [x, 0.35, 0.65], [Math.PI / 2, 0, 0]);
+      addMesh(g, cyl(0.35, 0.35, 0.08, 10), M("#1c1917", 0.8), [x, 0.35, -0.65], [Math.PI / 2, 0, 0]);
+    });
+    for (let i = 0; i < 12; i++) {
+      const cx = -0.6 + (i % 4) * 0.4, cz = -0.3 + Math.floor(i / 4) * 0.3;
+      addMesh(g, sphere(0.18, 8), M("#15803d", 0.7), [cx, 1.15, cz]);
+    }
+    const bTex = new THREE.MeshStandardMaterial({ map: makeOdiaBanner("ମିଠା ଡାବ ପାଣି", "TENDER COCONUT ₹30", { bg: "#166534" }) });
+    addMesh(g, new THREE.PlaneGeometry(2.0, 0.4), bTex, [0, 1.4, 0.62]);
+    return g;
+  }
+
+  function makeChaiTapri(pos, rot = 0) {
+    const g = new THREE.Group();
+    g.position.set(...pos); g.rotation.y = rot;
+    addMesh(g, box(2.4, 0.9, 1.3), BM.woodTeak(), [0, 0.45, 0]);
+    addMesh(g, box(2.8, 0.06, 1.8), BM.tin(), [0, 2.2, 0], [0.1, 0, 0]);
+    [-1.2, 1.2].forEach(x => {
+      addMesh(g, cyl(0.04, 0.04, 2.2, 6), BM.bamboo(), [x, 1.1, 0.7]);
+      addMesh(g, cyl(0.04, 0.04, 2.2, 6), BM.bamboo(), [x, 1.1, -0.7]);
+    });
+    addMesh(g, cyl(0.2, 0.25, 0.5, 10), M("#ca8a04", 0.3, { metalness: 0.8 }), [-0.5, 1.15, 0]);
+    const bTex = new THREE.MeshStandardMaterial({ map: makeOdiaBanner("ମସଲା ଚାହା", "SPECIAL SPICED CHAI", { bg: "#c2410c" }) });
+    addMesh(g, new THREE.PlaneGeometry(2.2, 0.45), bTex, [0, 2.3, 0.85]);
+    return g;
+  }
+
+  /* ===== DETAILED RAJ MAHAL FLYOVER ===== */
+  function makeFlyoverDetailed(opts = {}) {
+    const { len = 60, w = 14, h = 6.2 } = opts;
+    const g = new THREE.Group();
+    for (let z = -len / 2 + 8; z <= len / 2 - 8; z += 15) {
+      [-w * 0.3, w * 0.3].forEach(x => {
+        addMesh(g, cyl(0.9, 1.1, h, 10), BM.concrete(), [x, h / 2, z]);
+      });
+      addMesh(g, box(w * 0.85, 0.9, 2.2), BM.concrete(), [0, h - 0.45, z]);
+    }
+    addMesh(g, box(w, 0.8, len), BM.asphalt(), [0, h + 0.4, 0]);
+    [-w / 2 + 0.3, w / 2 - 0.3].forEach(x => {
+      addMesh(g, box(0.6, 1.0, len), BM.concrete(), [x, h + 1.2, 0]);
+    });
+    const gantry = new THREE.Group();
+    gantry.position.set(0, h + 1.0, 0);
+    [-w / 2, w / 2].forEach(x => {
+      addMesh(gantry, cyl(0.12, 0.12, 4.5, 6), M("#334155", 0.5), [x, 2.25, 0]);
+    });
+    addMesh(gantry, box(w + 0.5, 0.2, 0.2), M("#334155", 0.5), [0, 4.5, 0]);
+    const gTex = new THREE.MeshStandardMaterial({
+      map: makeOdiaBanner("ରାଜମହଲ ଫ୍ଲାଏଓଭର", "RAJ MAHAL FLYOVER ➔ JANPATH", { bg: "#065f46", fg: "#ecfdf5", w: 512, h: 128 }),
+      side: THREE.DoubleSide
+    });
+    addMesh(gantry, new THREE.PlaneGeometry(w * 0.75, 1.5), gTex, [0, 3.7, 0]);
+    g.add(gantry);
+    return { group: g, collider: { w, d: len } };
+  }
+
+  /* ===== ENTERABLE BUILDING INTERIOR (Old Town Rent Room) ===== */
+  function makeEnterableInterior(opts = {}) {
+    const { w = 8, d = 7, h = 3.2 } = opts;
+    const g = new THREE.Group();
+    addMesh(g, box(w, 0.1, d), BM.floorTile(), [0, 0.05, 0]);
+    addMesh(g, box(w, 0.1, d), BM.plasterWhite(), [0, h, 0]);
+    addMesh(g, box(w, h, 0.2), BM.plasterWhite(), [0, h / 2, -d / 2]);
+    addMesh(g, box(0.2, h, d), BM.plasterWhite(), [-w / 2, h / 2, 0]);
+    addMesh(g, box(0.2, h, d), BM.plasterWhite(), [w / 2, h / 2, 0]);
+    // Front wall with doorway opening
+    addMesh(g, box(w * 0.35, h, 0.2), BM.plasterWhite(), [-w * 0.32, h / 2, d / 2]);
+    addMesh(g, box(w * 0.35, h, 0.2), BM.plasterWhite(), [w * 0.32, h / 2, d / 2]);
+    addMesh(g, box(w * 0.3, h * 0.3, 0.2), BM.plasterWhite(), [0, h - (h * 0.15), d / 2]);
+
+    // Cot & Ikat sheet
+    addMesh(g, box(1.8, 0.45, 1.0), BM.woodTeak(), [-w / 2 + 1.2, 0.25, -d / 2 + 1.2]);
+    addMesh(g, box(1.7, 0.15, 0.9), BM.fabricIkat(), [-w / 2 + 1.2, 0.55, -d / 2 + 1.2]);
+
+    // Study desk & Stamp paper agreement
+    const desk = new THREE.Group();
+    desk.position.set(w / 2 - 1.5, 0, -d / 2 + 1.5);
+    addMesh(desk, box(1.6, 0.75, 0.9), BM.woodTeak(), [0, 0.38, 0]);
+    addMesh(desk, new THREE.PlaneGeometry(0.5, 0.7), M("#fef08a", 0.9), [0, 0.76, 0], [-Math.PI / 2, 0, 0]);
+    g.add(desk);
+
+    // Rotating ceiling fan
+    const fan = new THREE.Group();
+    fan.position.set(0, h - 0.4, 0);
+    addMesh(fan, cyl(0.04, 0.04, 0.4, 6), M("#1c1917", 0.5), [0, 0.2, 0]);
+    addMesh(fan, cyl(0.18, 0.18, 0.1, 10), M("#334155", 0.5), [0, 0, 0]);
+    for (let i = 0; i < 3; i++) {
+      const ang = (i * Math.PI * 2) / 3;
+      addMesh(fan, box(0.9, 0.02, 0.15), M("#334155", 0.5),
+        [Math.cos(ang) * 0.5, 0, Math.sin(ang) * 0.5], [0, -ang, 0]);
+    }
+    g.add(fan);
+
+    // Dubious submeter box on wall
+    addMesh(g, box(0.4, 0.5, 0.15), M("#94a3b8", 0.6), [-w / 2 + 0.15, 1.8, 0.5]);
+
+    return { group: g, fan, agreementDesk: desk, collider: { w, d } };
+  }
+
+  /* ===== MASTER WORLD HOOK: BUILD ODISHA EXTRAS ===== */
+  function buildOdishaExtras(scene, colliders) {
+    const extraColliders = [];
+    const addCol = (x, z, w, d, pad = 0.5) => {
+      const c = { minX: x - w / 2 - pad, maxX: x + w / 2 + pad, minZ: z - d / 2 - pad, maxZ: z + d / 2 + pad };
+      colliders.push(c);
+      extraColliders.push(c);
+    };
+
+    // 1. Odia Shop
+    const shop1 = makeOdiaShop(BM.plasterOchre(), BM.terracottaRoof(), "ଉତ୍କଳ ହ୍ୟାଣ୍ଡଲୁମ୍ ଓ ସୁଇଟ୍ସ", "UTKAL HANDLOOM & SWEETS");
+    shop1.group.position.set(52, 0, -70);
+    scene.add(shop1.group);
+    addCol(52, -70, 9, 8);
+
+    // 2. Odia Cottage
+    const cot1 = makeOdiaCottage();
+    cot1.group.position.set(-95, 0, -275);
+    scene.add(cot1.group);
+    addCol(-95, -275, 8, 7);
+
+    // 3. Old Town Brick House
+    const brk1 = makeOldTownBrickHouse();
+    brk1.group.position.set(132, 0, -310);
+    scene.add(brk1.group);
+    addCol(132, -310, 10, 9);
+
+    // 4. Colonial White Bungalow
+    const bun1 = makeColonialBungalow();
+    bun1.group.position.set(22, 0, -190);
+    scene.add(bun1.group);
+    addCol(22, -190, 14, 11);
+
+    // 5. Infocity Glass Tower
+    const tow1 = makeInfocityGlassTower();
+    tow1.group.position.set(-125, 0, -145);
+    scene.add(tow1.group);
+    addCol(-125, -145, 14, 14);
+
+    // 6. Temple Matha
+    const mat1 = makeTempleMatha();
+    mat1.group.position.set(-68, 0, -215);
+    scene.add(mat1.group);
+    addCol(-68, -215, 12, 12);
+
+    // 4 Stalls
+    const s1 = makeChhenaPodaStall([78, 0, -324], -Math.PI / 2);
+    scene.add(s1); addCol(78, -324, 2.6, 1.4);
+
+    const s2 = makeHandloomSareeStall([-75, 0, -284], 0);
+    scene.add(s2); addCol(-75, -284, 2.8, 1.5);
+
+    const s3 = makeCoconutCart([24, 0, 20], 0.3);
+    scene.add(s3); addCol(24, 20, 2.2, 1.2);
+
+    const s4 = makeChaiTapri([62, 0, -165], Math.PI / 2);
+    scene.add(s4); addCol(62, -165, 2.4, 1.3);
+
+    // Flyover
+    const fly = makeFlyoverDetailed({ len: 60, w: 14, h: 6.2 });
+    fly.group.position.set(40, 0, -270);
+    scene.add(fly.group);
+    addCol(40, -270, 14, 60);
+
+    // Enterable Interior Room in Old Town
+    const interior = makeEnterableInterior({ w: 8, d: 7, h: 3.2 });
+    interior.group.position.set(105, 0, -308.5);
+    scene.add(interior.group);
+
+    // Festive banners across road
+    const strip1 = makeStreetBannerStrip([
+      { odia: "ଶୁଭ ଦୁର୍ଗାପୂଜା", eng: "HAPPY DURGA PUJA", bg: "#991b1b" },
+      { odia: "ଜୟ ଜଗନ୍ନାଥ", eng: "JAY JAGANNATH", bg: "#b45309" },
+      { odia: "ରାଜମହଲ ଉତ୍ସବ", eng: "RAJ MAHAL FESTIVAL", bg: "#065f46" }
+    ]);
+    strip1.position.set(40, 0, -230);
+    scene.add(strip1);
+
+    return {
+      extraColliders,
+      interiorFan: interior.fan,
+      interiorDesk: interior.agreementDesk
+    };
+  }
+
   /* =========================================================================
      EXPANDED WORLD BUILDER: BHUBANESWAR OPEN WORLD
      ========================================================================= */
@@ -5362,6 +5987,8 @@ let __weave=null;
       scene.add(dish);
     });
 
+    const extras = buildOdishaExtras(scene, colliders);
+
     return {
       colliders,
       bus: bus1,
@@ -5373,7 +6000,8 @@ let __weave=null;
       caves,
       studentPG,
       policePost,
-      dahibaraCarts
+      dahibaraCarts,
+      interiorFan: extras ? extras.interiorFan : null
     };
   }
 
@@ -7820,16 +8448,16 @@ let __weave=null;
 
     const bInspect = document.createElement('button');
     bInspect.className = 'dia-opt-btn';
-    bInspect.innerHTML = '<span>🏠 ' + (state.lang === 'or' ? 'ରୁମ୍ ଦେଖାନ୍ତୁ, ଏଗ୍ରିମେଣ୍ଟ କରିବା' : 'कमरा दिखाइए, एग्रीमेंट करेंगे') + '</span>';
+    bInspect.innerHTML = '<span>🏠 ' + (state.lang === 'or' ? 'ରୁମ୍ ଦେଖାନ୍ତୁ, ଏଗ୍ରିମେଣ୍ଟ ଯାଞ୍ଚ କରିବା' : 'कमरा दिखाइए, एग्रीमेंट जांचेंगे') + '</span>';
     bInspect.onclick = () => {
       document.getElementById('dia-text').innerText = tr(LINES.broker_room);
       playVoiceLine('broker_room').then(() => {
         grp.innerHTML = '';
 
-        // Option 1: Spot Red Flag - Ask for agreement
+        // Option 1: Spot Red Flag 1 - No legal stamp paper
         const bFlag1 = document.createElement('button');
         bFlag1.className = 'dia-opt-btn';
-        bFlag1.innerHTML = '<span>🚩 ' + (state.lang === 'or' ? 'ରେଣ୍ଟ ଏଗ୍ରିମେଣ୍ଟ କେଉଁଠି? (ରେଡ୍ ଫ୍ଲାଗ୍ ୧)' : 'रेंट एग्रीमेंट कहाँ है? (रेड फ्लैग 1)') + '</span><span class="dia-tag-pill">+100 XP</span>';
+        bFlag1.innerHTML = '<span>🚩 ' + (state.lang === 'or' ? 'ରେଣ୍ଟ ଏଗ୍ରିମେଣ୍ଟ କେଉଁଠି? (ଷ୍ଟାମ୍ପ ପେପର୍ ନାହିଁ)' : 'रेंट एग्रीमेंट कहाँ है? (स्टांप पेपर नहीं)') + '</span><span class="dia-tag-pill">+100 XP</span>';
         bFlag1.onclick = () => {
           detectRedFlag('agreement');
           playVoiceLine('broker_noagree').then(() => {
@@ -7841,7 +8469,24 @@ let __weave=null;
         };
         grp.appendChild(bFlag1);
 
-        // Option 2: Fall for scam
+        // Option 2: Spot Red Flag 2 - Dubious electric sub-meter & damp walls
+        const bFlag2 = document.createElement('button');
+        bFlag2.className = 'dia-opt-btn';
+        bFlag2.innerHTML = '<span>⚡ ' + (state.lang === 'or' ? 'ସବ୍-ମିଟର ଓ ଓଦା କାନ୍ଥ ଯାଞ୍ଚ କରନ୍ତୁ' : 'सब-मीटर और सीलन वाली दीवार जांचें') + '</span><span class="dia-tag-pill">+100 XP</span>';
+        bFlag2.onclick = () => {
+          detectRedFlag('pressure');
+          sfx.flag();
+          popup('🚩 ' + (state.lang === 'or' ? 'ବେଆଇନ ସବ୍-ମିଟର ଧରାପଡ଼ିଲା! (+100 XP)' : 'अवैध सब-मीटर पकड़ा गया! (+100 XP)'));
+          playVoiceLine('broker_noagree').then(() => {
+            playVoiceLine('neighbour_warn').then(() => {
+              detectRedFlag('owner');
+              triggerPoliceSting();
+            });
+          });
+        };
+        grp.appendChild(bFlag2);
+
+        // Option 3: Fall for scam
         const bPay = document.createElement('button');
         bPay.className = 'dia-opt-btn';
         bPay.innerHTML = '<span>💸 ' + (state.lang === 'or' ? 'ନିଅନ୍ତୁ ₹୨୦୦୦ ଆଡଭାନ୍ସ (ଅନ୍ଧବିଶ୍ୱାସ)' : 'लीजिए ₹2000 एडवांस') + '</span>';
@@ -8656,6 +9301,9 @@ let __weave=null;
     }
     if (worldData && worldData.ramFlag) {
       worldData.ramFlag.rotation.y = Math.sin(Date.now() * 0.006 + 1) * 0.35;
+    }
+    if (worldData && worldData.interiorFan) {
+      worldData.interiorFan.rotation.y += 0.08;
     }
 
     // Objective waypoint marker animation
