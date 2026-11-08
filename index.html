@@ -3153,6 +3153,118 @@
   const cyl = (rt, rb, h, s = 14) => new THREE.CylinderGeometry(rt, rb, h, s);
   const sphere = (r, s = 12) => new THREE.SphereGeometry(r, s, s);
 
+  /* ============================================================
+     UNIFIED TEXTURE SYSTEM — TEX object
+     Every surface in the game routes through here.
+     Falls back to procedural canvas if the file is missing.
+     ============================================================ */
+  (function initTEX() {
+    const loader = new THREE.TextureLoader();
+    const isFile = typeof location !== 'undefined' && location.protocol === 'file:';
+    const cache = {};
+
+    function load(name, repeatX = 1, repeatY = 1) {
+      const key = name + '_' + repeatX + '_' + repeatY;
+      if (cache[key]) return cache[key];
+      if (isFile) { cache[key] = null; return null; }
+
+      const base = './textures/' + name + '/';
+      const mk = (file, colorSpace) => {
+        const t = loader.load(base + file, undefined, undefined, () => {});
+        t.wrapS = t.wrapT = THREE.RepeatWrapping;
+        t.repeat.set(repeatX, repeatY);
+        t.anisotropy = 4;
+        if (colorSpace === 'srgb' && THREE.sRGBEncoding) t.encoding = THREE.sRGBEncoding;
+        return t;
+      };
+      const set = {
+        albedo: mk('albedo.webp', 'srgb'),
+        normal: mk('normal.webp'),
+        rough:  mk('roughness.webp'),
+        ao:     mk('ao.webp')
+      };
+      cache[key] = set;
+      return set;
+    }
+
+    function mat(name, opts = {}) {
+      const {
+        rx = 1, ry = 1, color = 0xffffff, rough = 0.85, metal = 0.03,
+        side = THREE.FrontSide, transparent = false, opacity = 1
+      } = opts;
+      const maps = load(name, rx, ry);
+      if (!maps) {
+        let fallbackMap = null;
+        if (typeof texOrProc === 'function') {
+          if (name === 'asphalt') fallbackMap = texOrProc('asphalt_worn', procConcreteRaw, rx, ry);
+          else if (name === 'cream_wall') fallbackMap = texOrProc('plaster_white', procPlasterWhite, rx, ry);
+          else if (name === 'concrete') fallbackMap = texOrProc('concrete_raw', procConcreteRaw, rx, ry);
+          else if (name === 'sandstone') fallbackMap = texOrProc('sandstone_red', procSandstoneRed, rx, ry);
+          else if (name === 'glass') fallbackMap = texOrProc('glass_modern', procGlassCurtain, rx, ry);
+          else if (name === 'wood') fallbackMap = texOrProc('wood_teak', procBamboo, rx, ry);
+          else if (name === 'bamboo') fallbackMap = texOrProc('bamboo', procBamboo, rx, ry);
+          else if (name === 'terracotta') fallbackMap = texOrProc('terracotta_roof', procTerracottaRoof, rx, ry);
+          else if (name === 'fabric_red') fallbackMap = texOrProc('fabric_ikat', procFabricIkat, rx, ry);
+          else if (name === 'fabric_white') fallbackMap = texOrProc('fabric_burlap', procFabricBurlap, rx, ry);
+          else if (name === 'fabric_blue') fallbackMap = texOrProc('fabric_ikat', procFabricIkat, rx, ry);
+          else if (name === 'floor_interior') fallbackMap = texOrProc('floor_tiles_02', procFloorTiles, rx, ry);
+        }
+        const matParams = { color, roughness: rough, metalness: metal, side, transparent, opacity };
+        if (fallbackMap) matParams.map = fallbackMap;
+        return new THREE.MeshStandardMaterial(matParams);
+      }
+      const m = new THREE.MeshStandardMaterial({
+        map: maps.albedo,
+        normalMap: maps.normal,
+        roughnessMap: maps.rough,
+        aoMap: maps.ao,
+        roughness: rough, metalness: metal, color, side, transparent, opacity
+      });
+      return m;
+    }
+
+    const _g = typeof window !== 'undefined' ? window : globalThis;
+    _g.TEX = {
+      // Ground surfaces
+      asphalt:       (rx = 8, ry = 8) => mat('asphalt',      { rx, ry, rough: 0.9,  metal: 0.05 }),
+      concrete:      (rx = 2, ry = 2) => mat('concrete',     { rx, ry, rough: 0.88, metal: 0.02 }),
+      // Walls
+      cream:         (rx = 2, ry = 2) => mat('cream_wall',   { rx, ry, rough: 0.9,  metal: 0.02 }),
+      sandstone:     (rx = 2, ry = 2) => mat('sandstone',    { rx, ry, rough: 0.85, metal: 0.03 }),
+      glass:         (rx = 3, ry = 3) => mat('glass',        { rx, ry, rough: 0.15, metal: 0.75, color: 0xb0d6f0 }),
+      // Wood / organic
+      wood:          (rx = 1, ry = 1) => mat('wood',         { rx, ry, rough: 0.8,  metal: 0.02 }),
+      bamboo:        (rx = 1, ry = 3) => mat('bamboo',       { rx, ry, rough: 0.88, metal: 0.01 }),
+      terracotta:    (rx = 2, ry = 2) => mat('terracotta',   { rx, ry, rough: 0.9,  metal: 0.02 }),
+      // Fabric
+      fabricRed:     (rx = 1, ry = 1) => mat('fabric_red',   { rx, ry, rough: 0.9,  metal: 0 }),
+      fabricWhite:   (rx = 1, ry = 1) => mat('fabric_white', { rx, ry, rough: 0.9,  metal: 0 }),
+      fabricBlue:    (rx = 1, ry = 1) => mat('fabric_blue',  { rx, ry, rough: 0.9,  metal: 0 }),
+      // Interior
+      floorInterior: (rx = 4, ry = 4) => mat('floor_interior', { rx, ry, rough: 0.65, metal: 0.05 }),
+      // Plain colored (for character skin, hair, small details)
+      plain:         (color, rough = 0.85, metal = 0.02) =>
+        new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: metal })
+    };
+
+    _g.TEXTURES = {
+      road:          () => _g.TEX.asphalt(12, 12),
+      sidewalk:      () => _g.TEX.concrete(4, 1),
+      buildingWall:  () => _g.TEX.cream(3, 2),
+      buildingTrim:  () => _g.TEX.concrete(2, 1),
+      templeWall:    () => _g.TEX.sandstone(3, 2),
+      glassFacade:   () => _g.TEX.glass(4, 6),
+      cartWood:      () => _g.TEX.wood(1, 1),
+      cartCanopy:    () => _g.TEX.bamboo(2, 1),
+      stallAwning:   () => _g.TEX.fabricRed(2, 1),
+      roofTiles:     () => _g.TEX.terracotta(4, 4),
+      signCloth:     () => _g.TEX.fabricWhite(1, 1),
+      interiorFloor: () => _g.TEX.floorInterior(4, 4)
+    };
+  })();
+  var TEX = (typeof window !== 'undefined' && window.TEX) ? window.TEX : globalThis.TEX;
+  var TEXTURES = (typeof window !== 'undefined' && window.TEXTURES) ? window.TEXTURES : globalThis.TEXTURES;
+
   const mats = {
     autoGreen: M("#1f7a3c", 0.45, { metalness: 0.2 }),
     autoYellow: M("#f2c418", 0.45, { metalness: 0.15 }),
@@ -4304,134 +4416,118 @@
      ========================================================================= */
   function makeCharacterFigure(cfg = {}) {
     const g = new THREE.Group();
-    
-    const skin = M(cfg.skinColor || "#d49b78", 0.6);
-    const shirt = M(cfg.shirtColor || "#10b981", 0.75);
-    const pants = M(cfg.pantsColor || "#1e293b", 0.8);
-    const shoe = M(cfg.shoeColor || "#0f172a", 0.5);
-    const hair = M(cfg.hairColor || "#1c1917", 0.9);
-    const white = M("#ffffff", 0.3);
-    const eye = M("#1c1917", 0.1);
-    const gold = M("#eab308", 0.3, { metalness: 0.6 });
-    const gamucha = M(cfg.gamuchaColor || "#b71c1c", 0.8);
-    const khaki = M("#b45309", 0.7);
-    const brown = M("#78350f", 0.7);
+    const P = TEX.plain;
 
-    // Root Body Group (holds Torso, Neck, Head, Arms)
+    // Textures & Materials
+    const skin     = P(cfg.skinColor   || "#d49b78", 0.7);
+    const shirtTex = cfg.shirtColor === "saffron"   ? TEX.fabricRed(1, 1)
+                   : cfg.shirtColor === "white"     ? TEX.fabricWhite(1, 1)
+                   : cfg.shirtColor === "blue"      ? TEX.fabricBlue(1, 1)
+                   : P(cfg.shirtColor || "#10b981", 0.85);
+    const pantsTex = cfg.pantsColor === "khaki"     ? TEX.concrete(1, 1)
+                   : P(cfg.pantsColor || "#1e293b", 0.85);
+    const shoeTex  = P(cfg.shoeColor || "#0f172a", 0.5);
+    const hair     = P(cfg.hairColor || "#1c1917", 0.9);
+    const white    = P("#ffffff", 0.3);
+    const eye      = P("#1c1917", 0.1);
+    const gold     = P("#eab308", 0.3, 0.6);
+    const gamuchaTex = cfg.gamuchaColor === "orange" ? TEX.fabricRed(1, 2)
+                     : TEX.fabricWhite(1, 2);
+
+    // --- ROOT (holds torso, neck, head, arms) ---
     const root = new THREE.Group();
     g.add(root);
 
-    // 1. PELVIS & BELT
-    addMesh(root, box(0.50, 0.22, 0.30), pants, [0, 0.88, 0]);
+    // === PELVIS & BELT ===
+    addMesh(root, box(0.50, 0.22, 0.30), pantsTex, [0, 0.88, 0]);
     addMesh(root, box(0.52, 0.06, 0.32), hair, [0, 0.94, 0]);
     addMesh(root, box(0.10, 0.08, 0.34), gold, [0, 0.94, 0]);
 
-    // 2. CONTOURED TORSO
-    if (cfg.isUncleTummy) {
-      addMesh(root, box(0.54, 0.38, 0.40), shirt, [0, 1.15, 0.04]);
-      addMesh(root, box(0.60, 0.36, 0.36), shirt, [0, 1.40, 0]);
-    } else {
-      addMesh(root, box(0.48, 0.36, 0.30), shirt, [0, 1.15, 0]);
-      addMesh(root, box(0.58, 0.38, 0.32), shirt, [0, 1.42, 0]);
-    }
+    // === TORSO — 2 stacked boxes for natural taper ===
+    addMesh(root, box(0.48, 0.34, 0.32), shirtTex, [0, 1.12, 0.01]);
+    addMesh(root, box(0.58, 0.38, 0.32), shirtTex, [0, 1.42, 0]);
+    addMesh(root, box(0.22, 0.08, 0.34), white, [0, 1.62, 0]); // collar
+    addMesh(root, box(0.04, 0.68, 0.02), white, [0, 1.34, 0.17]); // placket
 
-    // Shirt Collar & Neckline
-    addMesh(root, box(0.22, 0.08, 0.34), white, [0, 1.62, 0]);
-
-    // Character Attire
+    // === GAMUCHA (traditional cloth) ===
     let gamuchaTail = null;
     if (cfg.hasGamucha) {
-      addMesh(root, box(0.16, 0.72, 0.36), gamucha, [-0.20, 1.34, 0]);
-      addMesh(root, box(0.16, 0.45, 0.36), gamucha, [0.06, 1.25, 0.02], [0, 0, -0.4]);
+      addMesh(root, box(0.16, 0.72, 0.36), gamuchaTex, [-0.20, 1.34, 0]);
+      addMesh(root, box(0.16, 0.45, 0.36), gamuchaTex, [0.06, 1.25, 0.02], [0, 0, -0.4]);
       gamuchaTail = new THREE.Group();
       gamuchaTail.position.set(-0.20, 1.05, -0.16);
       root.add(gamuchaTail);
-      addMesh(gamuchaTail, box(0.15, 0.35, 0.04), gamucha, [0, -0.17, 0]);
+      addMesh(gamuchaTail, box(0.15, 0.35, 0.04), gamuchaTex, [0, -0.17, 0]);
     }
+
+    // === SAREE (female NPCs) ===
     if (cfg.isSaree) {
-      addMesh(root, box(0.22, 0.85, 0.36), shirt, [-0.18, 1.35, 0]);
-      addMesh(root, box(0.24, 0.70, 0.06), shirt, [-0.18, 1.10, -0.16]);
-      addMesh(root, box(0.50, 0.45, 0.32), shirt, [0, 0.70, 0]);
+      addMesh(root, box(0.22, 0.85, 0.36), shirtTex, [-0.18, 1.35, 0]);
+      addMesh(root, box(0.24, 0.70, 0.06), shirtTex, [-0.18, 1.10, -0.16]);
+      addMesh(root, box(0.50, 0.45, 0.32), shirtTex, [0, 0.70, 0]);
     }
+
+    // === BACKPACK ===
     if (cfg.hasBackpack) {
-      const bpGroup = new THREE.Group();
-      bpGroup.position.set(0, 1.30, -0.20);
-      root.add(bpGroup);
-      addMesh(bpGroup, box(0.44, 0.56, 0.24), M(cfg.backpackColor || "#1e3a8a", 0.7), [0, 0, 0]);
-      addMesh(bpGroup, box(0.36, 0.32, 0.08), M(cfg.backpackColor || "#1e3a8a", 0.8), [0, -0.08, -0.15]);
-      addMesh(bpGroup, cyl(0.04, 0.04, 0.16, 6), hair, [0, 0.30, -0.02], [0, 0, Math.PI / 2]);
-      addMesh(bpGroup, cyl(0.05, 0.05, 0.22, 8), M("#38bdf8", 0.3), [-0.24, -0.05, 0]);
+      const bp = new THREE.Group();
+      bp.position.set(0, 1.30, -0.20);
+      root.add(bp);
+      addMesh(bp, box(0.44, 0.56, 0.24), P(cfg.backpackColor || "#1e3a8a", 0.7), [0, 0, 0]);
+      addMesh(bp, box(0.36, 0.32, 0.08), P(cfg.backpackColor || "#1e3a8a", 0.8), [0, -0.08, -0.15]);
+      addMesh(bp, cyl(0.04, 0.04, 0.16, 6), hair, [0, 0.30, -0.02], [0, 0, Math.PI / 2]);
+      addMesh(bp, cyl(0.05, 0.05, 0.22, 8), P("#38bdf8", 0.3), [-0.24, -0.05, 0]);
       addMesh(root, box(0.08, 0.50, 0.36), hair, [-0.18, 1.38, 0]);
       addMesh(root, box(0.08, 0.50, 0.36), hair, [0.18, 1.38, 0]);
-      addMesh(root, box(0.12, 0.04, 0.03), gold, [0, 1.45, 0.17]);
     }
-    if (cfg.hasJaneu) {
-      addMesh(root, cyl(0.015, 0.015, 0.75, 6), white, [0, 1.32, 0.17], [0, 0, 0.65]);
-      addMesh(root, cyl(0.02, 0.02, 0.45, 8), brown, [0, 1.45, 0.18]);
-    }
+
+    // === POLICE EPAULETTES ===
     if (cfg.hasEpaulettes) {
-      addMesh(root, box(0.18, 0.04, 0.12), khaki, [-0.25, 1.60, 0]);
-      addMesh(root, box(0.18, 0.04, 0.12), khaki, [0.25, 1.60, 0]);
-      addMesh(root, box(0.06, 0.06, 0.02), gold, [0.12, 1.48, 0.17]);
+      addMesh(root, box(0.18, 0.04, 0.12), P("#b45309", 0.7), [-0.25, 1.60, 0]);
+      addMesh(root, box(0.18, 0.04, 0.12), P("#b45309", 0.7), [0.25, 1.60, 0]);
     }
 
-    // 3. ANATOMICAL NECK & HEAD
-    addMesh(root, cyl(0.08, 0.09, 0.16, 10), skin, [0, 1.68, 0]);
+    // === NECK ===
+    addMesh(root, cyl(0.09, 0.10, 0.16, 10), skin, [0, 1.68, 0]);
 
+    // === HEAD GROUP ===
     const headGroup = new THREE.Group();
     headGroup.position.set(0, 1.88, 0);
     root.add(headGroup);
 
     addMesh(headGroup, box(0.36, 0.40, 0.34), skin, [0, 0, 0]);
-    addMesh(headGroup, box(0.28, 0.12, 0.30), skin, [0, -0.18, 0.02]);
+    addMesh(headGroup, box(0.28, 0.12, 0.30), skin, [0, -0.18, 0.02]); // jaw
 
     // Eyes
-    addMesh(headGroup, box(0.065, 0.045, 0.04), white, [-0.09, 0.04, 0.17]);
-    addMesh(headGroup, box(0.065, 0.045, 0.04), white, [0.09, 0.04, 0.17]);
-    addMesh(headGroup, box(0.032, 0.032, 0.045), eye, [-0.09, 0.04, 0.175]);
-    addMesh(headGroup, box(0.032, 0.032, 0.045), eye, [0.09, 0.04, 0.175]);
-
-    // Eyebrows
-    addMesh(headGroup, box(0.08, 0.022, 0.04), hair, [-0.09, 0.085, 0.172]);
-    addMesh(headGroup, box(0.08, 0.022, 0.04), hair, [0.09, 0.085, 0.172]);
-
-    // Nose
-    addMesh(headGroup, box(0.055, 0.09, 0.08), skin, [0, 0.0, 0.19]);
-
-    // Ears
-    addMesh(headGroup, box(0.045, 0.09, 0.07), skin, [-0.20, 0.01, 0]);
+    [-0.09, 0.09].forEach(x => {
+      addMesh(headGroup, box(0.065, 0.045, 0.04), white, [x, 0.04, 0.17]);
+      addMesh(headGroup, box(0.032, 0.032, 0.045), eye, [x, 0.04, 0.175]);
+    });
+    // Brows
+    [-0.09, 0.09].forEach(x => {
+      addMesh(headGroup, box(0.08, 0.022, 0.04), hair, [x, 0.085, 0.172]);
+    });
+    addMesh(headGroup, box(0.055, 0.09, 0.08), skin, [0, 0.0, 0.19]); // nose
+    addMesh(headGroup, box(0.045, 0.09, 0.07), skin, [-0.20, 0.01, 0]); // ears
     addMesh(headGroup, box(0.045, 0.09, 0.07), skin, [0.20, 0.01, 0]);
 
     if (cfg.hasMustache) {
       addMesh(headGroup, box(0.20, 0.045, 0.05), hair, [0, -0.075, 0.18]);
     }
 
-    // Headwear
+    // === HAIR & HEADWEAR VARIANTS ===
     if (cfg.headwear === 'police_cap') {
-      addMesh(headGroup, cyl(0.23, 0.21, 0.14, 14), khaki, [0, 0.23, -0.02]);
+      addMesh(headGroup, cyl(0.23, 0.21, 0.14, 14), P("#b45309", 0.7), [0, 0.23, -0.02]);
       addMesh(headGroup, box(0.30, 0.03, 0.15), hair, [0, 0.18, 0.15], [0.22, 0, 0]);
       addMesh(headGroup, box(0.07, 0.07, 0.03), gold, [0, 0.23, 0.17]);
     } else if (cfg.headwear === 'aunty_bun') {
       addMesh(headGroup, box(0.40, 0.22, 0.38), hair, [0, 0.15, -0.02]);
       addMesh(headGroup, sphere(0.14, 10), hair, [0, 0.06, -0.21]);
       addMesh(headGroup, cyl(0.15, 0.15, 0.04, 12), white, [0, 0.06, -0.21], [Math.PI / 2, 0, 0]);
-      addMesh(headGroup, sphere(0.028, 6), gamucha, [0, 0.075, 0.18]);
-      addMesh(headGroup, sphere(0.035, 6), gold, [-0.21, -0.05, 0]);
-      addMesh(headGroup, sphere(0.035, 6), gold, [0.21, -0.05, 0]);
     } else if (cfg.headwear === 'priest_tilak') {
       addMesh(headGroup, sphere(0.06, 8), hair, [0, 0.12, -0.19]);
       addMesh(headGroup, box(0.035, 0.11, 0.02), white, [0, 0.09, 0.18]);
-      addMesh(headGroup, sphere(0.02, 6), gamucha, [0, 0.09, 0.19]);
-    } else if (cfg.headwear === 'spectacles') {
-      addMesh(headGroup, box(0.40, 0.16, 0.36), hair, [0, 0.15, -0.04]);
-      addMesh(headGroup, box(0.09, 0.07, 0.04), gold, [-0.09, 0.04, 0.185]);
-      addMesh(headGroup, box(0.09, 0.07, 0.04), gold, [0.09, 0.04, 0.185]);
-      addMesh(headGroup, box(0.05, 0.02, 0.04), gold, [0, 0.04, 0.185]);
-    } else if (cfg.headwear === 'vendor_band') {
-      addMesh(headGroup, box(0.40, 0.18, 0.38), hair, [0, 0.14, -0.02]);
-      addMesh(headGroup, box(0.42, 0.07, 0.39), white, [0, 0.10, 0]);
+      addMesh(headGroup, sphere(0.02, 6), P("#dc2626", 0.5), [0, 0.09, 0.19]);
     } else if (cfg.headwear === 'uncle_bald') {
-      // Bald top with sidehair tufts + gold-rim glasses
       addMesh(headGroup, box(0.44, 0.12, 0.42), hair, [0, 0.09, -0.02]);
       addMesh(headGroup, box(0.08, 0.10, 0.40), hair, [-0.21, 0.04, -0.02]);
       addMesh(headGroup, box(0.08, 0.10, 0.40), hair, [0.21, 0.04, -0.02]);
@@ -4439,70 +4535,59 @@
       addMesh(headGroup, box(0.10, 0.07, 0.04), gold, [0.09, 0.04, 0.185]);
       addMesh(headGroup, box(0.05, 0.02, 0.04), gold, [0, 0.04, 0.185]);
     } else if (cfg.headwear === 'cool_shades') {
-      // Stylish swept hair + dark shades
       addMesh(headGroup, box(0.40, 0.18, 0.38), hair, [0, 0.15, -0.02]);
-      addMesh(headGroup, box(0.14, 0.09, 0.13), hair, [0.06, 0.16, 0.13], [-0.25, 0, 0]);
       addMesh(headGroup, box(0.14, 0.06, 0.03), eye, [-0.09, 0.045, 0.185]);
       addMesh(headGroup, box(0.14, 0.06, 0.03), eye, [0.09, 0.045, 0.185]);
       addMesh(headGroup, box(0.04, 0.02, 0.03), gold, [0, 0.045, 0.185]);
-    } else {
-      // Default stylish hair (fallback, used for 'stylish_hair' too)
+    } else if (cfg.headwear === 'vendor_band') {
+      addMesh(headGroup, box(0.40, 0.18, 0.38), hair, [0, 0.14, -0.02]);
+      addMesh(headGroup, box(0.42, 0.07, 0.39), white, [0, 0.10, 0]);
+    } else if (cfg.headwear === 'stylish_hair') {
       addMesh(headGroup, box(0.40, 0.20, 0.38), hair, [0, 0.17, -0.02]);
       addMesh(headGroup, box(0.36, 0.09, 0.13), hair, [0, 0.19, 0.13], [-0.3, 0, 0]);
       addMesh(headGroup, box(0.09, 0.16, 0.40), hair, [-0.18, 0.07, -0.02]);
       addMesh(headGroup, box(0.09, 0.16, 0.40), hair, [0.18, 0.07, -0.02]);
+    } else {
+      addMesh(headGroup, box(0.40, 0.20, 0.38), hair, [0, 0.17, -0.02]);
     }
 
-    // 4. ARTICULATED ARMS (Shoulder Pivots)
+    // === ARMS (shoulder pivot for natural swing) ===
     const armL = new THREE.Group();
     armL.position.set(-0.35, 1.48, 0);
     root.add(armL);
-    addMesh(armL, box(0.15, 0.20, 0.16), shirt, [0, -0.08, 0]);
-    addMesh(armL, cyl(0.06, 0.05, 0.45, 8), skin, [0, -0.36, 0]);
+    addMesh(armL, box(0.15, 0.20, 0.16), shirtTex, [0, -0.08, 0]);
+    addMesh(armL, cyl(0.06, 0.055, 0.45, 8), skin, [0, -0.36, 0]);
     addMesh(armL, box(0.075, 0.10, 0.05), skin, [0, -0.62, 0]);
-    addMesh(armL, box(0.025, 0.045, 0.035), skin, [0.035, -0.60, 0.02]);
     if (cfg.hasWatch) {
       addMesh(armL, box(0.09, 0.03, 0.09), gold, [0, -0.54, 0]);
-    }
-    if (cfg.hasClipboard) {
-      addMesh(armL, box(0.24, 0.34, 0.03), brown, [0, -0.55, 0.15], [0.6, 0, 0]);
-      addMesh(armL, box(0.20, 0.28, 0.01), white, [0, -0.55, 0.17], [0.6, 0, 0]);
     }
 
     const armR = new THREE.Group();
     armR.position.set(0.35, 1.48, 0);
     root.add(armR);
-    addMesh(armR, box(0.15, 0.20, 0.16), shirt, [0, -0.08, 0]);
-    addMesh(armR, cyl(0.06, 0.05, 0.45, 8), skin, [0, -0.36, 0]);
+    addMesh(armR, box(0.15, 0.20, 0.16), shirtTex, [0, -0.08, 0]);
+    addMesh(armR, cyl(0.06, 0.055, 0.45, 8), skin, [0, -0.36, 0]);
     addMesh(armR, box(0.075, 0.10, 0.05), skin, [0, -0.62, 0]);
-    addMesh(armR, box(0.025, 0.045, 0.035), skin, [-0.035, -0.60, 0.02]);
-    if (cfg.hasLadle) {
-      addMesh(armR, cyl(0.015, 0.015, 0.45, 6), white, [0, -0.65, 0.15], [0.8, 0, 0]);
-      addMesh(armR, sphere(0.06, 8), white, [0, -0.50, 0.30]);
-    }
-    if (cfg.hasBaton) {
-      addMesh(armR, cyl(0.02, 0.02, 0.45, 8), white, [0, -0.62, 0.15], [0.7, 0, 0]);
-      addMesh(armR, box(0.03, 0.15, 0.03), gamucha, [0, -0.50, 0.25], [0.7, 0, 0]);
-    }
 
-    // 5. ARTICULATED TWO SEPARATE LEGS (Hip Pivots)
+    // === LEGS (hip pivot for walking) ===
     const legL = new THREE.Group();
     legL.position.set(-0.15, 0.82, 0);
     g.add(legL);
-    addMesh(legL, box(0.19, 0.44, 0.22), pants, [0, -0.22, 0]);
-    addMesh(legL, box(0.17, 0.42, 0.20), pants, [0, -0.54, 0]);
-    addMesh(legL, box(0.16, 0.10, 0.26), shoe, [0, -0.74, 0.03]);
+    addMesh(legL, box(0.19, 0.44, 0.22), pantsTex, [0, -0.22, 0]);
+    addMesh(legL, box(0.17, 0.42, 0.20), pantsTex, [0, -0.54, 0]);
+    addMesh(legL, box(0.16, 0.10, 0.26), shoeTex, [0, -0.74, 0.03]);
     addMesh(legL, box(0.16, 0.03, 0.28), white, [0, -0.79, 0.03]);
 
     const legR = new THREE.Group();
     legR.position.set(0.15, 0.82, 0);
     g.add(legR);
-    addMesh(legR, box(0.19, 0.44, 0.22), pants, [0, -0.22, 0]);
-    addMesh(legR, box(0.17, 0.42, 0.20), pants, [0, -0.54, 0]);
-    addMesh(legR, box(0.16, 0.10, 0.26), shoe, [0, -0.74, 0.03]);
+    addMesh(legR, box(0.19, 0.44, 0.22), pantsTex, [0, -0.22, 0]);
+    addMesh(legR, box(0.17, 0.42, 0.20), pantsTex, [0, -0.54, 0]);
+    addMesh(legR, box(0.16, 0.10, 0.26), shoeTex, [0, -0.74, 0.03]);
     addMesh(legR, box(0.16, 0.03, 0.28), white, [0, -0.79, 0.03]);
 
     return { group: g, root, headGroup, armL, armR, legL, legR, gamuchaTail };
+  };
   }
 
   /* ===== LAYER 2: TEXTURED FIGURES (fabric weave + painted faces) ===== */
@@ -5579,6 +5664,22 @@ let __weave=null;
       extraColliders.push(c);
     };
 
+    // Contemporary Indian Urban Buildings (Tech Hub & Plaza)
+    const modernMall = makeModernBuilding('cream', { width: 14, depth: 10, floors: 3, signOdia: "ଉତ୍କଳ ମଲ୍", signEng: "UTKAL METRO MALL" });
+    modernMall.group.position.set(22, 0, -115);
+    scene.add(modernMall.group);
+    addCol(22, -115, 14, 10);
+
+    const itHub = makeModernBuilding('glass', { width: 16, depth: 12, floors: 5, signOdia: "ଇନଫୋସିଟି ଟେକ୍", signEng: "INFOCITY TECH HUB" });
+    itHub.group.position.set(-145, 0, -110);
+    scene.add(itHub.group);
+    addCol(-145, -110, 16, 12);
+
+    const residentialBlock = makeModernBuilding('brick', { width: 12, depth: 10, floors: 3, signOdia: "ସହିଦ ନଗର ଏନକ୍ଲେଭ୍", signEng: "SAHEED NAGAR ENCLAVE" });
+    residentialBlock.group.position.set(-115, 0, 55);
+    scene.add(residentialBlock.group);
+    addCol(-115, 55, 12, 10);
+
     // 1. Odia Shop
     const shop1 = makeOdiaShop(BM.plasterOchre(), BM.terracottaRoof(), "ଉତ୍କଳ ହ୍ୟାଣ୍ଡଲୁମ୍ ଓ ସୁଇଟ୍ସ", "UTKAL HANDLOOM & SWEETS");
     shop1.group.position.set(52, 0, -70);
@@ -5653,6 +5754,144 @@ let __weave=null;
       interiorFan: interior.fan,
       interiorDesk: interior.agreementDesk
     };
+  }
+
+
+  /* ============================================================
+     MODERN BUILDING GENERATOR
+     Creates contemporary Indian urban buildings (glass, brick, cream).
+     ============================================================ */
+
+  function makeModernBuilding(style, opts = {}) {
+    const {
+      width = 12, depth = 10, floors = 3, floorHeight = 3.2,
+      signOdia = "", signEng = "", entrance = true
+    } = opts;
+
+    const g = new THREE.Group();
+    const H = floors * floorHeight;
+
+    const wallMat = style === 'glass' ? TEX.glass(3, floors * 2)
+                  : style === 'brick' ? TEX.sandstone(3, 2)
+                  : TEX.cream(2, 2);
+    const trimMat = TEX.concrete(1, 1);
+
+    // Main mass
+    addMesh(g, box(width, H, depth),
+      [wallMat, wallMat, trimMat, trimMat, wallMat, wallMat],
+      [0, H / 2, 0]);
+
+    // Ground floor recessed entrance
+    if (entrance) {
+      addMesh(g, box(width * 0.4, 2.8, 0.15), trimMat, [0, 1.4, depth / 2 + 0.1]);
+      addMesh(g, box(width * 0.36, 2.6, 0.08),
+        new THREE.MeshStandardMaterial({ color: 0x1a2530, roughness: 0.2, metalness: 0.6 }),
+        [0, 1.35, depth / 2 + 0.14]);
+      addMesh(g, box(0.05, 0.4, 0.05), TEX.plain(0xd4d4d8, 0.3, 0.9), [width * 0.12, 1.1, depth / 2 + 0.18]);
+    }
+
+    // Upper-floor windows
+    for (let f = 1; f < floors; f++) {
+      const y = f * floorHeight + floorHeight / 2;
+      const cols = Math.max(2, Math.floor(width / 3));
+      for (let c = 0; c < cols; c++) {
+        const x = -width / 2 + (width / cols) * (c + 0.5);
+        addMesh(g, box(1.5, 2.0, 0.08), trimMat, [x, y, depth / 2 + 0.05]);
+        addMesh(g, box(1.35, 1.85, 0.02),
+          new THREE.MeshStandardMaterial({ color: 0x0f1a24, roughness: 0.15, metalness: 0.8 }),
+          [x, y, depth / 2 + 0.09]);
+        addMesh(g, box(1.6, 0.06, 0.4), trimMat, [x, y + 1.05, depth / 2 + 0.25]);
+      }
+    }
+
+    // Rooftop parapet
+    addMesh(g, box(width + 0.2, 0.5, depth + 0.2), trimMat, [0, H + 0.25, 0]);
+
+    // Water tank
+    addMesh(g, cyl(0.6, 0.6, 1.1, 10), TEX.plain(0x0f172a, 0.8), [-width * 0.3, H + 1.05, -depth * 0.3]);
+    // Rooftop AC unit
+    addMesh(g, box(0.8, 0.6, 0.6), TEX.plain(0xcbd5e1, 0.5, 0.4), [width * 0.3, H + 0.8, -depth * 0.3]);
+
+    // Sign board
+    if (signOdia || signEng) {
+      const signMat = new THREE.MeshStandardMaterial({
+        map: signTex(signOdia, signEng, "#B71C1C", "#FFFBEB"),
+        roughness: 0.7
+      });
+      addMesh(g, new THREE.PlaneGeometry(width * 0.8, 1.2), signMat,
+        [0, 3.0, depth / 2 + 0.12], null, null, false);
+    }
+
+    if (style === 'brick') {
+      addMesh(g, new THREE.PlaneGeometry(0.8, 3.5),
+        TEX.fabricRed(1, 4), [width / 2 + 0.02, H * 0.6, 0], [0, -Math.PI / 2, 0]);
+    }
+
+    return { group: g, width, height: H, depth, collider: { w: width, d: depth } };
+  }
+
+  /* ============================================================
+     ENTERABLE INTERIOR — real room with furniture and fan
+     ============================================================ */
+
+  function makeInteriorRoom(opts = {}) {
+    const {
+      width = 8, depth = 8, height = 3.2,
+      wallColor = null,
+      floorTex = null,
+      furniture = true
+    } = opts;
+
+    const g = new THREE.Group();
+    const wallMat = wallColor
+      ? TEX.plain(wallColor, 0.9)
+      : TEX.cream(2, 2);
+    const floorMat = floorTex ? TEX.floorInterior(4, 4) : TEX.concrete(3, 3);
+    const ceilingMat = TEX.concrete(2, 2);
+    const trimMat = TEX.wood(1, 1);
+
+    // Floor & Ceiling
+    addMesh(g, box(width, 0.12, depth), floorMat, [0, 0.06, 0]);
+    addMesh(g, box(width, 0.12, depth), ceilingMat, [0, height + 0.06, 0]);
+
+    // Back wall
+    addMesh(g, box(width, height, 0.2), wallMat, [0, height / 2, -depth / 2]);
+    // Left & right walls
+    addMesh(g, box(0.2, height, depth), wallMat, [-width / 2, height / 2, 0]);
+    addMesh(g, box(0.2, height, depth), wallMat, [width / 2, height / 2, 0]);
+
+    // Front wall with doorway
+    addMesh(g, box(width * 0.35, height, 0.2), wallMat, [-width * 0.32, height / 2, depth / 2]);
+    addMesh(g, box(width * 0.35, height, 0.2), wallMat, [width * 0.32, height / 2, depth / 2]);
+    addMesh(g, box(width * 0.3, height * 0.3, 0.2), wallMat, [0, height - (height * 0.15), depth / 2]);
+
+    let fan = null, table = null;
+
+    if (furniture) {
+      table = new THREE.Group();
+      table.position.set(width / 2 - 1.6, 0, -depth / 2 + 1.6);
+      addMesh(table, box(1.8, 0.78, 0.9), trimMat, [0, 0.39, 0]);
+      addMesh(table, new THREE.PlaneGeometry(0.5, 0.7), new THREE.MeshStandardMaterial({ color: 0xfef08a, roughness: 0.9 }), [0, 0.79, 0], [-Math.PI / 2, 0, 0]);
+      g.add(table);
+
+      addMesh(g, box(1.9, 0.45, 1.1), trimMat, [-width / 2 + 1.3, 0.23, -depth / 2 + 1.3]);
+      addMesh(g, box(1.8, 0.15, 1.0), TEX.fabricWhite(1, 1), [-width / 2 + 1.3, 0.53, -depth / 2 + 1.3]);
+
+      fan = new THREE.Group();
+      fan.position.set(0, height - 0.4, 0);
+      addMesh(fan, cyl(0.04, 0.04, 0.4, 6), TEX.plain(0x1c1917, 0.5), [0, 0.2, 0]);
+      addMesh(fan, cyl(0.18, 0.18, 0.1, 10), TEX.plain(0x334155, 0.5), [0, 0, 0]);
+      for (let i = 0; i < 3; i++) {
+        const ang = (i * Math.PI * 2) / 3;
+        addMesh(fan, box(0.9, 0.02, 0.15), TEX.plain(0x334155, 0.5),
+          [Math.cos(ang) * 0.5, 0, Math.sin(ang) * 0.5], [0, -ang, 0]);
+      }
+      g.add(fan);
+
+      addMesh(g, box(0.4, 0.5, 0.15), TEX.plain(0x94a3b8, 0.6), [-width / 2 + 0.15, 1.8, 0.5]);
+    }
+
+    return { group: g, fan, table, collider: { w: width, d: depth } };
   }
 
   /* =========================================================================
