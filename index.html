@@ -2365,19 +2365,22 @@
   }
 
   function waterTex() {
-    return makeCanvas(128, 128, (ctx, w, h) => {
-      ctx.fillStyle = "#0c4a6e";
-      ctx.fillRect(0, 0, w, h);
-      ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
-      ctx.lineWidth = 2;
-      for (let i = 0; i < 28; i++) {
-        const y = Math.random() * h;
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.bezierCurveTo(w * 0.33, y + 6, w * 0.66, y - 6, w, y);
-        ctx.stroke();
-      }
-    });
+    if (!window.__dynamicWaterTex) {
+      window.__dynamicWaterTex = makeCanvas(128, 128, (ctx, w, h) => {
+        ctx.fillStyle = "#0c4a6e";
+        ctx.fillRect(0, 0, w, h);
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.45)";
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 28; i++) {
+          const y = Math.random() * h;
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.bezierCurveTo(w * 0.33, y + 6, w * 0.66, y - 6, w, y);
+          ctx.stroke();
+        }
+      });
+    }
+    return window.__dynamicWaterTex;
   }
 
   function glassTex() {
@@ -3084,11 +3087,14 @@
     // Driver Seat Bench
     addMesh(g, box(0.62, 0.28, 0.38), M("#27150a", 0.8), [0, 0.54, 0.22]);
 
-    // Handlebar & Steering Column
-    addMesh(g, cyl(0.022, 0.022, 0.65, 8), chromeMat, [0, 0.85, 0.58], [-0.35, 0, 0]);
-    addMesh(g, cyl(0.018, 0.018, 0.58, 8), chromeMat, [0, 1.08, 0.52], [0, 0, Math.PI / 2]);
-    addMesh(g, cyl(0.028, 0.028, 0.12, 8), blackMat, [-0.24, 1.08, 0.52], [0, 0, Math.PI / 2]);
-    addMesh(g, cyl(0.028, 0.028, 0.12, 8), blackMat, [0.24, 1.08, 0.52], [0, 0, Math.PI / 2]);
+    // Handlebar & Steering Column (Steerable 4D moveable content)
+    const handleColumn = new THREE.Group();
+    handleColumn.position.set(0, 0.85, 0.58);
+    g.add(handleColumn);
+    addMesh(handleColumn, cyl(0.022, 0.022, 0.65, 8), chromeMat, [0, 0, 0], [-0.35, 0, 0]);
+    addMesh(handleColumn, cyl(0.018, 0.018, 0.58, 8), chromeMat, [0, 0.23, -0.06], [0, 0, Math.PI / 2]);
+    addMesh(handleColumn, cyl(0.028, 0.028, 0.12, 8), blackMat, [-0.24, 0.23, -0.06], [0, 0, Math.PI / 2]);
+    addMesh(handleColumn, cyl(0.028, 0.028, 0.12, 8), blackMat, [0.24, 0.23, -0.06], [0, 0, Math.PI / 2]);
 
     // Digital Fare Meter Unit on dashboard
     addMesh(g, box(0.14, 0.12, 0.08), blackMat, [0.26, 0.92, 0.60]);
@@ -3101,8 +3107,11 @@
     // Front Textured Hood Panel ("FOR HIRE", "LPG", "R2", "OD-02")
     addMesh(g, new THREE.PlaneGeometry(0.72, 0.48), hoodMat, [0, 0.65, 1.30], [-0.18, 0, 0]);
 
-    // Curved Front Mudguard hugging front wheel
-    addMesh(g, box(0.24, 0.14, 0.52), yellowMat, [0, 0.38, 1.05], [0.12, 0, 0]);
+    // 4D Steerable Front Fork & Wheel Assembly
+    const frontFork = new THREE.Group();
+    frontFork.position.set(0, 0.26, 1.05);
+    g.add(frontFork);
+    addMesh(frontFork, box(0.24, 0.14, 0.52), yellowMat, [0, 0.12, 0], [0.12, 0, 0]);
 
     // Prominent Conical Headlight
     addMesh(g, cyl(0.13, 0.08, 0.14, 14), blackMat, [0, 0.64, 1.38], [Math.PI / 2, 0, 0]);
@@ -3133,7 +3142,13 @@
     // 2-Pane Glass Windshield with Central Divider
     addMesh(g, box(1.18, 0.64, 0.03), glassMat, [0, 1.36, 0.82], [-0.22, 0, 0]);
     addMesh(g, box(0.04, 0.65, 0.04), blackMat, [0, 1.36, 0.82], [-0.22, 0, 0]);
-    addMesh(g, cyl(0.01, 0.01, 0.32, 6), blackMat, [-0.18, 1.38, 0.85], [-0.22, 0, 0.4]);
+    // 4D Animated Windshield Wiper
+    const wiper = new THREE.Group();
+    wiper.position.set(-0.18, 1.24, 0.84);
+    wiper.rotation.set(-0.22, 0, 0);
+    g.add(wiper);
+    addMesh(wiper, cyl(0.01, 0.01, 0.32, 6), blackMat, [0, 0.16, 0]);
+    addMesh(wiper, box(0.012, 0.28, 0.012), blackMat, [0.015, 0.16, 0]);
 
     // Dual Round Side Rearview Mirrors on Chrome Stalks
     [-0.66, 0.66].forEach(x => {
@@ -3157,11 +3172,11 @@
       return wg;
     }
 
-    const wf = makeAutoWheel(g, [0, 0.26, 1.05]);
+    const wf = makeAutoWheel(frontFork, [0, 0, 0]);
     const wbl = makeAutoWheel(g, [-0.64, 0.26, -0.65]);
     const wbr = makeAutoWheel(g, [0.64, 0.26, -0.65]);
 
-    return { group: g, wheels: [wf, wbl, wbr], headlight };
+    return { group: g, wheels: [wf, wbl, wbr], headlight, wiper, frontFork, handleColumn };
   }
 
   // 2. DETAILED 3D SCOOTY (HONDA ACTIVA / TVS JUPITER STYLE BIKE)
@@ -3526,9 +3541,14 @@
     addMesh(root, box(0.22, 0.08, 0.34), white, [0, 1.62, 0]);
 
     // Character Attire
+    let gamuchaTail = null;
     if (cfg.hasGamucha) {
       addMesh(root, box(0.16, 0.72, 0.36), gamucha, [-0.20, 1.34, 0]);
       addMesh(root, box(0.16, 0.45, 0.36), gamucha, [0.06, 1.25, 0.02], [0, 0, -0.4]);
+      gamuchaTail = new THREE.Group();
+      gamuchaTail.position.set(-0.20, 1.05, -0.16);
+      root.add(gamuchaTail);
+      addMesh(gamuchaTail, box(0.15, 0.35, 0.04), gamucha, [0, -0.17, 0]);
     }
     if (cfg.isSaree) {
       addMesh(root, box(0.22, 0.85, 0.36), shirt, [-0.18, 1.35, 0]);
@@ -3668,7 +3688,7 @@
     addMesh(legR, box(0.16, 0.10, 0.26), shoe, [0, -0.74, 0.03]);
     addMesh(legR, box(0.16, 0.03, 0.28), white, [0, -0.79, 0.03]);
 
-    return { group: g, root, headGroup, armL, armR, legL, legR };
+    return { group: g, root, headGroup, armL, armR, legL, legR, gamuchaTail };
   }
 
   /* ===== LAYER 2: TEXTURED FIGURES (fabric weave + painted faces) ===== */
@@ -7728,7 +7748,167 @@ T(()=>{
   else if(e.key==='Escape'&&state.screen==='game'&&!state.modalActive){pause();e.preventDefault();e.stopImmediatePropagation();}},true);
 }catch(e){console.warn('layer11',e)}})();
 
-  loadSavedState();
+
+/* ===== LAYER 12: 4D MOVEABLE CONTENT & DYNAMIC TEXTURE ENGINE ===== */
+(function(){
+  const T = f => { try { f(); } catch(e) { console.warn('layer12', e); } };
+
+  // 1. Create 4D Animated Mo Bus LED Sign Texture
+  function create4dBusLedTex() {
+    return makeCanvas(256, 64, (ctx, w, h) => {
+      ctx.fillStyle = "#09090b";
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = "#f59e0b"; // Bright Amber/Gold LED Dot Matrix
+      ctx.font = "900 24px monospace";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.fillText("🚌 MO BUS • ROUTE 10 • BARAMUNDA ➔ MASTER CANTEEN ➔ KIIT INFOCITY • ₹20", 6, h / 2);
+    });
+  }
+  window.__moBusLedTex = create4dBusLedTex();
+
+  // Apply 4D LED texture to Mo Buses across the metropolis
+  scene.traverse(o => {
+    if (o.isMesh && o.geometry && o.geometry.type === 'PlaneGeometry' && o.position.y > 2.8 && o.position.z > 5.0) {
+      o.material = new THREE.MeshBasicMaterial({ map: window.__moBusLedTex });
+    }
+  });
+
+  // 2. 4D Animated Low-Poly Auto Exhaust Smoke Particles
+  const SMOKE_COUNT = 8;
+  const smokePuffs = [];
+  const smokeGeo = new THREE.SphereGeometry(0.12, 6, 6);
+  const smokeMat = new THREE.MeshBasicMaterial({ color: "#cbd5e1", transparent: true, opacity: 0.35, depthWrite: false });
+
+  for (let i = 0; i < SMOKE_COUNT; i++) {
+    const m = new THREE.Mesh(smokeGeo, smokeMat);
+    m.visible = false;
+    scene.add(m);
+    smokePuffs.push({ mesh: m, life: 0, maxLife: 0.85 + Math.random() * 0.4, vx: 0, vy: 0.35, vz: 0 });
+  }
+
+  // 3. Find and register all Temple Flags for 4D Wind Flutter
+  const animatedFlags = [];
+  scene.traverse(o => {
+    if (o.isMesh && o.geometry && o.geometry.type === 'PlaneGeometry' && (o.material.color && (o.material.color.getHexString() === 'ea580c' || o.material.color.getHexString() === 'dc2626'))) {
+      animatedFlags.push({ mesh: o, origRotY: o.rotation.y, phase: Math.random() * 6.28 });
+    }
+  });
+
+  // 4. Find Master Canteen Fountain Water Jets
+  const fountainJets = [];
+  scene.traverse(o => {
+    if (o.isMesh && o.geometry && o.geometry.type === 'CylinderGeometry' && o.position.y > 1.2 && o.position.y < 4.0 && Math.hypot(o.position.x - 40, o.position.z + 329) < 15) {
+      fountainJets.push({ mesh: o, baseY: o.scale.y, phase: Math.random() * 6.28 });
+    }
+  });
+
+  // 5. Connect 4D Kinematics and Moveable Parts to Master Render Loop
+  let animTime = 0;
+  let smokeTimer = 0;
+  let smokeIdx = 0;
+  const _prevTick = window.__tick;
+
+  window.__tick = dt => {
+    if (_prevTick) _prevTick(dt);
+    animTime += dt;
+
+    // A. 4D UV Texture Flows (Mo Bus LED + Water Ripples)
+    if (window.__moBusLedTex) {
+      window.__moBusLedTex.offset.x -= dt * 0.16;
+    }
+    if (window.__dynamicWaterTex) {
+      window.__dynamicWaterTex.offset.x = (animTime * 0.035) % 1.0;
+      window.__dynamicWaterTex.offset.y = (animTime * 0.055) % 1.0;
+    }
+
+    // B. 4D Moveable Temple Saffron Pataka Flags (Fluttering Cloth Waves)
+    animatedFlags.forEach((f, i) => {
+      f.mesh.rotation.y = f.origRotY + Math.sin(animTime * 4.8 + f.phase) * 0.32 + Math.sin(animTime * 8.4 + f.phase * 2) * 0.10;
+      f.mesh.rotation.z = Math.cos(animTime * 3.6 + f.phase) * 0.14;
+    });
+
+    // C. 4D Master Canteen Fountain Water Jets (Pulsing Water Columns)
+    fountainJets.forEach(j => {
+      j.mesh.scale.y = j.baseY * (0.85 + Math.sin(animTime * 3.8 + j.phase) * 0.35);
+    });
+
+    // D. 4D Vehicle Moveable Parts (Steering Turn, Body Lean, Wiper & Exhaust)
+    if (state.screen === 'game') {
+      const isSteerL = !!(keys['a'] || keys['arrowleft']);
+      const isSteerR = !!(keys['d'] || keys['arrowright']);
+      const steerVal = (isSteerL ? 1 : 0) - (isSteerR ? 1 : 0);
+
+      // 1. Auto-Rickshaw Moveable Content
+      if (playerAuto) {
+        // Front Fork Steering Turn
+        if (playerAuto.frontFork) {
+          playerAuto.frontFork.rotation.y = THREE.MathUtils.lerp(playerAuto.frontFork.rotation.y, steerVal * 0.45, 0.22);
+        }
+        if (playerAuto.handleColumn) {
+          playerAuto.handleColumn.rotation.y = THREE.MathUtils.lerp(playerAuto.handleColumn.rotation.y, steerVal * 0.45, 0.22);
+        }
+        // Windshield Wiper Motion
+        if (playerAuto.wiper) {
+          const isWiperActive = state.weather === 'rain' || state.mode === 'drive';
+          playerAuto.wiper.rotation.z = isWiperActive ? Math.sin(animTime * 6.5) * 0.52 : 0;
+        }
+        // Dynamic Cornering Lean
+        if (state.mode === 'drive') {
+          playerAuto.group.rotation.z = THREE.MathUtils.lerp(playerAuto.group.rotation.z, -steerVal * (playerSpeed >= 0 ? 1 : -1) * 0.12, 0.18);
+        }
+
+        // Auto Exhaust Smoke Emission (4D particle puffs)
+        if (state.mode === 'drive' && Math.abs(playerSpeed) > 0.05) {
+          smokeTimer += dt;
+          if (smokeTimer > 0.08) {
+            smokeTimer = 0;
+            const p = smokePuffs[smokeIdx];
+            smokeIdx = (smokeIdx + 1) % SMOKE_COUNT;
+            p.life = p.maxLife;
+            const tailOffset = new THREE.Vector3(-0.45, 0.22, -1.25).applyEuler(playerAuto.group.rotation);
+            p.mesh.position.copy(playerAuto.group.position).add(tailOffset);
+            p.mesh.scale.setScalar(0.4);
+            p.mesh.visible = true;
+          }
+        }
+      }
+
+      // Update Smoke Particles
+      smokePuffs.forEach(p => {
+        if (p.life > 0) {
+          p.life -= dt;
+          p.mesh.position.y += p.vy * dt;
+          p.mesh.position.x += (Math.random() - 0.5) * dt * 0.2;
+          const prog = 1.0 - (p.life / p.maxLife);
+          p.mesh.scale.setScalar(0.4 + prog * 1.4);
+          p.mesh.material.opacity = (1.0 - prog) * 0.35;
+          if (p.life <= 0) p.mesh.visible = false;
+        }
+      });
+
+      // 2. Scooty Moveable Content
+      if (playerScooty) {
+        if (playerScooty.handleGroup) {
+          playerScooty.handleGroup.rotation.y = THREE.MathUtils.lerp(playerScooty.handleGroup.rotation.y, steerVal * 0.42, 0.22);
+        }
+        if (state.mode === 'scooty') {
+          playerScooty.group.rotation.z = THREE.MathUtils.lerp(playerScooty.group.rotation.z, -steerVal * (playerSpeed >= 0 ? 1 : -1) * 0.26, 0.20);
+        }
+      }
+
+      // 3. Babu's Trailing Saffron Gamucha Flap
+      if (babuData && babuData.gamuchaTail) {
+        const isMoving = keys['w'] || keys['s'] || keys['arrowup'] || keys['arrowdown'];
+        const spd = state.mode === 'walk' ? (isMoving ? 0.2 : 0) : Math.abs(playerSpeed);
+        babuData.gamuchaTail.rotation.x = -spd * 1.4 + Math.sin(animTime * 6) * 0.16;
+        babuData.gamuchaTail.rotation.z = Math.sin(animTime * 5) * 0.18;
+      }
+    }
+  };
+})();
+
+    loadSavedState();
   checkSavedGame();
   updateHudLabels();
   setTimeout(() => {
