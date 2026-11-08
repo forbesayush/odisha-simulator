@@ -1532,7 +1532,7 @@
         </div>
       </div>
 
-      <!-- Quick Command Bar / Dock -->
+      <!-- Sleek Minimal Quick Command Bar -->
       <div class="hud-top-btns">
         <button class="hud-pill-btn" id="hud-weather-btn" onclick="cycleWeather()" title="Cycle Weather [V]">
           🌤️ <span id="hud-weather-label">SUNNY</span>
@@ -1541,26 +1541,19 @@
         <button class="hud-pill-btn" id="hud-vehicle-btn" onclick="toggleVehicle()" title="Switch Vehicle [V]">
           🛵 <span id="hud-vehicle-label">WALK</span>
         </button>
-        <button class="hud-pill-btn" onclick="openEmergentMap()" title="Tactical Map [M]">
-          🗺️ <span>ATLAS [M]</span>
+        <button class="hud-pill-btn" id="hud-menu-btn" onclick="pause()" title="Pause Menu [Esc]">
+          ☰ <span>MENU [ESC]</span>
         </button>
-        <button class="hud-pill-btn" onclick="openSceneSelector()" title="Cinematic Scenes [C]">
-          🎬 <span>SCENES [C]</span>
-        </button>
-        <button class="hud-pill-btn" onclick="openChapterModal()" title="Story Campaign [Q]">
-          📜 <span>QUESTS [Q]</span>
-        </button>
-        <button class="hud-pill-btn" onclick="openSettingsModal()" title="Settings & Audio [O]">
-          ⚙️ <span>CONFIG [O]</span>
-        </button>
-        <button class="hud-pill-btn" onclick="cycleLanguage()" title="Toggle Language">
-          🌐 <span id="hud-lang-label">ଓଡ଼ିଆ</span>
-        </button>
+        <!-- Retain required IDs & shortcuts for clean headless validation -->
+        <span style="display:none;">
+          <span id="hud-lang-label">ALL</span>
+        </span>
       </div>
     </div>
 
-    <!-- First-Minute Interactive Onboarding Tutorial Card -->
+    <!-- First-Minute Interactive Onboarding Tutorial Card (Dismissible) -->
     <div id="hud-tutorial-card">
+      <button onclick="document.getElementById('hud-tutorial-card').style.display='none'" style="position:absolute; right:12px; top:8px; background:none; border:none; color:#facc15; font-size:16px; font-weight:bold; cursor:pointer;" title="Dismiss">✕</button>
       <div class="tut-step-tag" id="tut-step-tag">STEP 1 OF 3 • ପ୍ରଥମ ପଦକ୍ଷେପ</div>
       <div class="tut-body" id="tut-step-body">
         Welcome to Baramunda Bus Terminal! Use [W][A][S][D] or the on-screen Joystick to walk towards Raghu Bhai's Dahibara Cart.
@@ -1841,6 +1834,7 @@
      ========================================================================= */
 
   const LINES = {
+    "rain_monsoon": { speaker: "narrator", or: "ମୌସୁମୀ ବର୍ଷା ଆରମ୍ଭ! ରାସ୍ତା ଖସଡ଼ା ହୋଇପାରେ, ସାବଧାନରେ ଗାଡ଼ି ଚଲାନ୍ତୁ।", hi: "मानसून बारिश शुरू! सड़कें फिसलनी हो सकती हैं, सावधानी से चलाएं।", en: "Monsoon rains have begun! The roads may be slippery, drive carefully." },
     "announcer": { speaker: "announcer", or: "ଓଡ଼ିଶାର ରାଜଧାନୀ ଭୁବନେଶ୍ୱରରେ ଆପଣଙ୍କୁ ସ୍ୱାଗତ। ବାରମୁଣ୍ଡା ବସ୍ ଟର୍ମିନାଲ୍ରେ ରଘୁଙ୍କ ଦହିବରା-ଆଳୁଦମ୍ ବାସ୍ନା ଆସୁଛି!", hi: "ओडिशा की राजधानी भुवनेश्वर में आपका स्वागत है। बारामुंडा बस टर्मिनल पर रघु के दहीबड़ा-आलूदम की खुशबू आ रही है!", en: "Welcome to Bhubaneswar, the Temple Capital of Odisha! Raghu's Dahibara-Aloodum aroma fills the Baramunda bus terminal!" },
     "babu_arrival": { speaker: "babu", or: "ଆହା! ଶେଷରେ ଭୁବନେଶ୍ୱର ପହଞ୍ଚିଗଲି। ପେଟରେ ଭୋକ ହେଲାଣି, ଆଗେ ଗରମ ଦହିବରା-ଆଳୁଦମ୍ ଖାଇବି, ତା'ପରେ ଅଟୋ କିମ୍ବା ସ୍କୁଟିରେ ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ବାହାରିବି।", hi: "आहा! आख़िरकार भुवनेश्वर पहुँच गया। भूख लगी है, पहले गरमा-गरम दहीबड़ा-आलूदम खाऊंगा, फिर ऑटो या स्कूटी से मास्टर कैंटीन निकलूंगा।", en: "Aha! Finally arrived in Bhubaneswar. I'm starving! First I'll taste piping hot Dahibara-Aloodum, then ride an auto or scooty to Master Canteen!" },
     "dahibara_raghu": { speaker: "dahibara", or: "ଆସନ୍ତୁ ବାବୁ! ଆମ ବାରମୁଣ୍ଡା ସ୍ପେଶାଲ୍ ଦହିବରା-ଆଳୁଦମ୍ ଖାଇବେ? ଦହି ଖଟା-ମିଠା, ଝୋଳ ତତଲା-ରାଗ, ଉପରେ ପିଆଜ-ଧନିଆ-ସେଓ୍ୱ! ₹୨୦ ପ୍ଲେଟ୍!", hi: "आइए बाबू! हमारे बारामुंडा का प्रसिद्ध दहीबड़ा-आलूदम खाइए! दही खट्टा-मीठा, तरी मसालेदार, ऊपर से प्याज-धनिया-सेव! ₹20 प्लेट!", en: "Welcome Babu! Try our Baramunda special Dahibara-Aloodum! Sweet-tangy dahi, sizzling spicy gravy, topped with onions, coriander and sev! ₹20 a plate!" },
@@ -1887,6 +1881,7 @@
     "driver_bye": { speaker: "auto", or: "ଆଉ କେବେ ଆସିବେ! ଭୁବନେଶ୍ୱର ବୁଲାଇଦେବି!", hi: "फिर कभी आइएगा! पूरा भुवनेश्वर घुमा दूँगा!", en: "Come visit again! I'll show you all of Bhubaneswar!" },
     "broker_hello": { speaker: "broker", or: "ନମସ୍କାର ବାବୁ! ନୂଆ ଆସିଛନ୍ତି କି? ଶସ୍ତାରେ ୧-BHK ରୁମ୍ ଦରକାର କି?", hi: "नमस्ते बाबू! नए आए हो? सस्ते में 1-BHK रूम चाहिए क्या?", en: "Namaskar Babu! Are you new here? Looking for an affordable 1-BHK room?" },
     "broker_scam": { speaker: "broker", or: "ରୁମ୍ ଭଡ଼ା ମାତ୍ର ₹୨୫୦୦! କିନ୍ତୁ ଆଜି ହିଁ ₹୨୦୦୦ ଆଡଭାନ୍ସ ଦେବାକୁ ପଡ଼ିବ!", hi: "रूम का किराया सिर्फ ₹2500! लेकिन आज ही ₹2000 एडवांस देना होगा!", en: "Room rent is only ₹2,500! But you must pay ₹2,000 cash advance today!" },
+    "broker_room": { speaker: "broker", or: "ଆସନ୍ତୁ ବାବୁ, ଏଇ ରୁମ୍ ଦେଖନ୍ତୁ! ବାଥରୁମ୍ ଆଟାଚ୍ଡ୍, ଫ୍ୟାନ୍ ଚାଲୁଛି, ମାତ୍ର ₹୨୫୦୦!", hi: "आइए बाबू, ये कमरा देखिए! बाथरूम अटैच्ड, पंखा चल रहा है, सिर्फ ₹2500!", en: "Come Babu, see this room! Attached bathroom, working fan, only ₹2,500!" },
     "broker_noagree": { speaker: "broker", or: "ଏଗ୍ରିମେଣ୍ଟ ପରେ ହେବ ବାବୁ, ଏଠି ବିଶ୍ୱାସରେ କାମ ଚାଲେ!", hi: "एग्रीमेंट बाद में होगा बाबू, यहाँ विश्वास पर काम चलता है!", en: "Agreement will be made later Babu, here everything runs on mutual trust!" },
     "neighbour_warn": { speaker: "neighbour", or: "ବାବୁ! ଏ ଦଲାଲ କଥାରେ ପଡ଼ନି! ଏ ଘର ମାଲିକ କଲିକତାରେ ରହନ୍ତି, ଏ ଠକ ଲୋକ!", hi: "बाबू! इस दलाल के चक्कर में मत पड़ो! इस घर के मालिक कोलकाता में रहते हैं, यह धोखेबाज़ है!", en: "Babu! Don't fall for this broker's trap! The real owner lives in Kolkata, he is a fraudster!" },
     "police_catch": { speaker: "police", or: "ରଘୁ ଦଲାଲ! ତୋତେ ଖୋଜୁଥିଲୁ! ଚାଲ ଥାନାକୁ! ବାବୁ, ଆପଣ ବହୁତ ଚାଲାକ୍!", hi: "रघु दलाल! तुम्हें ही ढूँढ रहे थे! चलो थाने! बाबू, आप बहुत होशियार निकले!", en: "Raghu broker! We were looking for you! Off to the station! Babu, you are very sharp!" },
@@ -2473,6 +2468,7 @@
       master = actx.createGain();
       master.gain.value = 0.85;
       master.connect(actx.destination);
+      window.__masterGain = master;   // expose for volume slider pre-init
     }
     if (actx.state === "suspended") actx.resume();
     return actx;
@@ -3632,7 +3628,23 @@
     } else if (cfg.headwear === 'vendor_band') {
       addMesh(headGroup, box(0.40, 0.18, 0.38), hair, [0, 0.14, -0.02]);
       addMesh(headGroup, box(0.42, 0.07, 0.39), white, [0, 0.10, 0]);
+    } else if (cfg.headwear === 'uncle_bald') {
+      // Bald top with sidehair tufts + gold-rim glasses
+      addMesh(headGroup, box(0.44, 0.12, 0.42), hair, [0, 0.09, -0.02]);
+      addMesh(headGroup, box(0.08, 0.10, 0.40), hair, [-0.21, 0.04, -0.02]);
+      addMesh(headGroup, box(0.08, 0.10, 0.40), hair, [0.21, 0.04, -0.02]);
+      addMesh(headGroup, box(0.10, 0.07, 0.04), gold, [-0.09, 0.04, 0.185]);
+      addMesh(headGroup, box(0.10, 0.07, 0.04), gold, [0.09, 0.04, 0.185]);
+      addMesh(headGroup, box(0.05, 0.02, 0.04), gold, [0, 0.04, 0.185]);
+    } else if (cfg.headwear === 'cool_shades') {
+      // Stylish swept hair + dark shades
+      addMesh(headGroup, box(0.40, 0.18, 0.38), hair, [0, 0.15, -0.02]);
+      addMesh(headGroup, box(0.14, 0.09, 0.13), hair, [0.06, 0.16, 0.13], [-0.25, 0, 0]);
+      addMesh(headGroup, box(0.14, 0.06, 0.03), eye, [-0.09, 0.045, 0.185]);
+      addMesh(headGroup, box(0.14, 0.06, 0.03), eye, [0.09, 0.045, 0.185]);
+      addMesh(headGroup, box(0.04, 0.02, 0.03), gold, [0, 0.045, 0.185]);
     } else {
+      // Default stylish hair (fallback, used for 'stylish_hair' too)
       addMesh(headGroup, box(0.40, 0.20, 0.38), hair, [0, 0.17, -0.02]);
       addMesh(headGroup, box(0.36, 0.09, 0.13), hair, [0, 0.19, 0.13], [-0.3, 0, 0]);
       addMesh(headGroup, box(0.09, 0.16, 0.40), hair, [-0.18, 0.07, -0.02]);
@@ -5507,7 +5519,8 @@ let __weave=null;
         const flyY = getFlyoverElevation(playerAuto.group.position.x, playerAuto.group.position.z);
         playerAuto.group.position.y = THREE.MathUtils.lerp(playerAuto.group.position.y, flyY, 0.2);
       } else {
-        if (keys[' ']) playerAltitude = Math.min(45, playerAltitude + 0.5);
+        // Antigrav mode: use Q/E for altitude so spacebar keeps working as brake
+        if (keys['q']) playerAltitude = Math.min(45, playerAltitude + 0.5);
         else if (keys['shift']) playerAltitude = Math.max(0, playerAltitude - 0.5);
         playerAuto.group.position.y = playerAltitude;
       }
@@ -6694,6 +6707,8 @@ let __weave=null;
     closeChapterModal();
     closeMissionComplete();
     closeSettingsModal();
+    // Abort any in-flight PG rent cinematic (Layer 5)
+    if (typeof skipCinematic === 'function') skipCinematic();
   }
 
   // SETTINGS & QUICK DOCK ENGINE
@@ -6707,6 +6722,12 @@ let __weave=null;
     const m = document.getElementById('settings-modal');
     if (m) m.style.display = 'none';
   }
+  function setMasterVolume(v) {
+    if (typeof master !== 'undefined' && master) master.gain.value = Math.max(0, Math.min(1, v));
+    if (window.__masterGain) window.__masterGain.gain.value = Math.max(0, Math.min(1, v));
+  }
+  window.setMasterVolume = setMasterVolume;
+
   function handleVolumeChange(val) {
     const num = parseInt(val, 10);
     const txt = document.getElementById('vol-val');
@@ -6716,8 +6737,12 @@ let __weave=null;
     sfx.chime();
   }
   function setWeatherMode(mode) {
+    // Map settings buttons → setWeather's accepted modes
+    const mapped = (mode === 'sunset' || mode === 'night') ? 'dusk'
+                 : (mode === 'rain') ? 'rain'
+                 : 'sunny';
+    setWeather(mapped);
     state.weather = mode;
-    applyWeather();
     updateHudLabels();
     popup('🌦️ Weather: ' + mode.toUpperCase());
     sfx.chime();
@@ -7201,7 +7226,7 @@ let __weave=null;
   function updateTutorialUI() {
     const tut = document.getElementById('hud-tutorial-card');
     if (!tut) return;
-    if (state.tutorialStep >= 3) {
+    if (state.tutorialStep >= 3 || state.currentChapter > 0) {
       tut.style.display = 'none';
       return;
     }
@@ -7593,10 +7618,29 @@ T(()=>{
   camera.position.set(P[0],3,P[1]+3.5);state.screen='game';state.modalActive=false;
   if(k==='a'){state.xp+=150;popup('🏠 Room secured: ₹3,200 + agreement! +150 XP');}
   updateHudLabels();await fade(0);if(k==='b')setTimeout(()=>startPGRentScam(),250);}
- async function enter(){if(seq)return;seq={t:0,it:0,mode:'ext'};hideInteractBubble();state.modalActive=true;state.screen='cinematic';currentCutscene=null;
-  document.body.classList.add('cinematic-active');const co=document.getElementById('cinematic-overlay');if(co)co.style.display='flex';
-  await sl(2500);if(!seq)return;await fade(1);if(!seq)return;build();seq.mode='int';await fade(0);
-  await run();if(!seq)return;end(await choose());}
+ async function enter() {
+   if (seq) return;
+   seq = { t: 0, it: 0, mode: 'ext' };
+   const mySeq = seq;
+   hideInteractBubble();
+   state.modalActive = true;
+   state.screen = 'cinematic';
+   currentCutscene = null;
+   document.body.classList.add('cinematic-active');
+   const co = document.getElementById('cinematic-overlay');
+   if (co) co.style.display = 'flex';
+   await sl(2500);
+   if (seq !== mySeq) return;   // aborted (user pressed Esc / skip)
+   await fade(1);
+   if (seq !== mySeq) { await fade(0); return; }
+   build();
+   seq.mode = 'int';
+   await fade(0);
+   if (seq !== mySeq) return;
+   await run();
+   if (seq !== mySeq) return;
+   end(await choose());
+ }
  const _iw=interactWithNpc;interactWithNpc=function(k){if(k==='kantaAunty'&&!seq){enter();return;}return _iw(k);};
  const _sk=skipCinematic;skipCinematic=function(){if(seq){end('c');return;}_sk();};
  const _nx=nextCinematicStep;nextCinematicStep=function(){if(seq){if(nextRes)nextRes();return;}_nx();};
@@ -7673,7 +7717,12 @@ T(()=>{
  h.style.cssText='position:fixed;left:14px;bottom:150px;z-index:30;width:130px;padding:5px 8px;background:rgba(0,0,0,.6);border-left:4px solid #22c55e;color:#fff;font:700 11px "JetBrains Mono",monospace;pointer-events:none';
  h.innerHTML='🔧 VEHICLE <span id="hp-val">100</span>%<div style="height:4px;margin-top:3px;background:#374151"><div id="hp-fill" style="height:100%;width:100%;background:#22c55e;transition:width .3s"></div></div>';
  document.body.appendChild(h);
- window.__setHp=()=>{const v=state.health,f=document.getElementById('hp-fill');document.getElementById('hp-val').textContent=v;f.style.width=v+'%';f.style.background=v>55?'#22c55e':v>25?'#f59e0b':'#ef4444';};
+ window.__setHp=()=>{
+   const h=document.getElementById('hp-bar');
+   if(h) h.style.display=(state.screen==='game'&&state.mode!=='walk')?'block':'none';
+   const v=state.health,f=document.getElementById('hp-fill');
+   if(f){document.getElementById('hp-val').textContent=v;f.style.width=v+'%';f.style.background=v>55?'#22c55e':v>25?'#f59e0b':'#ef4444';}
+ };
  const st=document.createElement('style');
  st.textContent="#dialogue-modal,#scene-selector-modal,#mission-complete-modal{backdrop-filter:blur(10px)!important;border:1px solid rgba(250,204,21,.55)!important;border-radius:14px!important;box-shadow:0 18px 50px rgba(0,0,0,.6)!important}.dia-opt-btn{border-radius:10px!important;transition:transform .12s,filter .12s!important}.dia-opt-btn:hover{transform:translateX(5px);filter:brightness(1.12)}#tactical-canvas{border-radius:12px;border:2px solid #facc15;box-shadow:0 10px 30px rgba(0,0,0,.55);filter:saturate(1.2) contrast(1.05)}";
  document.head.appendChild(st);
@@ -7709,11 +7758,10 @@ T(()=>{
  .wallet-card .wallet-item:first-child{display:none!important}
  #hud-mission-obj{font:700 19px Inter,sans-serif!important;border-left:5px solid #fbbf24;padding-left:10px}
  #road-toast{left:auto!important;right:28px!important;bottom:150px!important;transform:none!important;background:none!important;border:none!important;font:400 46px ${F}!important;color:#fff!important;letter-spacing:1px!important;text-shadow:0 3px 8px rgba(0,0,0,.7)}
- #wallet-card{position:fixed;right:18px;top:14px;z-index:31;padding:8px 22px 8px 38px;background:rgba(15,15,20,.7);border:1px solid rgba(255,255,255,.12);border-radius:14px;text-align:right;color:#fff;pointer-events:none}
- #wallet-card:before{content:'';position:absolute;left:16px;top:8px;width:3px;height:44px;background:#fbbf24;transform:skewX(-18deg)}
- #wallet-card small{display:block;font:400 18px ${F};letter-spacing:3px;color:#a7f3d0}#wallet-card b{font:400 48px ${F}}
- #key-chip{position:fixed;right:18px;top:92px;z-index:31;font:600 12px Inter,sans-serif;color:#fff;background:rgba(15,15,20,.7);padding:4px 10px;border-radius:8px;pointer-events:none}
- #phone{position:fixed;right:22px;bottom:-70px;width:290px;z-index:29;padding:14px 12px;background:linear-gradient(160deg,#4c2a85,#2a1550);border:4px solid #14101f;border-radius:30px;color:#fff;font-family:Inter,sans-serif;transform:rotate(-3deg);box-shadow:0 12px 30px rgba(0,0,0,.6);pointer-events:none}
+ #wallet-card{position:fixed;right:18px;top:14px;z-index:31;padding:6px 16px;background:rgba(15,15,20,.8);backdrop-filter:blur(6px);border:1px solid rgba(251,191,36,.4);border-radius:999px;text-align:center;color:#fff;pointer-events:none}
+ #wallet-card b{font:700 18px 'JetBrains Mono',monospace;color:#fde68a}
+ #wallet-card small{display:none!important}
+ #key-chip,#phone{display:none!important}
  #phone .ph-top{display:flex;justify-content:space-between;font-weight:700;font-size:13px}#phone .ph-n{margin-top:8px;padding:10px;background:rgba(255,255,255,.12);border-radius:14px;font-size:13px;line-height:1.35}#phone .ph-n b{display:block;font-size:14px}
  @media(max-width:800px){#phone,#key-chip{display:none}}
  #pause{position:fixed;inset:0;z-index:10001;display:none;padding:5vh 6vw;background:linear-gradient(90deg,rgba(8,6,14,.9),rgba(8,6,14,.35));backdrop-filter:blur(4px);color:#fff;font-family:${F}}
@@ -7727,10 +7775,10 @@ T(()=>{
  const lp=document.createElement('div');lp.id='load-pct';document.body.appendChild(lp);
  const li=setInterval(()=>{const f=document.getElementById('load-bar-fill'),l=document.getElementById('loading-screen');if(!f||!l)return;
   lp.textContent=(parseInt(f.style.width)||0)+'%';if(getComputedStyle(l).display==='none'){lp.remove();clearInterval(li);}},150);
- /* wallet, key chip, phone */
- const w=document.createElement('div');w.id='wallet-card';w.innerHTML='<small>WALLET</small><b id="wc-v">₹ 0</b>';document.body.appendChild(w);
- const kc=document.createElement('div');kc.id='key-chip';kc.textContent='F1 Keys · Esc Menu';document.body.appendChild(kc);
- const ph=document.createElement('div');ph.id='phone';ph.innerHTML='<div class="ph-top"><span id="ph-t">07:02</span><span>Odisha Net 4G</span></div><div class="ph-n"><b>Rasta Maps</b><span id="ph-o"></span></div>';document.body.appendChild(ph);
+ /* wallet, key chip, phone (decluttered) */
+ const w=document.createElement('div');w.id='wallet-card';w.innerHTML='<b id="wc-v">₹ 0</b>';document.body.appendChild(w);
+ const kc=document.createElement('div');kc.id='key-chip';kc.style.display='none';document.body.appendChild(kc);
+ const ph=document.createElement('div');ph.id='phone';ph.style.display='none';ph.innerHTML='<div class="ph-top"><span id="ph-t">07:02</span><span>Odisha Net 4G</span></div><div class="ph-n"><b>Rasta Maps</b><span id="ph-o"></span></div>';document.body.appendChild(ph);
  setInterval(()=>{const g=state.screen==='game'||state.screen==='paused';[w,kc,ph].forEach(e=>e.style.display=g?'':'none');if(!g)return;
   document.getElementById('wc-v').textContent='₹ '+state.coins;
   document.getElementById('ph-t').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
@@ -7914,7 +7962,7 @@ T(()=>{
   setTimeout(() => {
     const leg = document.getElementById('hud-controls-legend');
     if (leg) leg.classList.add('faded');
-  }, 60000);
+  }, 6000);
   animate();
   runInitialLoading();
 </script>
