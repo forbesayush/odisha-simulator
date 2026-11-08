@@ -2131,7 +2131,7 @@
 
   const state = {
     screen: "title", // title, loading, cinematic, game, modal, complete
-    lang: "or", // "or" | "hi"
+    lang: "en", // "en" | "or" | "hi" | "all"
     coins: 200,
     xp: 0,
     blessing: "None",
@@ -2817,32 +2817,349 @@
   }
 
   // 1. AUTO-RICKSHAW 3D MODEL
+  // =========================================================================
+  // AUTHENTIC INDIAN AUTO-RICKSHAW TEXTURES (BASED ON SKETCHFAB OYH6X / RSQUARE)
+  // =========================================================================
+
+  function autoFrontHoodTex() {
+    return makeCanvas(512, 256, (ctx, w, h) => {
+      // 1. Canary Yellow Body
+      ctx.fillStyle = "#facc15";
+      ctx.fillRect(0, 0, w, h);
+
+      // Subtle metallic highlight / bevel gradient
+      const grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, "rgba(255, 255, 255, 0.25)");
+      grad.addColorStop(0.5, "rgba(0, 0, 0, 0)");
+      grad.addColorStop(1, "rgba(0, 0, 0, 0.18)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+
+      // 2. Bold Red Brush Lettering: "FOR   HIRE"
+      ctx.fillStyle = "#b91c1c";
+      ctx.font = "900 36px 'Impact', 'Arial Black', sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.shadowColor = "rgba(0,0,0,0.3)";
+      ctx.shadowBlur = 4;
+      ctx.shadowOffsetY = 2;
+      ctx.fillText("FOR   HIRE", w / 2, 46);
+      ctx.shadowColor = "transparent";
+
+      // 3. Central Black Nose Plate: "R2" / "OD 02"
+      const nw = 110, nh = 90, nx = (w - nw) / 2, ny = 95;
+      ctx.fillStyle = "#18181b";
+      ctx.fillRect(nx, ny, nw, nh);
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(nx + 3, ny + 3, nw - 6, nh - 6);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 32px sans-serif";
+      ctx.fillText("R₂", w / 2, ny + 38);
+      ctx.font = "bold 18px monospace";
+      ctx.fillText("OD-02", w / 2, ny + 70);
+
+      // 4. Lower-Left Green Diamond "LPG" Eco Sticker
+      ctx.save();
+      const lx = 75, ly = 195;
+      ctx.translate(lx, ly);
+      ctx.rotate(Math.PI / 4);
+      ctx.fillStyle = "#15803d";
+      ctx.fillRect(-26, -26, 52, 52);
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(-23, -23, 46, 46);
+      ctx.restore();
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "900 20px sans-serif";
+      ctx.fillText("LPG", lx, ly);
+
+      // 5. Lower-Right RTO Number Plate / Permit
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(w - 145, 175, 125, 42);
+      ctx.strokeStyle = "#18181b";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(w - 145, 175, 125, 42);
+      ctx.fillStyle = "#18181b";
+      ctx.font = "bold 15px monospace";
+      ctx.fillText("OD 02 K 4040", w - 82, 201);
+    });
+  }
+
+  function autoSidePanelTex() {
+    return makeCanvas(512, 128, (ctx, w, h) => {
+      // 1. Canary Yellow Base
+      ctx.fillStyle = "#facc15";
+      ctx.fillRect(0, 0, w, h);
+
+      // 2. Deep Emerald Green Racing Stripe across middle
+      const sh = 36, sy = (h - sh) / 2;
+      ctx.fillStyle = "#15803d";
+      ctx.fillRect(0, sy, w, sh);
+
+      // White Pin-stripes on green band edges
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, sy - 3, w, 3);
+      ctx.fillRect(0, sy + sh, w, 3);
+
+      // Stylized text inside green band
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 18px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("BHUBANESWAR • FAST AIR • PASSENGER AUTO", w / 2, h / 2);
+
+      // Rivets along lower skirt
+      ctx.fillStyle = "#713f12";
+      for (let x = 16; x < w; x += 32) {
+        ctx.beginPath();
+        ctx.arc(x, h - 8, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+  }
+
+  function autoSeatBackTex() {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      // 1. Rich Vintage Brown Leatherette
+      ctx.fillStyle = "#3f1d0b";
+      ctx.fillRect(0, 0, w, h);
+
+      // Vertical leather upholstery creases
+      ctx.strokeStyle = "rgba(0, 0, 0, 0.35)";
+      ctx.lineWidth = 2;
+      for (let x = 32; x < w; x += 32) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+
+      // 2. Decorative Embroidered Wave Trim across middle
+      ctx.strokeStyle = "#fef3c7";
+      ctx.lineWidth = 8;
+      ctx.beginPath();
+      ctx.moveTo(0, h * 0.55);
+      for (let x = 0; x <= w; x += 10) {
+        const y = h * 0.55 + Math.sin(x * 0.08) * 16;
+        ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // 3. Central Magenta/Purple Decorative 4-Pointed Star Motif
+      const cx = w / 2, cy = h * 0.42;
+      ctx.fillStyle = "#a855f7";
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - 36);
+      ctx.quadraticCurveTo(cx + 6, cy - 6, cx + 36, cy);
+      ctx.quadraticCurveTo(cx + 6, cy + 6, cx, cy + 36);
+      ctx.quadraticCurveTo(cx - 6, cy + 6, cx - 36, cy);
+      ctx.quadraticCurveTo(cx - 6, cy - 6, cx - 36, cy);
+      ctx.fill();
+
+      // Gold center diamond pip
+      ctx.fillStyle = "#facc15";
+      ctx.beginPath();
+      ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  function autoRoofTex() {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      // Dark slate / vinyl black canvas roof
+      ctx.fillStyle = "#1e293b";
+      ctx.fillRect(0, 0, w, h);
+
+      // Subtle fabric texture & stitching seams
+      ctx.strokeStyle = "#0f172a";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(12, 12, w - 24, h - 24);
+
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.07)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(w / 2, 0);
+      ctx.lineTo(w / 2, h);
+      ctx.stroke();
+    });
+  }
+
+  function autoWheelTex() {
+    return makeCanvas(256, 256, (ctx, w, h) => {
+      const cx = w / 2, cy = h / 2;
+      // 1. Black Tyre Rubber
+      ctx.fillStyle = "#151515";
+      ctx.beginPath();
+      ctx.arc(cx, cy, 120, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Radial tyre tread grooves
+      ctx.strokeStyle = "#262626";
+      ctx.lineWidth = 4;
+      for (let a = 0; a < Math.PI * 2; a += Math.PI / 16) {
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(a) * 98, cy + Math.sin(a) * 98);
+        ctx.lineTo(cx + Math.cos(a) * 120, cy + Math.sin(a) * 120);
+        ctx.stroke();
+      }
+
+      // 2. Cyan / Turquoise Painted Wheel Hub Rim
+      ctx.fillStyle = "#38bdf8";
+      ctx.beginPath();
+      ctx.arc(cx, cy, 84, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = "#0284c7";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 84, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // 4 Cutout Bolt Holes in Rim
+      ctx.fillStyle = "#0f172a";
+      for (let a = 0; a < Math.PI * 2; a += Math.PI / 2) {
+        ctx.beginPath();
+        ctx.arc(cx + Math.cos(a) * 48, cy + Math.sin(a) * 48, 12, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 3. Chrome Center Hub Cap & Nut
+      ctx.fillStyle = "#e2e8f0";
+      ctx.beginPath();
+      ctx.arc(cx, cy, 26, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#94a3b8";
+      ctx.beginPath();
+      ctx.arc(cx, cy, 14, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  // 1. DETAILED 3D AUTO-RICKSHAW (AUTHENTIC SKETCHFAB OYH6X STYLING)
   function makeAuto() {
     const g = new THREE.Group();
-    addMesh(g, box(1.3, 0.45, 2.5), mats.autoGreen, [0, 0.42, 0]);
-    addMesh(g, box(1.28, 0.35, 1.3), mats.autoGreen, [0, 0.82, -0.6]);
-    addMesh(g, box(1.24, 0.5, 0.45), mats.seat, [0, 0.75, -0.7]);
-    addMesh(g, box(0.65, 0.4, 0.38), mats.seat, [0, 0.72, 0.25]);
 
-    // Canopy pillars & Yellow Roof
-    [-0.6, 0.6].forEach(x => {
-      addMesh(g, cyl(0.025, 0.025, 1.2, 8), mats.black, [x, 1.3, -1.1]);
-      addMesh(g, cyl(0.025, 0.025, 1.2, 8), mats.black, [x, 1.3, 0.1]);
-      addMesh(g, cyl(0.025, 0.025, 1.0, 8), mats.black, [x, 1.2, 0.9]);
+    const hoodMat = new THREE.MeshStandardMaterial({ map: autoFrontHoodTex(), roughness: 0.5 });
+    const sideMat = new THREE.MeshStandardMaterial({ map: autoSidePanelTex(), roughness: 0.5 });
+    const seatBackMat = new THREE.MeshStandardMaterial({ map: autoSeatBackTex(), roughness: 0.75 });
+    const roofMat = new THREE.MeshStandardMaterial({ map: autoRoofTex(), roughness: 0.85 });
+    const yellowMat = M("#facc15", 0.45, { metalness: 0.15 });
+    const greenMat = M("#15803d", 0.45, { metalness: 0.2 });
+    const darkRoofMat = M("#1e293b", 0.85);
+    const blackMat = mats.black || M("#18181b", 0.7);
+    const chromeMat = mats.chrome || M("#e2e8f0", 0.2, { metalness: 0.85 });
+    const glassMat = mats.glass || new THREE.MeshStandardMaterial({ color: "#a9c8d8", roughness: 0.1, transparent: true, opacity: 0.35 });
+    const amberMat = mats.lampAmber || M("#f59e0b", 0.3, { emissive: "#d97706", emissiveIntensity: 1.2 });
+    const redLightMat = M("#dc2626", 0.3, { emissive: "#991b1b", emissiveIntensity: 1.0 });
+
+    // 1. CHASSIS FLOOR & LOWER BODY
+    addMesh(g, box(1.32, 0.22, 2.45), blackMat, [0, 0.28, 0]);
+
+    // Yellow Body Shell (Lower Tub)
+    addMesh(g, box(1.30, 0.42, 1.40), yellowMat, [0, 0.52, -0.52]);
+
+    // Left & Right Textured Side Panels with Green Racing Stripe
+    const sideGeom = new THREE.PlaneGeometry(1.38, 0.38);
+    const leftSide = addMesh(g, sideGeom, sideMat, [-0.655, 0.54, -0.52]);
+    leftSide.rotation.y = -Math.PI / 2;
+    const rightSide = addMesh(g, sideGeom, sideMat, [0.655, 0.54, -0.52]);
+    rightSide.rotation.y = Math.PI / 2;
+
+    // Flared Rear Wheel Arches (Yellow)
+    [-0.67, 0.67].forEach(x => {
+      addMesh(g, box(0.12, 0.26, 0.68), yellowMat, [x, 0.48, -0.65]);
+      // Hanging Black Mudflaps behind rear wheels
+      addMesh(g, box(0.10, 0.22, 0.02), blackMat, [x, 0.24, -1.02]);
     });
-    addMesh(g, box(1.36, 0.12, 2.3), mats.autoYellow, [0, 1.88, -0.05]);
-    addMesh(g, box(1.28, 0.22, 1.1), mats.autoYellow, [0, 1.82, -0.6]);
-    addMesh(g, box(1.15, 0.65, 0.04), mats.glass, [0, 1.35, 0.92], [-0.18, 0, 0]);
 
-    // Front nose, mudguard & single front wheel
-    addMesh(g, box(0.72, 0.5, 0.6), mats.autoGreen, [0, 0.55, 1.1]);
-    addMesh(g, box(0.5, 0.28, 0.5), mats.autoYellow, [0, 0.75, 1.12]);
-    const headlight = addMesh(g, cyl(0.12, 0.12, 0.1, 12), mats.light, [0, 0.72, 1.42], [Math.PI / 2, 0, 0]);
+    // 2. PASSENGER & DRIVER SEATING
+    // Rear Passenger Bench Seat (Brown Leatherette with Decorative Embroidered Star Backrest)
+    addMesh(g, box(1.22, 0.22, 0.46), M("#3f1d0b", 0.75), [0, 0.52, -0.80]);
+    addMesh(g, new THREE.PlaneGeometry(1.20, 0.48), seatBackMat, [0, 0.86, -1.02]);
+    addMesh(g, box(1.22, 0.48, 0.08), M("#3f1d0b", 0.75), [0, 0.86, -1.06]);
 
-    // Wheels
-    const wf = wheel(g, [0, 0.26, 1.05]);
-    const wbl = wheel(g, [-0.64, 0.26, -0.65]);
-    const wbr = wheel(g, [0.64, 0.26, -0.65]);
+    // Driver Seat Bench
+    addMesh(g, box(0.62, 0.28, 0.38), M("#27150a", 0.8), [0, 0.54, 0.22]);
+
+    // Handlebar & Steering Column
+    addMesh(g, cyl(0.022, 0.022, 0.65, 8), chromeMat, [0, 0.85, 0.58], [-0.35, 0, 0]);
+    addMesh(g, cyl(0.018, 0.018, 0.58, 8), chromeMat, [0, 1.08, 0.52], [0, 0, Math.PI / 2]);
+    addMesh(g, cyl(0.028, 0.028, 0.12, 8), blackMat, [-0.24, 1.08, 0.52], [0, 0, Math.PI / 2]);
+    addMesh(g, cyl(0.028, 0.028, 0.12, 8), blackMat, [0.24, 1.08, 0.52], [0, 0, Math.PI / 2]);
+
+    // Digital Fare Meter Unit on dashboard
+    addMesh(g, box(0.14, 0.12, 0.08), blackMat, [0.26, 0.92, 0.60]);
+    addMesh(g, box(0.10, 0.06, 0.01), M("#22c55e", 0.2, { emissive: "#15803d", emissiveIntensity: 1.2 }), [0.26, 0.92, 0.645]);
+
+    // 3. FRONT NOSE, FAIRING & HOOD TEXTURE
+    // Sloping front nose body
+    addMesh(g, box(0.74, 0.54, 0.68), yellowMat, [0, 0.60, 0.95], [-0.18, 0, 0]);
+
+    // Front Textured Hood Panel ("FOR HIRE", "LPG", "R2", "OD-02")
+    addMesh(g, new THREE.PlaneGeometry(0.72, 0.48), hoodMat, [0, 0.65, 1.30], [-0.18, 0, 0]);
+
+    // Curved Front Mudguard hugging front wheel
+    addMesh(g, box(0.24, 0.14, 0.52), yellowMat, [0, 0.38, 1.05], [0.12, 0, 0]);
+
+    // Prominent Conical Headlight
+    addMesh(g, cyl(0.13, 0.08, 0.14, 14), blackMat, [0, 0.64, 1.38], [Math.PI / 2, 0, 0]);
+    const headlight = addMesh(g, cyl(0.11, 0.11, 0.04, 14), mats.light || M("#fffbeb", 0.1, { emissive: "#fef08a", emissiveIntensity: 1.5 }), [0, 0.64, 1.45], [Math.PI / 2, 0, 0]);
+
+    // Left & Right Amber Turn Indicators
+    addMesh(g, box(0.08, 0.06, 0.04), amberMat, [-0.34, 0.65, 1.20]);
+    addMesh(g, box(0.08, 0.06, 0.04), amberMat, [0.34, 0.65, 1.20]);
+
+    // Rear Brake Light Bars
+    addMesh(g, box(0.18, 0.08, 0.04), redLightMat, [-0.48, 0.48, -1.24]);
+    addMesh(g, box(0.18, 0.08, 0.04), redLightMat, [0.48, 0.48, -1.24]);
+
+    // 4. CANOPY PILLARS, CURVED VINYL ROOF & WINDSHIELD
+    [-0.60, 0.60].forEach(x => {
+      addMesh(g, cyl(0.02, 0.02, 1.20, 8), blackMat, [x, 1.28, -1.10]);
+      addMesh(g, cyl(0.02, 0.02, 1.20, 8), blackMat, [x, 1.28, 0.05]);
+      addMesh(g, cyl(0.02, 0.02, 1.05, 8), blackMat, [x, 1.20, 0.78], [-0.22, 0, 0]);
+    });
+
+    // Dark Vinyl Curved Roof (Sketchfab Silhouette)
+    addMesh(g, box(1.36, 0.14, 2.25), darkRoofMat, [0, 1.86, -0.08]);
+    addMesh(g, box(1.30, 0.18, 1.25), darkRoofMat, [0, 1.82, -0.55]);
+
+    // Yellow Sun-Visor Lip Overhang above Windshield
+    addMesh(g, box(1.32, 0.08, 0.22), yellowMat, [0, 1.82, 0.88], [-0.22, 0, 0]);
+
+    // 2-Pane Glass Windshield with Central Divider
+    addMesh(g, box(1.18, 0.64, 0.03), glassMat, [0, 1.36, 0.82], [-0.22, 0, 0]);
+    addMesh(g, box(0.04, 0.65, 0.04), blackMat, [0, 1.36, 0.82], [-0.22, 0, 0]);
+    addMesh(g, cyl(0.01, 0.01, 0.32, 6), blackMat, [-0.18, 1.38, 0.85], [-0.22, 0, 0.4]);
+
+    // Dual Round Side Rearview Mirrors on Chrome Stalks
+    [-0.66, 0.66].forEach(x => {
+      addMesh(g, cyl(0.008, 0.008, 0.24, 6), chromeMat, [x, 1.35, 0.75], [0.3, 0, x > 0 ? 0.35 : -0.35]);
+      addMesh(g, cyl(0.07, 0.07, 0.02, 14), blackMat, [x + (x > 0 ? 0.08 : -0.08), 1.45, 0.82], [Math.PI / 2, 0, 0]);
+      addMesh(g, cyl(0.06, 0.06, 0.01, 14), chromeMat, [x + (x > 0 ? 0.08 : -0.08), 1.45, 0.81], [Math.PI / 2, 0, 0]);
+    });
+
+    // 5. WHEELS WITH CYAN/TURQUOISE PAINTED HUBS & TYRES
+    const wheelMat = new THREE.MeshStandardMaterial({ map: autoWheelTex(), roughness: 0.6 });
+    function makeAutoWheel(parent, pos) {
+      const wg = new THREE.Group();
+      wg.position.set(...pos);
+      parent.add(wg);
+      addMesh(wg, cyl(0.26, 0.26, 0.16, 16), mats.tyre || blackMat, [0, 0, 0], [0, 0, Math.PI / 2]);
+      const capGeom = new THREE.CircleGeometry(0.25, 16);
+      const capL = addMesh(wg, capGeom, wheelMat, [-0.082, 0, 0]);
+      capL.rotation.y = -Math.PI / 2;
+      const capR = addMesh(wg, capGeom, wheelMat, [0.082, 0, 0]);
+      capR.rotation.y = Math.PI / 2;
+      return wg;
+    }
+
+    const wf = makeAutoWheel(g, [0, 0.26, 1.05]);
+    const wbl = makeAutoWheel(g, [-0.64, 0.26, -0.65]);
+    const wbr = makeAutoWheel(g, [0.64, 0.26, -0.65]);
 
     return { group: g, wheels: [wf, wbl, wbr], headlight };
   }
@@ -3354,7 +3671,30 @@
     return { group: g, root, headGroup, armL, armR, legL, legR };
   }
 
-    // 7.5 FAMOUS CUTTACK-BHUBANESWAR DAHIBARA-ALOODUM PUSHCART
+  /* ===== LAYER 2: TEXTURED FIGURES (fabric weave + painted faces) ===== */
+const __cv=(w,h,f)=>{const c=document.createElement('canvas');c.width=w;c.height=h;f(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;return t;};
+let __weave=null;
+(function(){const _m=makeCharacterFigure;makeCharacterFigure=function(cfg={}){const r=_m(cfg);try{
+ __weave=__weave||__cv(32,32,(g,w,h)=>{g.fillStyle='#fff';g.fillRect(0,0,w,h);for(let i=0;i<w;i+=2){g.fillStyle='rgba(0,0,0,.13)';g.fillRect(i,0,1,h);g.fillStyle='rgba(0,0,0,.09)';g.fillRect(0,i,w,1);}});
+ const sk=new THREE.Color(cfg.skinColor||'#d49b78').getHex();
+ r.group.traverse(o=>{if(o.isMesh&&o.material&&o.material.color&&!o.material.map&&o.material.color.getHex()!==sk&&o.material.roughness>=0.7){o.material.map=__weave;o.material.needsUpdate=true;}});
+ const fem=!!cfg.female,mus=!fem&&!!(cfg.isUncleTummy||cfg.hasEpaulettes||cfg.mustache);
+ const X=x=>(x+.17)*376,Y=y=>(.19-y)*379;
+ const ft=__cv(128,144,(g)=>{
+  g.fillStyle='rgba(120,60,40,.16)';g.beginPath();g.ellipse(X(0),Y(-.035),9,6,0,0,7);g.fill();
+  g.fillStyle='rgba(230,90,110,.2)';[-.1,.1].forEach(x=>{g.beginPath();g.arc(X(x),Y(-.055),9,0,7);g.fill();});
+  g.strokeStyle='#2a1810';g.lineWidth=2;[-.09,.09].forEach(x=>{g.beginPath();g.moveTo(X(x-.04),Y(.062));g.quadraticCurveTo(X(x),Y(.075),X(x+.04),Y(.062));g.stroke();});
+  g.fillStyle='#fff';[-.09,.09].forEach(x=>{g.fillRect(X(x)+2,Y(.05),3,3);});
+  if(mus){g.fillStyle='#1c1410';g.beginPath();g.moveTo(X(-.07),Y(-.07));g.quadraticCurveTo(X(0),Y(-.05),X(.07),Y(-.07));g.quadraticCurveTo(X(0),Y(-.09),X(-.07),Y(-.07));g.fill();}
+  g.strokeStyle=fem?'#b91c3c':'#6b2a20';g.lineWidth=fem?4:3;g.beginPath();g.moveTo(X(-.045),Y(-.105));g.quadraticCurveTo(X(0),Y(-.12),X(.045),Y(-.105));g.stroke();
+  if(fem){g.fillStyle='#dc2626';g.beginPath();g.arc(X(0),Y(.115),4,0,7);g.fill();}
+ });
+ const fm=new THREE.Mesh(new THREE.PlaneGeometry(.34,.38),new THREE.MeshStandardMaterial({map:ft,transparent:true,depthWrite:false,roughness:.8,polygonOffset:true,polygonOffsetFactor:-2}));
+ fm.position.set(0,0,.1715);r.headGroup.add(fm);
+ if(fem){const bun=new THREE.Mesh(new THREE.SphereGeometry(.11,8,8),new THREE.MeshStandardMaterial({color:'#9ca3af',roughness:.9}));bun.position.set(0,.1,-.2);r.headGroup.add(bun);}
+}catch(e){console.warn('fig',e)}return r;};})();
+
+  // 7.5 FAMOUS CUTTACK-BHUBANESWAR DAHIBARA-ALOODUM PUSHCART
   function makeDahibaraCart() {
     const g = new THREE.Group();
     // Wooden pushcart deck
@@ -7070,6 +7410,7 @@
       wayMarker.ring.scale.setScalar(1 + Math.sin(Date.now() * 0.005) * 0.1);
     }
 
+    if (window.__tick) __tick(dt);
     drawMinimap();
     renderer.render(scene, camera);
   }
@@ -7079,6 +7420,219 @@
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
+
+
+/* ===== LAYERS 1,3,4,5 ===== */
+(function(){
+const T=f=>{try{f()}catch(e){console.warn('layer',e)}};
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const lerp=(a,b,k)=>a+(b-a)*k;
+
+/* LAYER 1: EXPANDED ROADS, LANE MARKINGS, STREET LAMPS */
+T(()=>{
+ const EXTRA=[
+  {x1:-50,z1:15,x2:-50,z2:-100,w:10,name:"UNIT-4 CONNECTOR"},
+  {x1:-50,z1:-100,x2:40,z2:-100,w:9,name:"CROSS LINK ROAD"},
+  {x1:-90,z1:-280,x2:-90,z2:-130,w:10,name:"EKAMRA-INFOCITY LINK"},
+  {x1:40,z1:-60,x2:110,z2:-60,w:9,name:"JANPATH EAST SERVICE ROAD"}
+ ];
+ const base=ROADS.length;
+ EXTRA.forEach((r,j)=>{
+  const i=base+j,hz=r.z1===r.z2,len=hz?Math.abs(r.x2-r.x1):Math.abs(r.z2-r.z1),cx=(r.x1+r.x2)/2,cz=(r.z1+r.z2)/2;
+  const t=asphalt().clone();t.needsUpdate=true;t.repeat.set(hz?len/8:r.w/8,hz?r.w/8:len/8);
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(hz?len:r.w,hz?r.w:len),new THREE.MeshStandardMaterial({map:t,roughness:.9}));
+  m.rotation.x=-Math.PI/2;m.position.set(cx,.03+i*.004,cz);m.receiveShadow=true;scene.add(m);
+  [-1,1].forEach(s=>{const tt=pavement().clone();tt.needsUpdate=true;tt.repeat.set(hz?len/3:1,hz?1:len/3);
+   const sw=new THREE.Mesh(new THREE.BoxGeometry(hz?len:3.2,.16,hz?3.2:len),new THREE.MeshStandardMaterial({map:tt,roughness:.95}));
+   const o=s*(r.w/2+1.6);sw.position.set(hz?cx:cx+o,.08,hz?cz+o:cz);sw.receiveShadow=true;scene.add(sw);});
+  ROADS.push(r);
+ });
+ const dashT=__cv(8,64,g=>{g.fillStyle='#f4f4f0';g.fillRect(2,4,4,30);});
+ const lampM=new THREE.MeshStandardMaterial({color:'#fff7d6',emissive:'#fde68a',emissiveIntensity:1.4}),pole=M('#374151',.5);
+ ROADS.forEach(r=>{
+  const hz=r.z1===r.z2,len=hz?Math.abs(r.x2-r.x1):Math.abs(r.z2-r.z1),cx=(r.x1+r.x2)/2,cz=(r.z1+r.z2)/2;
+  if(len<30)return;
+  const g=new THREE.Group(),d=dashT.clone();d.needsUpdate=true;d.repeat.set(1,len/4);
+  const dm=new THREE.Mesh(new THREE.PlaneGeometry(.3,len),new THREE.MeshBasicMaterial({map:d,transparent:true,polygonOffset:true,polygonOffsetFactor:-4}));
+  dm.rotation.x=-Math.PI/2;dm.position.y=.09;g.add(dm);
+  [-1,1].forEach(s=>{const e=new THREE.Mesh(new THREE.PlaneGeometry(.14,len),new THREE.MeshBasicMaterial({color:s<0?'#f5f5f4':'#facc15',polygonOffset:true,polygonOffsetFactor:-4}));
+   e.rotation.x=-Math.PI/2;e.position.set(s*(r.w/2-.45),.09,0);g.add(e);});
+  g.position.set(cx,0,cz);g.rotation.y=hz?Math.PI/2:0;scene.add(g);
+  if(state.lowGraphics)return;
+  let n=0;for(let p=12;p<len-8;p+=30,n++){const s=n%2?1:-1,lg=new THREE.Group();
+   addMesh(lg,cyl(.07,.1,6,8),pole,[0,3,0]);addMesh(lg,box(1.6,.08,.1),pole,[.7,6,0]);addMesh(lg,box(.5,.14,.28),lampM,[1.4,5.92,0],null,null,false);
+   const off=s*(r.w/2+.9),a=hz?r.x1<r.x2?r.x1+p:r.x2+p:r.z1<r.z2?r.z1+p:r.z2+p;
+   lg.position.set(hz?a:r.x1+off,0,hz?r.z1+off:a);lg.rotation.y=hz?s*Math.PI/2:(s>0?Math.PI:0);scene.add(lg);}
+ });
+});
+
+/* LAYER 3: PROPER MULTI-STOREY BUILDINGS */
+T(()=>{
+ const fcd=(fl,base)=>__cv(256,64*fl,(g,w,h)=>{g.fillStyle=base;g.fillRect(0,0,w,h);
+  for(let f=0;f<fl;f++){const y=f*64;g.fillStyle='rgba(0,0,0,.18)';g.fillRect(0,y+60,w,4);
+   for(let c=0;c<4;c++){const x=c*64+19;g.fillStyle='#2b3a4a';g.fillRect(x,y+12,26,34);g.fillStyle='rgba(255,230,150,.5)';g.fillRect(x+2,y+14,10,30);g.fillStyle='#111';g.fillRect(x+12,y+12,2,34);g.fillStyle='#8b8b8b';g.fillRect(x-3,y+46,32,4);}}
+  for(let i=0;i<36;i++){g.fillStyle='rgba(60,40,20,.07)';g.fillRect(rnd(0,w),rnd(0,h),rnd(3,10),rnd(20,70));}});
+ const COL=['#e9d8b4','#f3c9a0','#cfe0c3','#e8b4b0','#d6d3f0','#f1e6a6'];
+ const house=(x,z,rot,k)=>{const w=rnd(8,11),d=rnd(7,9),fl=2+(k%2),H=fl*3.2,g=new THREE.Group(),tx=fcd(fl,COL[k%COL.length]);
+  const wm=new THREE.MeshStandardMaterial({map:tx,roughness:.9}),rm=M('#8b5a3c',.9);
+  addMesh(g,box(w,H,d),[wm,wm,rm,rm,wm,wm],[0,H/2,0]);
+  addMesh(g,box(w+.6,.4,d+.6),M('#d6cfc2'),[0,H+.2,0]);
+  for(let f=1;f<fl;f++){const y=f*3.2;addMesh(g,box(w*.8,.18,1.3),M('#bdb5a5'),[0,y,d/2+.65]);addMesh(g,box(w*.8,.9,.07),M('#4b5563'),[0,y+.55,d/2+1.25]);}
+  addMesh(g,box(w*.72,2.4,.12),M('#6b7280',.6),[0,1.2,d/2+.06]);
+  const sh=SHOPS[(k*3)%SHOPS.length];
+  addMesh(g,new THREE.PlaneGeometry(w*.72,.9),new THREE.MeshStandardMaterial({map:signTex(sh[0],sh[1],['#B71C1C','#1d4e89','#2E7D32'][k%3],'#FFFBEB')}),[0,2.9,d/2+.14],null,null,false);
+  addMesh(g,box(1.1,.7,.5),M('#e5e7eb'),[w/2-1.5,H-1.2,d/2+.25]);
+  addMesh(g,cyl(.8,.8,1.3,12),mats.sintexBlack,[-w/4,H+1,0]);
+  g.position.set(x,0,z);g.rotation.y=rot;scene.add(g);};
+ let k=0;
+ for(let z=-10;z>-95;z-=16){if(Math.abs(z+35)<13)continue;house(-50-14,z,Math.PI/2,k++);house(-50+14,z,-Math.PI/2,k++);}
+ for(let x=-30;x<20;x+=14){if(x===12)continue;house(x,-100+13,Math.PI,k++);house(x,-100-13,0,k++);}
+});
+
+/* LAYER 4: ENGLISH-FIRST UI (EN default, OR / HI / ALL kept) */
+T(()=>{
+ const _u=updateHudLabels;
+ updateHudLabels=function(){_u();if(state.lang!=='en')return;
+  const s=(id,t)=>{const e=document.getElementById(id);if(e)e.innerText=t;};
+  s('lbl-cash','CASH:');s('lbl-xp','CITIZEN XP:');s('lbl-bless','BLESSING:');
+  s('hud-weather-label',{rain:'RAINY',sunset:'SUNSET',night:'NIGHT'}[state.weather]||'SUNNY');
+  s('hud-vehicle-label',{scooty:'SCOOTY',drive:'AUTO'}[state.mode]||'ON FOOT');
+  s('hud-dahibara-count','DAHIBARA: '+((state.dahibaraStallsEaten||[]).length)+' / 5 STALLS');};
+ const _pp=popup;
+ popup=function(t,k){
+  if(state.lang==='en'){const m=String(t).match(/[A-Za-z]{4,}/);if(!m&&/[\u0900-\u097F\u0B00-\u0B7F]/.test(t)){t=t.replace(/[^\u0000-\u00FF\u2190-\u2BFF\u{1F000}-\u{1FFFF}₹]+/gu,'').trim()||'✔';}}
+  return _pp(t,k);};
+});
+
+/* LAYER 5: ENTER THE PG • RENT TALK WITH KANTA AUNTY (CINEMATIC) */
+T(()=>{
+ Object.assign(LINES,{
+ pg_b1:{speaker:'babu',or:"ନମସ୍କାର ଆଣ୍ଟି! ବାହାରେ 'ଭଡ଼ା ପାଇଁ ରୁମ୍' ବୋର୍ଡ ଦେଖିଲି। ରୁମ୍ ଖାଲି ଅଛି କି?",hi:"नमस्ते आंटी! बाहर 'रूम फॉर रेंट' का बोर्ड देखा। कमरा खाली है क्या?",en:"Namaskar Aunty! I saw the 'Room for Rent' board outside. Is a room free?"},
+ pg_a1:{speaker:'aunty',or:"ଆସ ବାବୁ, ଭିତରକୁ ଆସ! ଜୋତା ବାହାରେ ଖୋଲ। କୁହ, ପାଠ ପଢ଼ୁଛ ନା ଚାକିରି? ଘର କେଉଁଠି?",hi:"आओ बाबू, अंदर आओ! जूते बाहर उतारो। बोलो, पढ़ाई करते हो या नौकरी? घर कहाँ है?",en:"Come in, Babu! Shoes off outside. Tell me, student or job? Where is your home?"},
+ pg_b2:{speaker:'babu',or:"ମୁଁ ଗାଁରୁ ନୂଆ ଆସିଛି ଆଣ୍ଟି। ପାଠ ପଢ଼ିବି, ଶାନ୍ତ ଗୋଟେ ସିଙ୍ଗଲ୍ ରୁମ୍ ଦରକାର।",hi:"मैं गाँव से नया आया हूँ आंटी। पढ़ाई करनी है, एक शांत सिंगल रूम चाहिए।",en:"I just arrived from my village, Aunty. I'm here to study and need a quiet single room."},
+ pg_a2:{speaker:'aunty',or:"ସିଙ୍ଗଲ୍ ରୁମ୍, ଆଟାଚ୍ଡ୍ ବାଥ୍‌ରୁମ୍, ମାସକୁ ₹୩,୫୦୦। ଦୁଇ ମାସର ଡିପୋଜିଟ୍। ବିଜୁଳି ଓ ପାଣି ଅଲଗା!",hi:"सिंगल रूम, अटैच्ड बाथरूम, महीने का ₹3,500। दो महीने का डिपॉजिट। बिजली-पानी अलग!",en:"Single room, attached bath, ₹3,500 a month. Two months' deposit. Electricity and water extra!"},
+ pg_b3:{speaker:'babu',or:"ଆଣ୍ଟି, ଭଡ଼ା ଏଗ୍ରିମେଣ୍ଟ ଆଉ ବିଜୁଳି ମିଟର ରିଡିଂ ଆଗ ଦେଖିପାରିବି କି?",hi:"आंटी, क्या मैं पहले रेंट एग्रीमेंट और बिजली मीटर की रीडिंग देख सकता हूँ?",en:"Aunty, may I see the rent agreement and the electricity meter reading first?"},
+ pg_a3:{speaker:'aunty',or:"ଏଗ୍ରିମେଣ୍ଟ?! ଏତେ ବର୍ଷରେ କେହି ପଚାରିନଥିଲେ! ... ଠିକ୍ ଅଛି, ତୁମେ ଚାଲାକ୍ ପିଲା। ରାତି ୯ଟାରେ ଗେଟ୍ ବନ୍ଦ, ସାଙ୍ଗ ମନା, ରବିବାର ପତଳା ଡାଲି!",hi:"एग्रीमेंट?! इतने सालों में किसी ने नहीं पूछा! ...ठीक है, तुम होशियार लड़के हो। रात 9 बजे गेट बंद, दोस्त मना, रविवार को पतली दाल!",en:"Agreement?! In all these years nobody asked! ...Fine, you're a sharp boy. Gate shuts at 9 PM, no friends over, and Sundays are watery dal!"},
+ pg_b4:{speaker:'babu',or:"ଆଣ୍ଟି, ଏଗ୍ରିମେଣ୍ଟ ସହ ₹୩,୦୦୦ ହେଲେ ମୁଁ ପ୍ରତି ମାସ ପହିଲାରେ ଭଡ଼ା ଦେବି!",hi:"आंटी, एग्रीमेंट के साथ ₹3,000 में दे दीजिए, मैं हर महीने पहली तारीख को किराया दूँगा!",en:"Aunty, ₹3,000 with a proper agreement? I'll pay on the 1st of every month!"},
+ pg_a4:{speaker:'aunty',or:"ଆଚ୍ଛା ଆଚ୍ଛା, ₹୩,୨୦୦। ଷ୍ଟାମ୍ପ୍ ପେପରରେ ଏଗ୍ରିମେଣ୍ଟ। କିନ୍ତୁ ରବିବାର ମୋ ଛେନାପୋଡ଼ ଖାଇବାକୁ ପଡ଼ିବ!",hi:"अच्छा अच्छा, ₹3,200। स्टाम्प पेपर पर एग्रीमेंट। लेकिन रविवार को मेरा छेनापोड़ा खाना पड़ेगा!",en:"Alright, alright: ₹3,200, agreement on stamp paper. But you must eat my chhena poda on Sundays!"}});
+ const BEATS=[
+  {id:'pg_b1',min:3.4,c:[0,1.6,6.8,0,1.4,2,.5,1.5,4.9,0,1.4,1]},
+  {id:'pg_a1',min:3.4,c:[-.6,1.55,.8,2.2,1.5,-1.6,.4,1.5,.2,2.3,1.55,-1.7]},
+  {id:'pg_b2',min:3,c:[3.6,1.55,-.6,.4,1.55,1,3.2,1.5,-.2,.4,1.55,1]},
+  {id:'pg_a2',min:3.4,c:[-1.6,1.6,1.4,2.2,1.55,-1.6,.6,1.6,-.2,2.2,1.6,-1.7]},
+  {id:'pg_b3',min:3,c:[.5,2.2,3.8,.8,1.3,-.4,1.4,1.9,3.2,.9,1.3,-.4]},
+  {id:'pg_a3',min:3.6,c:[1,1.65,-.2,2.2,1.7,-1.7,1.5,1.7,-.7,2.2,1.7,-1.7]},
+  {id:'pg_b4',min:3,c:[3.4,1.7,-2.6,.4,1.6,.9,3,1.65,-2.2,.4,1.6,.9]},
+  {id:'pg_a4',min:3.6,c:[-3.5,2,2.8,1.2,1.4,-.8,-2.8,1.9,2.2,1.2,1.4,-.8]}];
+ const OPTS=[
+  {k:'a',t:{or:'🤝 ଠିକ୍ ଅଛି ଆଣ୍ଟି! ₹୩,୨୦୦ ଓ ଏଗ୍ରିମେଣ୍ଟ',hi:'🤝 डील पक्की आंटी! ₹3,200 और एग्रीमेंट',en:'🤝 Deal, Aunty! ₹3,200 with the agreement'}},
+  {k:'b',t:{or:'🔌 ପ୍ରଥମେ ବିଜୁଳି ମିଟର ଦେଖାନ୍ତୁ',hi:'🔌 पहले बिजली का मीटर दिखाइए',en:'🔌 First, show me the electricity meter'}},
+  {k:'c',t:{or:'🚪 ଟିକେ ଭାବି ଆସିବି, ଧନ୍ୟବାଦ',hi:'🚪 सोचकर आता हूँ, धन्यवाद',en:'🚪 Let me think it over, thank you'}}];
+ const O={x:700,z:700},sl=ms=>new Promise(r=>setTimeout(r,ms));
+ let built=false,fan,aun,bab,seq=null,nextRes=null,fadeEl,chEl;
+ const face=(g,x,z)=>{g.rotation.y=Math.atan2(x-g.position.x,z-g.position.z);};
+ const walk=(f,t,mv)=>{const s=mv?Math.sin(t*9)*.6:0;f.legL.rotation.x=s;f.legR.rotation.x=-s;f.armL.rotation.x=-s*.7;f.armR.rotation.x=s*.7;};
+ const fade=(a,ms=650)=>{if(!fadeEl){fadeEl=document.createElement('div');fadeEl.style.cssText='position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:9999;transition:opacity .6s';document.body.appendChild(fadeEl);}fadeEl.style.opacity=a;return sl(ms);};
+ function build(){if(built)return;built=true;const g=new THREE.Group();g.position.set(O.x,0,O.z);scene.add(g);
+  const fl=__cv(128,128,c=>{for(let i=0;i<4;i++)for(let j=0;j<4;j++){c.fillStyle=(i+j)%2?'#d9c7a3':'#c9b48c';c.fillRect(i*32,j*32,32,32);c.strokeStyle='rgba(80,60,30,.35)';c.strokeRect(i*32,j*32,32,32);}});fl.repeat.set(5,4);
+  addMesh(g,new THREE.PlaneGeometry(10,8),new THREE.MeshStandardMaterial({map:fl,roughness:.6}),[0,.01,0],[-Math.PI/2,0,0]);
+  const wl=M('#f0e2c0',.9),dd=M('#7f1d1d',.8);
+  addMesh(g,box(10,3.6,.2),wl,[0,1.8,-4]);addMesh(g,box(.2,3.6,8),wl,[-5,1.8,0]);addMesh(g,box(.2,3.6,8),wl,[5,1.8,0]);
+  addMesh(g,box(4.3,3.6,.2),wl,[-2.85,1.8,4]);addMesh(g,box(4.3,3.6,.2),wl,[2.85,1.8,4]);addMesh(g,box(1.4,1.2,.2),wl,[0,3,4]);
+  addMesh(g,box(10,.9,.22),dd,[0,.45,-3.99]);addMesh(g,box(.22,.9,8),dd,[-4.99,.45,0]);addMesh(g,box(10,.1,8),M('#f8f5ee'),[0,3.65,0]);
+  const po=__cv(160,110,(c,w,h)=>{c.fillStyle='#b91c1c';c.fillRect(0,0,w,h);[['#111',30],['#f8fafc',80],['#facc15',130]].forEach(([col,x])=>{c.fillStyle=col;c.beginPath();c.arc(x,55,24,0,7);c.fill();c.fillStyle='#fff';c.beginPath();c.arc(x,52,10,0,7);c.fill();c.fillStyle='#111';c.beginPath();c.arc(x,52,4,0,7);c.fill();});c.strokeStyle='#facc15';c.lineWidth=5;c.strokeRect(2,2,w-4,h-4);});
+  addMesh(g,new THREE.PlaneGeometry(1.6,1.1),new THREE.MeshStandardMaterial({map:po}),[-1.5,2.1,-3.87],null,null,false);
+  addMesh(g,new THREE.PlaneGeometry(2.2,1.5),new THREE.MeshBasicMaterial({color:'#bfe3ff'}),[4.88,2,-1],[0,-Math.PI/2,0],null,false);
+  addMesh(g,box(1.1,2.1,.5),M('#64748b',.5),[3.8,1.05,-3.6]);
+  addMesh(g,box(1,.45,2.8),M('#7c2d12'),[-4.2,.25,.5]);addMesh(g,box(.3,.9,2.8),M('#7c2d12'),[-4.7,.7,.5]);
+  addMesh(g,box(1.1,.08,1.1),mats.wood,[-2.6,.45,.5]);[[-.45,-.45],[.45,-.45],[-.45,.45],[.45,.45]].forEach(([a,b])=>addMesh(g,box(.08,.45,.08),mats.wood,[-2.6+a,.22,.5+b]));
+  addMesh(g,box(.5,.05,.35),M('#7f1d1d'),[-2.6,.51,.4]);[-.3,.1].forEach(a=>addMesh(g,cyl(.07,.05,.1,10),M('#f8fafc'),[-2.6+a,.54,.8]));
+  fan=new THREE.Group();fan.position.set(0,3.45,0);g.add(fan);addMesh(fan,cyl(.12,.12,.12,10),mats.black);[0,2.1,4.2].forEach(a=>addMesh(fan,box(1.1,.03,.2),M('#e5e7eb'),[Math.cos(a)*.65,0,Math.sin(a)*.65],[0,-a,0]));
+  const pl=new THREE.PointLight('#ffe2b0',1.1,16);pl.position.set(0,3.1,0);g.add(pl);
+  aun=makeCharacterFigure({shirtColor:'#b91c1c',pantsColor:'#9f1239',skinColor:'#c68642',hairColor:'#9ca3af',hasGamucha:true,gamuchaColor:'#f5c518',female:true});
+  const st=__cv(64,64,c=>{c.fillStyle='#b91c1c';c.fillRect(0,0,64,64);c.fillStyle='#f5c518';c.fillRect(0,50,64,14);c.fillStyle='#7f1d1d';for(let i=0;i<64;i+=8)c.fillRect(i,54,4,6);});
+  addMesh(aun.group,cyl(.27,.33,.85,14),new THREE.MeshStandardMaterial({map:st,roughness:.8}),[0,.48,0]);
+  bab=makeCharacterFigure({shirtColor:'#10b981',pantsColor:'#334155',skinColor:'#d49b78',hasGamucha:true,gamuchaColor:'#b71c1c',hasBackpack:true,backpackColor:'#1e3a8a',headwear:'stylish_hair'});
+  aun.group.position.set(2.2,0,-1.7);bab.group.position.set(0,0,3.8);g.add(aun.group);g.add(bab.group);face(aun.group,0,1);}
+ const gest=(f,t)=>{f.armR.rotation.x=-1+Math.sin(t*6)*.35;};
+ window.__tick=dt=>{if(!seq)return;seq.t+=dt;const T=seq.t;
+  if(seq.mode==='ext'){const k=Math.min(T/2.4,1),P=POI.saheedPG;babuGroup.position.set(P[0],0,P[1]+18-9*k);babuGroup.rotation.y=Math.PI;walk(babuData,T,k<1);camera.position.set(P[0]+9,2.4,P[1]+24);camera.lookAt(P[0]-1,2,P[1]+10);}
+  else if(seq.mode==='int'){fan.rotation.y+=dt*7;seq.it+=dt;const I=seq.it,kw=Math.min(I/3.6,1),b=seq.beat;
+   bab.group.position.z=lerp(3.8,1,kw);if(kw<1){bab.group.rotation.y=Math.PI;walk(bab,I,true);}else{walk(bab,0,false);face(bab.group,2.2,-1.7);}
+   aun.root.position.y=Math.sin(I*2)*.01;
+   if(b){b.t+=dt;const k=Math.min(b.t/(b.min+1.5),1),e=k*k*(3-2*k),c=b.c;
+    camera.position.set(O.x+lerp(c[0],c[6],e),lerp(c[1],c[7],e),O.z+lerp(c[2],c[8],e));camera.lookAt(O.x+lerp(c[3],c[9],e),lerp(c[4],c[10],e),O.z+lerp(c[5],c[11],e));
+    const sp=LINES[b.id].speaker;if(sp==='aunty'&&kw>=1)gest(aun,b.t);else aun.armR.rotation.x=0;if(sp==='babu'&&kw>=1)gest(bab,b.t);else if(kw>=1)bab.armR.rotation.x=0;}}};
+ async function run(){for(const b of BEATS){if(!seq)return;seq.beat=b;b.t=0;
+  await Promise.race([Promise.all([sl(b.min*1000),playVoiceLine(b.id).then(()=>sl(400))]),sl(10000),new Promise(r=>nextRes=r)]);stopVoice();}}
+ function choose(){return new Promise(res=>{chEl=document.createElement('div');chEl.style.cssText='position:fixed;left:50%;bottom:9vh;transform:translateX(-50%);z-index:10000;display:flex;flex-direction:column;gap:8px;width:min(92vw,520px)';
+  OPTS.forEach(o=>{const b=document.createElement('button');b.className='dia-opt-btn';b.textContent=tr(o.t);b.onclick=()=>{chEl.remove();chEl=null;res(o.k);};chEl.appendChild(b);});document.body.appendChild(chEl);});}
+ async function end(k){if(!seq)return;seq=null;stopVoice();if(chEl){chEl.remove();chEl=null;}
+  await fade(1);document.body.classList.remove('cinematic-active');const co=document.getElementById('cinematic-overlay');if(co)co.style.display='none';
+  const P=POI.saheedPG;babuGroup.position.set(P[0],0,P[1]+10);babuGroup.rotation.y=0;playerAngle=0;walk(babuData,0,false);
+  camera.position.set(P[0],3,P[1]+3.5);state.screen='game';state.modalActive=false;
+  if(k==='a'){state.xp+=150;popup('🏠 Room secured: ₹3,200 + agreement! +150 XP');}
+  updateHudLabels();await fade(0);if(k==='b')setTimeout(()=>startPGRentScam(),250);}
+ async function enter(){if(seq)return;seq={t:0,it:0,mode:'ext'};hideInteractBubble();state.modalActive=true;state.screen='cinematic';currentCutscene=null;
+  document.body.classList.add('cinematic-active');const co=document.getElementById('cinematic-overlay');if(co)co.style.display='flex';
+  await sl(2500);if(!seq)return;await fade(1);if(!seq)return;build();seq.mode='int';await fade(0);
+  await run();if(!seq)return;end(await choose());}
+ const _iw=interactWithNpc;interactWithNpc=function(k){if(k==='kantaAunty'&&!seq){enter();return;}return _iw(k);};
+ const _sk=skipCinematic;skipCinematic=function(){if(seq){end('c');return;}_sk();};
+ const _nx=nextCinematicStep;nextCinematicStep=function(){if(seq){if(nextRes)nextRes();return;}_nx();};
+ CUTSCENES.push({id:'scene_pg_rent',title:{or:'୧୫. ପିଜି ଭିତରେ କାନ୍ତା ଆଣ୍ଟି ସହ ଭଡ଼ା କଥା',hi:'15. पीजी के अंदर कांता आंटी से किराए की बात',en:'15. Inside the PG: Renting with Kanta Aunty'},desc:{or:'ବାବୁ ପିଜି ଭିତରକୁ ଯାଇ କାନ୍ତା ଆଣ୍ଟିଙ୍କ ସହ ରୁମ୍ ଭଡ଼ା ଦର କଥାବାର୍ତ୍ତା କରନ୍ତି।',hi:'बाबू पीजी के अंदर जाकर कांता आंटी से कमरे के किराए पर बात करते हैं।',en:'Babu walks into the PG and haggles room rent with Kanta Aunty.'},camStart:[-128,3,59],camLook:[-140,2,42],camEnd:[-128,3,59],voice:'pg_b1',nextVoice:'pg_a1'});
+ const _pc=playCutscene;playCutscene=function(id){if(id==='scene_pg_rent'){closeSceneSelector();const P=POI.saheedPG;enter();return;}return _pc(id);};
+});
+})();
+
+/* ===== LAYERS 6-8: LIVE TRAFFIC • GOLDEN-HOUR ART STYLE • GAME-STYLE HUD ===== */
+(function(){
+const T=f=>{try{f()}catch(e){console.warn('layer',e)}};
+const P=()=>state.mode==='walk'?babuGroup.position:state.mode==='scooty'?playerScooty.group.position:playerAuto.group.position;
+
+/* LAYER 6: OPEN-WORLD TRAFFIC (left-hand lanes, brake for you and for each other) */
+T(()=>{
+ const rs=ROADS.filter(r=>Math.hypot(r.x2-r.x1,r.z2-r.z1)>40),cars=[],cols=['#ef4444','#3b82f6','#f59e0b','#10b981','#a855f7','#e5e7eb'];
+ const n=state.lowGraphics?6:16;
+ for(let i=0;i<n;i++){
+  const r=rs[i%rs.length],L=Math.hypot(r.x2-r.x1,r.z2-r.z1),k=i%4;
+  const m=k===0?makeAuto():k===1?makeBus():makeScooty(cols[i%cols.length]),g=m.group||m;
+  scene.add(g);
+  cars.push({g,r,L,dx:(r.x2-r.x1)/L,dz:(r.z2-r.z1)/L,s:Math.random()*L,sign:Math.random()<.5?1:-1,v:k===1?6+Math.random()*2:8+Math.random()*4,cur:0});
+ }
+ let nt=0;const _t=window.__tick;
+ window.__tick=dt=>{_t&&_t(dt);if(state.screen!=='game')return;const p=P();
+  cars.forEach(c=>{const dx=c.dx*c.sign,dz=c.dz*c.sign,lx=dz,lz=-dx,off=c.r.w/4;
+   const x=c.r.x1+c.dx*c.s+lx*off,z=c.r.z1+c.dz*c.s+lz*off;
+   const rx=p.x-x,rz=p.z-z,ah=rx*dx+rz*dz,sd=Math.abs(rx*lx+rz*lz);
+   let blk=ah>0&&ah<11&&sd<2.8;const byPlayer=blk;
+   if(!blk)for(const o of cars)if(o!==c&&o.r===c.r&&o.sign===c.sign){const gp=(o.s-c.s)*c.sign;if(gp>0&&gp<9){blk=true;break;}}
+   c.cur+=((blk?0:c.v)-c.cur)*Math.min(dt*2.5,1);
+   c.s+=c.cur*dt*c.sign;if(c.s>c.L){c.s=c.L;c.sign=-1;}if(c.s<0){c.s=0;c.sign=1;}
+   c.g.position.set(x,0,z);c.g.rotation.y=Math.atan2(dx,dz);
+   if(byPlayer&&c.cur<.5&&ah<7&&Math.random()<dt*.15)popup('📢 Traffic ahead, go around!');});
+  nt+=dt;if(nt<.5)return;nt=0;
+  const r=ROADS.find(r=>{const hz=r.z1===r.z2;return hz?Math.abs(p.z-r.z1)<r.w/2&&p.x>=Math.min(r.x1,r.x2)&&p.x<=Math.max(r.x1,r.x2):Math.abs(p.x-r.x1)<r.w/2&&p.z>=Math.min(r.z1,r.z2)&&p.z<=Math.max(r.z1,r.z2);});
+  if(r&&r!==window.__lastRoad){window.__lastRoad=r;const e=document.getElementById('road-toast');e.textContent='📍 '+r.name;e.style.opacity=1;clearTimeout(e._h);e._h=setTimeout(()=>e.style.opacity=0,2600);}};
+ const e=document.createElement('div');e.id='road-toast';
+ e.style.cssText='position:fixed;left:50%;bottom:24vh;transform:translateX(-50%);z-index:30;padding:8px 22px;background:rgba(0,0,0,.6);color:#fde68a;font:700 15px "Plus Jakarta Sans",sans-serif;letter-spacing:2px;border-left:4px solid #facc15;opacity:0;transition:opacity .5s;pointer-events:none';
+ document.body.appendChild(e);
+});
+
+/* LAYER 7: GOLDEN-HOUR ART STYLE (warm grade, vignette, crisper shadows) */
+T(()=>{
+ const c=document.getElementById('webgl-canvas');if(c)c.style.filter='contrast(1.07) saturate(1.22) brightness(1.02)';
+ const v=document.createElement('div');v.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:2;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,rgba(40,12,0,.38) 100%)';document.body.appendChild(v);
+ const sun=scene.children.find(o=>o.isDirectionalLight);if(sun&&!state.lowGraphics)sun.shadow.mapSize.set(2048,2048);
+});
+
+/* LAYER 8: GAME-STYLE HUD (round minimap, italic speedo, green cash, mission strip) */
+T(()=>{
+ const s=document.createElement('style');
+ s.textContent="#minimap-canvas{border-radius:50%!important;border:3px solid #f5f5f4!important;box-shadow:0 0 0 3px rgba(0,0,0,.55),0 6px 18px rgba(0,0,0,.5)!important}.speedo-num{font-style:italic!important;font-weight:900!important;text-shadow:0 2px 0 rgba(0,0,0,.6)!important}#hud-coins{color:#86efac!important;text-shadow:0 2px 0 #052e16!important}.wallet-val{font-family:'JetBrains Mono',monospace!important}.mission-banner{border-left:5px solid #facc15!important;background:linear-gradient(90deg,rgba(0,0,0,.74),rgba(0,0,0,.35))!important;border-radius:4px!important}.hud-pill-btn{backdrop-filter:blur(6px)!important}";
+ document.head.appendChild(s);
+});
+})();
 
   loadSavedState();
   checkSavedGame();
