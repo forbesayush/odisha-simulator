@@ -5463,77 +5463,145 @@ let __weave=null;
     return { group: g, collider: { w: width, d: depth } };
   }
 
-  // 2. Odia Cottage — Ekamra Haat Tribal Craft Hut with Saura Murals
+  // 2. Odia Cottage — Ekamra Haat Tribal Craft Hut with Saura Murals (GAP A)
   function makeOdiaCottage(opts = {}) {
     const { w = 8, d = 7, h = 3.2 } = opts;
     const g = new THREE.Group();
-    addMesh(g, box(w, h, d), BM.sauraMural(), [0, h / 2, 0]);
-    addMesh(g, new THREE.ConeGeometry(w * 0.78, 2.6, 4), BM.thatch(), [0, h + 1.3, 0], [0, Math.PI / 4, 0]);
-    addMesh(g, new THREE.PlaneGeometry(1.6, 2.2), BM.woodTeak(), [0, 1.1, d / 2 + 0.05]);
-    [-w * 0.45, w * 0.45].forEach(x => {
-      addMesh(g, cyl(0.08, 0.08, h + 0.6, 6), BM.bamboo(), [x, (h + 0.6) / 2, d / 2 + 0.8]);
+    // Circular mud wall with Saura tribal mural texture
+    addMesh(g, cyl(w / 2, w / 2, h, 16), BM.sauraMural(), [0, h / 2, 0]);
+    // Bamboo ring under eave
+    addMesh(g, cyl(w / 2 + 0.15, w / 2 + 0.15, 0.18, 16), BM.bamboo(), [0, h - 0.1, 0]);
+    // Conical thatched roof
+    addMesh(g, new THREE.ConeGeometry(w * 0.62, 2.8, 16), BM.thatch(), [0, h + 1.4, 0]);
+    // Terracotta finial pot
+    addMesh(g, cyl(0.15, 0.35, 0.6, 8), M("#b45309", 0.9), [0, h + 3.0, 0]);
+    // Wooden door
+    addMesh(g, new THREE.PlaneGeometry(1.4, 2.2), BM.woodTeak(), [0, 1.1, w / 2 + 0.02]);
+    // Bamboo porch posts + lintel
+    [-w * 0.28, w * 0.28].forEach(x => {
+      addMesh(g, cyl(0.07, 0.07, h + 0.4, 6), BM.bamboo(), [x, (h + 0.4) / 2, w / 2 + 0.7]);
     });
-    return { group: g, collider: { w, d } };
+    addMesh(g, box(w * 0.65, 0.14, 0.14), BM.bamboo(), [0, h + 0.3, w / 2 + 0.7]);
+    return { group: g, collider: { w, d: w } };
   }
 
-  // 3. Old Town Brick House — Weathered Clay Tile Residential Duplex
+  // 3. Old Town Brick House — Weathered Clay Tile Residential Duplex (GAP B)
   function makeOldTownBrickHouse(opts = {}) {
     const { w = 10, d = 9, h = 6.5 } = opts;
     const g = new THREE.Group();
+    // Main brick block
     addMesh(g, box(w, h, d), BM.brick(), [0, h / 2, 0]);
-    addMesh(g, box(w + 0.8, 0.4, d + 0.8), BM.terracottaRoof(), [0, h + 0.2, 0]);
-    addMesh(g, box(3.2, 2.8, 1.8), BM.brick(), [0, 1.4, d / 2 + 0.9]);
-    addMesh(g, new THREE.PlaneGeometry(1.4, 2.2), BM.woodTeak(), [0, 1.1, d / 2 + 1.82]);
+    // Terracotta barrel-tile roof cap
+    addMesh(g, box(w + 0.8, 0.5, d + 0.8), BM.terracottaRoof(), [0, h + 0.25, 0]);
+    addMesh(g, box(w + 0.4, 0.35, d + 0.4), BM.terracottaRoof(), [0, h + 0.7, 0]);
+    // Ground-floor entry porch
+    addMesh(g, box(3.4, 2.9, 1.9), BM.brick(), [0, 1.45, d / 2 + 0.95]);
+    addMesh(g, new THREE.PlaneGeometry(1.6, 2.4), BM.woodTeak(), [0, 1.2, d / 2 + 1.92]);
+    // Two balconies with iron railings
+    [h - 2.2, h - 0.2].forEach((y, i) => {
+      addMesh(g, box(w * 0.7, 0.1, 1.0), BM.brick(), [0, y, d / 2 + 0.5]);
+      for (let bx = -w * 0.32; bx <= w * 0.32; bx += 0.35) {
+        addMesh(g, box(0.05, 0.7, 0.05), M("#1c1917", 0.6), [bx, y + 0.4, d / 2 + 0.95]);
+      }
+    });
+    // Windows
+    for (let wy = 2.4; wy < h - 1.0; wy += 2.0) {
+      [-w * 0.3, w * 0.3].forEach(x => {
+        addMesh(g, box(1.3, 1.6, 0.08), BM.woodTeak(), [x, wy, d / 2 + 0.04]);
+      });
+    }
     return { group: g, collider: { w, d } };
   }
 
-  // 4. Colonial White Bungalow — Raj Bhavan Style Heritage Quarters
+  // 4. Colonial White Bungalow — Raj Bhavan Style Heritage Quarters (GAP C)
   function makeColonialBungalow(opts = {}) {
     const { w = 14, d = 11, h = 5.2 } = opts;
     const g = new THREE.Group();
     addMesh(g, box(w, h, d), BM.plasterWhite(), [0, h / 2, 0]);
+    // Hipped clay-tile roof
     addMesh(g, box(w + 1, 0.5, d + 1), BM.terracottaRoof(), [0, h + 0.25, 0]);
-    [-w * 0.35, -w * 0.12, w * 0.12, w * 0.35].forEach(x => {
-      addMesh(g, cyl(0.22, 0.25, 3.8, 10), BM.plasterWhite(), [x, 1.9, d / 2 + 1.2]);
+    addMesh(g, new THREE.ConeGeometry(w * 0.42, 2.2, 4), BM.terracottaRoof(), [0, h + 1.6, 0], [0, Math.PI / 4, 0]);
+    // Portico with 4 white columns
+    [-w * 0.32, -w * 0.12, w * 0.12, w * 0.32].forEach(x => {
+      addMesh(g, cyl(0.22, 0.26, 3.8, 12), BM.plasterWhite(), [x, 1.9, d / 2 + 1.4]);
     });
-    addMesh(g, box(w * 0.8, 0.3, 2.4), BM.plasterWhite(), [0, 3.95, d / 2 + 1.2]);
+    // Portico lintel slab
+    addMesh(g, box(w * 0.8, 0.35, 2.6), BM.plasterWhite(), [0, 3.95, d / 2 + 1.4]);
+    // Front steps
+    for (let s = 0; s < 3; s++) {
+      addMesh(g, box(w * 0.7, 0.25, 0.35), BM.plasterWhite(), [0, 0.12 + s * 0.25, d / 2 + 2.7 + (2 - s) * 0.35]);
+    }
+    // Arched door + tall windows
+    addMesh(g, new THREE.PlaneGeometry(1.8, 2.8), BM.woodTeak(), [0, 1.4, d / 2 + 0.02]);
+    [-w * 0.3, w * 0.3].forEach(x => {
+      addMesh(g, new THREE.PlaneGeometry(1.1, 2.4), BM.woodTeak(), [x, 1.6, d / 2 + 0.02]);
+    });
+    // Chimney stack
+    addMesh(g, box(0.6, 2.0, 0.6), BM.plasterWhite(), [w * 0.35, h + 1.4, -d * 0.25]);
     return { group: g, collider: { w, d } };
   }
 
-  // 5. Infocity Glass Tower — Cyber Tech Hub with Antenna Mast
+  // 5. Infocity Glass Tower — Cyber Tech Hub with Antenna Mast (GAP D)
   function makeInfocityGlassTower(opts = {}) {
     const { w = 14, d = 14, h = 26 } = opts;
     const g = new THREE.Group();
     addMesh(g, box(w, h, d), BM.glassCurtain(), [0, h / 2, 0]);
+    // Corner concrete structural fins
     [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sz]) => {
       addMesh(g, box(0.8, h + 0.5, 0.8), BM.concrete(), [sx * (w / 2), (h + 0.5) / 2, sz * (d / 2)]);
     });
-    addMesh(g, cyl(0.08, 0.15, 6, 6), M("#ef4444", 0.5), [0, h + 3, 0]);
+    // Ground-floor double-height lobby
+    addMesh(g, box(w + 0.6, 3.0, d + 0.6), BM.concrete(), [0, 1.5, 0]);
+    addMesh(g, new THREE.PlaneGeometry(2.4, 0.7), new THREE.MeshStandardMaterial({
+      map: signTex("ଇନଫୋସିଟି", "INFOCITY TECH HUB", "#065f46")
+    }), [0, 2.6, d / 2 + 0.42], null, null, false);
+    // Parapet + rooftop mechanical box
+    addMesh(g, box(w + 0.4, 0.4, d + 0.4), BM.concrete(), [0, h + 0.2, 0]);
+    addMesh(g, box(w * 0.4, 2.2, d * 0.4), BM.concrete(), [0, h + 1.3, 0]);
+    // Antenna mast + red aircraft-warning beacon
+    addMesh(g, cyl(0.08, 0.14, 6, 6), M("#334155", 0.5), [0, h + 3, 0]);
+    addMesh(g, sphere(0.22, 8), new THREE.MeshStandardMaterial({ color: "#dc2626", emissive: "#ef4444", emissiveIntensity: 1.2 }), [0, h + 6.2, 0]);
     return { group: g, collider: { w, d } };
   }
 
-  // 6. Temple Annex Matha — Stone Monastic Cloister with Kalasa
+  // 6. Temple Annex Matha — Stone Monastic Cloister with Kalasa (GAP E)
   function makeTempleMatha(opts = {}) {
     const { w = 12, d = 12, h = 5.5 } = opts;
     const g = new THREE.Group();
     addMesh(g, box(w, h, d), BM.sandstone(), [0, h / 2, 0]);
-    addMesh(g, box(w * 0.65, 1.8, d * 0.65), BM.sandstone(), [0, h + 0.9, 0]);
-    addMesh(g, box(w * 0.35, 1.2, d * 0.35), BM.sandstone(), [0, h + 2.4, 0]);
-    addMesh(g, cyl(0.05, 0.45, 1.2, 8), M("#f59e0b", 0.3, { metalness: 0.8 }), [0, h + 3.6, 0]);
+    // Pida Deula stepped roof (3 tiers)
+    addMesh(g, box(w * 0.8, 1.6, d * 0.8), BM.sandstone(), [0, h + 0.8, 0]);
+    addMesh(g, box(w * 0.55, 1.2, d * 0.55), BM.sandstone(), [0, h + 2.2, 0]);
+    addMesh(g, box(w * 0.32, 0.9, d * 0.32), BM.sandstone(), [0, h + 3.25, 0]);
+    // Gold Kalasa finial with disc
+    addMesh(g, cyl(0.35, 0.45, 0.4, 12), mats.gold, [0, h + 3.9, 0]);
+    addMesh(g, cyl(0.06, 0.4, 1.4, 10), mats.gold, [0, h + 4.7, 0]);
+    addMesh(g, sphere(0.22, 8), mats.gold, [0, h + 5.5, 0]);
+    // Entry arch
+    addMesh(g, box(2.2, 3.0, 0.25), BM.woodTeak(), [0, 1.5, d / 2 + 0.02]);
+    // Carved pilasters
+    [-w * 0.4, w * 0.4].forEach(x => {
+      addMesh(g, box(0.5, h, 0.4), BM.sandstone(), [x, h / 2, d / 2 + 0.02]);
+    });
     return { group: g, collider: { w, d } };
   }
 
-  /* ===== 4 ODISHA STREET STALLS ===== */
-
+  // 4 STREET STALLS (GAP F)
   function makeChhenaPodaStall(pos, rot = 0) {
     const g = new THREE.Group();
     g.position.set(...pos); g.rotation.y = rot;
     addMesh(g, box(2.6, 1.0, 1.4), BM.woodTeak(), [0, 0.5, 0]);
-    [-0.6, 0, 0.6].forEach(x => {
-      addMesh(g, cyl(0.28, 0.28, 0.18, 10), M("#451a03", 0.8), [x, 1.1, 0]);
+    [-0.7, 0, 0.7].forEach(x => {
+      addMesh(g, box(0.55, 0.12, 0.55), M("#92400e", 0.8), [x, 1.12, 0]);
+      addMesh(g, box(0.5, 0.03, 0.5), M("#3f1d0b", 0.7), [x, 1.2, 0]);
     });
-    const bTex = new THREE.MeshStandardMaterial({ map: makeOdiaBanner("ପହଳା ଛେନାପୋଡ଼", "PAHALA CHHENA PODA", { bg: "#78350f" }) });
-    addMesh(g, new THREE.PlaneGeometry(2.4, 0.5), bTex, [0, 1.35, 0.72]);
+    addMesh(g, cyl(0.85, 0.85, 0.4, 16), new THREE.MeshStandardMaterial({
+      color: "#bfdbfe", transparent: true, opacity: 0.35, roughness: 0.1
+    }), [0, 1.42, 0]);
+    addMesh(g, new THREE.PlaneGeometry(2.4, 0.55), new THREE.MeshStandardMaterial({
+      map: makeOdiaBanner("ପାହାଳ ଛେନାପୋଡ଼", "PAHALA CHHENA PODA", { bg: "#78350f" })
+    }), [0, 1.95, 0.72]);
+    addMesh(g, box(2.8, 0.06, 1.5), BM.tin(), [0, 2.2, 0.1], [0.12, 0, 0]);
     return g;
   }
 
@@ -5541,13 +5609,20 @@ let __weave=null;
     const g = new THREE.Group();
     g.position.set(...pos); g.rotation.y = rot;
     addMesh(g, box(2.8, 1.0, 1.5), BM.woodTeak(), [0, 0.5, 0]);
-    addMesh(g, box(3.0, 0.08, 1.8), BM.fabricIkat(), [0, 2.2, 0]);
-    [-1.3, 1.3].forEach(x => {
-      addMesh(g, cyl(0.05, 0.05, 2.2, 6), BM.bamboo(), [x, 1.1, 0.8]);
-      addMesh(g, cyl(0.05, 0.05, 2.2, 6), BM.bamboo(), [x, 1.1, -0.8]);
+    [-0.9, 0, 0.9].forEach((x, i) => {
+      const colors = ["#b0322a", "#1a1a1a", "#f0d66a"];
+      addMesh(g, new THREE.PlaneGeometry(0.7, 1.8), new THREE.MeshStandardMaterial({
+        color: colors[i], side: THREE.DoubleSide, roughness: 0.9
+      }), [x, 1.9, 0.4]);
     });
-    const bTex = new THREE.MeshStandardMaterial({ map: makeOdiaBanner("ସମ୍ବଲପୁରୀ ବସ୍ତ୍ରାଳୟ", "SAMBALPURI HANDLOOM", { bg: "#991b1b" }) });
-    addMesh(g, new THREE.PlaneGeometry(2.6, 0.5), bTex, [0, 2.4, 0.9]);
+    addMesh(g, box(3.0, 0.06, 1.8), BM.fabricIkat(), [0, 2.5, 0]);
+    [-1.3, 1.3].forEach(x => {
+      addMesh(g, cyl(0.05, 0.05, 2.5, 6), BM.bamboo(), [x, 1.25, 0.8]);
+      addMesh(g, cyl(0.05, 0.05, 2.5, 6), BM.bamboo(), [x, 1.25, -0.8]);
+    });
+    addMesh(g, new THREE.PlaneGeometry(2.6, 0.55), new THREE.MeshStandardMaterial({
+      map: makeOdiaBanner("ସମ୍ବଲପୁରୀ ବସ୍ତ୍ର", "SAMBALPURI HANDLOOM", { bg: "#991b1b" })
+    }), [0, 2.9, 0.9]);
     return g;
   }
 
@@ -5560,11 +5635,15 @@ let __weave=null;
       addMesh(g, cyl(0.35, 0.35, 0.08, 10), M("#1c1917", 0.8), [x, 0.35, -0.65], [Math.PI / 2, 0, 0]);
     });
     for (let i = 0; i < 12; i++) {
-      const cx = -0.6 + (i % 4) * 0.4, cz = -0.3 + Math.floor(i / 4) * 0.3;
+      const cx = -0.6 + (i % 4) * 0.4;
+      const cz = -0.3 + Math.floor(i / 4) * 0.3;
       addMesh(g, sphere(0.18, 8), M("#15803d", 0.7), [cx, 1.15, cz]);
     }
-    const bTex = new THREE.MeshStandardMaterial({ map: makeOdiaBanner("ମିଠା ଡାବ ପାଣି", "TENDER COCONUT ₹30", { bg: "#166534" }) });
-    addMesh(g, new THREE.PlaneGeometry(2.0, 0.4), bTex, [0, 1.4, 0.62]);
+    addMesh(g, box(0.4, 0.03, 0.15), M("#cbd5e1", 0.3, { metalness: 0.7 }), [0.7, 1.05, 0.3]);
+    addMesh(g, cyl(0.1, 0.1, 0.4, 8), new THREE.MeshStandardMaterial({ color: "#ef4444", roughness: 0.4 }), [0.85, 1.05, -0.4]);
+    addMesh(g, new THREE.PlaneGeometry(2.0, 0.45), new THREE.MeshStandardMaterial({
+      map: makeOdiaBanner("ଡାବ ପାଣି", "TENDER COCONUT ₹30", { bg: "#166534" })
+    }), [0, 1.45, 0.62]);
     return g;
   }
 
@@ -5572,14 +5651,19 @@ let __weave=null;
     const g = new THREE.Group();
     g.position.set(...pos); g.rotation.y = rot;
     addMesh(g, box(2.4, 0.9, 1.3), BM.woodTeak(), [0, 0.45, 0]);
+    addMesh(g, cyl(0.18, 0.18, 0.4, 10), M("#ca8a04", 0.3, { metalness: 0.8 }), [-0.5, 1.15, 0]);
+    addMesh(g, cyl(0.04, 0.04, 0.2, 6), M("#1c1917", 0.6), [-0.5, 1.4, 0]);
+    [-0.1, 0.15, 0.4, 0.65].forEach(x => {
+      addMesh(g, cyl(0.06, 0.045, 0.1, 8), M("#b45309", 0.85), [x, 1.05, 0.35]);
+    });
     addMesh(g, box(2.8, 0.06, 1.8), BM.tin(), [0, 2.2, 0], [0.1, 0, 0]);
     [-1.2, 1.2].forEach(x => {
       addMesh(g, cyl(0.04, 0.04, 2.2, 6), BM.bamboo(), [x, 1.1, 0.7]);
       addMesh(g, cyl(0.04, 0.04, 2.2, 6), BM.bamboo(), [x, 1.1, -0.7]);
     });
-    addMesh(g, cyl(0.2, 0.25, 0.5, 10), M("#ca8a04", 0.3, { metalness: 0.8 }), [-0.5, 1.15, 0]);
-    const bTex = new THREE.MeshStandardMaterial({ map: makeOdiaBanner("ମସଲା ଚାହା", "SPECIAL SPICED CHAI", { bg: "#c2410c" }) });
-    addMesh(g, new THREE.PlaneGeometry(2.2, 0.45), bTex, [0, 2.3, 0.85]);
+    addMesh(g, new THREE.PlaneGeometry(2.2, 0.5), new THREE.MeshStandardMaterial({
+      map: makeOdiaBanner("ମସଲା ଚାହା", "SPECIAL SPICED CHAI", { bg: "#c2410c" })
+    }), [0, 2.3, 0.85]);
     return g;
   }
 
