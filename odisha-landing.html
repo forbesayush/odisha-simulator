@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Amara Odisha Adventures — Bhubaneswar Grand Open World</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Cinzel:wght@600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+    <style type="text/tailwindcss">
+      @import "tailwindcss";
+      @theme inline {
+        --color-background: var(--background);
+        --color-foreground: var(--foreground);
+        --color-primary: var(--primary);
+        --color-primary-foreground: var(--primary-foreground);
+        --color-secondary: var(--secondary);
+        --color-secondary-foreground: var(--secondary-foreground);
+        --color-tertiary: var(--tertiary);
+        --color-tertiary-foreground: var(--tertiary-foreground);
+        --color-muted: var(--muted);
+        --color-muted-foreground: var(--muted-foreground);
+        --color-accent: var(--accent);
+        --color-accent-foreground: var(--accent-foreground);
+        --color-destructive: var(--destructive);
+        --color-destructive-foreground: var(--destructive-foreground);
+        --color-card: var(--card);
+        --color-card-foreground: var(--card-foreground);
+        --color-popover: var(--popover);
+        --color-popover-foreground: var(--popover-foreground);
+        --color-border: var(--border);
+        --color-input: var(--input);
+        --color-ring: var(--ring);
+        --radius-sm: calc(var(--radius) - 4px);
+        --radius-md: calc(var(--radius) - 2px);
+        --radius-lg: var(--radius);
+        --font-sans: 'Plus Jakarta Sans', Inter, sans-serif;
+        --font-heading: 'Plus Jakarta Sans', Inter, sans-serif;
+        --font-mono: 'JetBrains Mono', monospace;
+      }
+
+      @layer base {
+        .bg-card { color: var(--card-foreground); }
+        .bg-popover { color: var(--popover-foreground, var(--card-foreground)); }
+        .bg-primary { color: var(--primary-foreground); }
+        .bg-secondary { color: var(--secondary-foreground); }
+        .bg-accent { color: var(--accent-foreground, var(--foreground)); }
+        .bg-tertiary { color: var(--tertiary-foreground, var(--primary-foreground)); }
+        .bg-destructive { color: var(--destructive-foreground, var(--primary-foreground)); }
+      }
+
+      :root {
+        /* Authentic Odisha & Pattachitra Palette */
+        --background: #0d0a14;
+        --foreground: #fffdf5;
+        --primary: #f59e0b; /* Temple Saffron / Marigold */
+        --primary-foreground: #1c0e04;
+        --secondary: #1a1325;
+        --secondary-foreground: #fffdf5;
+        --tertiary: #271428;
+        --tertiary-foreground: #fffdf5;
+        --muted: #181224;
+        --muted-foreground: #a49cb5;
+        --accent: #b71c1c; /* Vermilion / Gamucha Red */
+        --accent-foreground: #ffffff;
+        --destructive: #ef4444;
+        --card: #151020;
+        --card-foreground: #fffdf5;
+        --border: #2c233c;
+        --input: #2c233c;
+        --ring: #f59e0b;
+        --radius: 12px;
+        --font-sans: 'Plus Jakarta Sans', Inter, sans-serif;
+        --font-heading: 'Plus Jakarta Sans', Inter, sans-serif;
+        --font-mono: 'JetBrains Mono', monospace;
+      }
+    </style>
+    <style>
+      .brand-gradient {
+        background-image: linear-gradient(135deg, #f59e0b 0%, #dc2626 50%, #b71c1c 100%);
+      }
+      .temple-glow {
+        box-shadow: 0 0 50px rgba(245, 158, 11, 0.22);
+      }
+      .rain-drop {
+        position: fixed;
+        width: 1.5px;
+        height: 24px;
+        background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(125, 211, 252, 0.7));
+        pointer-events: none;
+        z-index: 999;
+      }
+      /* Custom animated canvas */
+      #hero-canvas, #trailer-canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .odia-text {
+        font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+      }
+    </style>
+  </head>
+  <body class="bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground overflow-x-hidden">
+    <!-- Screen overlay for active cheats (rain / night / toast) -->
+    <div id="rain-layer" class="fixed inset-0 pointer-events-none z-50 overflow-hidden hidden"></div>
+    <div id="cheat-toast" class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] hidden items-center gap-3 bg-secondary/95 border border-primary/50 text-foreground px-6 py-3.5 rounded-full shadow-2xl backdrop-blur-md font-mono text-sm">
+      <span class="text-xl">✨</span>
+      <div>
+        <b class="text-primary" id="toast-title">CHEAT ACTIVATED</b>
+        <span class="text-muted-foreground ml-2" id="toast-desc">Rain and thunder</span>
+      </div>
+    </div>
+
+    <div class="min-h-screen w-full bg-background flex flex-col relative">
+
+      <!-- ==========================================
+           SECTION 1: HERO SECTION
+           ========================================== -->
+      <section id="hero" class="relative flex min-h-[920px] h-screen overflow-hidden bg-background text-foreground">
+        <!-- Procedural 3D/2D Canvas Visual Backdrop -->
+        <div class="absolute inset-0 z-0">
+          <canvas id="hero-canvas"></canvas>
+          <div class="absolute inset-0 bg-background/55"></div>
+          <div class="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-background/20"></div>
+          <div class="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-background to-transparent"></div>
+        </div>
+
+        <div class="relative z-10 mx-auto flex h-full w-full max-w-[1280px] items-end px-6 pb-20 pt-28">
+          <div class="w-full max-w-[640px]">
+            <!-- Brand Badge -->
+            <div class="mb-5 inline-flex items-center gap-2.5 rounded-full border border-primary/40 bg-secondary/80 px-4 py-1.5 backdrop-blur-md">
+              <span class="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+              <span class="font-mono text-xs font-bold uppercase tracking-wider text-primary">ଆମ ଓଡ଼ିଶା • AMARA ODISHA 3D</span>
+            </div>
+
+            <h1 id="hero-h" class="text-4xl sm:text-6xl font-black uppercase leading-[0.95] tracking-tight text-foreground">
+              Bhubaneswar,<br>
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-red-500">now playable</span><br>
+              in your browser.
+            </h1>
+
+            <p class="mt-4 text-base sm:text-lg leading-relaxed text-muted-foreground max-w-[540px]">
+              Baramunda Bus Terminal, Raghu's steaming Dahibara-Aloodum pushcart, Lingaraj Temple, yellow-black auto chases, and Saheed Nagar PG scams. No downloads, no installs.
+            </p>
+
+            <div class="hero-ctas mt-8 flex flex-wrap items-center gap-3.5">
+              <a class="inline-flex h-14 items-center gap-3 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-600 px-8 text-base font-bold text-white shadow-lg shadow-orange-500/25 hover:scale-[1.02] transition-transform" href="index.html" data-play="hero">
+                <iconify-icon icon="lucide:play" class="text-lg"></iconify-icon>
+                Play Odisha 3D Free
+                <kbd class="key inline-flex items-center gap-1 rounded border border-white/30 bg-white/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">Enter <iconify-icon icon="lucide:corner-down-left" class="text-xs"></iconify-icon></kbd>
+              </a>
+
+              <a class="inline-flex h-14 items-center gap-2 rounded-xl border border-border/80 bg-secondary/60 px-6 text-sm font-bold text-foreground backdrop-blur-sm hover:bg-secondary transition-colors" href="namma-metro.html" title="Play Bengaluru 2D Runner Companion">
+                <iconify-icon icon="lucide:train-front" class="text-base text-primary"></iconify-icon>
+                Namma Metro 2D
+              </a>
+
+              <button type="button" onclick="document.getElementById('more-close').showModal()" class="inline-flex h-14 items-center gap-2 rounded-xl border border-border/80 bg-secondary/40 px-6 text-sm font-bold text-foreground backdrop-blur-sm hover:bg-secondary/70 transition-colors">
+                <iconify-icon icon="lucide:map-pin" class="text-base text-amber-400"></iconify-icon>
+                Vote for Cuttack & Puri
+              </button>
+            </div>
+
+            <ul class="hero-facts mt-8 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-medium text-muted-foreground" role="list">
+              <li class="after:ml-3 after:text-primary after:content-['•']">Free</li>
+              <li class="after:ml-3 after:text-primary after:content-['•']">No download</li>
+              <li class="after:ml-3 after:text-primary after:content-['•']">Trilingual (ଓଡ଼ିଆ • हिंदी • English)</li>
+              <li><a class="underline decoration-primary/80 underline-offset-4" href="#how">Phones & Laptops</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <span class="tag hero-tag absolute bottom-20 right-10 sm:right-24 z-10 inline-flex items-center gap-2 rounded-full border border-border/60 bg-secondary/80 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.14em] text-foreground backdrop-blur-sm shadow-xl">
+          <i class="h-2 w-2 rounded-full bg-primary shadow-[0_0_0_3px_rgba(245,158,11,0.25)]"></i>Pure WebGL 3D Gameplay
+        </span>
+
+        <a class="hero-cue absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground transition-colors" href="#trailer" aria-label="Scroll down">
+          <span>Scroll</span>
+          <i class="h-7 w-px bg-muted-foreground"></i>
+        </a>
+      </section>
+
+
+      <!-- ==========================================
+           SECTION 2: TRAILER & CINEMATIC SHOWCASE
+           ========================================== -->
+      <section id="trailer" class="min-h-[960px] overflow-hidden bg-background px-6 sm:px-14 pt-28 pb-32 text-foreground">
+        <div class="mx-auto max-w-[1440px]">
+          <header class="max-w-[820px]">
+            <h2 id="trailer-h" class="text-4xl sm:text-7xl font-black uppercase leading-[0.88] tracking-[-0.06em]">
+              Eighty-nine seconds<br>of <span class="text-primary">Bhubaneswar</span>
+            </h2>
+            <p class="mt-6 max-w-[700px] text-lg sm:text-xl leading-[1.55] tracking-[-0.02em] text-muted-foreground">
+              Gulmohar evenings on Janpath, steaming Dahibara-Aloodum with extra dahi-pani, yellow-and-black auto chases past Raj Mahal Flyover, and evening aarti bells at Lingaraj Temple. <b class="text-foreground">Every frame is procedural 3D.</b> Sound on.
+            </p>
+          </header>
+
+          <div class="relative mt-12 aspect-[1920/820] overflow-hidden rounded-2xl bg-card border border-border shadow-2xl">
+            <!-- Canvas Trailer Loop -->
+            <canvas id="trailer-canvas"></canvas>
+
+            <span class="absolute left-4 top-4 flex items-center gap-2 rounded-md bg-background/85 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-foreground backdrop-blur-md">
+              <i class="h-2 w-2 rounded-full bg-primary animate-pulse"></i>In-game footage
+            </span>
+
+            <a href="index.html" class="absolute left-1/2 top-1/2 flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-gradient-to-r from-amber-500 to-red-600 text-white shadow-2xl hover:scale-110 transition-transform group" aria-label="Play the game now">
+              <iconify-icon class="ml-1 text-4xl group-hover:scale-110 transition-transform" icon="lucide:play"></iconify-icon>
+            </a>
+
+            <div class="absolute bottom-6 left-8 uppercase">
+              <p class="text-2xl sm:text-4xl font-black leading-[0.8] tracking-[-0.05em] text-foreground">
+                Amara Odisha<span class="mt-2 block text-xs sm:text-sm font-bold tracking-[0.18em] text-primary">Chapter 1 • Baramunda to Old Town</span>
+              </p>
+              <p class="mt-2 text-xs sm:text-sm font-semibold normal-case tracking-[0.02em] text-muted-foreground">
+                <span class="font-bold text-primary">15 Cutscenes</span> · Full trilingual voice lines (Odia/Hindi/English)
+              </p>
+            </div>
+
+            <!-- Authentic viewfinder corner marks -->
+            <span class="absolute left-4 top-4 h-4 w-4 border-l-2 border-t-2 border-primary/80"></span>
+            <span class="absolute right-4 top-4 h-4 w-4 border-r-2 border-t-2 border-primary/80"></span>
+            <span class="absolute bottom-4 left-4 h-4 w-4 border-b-2 border-l-2 border-primary/80"></span>
+            <span class="absolute bottom-4 right-4 h-4 w-4 border-b-2 border-r-2 border-primary/80"></span>
+          </div>
+
+          <p class="mt-4 text-xs tracking-[-0.02em] text-muted-foreground flex items-center gap-2">
+            <span>Procedural audio synthesis via Web Audio API. 100% original code.</span>
+            <a class="text-foreground underline decoration-muted-foreground underline-offset-2" href="#cheats">Test sound & cheats below</a>
+          </p>
+        </div>
+      </section>
+
+
+      <!-- ==========================================
+           SECTION 3: WORLD & ROAD HIGHLIGHTS
+           ========================================== -->
+      <header class="w-full bg-background px-6 py-12 text-foreground border-t border-border/40">
+        <div class="mx-auto flex flex-col md:flex-row items-start md:items-end justify-between max-w-[1240px] gap-6">
+          <div>
+            <span class="font-mono text-xs font-bold uppercase tracking-widest text-primary">EKAMRA KSHETRA MAP</span>
+            <h2 id="world-h" class="text-3xl sm:text-5xl font-black uppercase leading-tight tracking-tight mt-1">
+              Baramunda now.<br><span class="text-primary">Twin Cities</span> next.
+            </h2>
+          </div>
+          <p class="text-sm sm:text-base leading-relaxed text-muted-foreground max-w-[500px]">
+            Chapter 1 features Baramunda Bus Terminal to Master Canteen and Old Town, laid out from <b>real Bhubaneswar map data</b> and tuned for fast 3D gameplay. Saheed Nagar, Khandagiri Caves, and Cuttack Silver City unlock next.
+          </p>
+        </div>
+      </header>
+
+      <section class="w-full bg-background px-6 pb-20 text-foreground">
+        <div class="mx-auto max-w-[1240px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Road Card 1: Janpath -->
+          <div class="rounded-xl border border-border bg-card overflow-hidden group hover:border-primary/60 transition-colors">
+            <div class="h-44 bg-gradient-to-br from-amber-950/40 via-card to-card p-5 flex flex-col justify-between relative">
+              <span class="text-3xl">🚏</span>
+              <span class="absolute top-4 right-4 font-mono text-[11px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">MO BUS CORRIDOR</span>
+              <div>
+                <h4 class="font-bold text-lg text-foreground">Janpath Boulevard</h4>
+                <p class="text-xs text-muted-foreground">Wide arterial road with Mo Bus stops, sacred cow crossings, and evening dahibara carts.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Road Card 2: Raj Mahal Flyover -->
+          <div class="rounded-xl border border-border bg-card overflow-hidden group hover:border-primary/60 transition-colors">
+            <div class="h-44 bg-gradient-to-br from-red-950/40 via-card to-card p-5 flex flex-col justify-between relative">
+              <span class="text-3xl">🌉</span>
+              <span class="absolute top-4 right-4 font-mono text-[11px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">ELEVATED PASS</span>
+              <div>
+                <h4 class="font-bold text-lg text-foreground">Raj Mahal Flyover</h4>
+                <p class="text-xs text-muted-foreground">Double-decker flyover connecting Kalpana Square to Master Canteen over heavy auto traffic.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Road Card 3: Old Town & Lingaraj -->
+          <div class="rounded-xl border border-border bg-card overflow-hidden group hover:border-primary/60 transition-colors">
+            <div class="h-44 bg-gradient-to-br from-orange-950/40 via-card to-card p-5 flex flex-col justify-between relative">
+              <span class="text-3xl">🛕</span>
+              <span class="absolute top-4 right-4 font-mono text-[11px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">HERITAGE ZONE</span>
+              <div>
+                <h4 class="font-bold text-lg text-foreground">Old Town Lingaraj</h4>
+                <p class="text-xs text-muted-foreground">11th-century Rekha deul sandstone towers, Bindusagar lake ripples, and narrow temple alleys.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Road Card 4: Master Canteen Roundabout -->
+          <div class="rounded-xl border border-border bg-card overflow-hidden group hover:border-primary/60 transition-colors">
+            <div class="h-44 bg-gradient-to-br from-purple-950/40 via-card to-card p-5 flex flex-col justify-between relative">
+              <span class="text-3xl">🐎</span>
+              <span class="absolute top-4 right-4 font-mono text-[11px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">LANDMARK</span>
+              <div>
+                <h4 class="font-bold text-lg text-foreground">Master Canteen Square</h4>
+                <p class="text-xs text-muted-foreground">The iconic Konark War Horse monument, dancing fountains, railway station gateway, and student addas.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==========================================
+           SECTION 4: CHAPTER 1 STORY BEATS
+           ========================================== -->
+      <header class="w-full bg-background px-6 pt-16 pb-8 text-foreground text-center border-t border-border/40">
+        <div class="max-w-[720px] mx-auto">
+          <span class="font-mono text-xs font-bold uppercase tracking-widest text-primary">STORY CAMPAIGN</span>
+          <h2 id="life-h" class="text-3xl sm:text-5xl font-black uppercase leading-tight tracking-tight mt-2">
+            Chapter 1: <span class="text-primary">Baramunda to Saheed Nagar</span>
+          </h2>
+          <p class="mt-4 text-base sm:text-lg leading-relaxed text-muted-foreground">
+            You are Babu. Fresh off the bus from Cuttack with one steel trunk, an old scooty, and a PG broker demanding 10 months deposit without an agreement.
+          </p>
+        </div>
+      </header>
+
+      <section class="w-full bg-background px-6 pb-28 text-foreground">
+        <div class="mx-auto max-w-[1240px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          <!-- Beat 1: Dahibara Trail -->
+          <div class="p-6 rounded-2xl border border-border bg-card flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-4xl">🍛</span>
+                <span class="font-mono text-xs font-bold text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-full">5 CHECKPOINTS</span>
+              </div>
+              <h3 class="text-xl font-bold uppercase tracking-tight text-foreground">Taste the Dahibara</h3>
+              <p class="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Hit five legendary Dahibara-Aloodum carts from Baramunda to Lingaraj. Spicy aloo dum, tangy curd, ghuguni, and a cold sip of dahi-pani grants a 45-second speed boost!
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-border/40 text-xs text-primary font-mono font-semibold">
+              +50 XP & Speed Boost
+            </div>
+          </div>
+
+          <!-- Beat 2: Free Roam & Chai Khatti -->
+          <div class="p-6 rounded-2xl border border-border bg-card flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-4xl">☕</span>
+                <span class="font-mono text-xs font-bold text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-full">FREE ROAM</span>
+              </div>
+              <h3 class="text-xl font-bold uppercase tracking-tight text-foreground">Live the Adda</h3>
+              <p class="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Walk through Ekamra Haat, sip hot spiced tea at Dhabaleswar Tea Stall, pet sacred cows along Janpath, and negotiate ₹20 auto fare with Kalia Bhai.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-border/40 text-xs text-primary font-mono font-semibold">
+              Authentic Odia Dialect Dialogue
+            </div>
+          </div>
+
+          <!-- Beat 3: Anything with Wheels -->
+          <div class="p-6 rounded-2xl border border-border bg-card flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-4xl">🛺</span>
+                <span class="font-mono text-xs font-bold text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-full">DRIVABLE</span>
+              </div>
+              <h3 class="text-xl font-bold uppercase tracking-tight text-foreground">Anything with Wheels</h3>
+              <p class="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Yellow-and-black Bajaj auto-rickshaw (with authentic "OD-02" and "LPG" stickers), Honda Activa Scooty, green Mo Bus, and Police PCR cruiser. Horn included. Horn compulsory.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-border/40 text-xs text-primary font-mono font-semibold">
+              4D Moveable Steering & Physics
+            </div>
+          </div>
+
+          <!-- Beat 4: Make a Scene (Gandagola) -->
+          <div class="p-6 rounded-2xl border border-border bg-card flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-4xl">🚨</span>
+                <span class="font-mono text-xs font-bold text-red-400 bg-red-400/10 px-2.5 py-1 rounded-full">POLICE PCR</span>
+              </div>
+              <h3 class="text-xl font-bold uppercase tracking-tight text-foreground">Make a Scene (ଗଣ୍ଡଗୋଳ)</h3>
+              <p class="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Wanted meter tiers: Whistle, Challan, Nakabandi, PCR Chase, Commissionerate Alert. Fight with what the street has: steel ladle, tender coconut, plastic chair. No guns.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-border/40 text-xs text-primary font-mono font-semibold">
+              Authentic Street Mechanics
+            </div>
+          </div>
+
+          <!-- Beat 5: Odd Jobs & PG Rent Scam -->
+          <div class="p-6 rounded-2xl border border-border bg-card flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-4xl">🏢</span>
+                <span class="font-mono text-xs font-bold text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-full">SYNDICATE</span>
+              </div>
+              <h3 class="text-xl font-bold uppercase tracking-tight text-foreground">Expose Dalal Raghu</h3>
+              <p class="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Spot 3 red flags in the Saheed Nagar PG rental market, negotiate with Kanta Aunty, and recover genuine room keys with Police PCR assistance.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-border/40 text-xs text-primary font-mono font-semibold">
+              +150 XP & Secured Room
+            </div>
+          </div>
+
+          <!-- Beat 6: Dynamic Weather & Flying Auto -->
+          <div class="p-6 rounded-2xl border border-border bg-card flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-4xl">⛈️</span>
+                <span class="font-mono text-xs font-bold text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-full">4D SIMULATION</span>
+              </div>
+              <h3 class="text-xl font-bold uppercase tracking-tight text-foreground">Monsoon & Flying Auto</h3>
+              <p class="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Dynamic Kalabaishakhi thunderstorms with lightning and road puddles, golden sunset temple aarti, or hit Antigrav mode [Z] to fly above the flyovers!
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-border/40 text-xs text-primary font-mono font-semibold">
+              Press [V] for Weather · [Z] for Flight
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+
+      <!-- ==========================================
+           SECTION 5: PEAK BHUBANESWAR HUMOR & TIPS
+           ========================================== -->
+      <header class="w-full bg-background px-6 pt-16 pb-8 text-center text-foreground border-t border-border/40">
+        <div class="mx-auto max-w-[650px]">
+          <span class="font-mono text-xs font-bold uppercase tracking-widest text-primary">KHATTI & LOCAL CULTURE</span>
+          <h2 id="blr-h" class="text-3xl sm:text-5xl font-bold leading-tight tracking-tight mt-2">
+            Peak Bhubaneswar,<br><span class="text-primary">built in</span>
+          </h2>
+          <p class="mt-4 text-base leading-relaxed text-muted-foreground">
+            The jokes write themselves. We just put them in the game: on shop signs, in loading tips, and in what the auto drivers shout.
+          </p>
+        </div>
+      </header>
+
+      <section class="w-full bg-background px-6 pb-28 text-foreground">
+        <div class="mx-auto max-w-[1080px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+          <div class="p-6 rounded-xl bg-card border border-border flex flex-col justify-between">
+            <q class="text-sm sm:text-base leading-snug font-medium text-foreground">Master Canteen at 7 PM is not a traffic junction. It is a philosophy of patience.</q>
+            <span class="mt-4 text-xs font-mono text-primary uppercase">Overheard at Auto Stand</span>
+          </div>
+
+          <div class="p-6 rounded-xl bg-card border border-border flex flex-col justify-between">
+            <q class="text-sm sm:text-base leading-snug font-medium text-foreground">Dahibara without extra Dahi-pani and roasted jeera-chilli powder is a civic offense.</q>
+            <span class="mt-4 text-xs font-mono text-primary uppercase">Loading Tip #4</span>
+          </div>
+
+          <div class="p-6 rounded-xl bg-card border border-border flex flex-col justify-between">
+            <q class="text-sm sm:text-base leading-snug font-medium text-foreground">Raj Mahal flyover takes 2 minutes; finding two-wheeler parking at Market Building takes 45 minutes.</q>
+            <span class="mt-4 text-xs font-mono text-primary uppercase">Janpath Proverb</span>
+          </div>
+
+          <div class="p-6 rounded-xl bg-card border border-border flex flex-col justify-between">
+            <q class="text-sm sm:text-base leading-snug font-medium text-foreground">Mo Bus will arrive the exact second you give up and decide to walk in the heat.</q>
+            <span class="mt-4 text-xs font-mono text-primary uppercase">Bus Stop Truth</span>
+          </div>
+
+          <div class="p-6 rounded-xl bg-card border border-border flex flex-col justify-between">
+            <q class="text-sm sm:text-base leading-snug font-medium text-foreground">"ଏଗ୍ରିମେଣ୍ଟ ପରେ ହେବ ବାବୁ, ଏଠି ବିଶ୍ୱାସରେ କାମ ଚାଲେ!" (Agreement will happen later Babu, here everything runs on mutual trust!)</q>
+            <span class="mt-4 text-xs font-mono text-primary uppercase">Dalal Raghu (PG Broker)</span>
+          </div>
+
+          <div class="p-6 rounded-xl bg-card border border-border flex flex-col justify-between">
+            <q class="text-sm sm:text-base leading-snug font-medium text-foreground">Always ring the temple bell at Ram Mandir before speeding towards Vani Vihar.</q>
+            <span class="mt-4 text-xs font-mono text-primary uppercase">Babu Lal Uncle's Advice</span>
+          </div>
+
+        </div>
+      </section>
+
+
+      <!-- ==========================================
+           SECTION 6: INTERACTIVE CHEATS ENGINE
+           ========================================== -->
+      <section id="cheats" class="min-h-[980px] overflow-hidden bg-background px-6 sm:px-14 py-28 text-foreground border-t border-border/40">
+        <div class="mx-auto max-w-[1440px]">
+          <header class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-end">
+            <div>
+              <span class="font-mono text-xs font-bold uppercase tracking-widest text-primary">SECRET CODES</span>
+              <h2 id="cheats-h" class="text-4xl sm:text-6xl font-black uppercase leading-tight tracking-tight mt-2">
+                Cheats work on<br>this <span class="text-primary">website</span> too
+              </h2>
+            </div>
+            <p class="text-base sm:text-lg leading-relaxed text-muted-foreground max-w-lg">
+              In the game you type a word and the city changes. Here too. <b class="text-foreground">Click any code below, or type it on your keyboard right now!</b>
+            </p>
+          </header>
+
+          <div class="mt-14 grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-12 items-start">
+            <!-- Active Cheat Display Box -->
+            <div class="p-8 sm:p-12 rounded-2xl bg-card border border-border relative overflow-hidden">
+              <div class="flex items-center justify-between mb-8">
+                <span class="font-mono text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-3 py-1 rounded-full">LIVE PREVIEW</span>
+                <span class="text-sm font-mono text-muted-foreground">Type on keyboard: <kbd class="px-2 py-0.5 rounded bg-muted border border-border text-foreground">BARSHA</kbd></span>
+              </div>
+
+              <div class="py-10">
+                <p class="font-mono text-4xl sm:text-6xl font-black tracking-tight text-primary" id="active-cheat-code">BARSHA</p>
+                <p class="mt-4 text-xl sm:text-2xl font-bold text-foreground" id="active-cheat-title">"The Monsoon Has Arrived"</p>
+                <p class="mt-3 text-base text-muted-foreground max-w-xl leading-relaxed" id="active-cheat-desc">
+                  In the game: Heavy Kalabaishakhi thunderstorm, slick asphalt roads, and auto wipers running. On this page: Monsoon rain falls across the screen with thunder audio!
+                </p>
+              </div>
+
+              <div class="mt-8 flex gap-4">
+                <button type="button" onclick="triggerCheat('BARSHA')" class="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 font-mono font-bold text-sm text-primary-foreground hover:brightness-110 transition-all">
+                  <iconify-icon icon="lucide:play"></iconify-icon>
+                  Test Code Now
+                </button>
+                <a href="index.html" class="inline-flex items-center gap-2 rounded-xl border border-border px-6 py-3 font-mono font-bold text-sm text-foreground hover:bg-secondary transition-all">
+                  Use In 3D Game
+                </a>
+              </div>
+            </div>
+
+            <!-- Cheat List -->
+            <ul class="space-y-2.5" role="list" aria-label="Cheat codes">
+              <li>
+                <button type="button" onclick="triggerCheat('BARSHA')" class="w-full rounded-xl border-l-4 border-primary bg-card hover:bg-secondary p-4 text-left transition-all">
+                  <span class="block font-mono text-lg font-bold text-foreground">BARSHA</span>
+                  <span class="mt-1 block text-xs text-muted-foreground">Heavy Kalabaishakhi monsoon rain & thunder</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" onclick="triggerCheat('DAHIBARA')" class="w-full rounded-xl border-l-4 border-transparent hover:border-primary bg-card hover:bg-secondary p-4 text-left transition-all">
+                  <span class="block font-mono text-lg font-bold text-foreground">DAHIBARA</span>
+                  <span class="mt-1 block text-xs text-muted-foreground">Instant Dahibara-Aloodum plate +50 Speed Boost</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" onclick="triggerCheat('KALIA')" class="w-full rounded-xl border-l-4 border-transparent hover:border-primary bg-card hover:bg-secondary p-4 text-left transition-all">
+                  <span class="block font-mono text-lg font-bold text-foreground">KALIA</span>
+                  <span class="mt-1 block text-xs text-muted-foreground">Spawns Kalia Bhai's auto with nitro boost</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" onclick="triggerCheat('BAPUJI')" class="w-full rounded-xl border-l-4 border-transparent hover:border-primary bg-card hover:bg-secondary p-4 text-left transition-all">
+                  <span class="block font-mono text-lg font-bold text-foreground">BAPUJI</span>
+                  <span class="mt-1 block text-xs text-muted-foreground">+₹50,000 cash in wallet for PG deposit</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" onclick="triggerCheat('POLICEBEDA')" class="w-full rounded-xl border-l-4 border-transparent hover:border-primary bg-card hover:bg-secondary p-4 text-left transition-all">
+                  <span class="block font-mono text-lg font-bold text-foreground">POLICEBEDA</span>
+                  <span class="mt-1 block text-xs text-muted-foreground">Clear Police PCR wanted level immediately</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" onclick="triggerCheat('RASAGOLA')" class="w-full rounded-xl border-l-4 border-transparent hover:border-primary bg-card hover:bg-secondary p-4 text-left transition-all">
+                  <span class="block font-mono text-lg font-bold text-foreground">RASAGOLA</span>
+                  <span class="mt-1 block text-xs text-muted-foreground">Full health recovery & sweet divine blessing</span>
+                </button>
+              </li>
+              <li>
+                <button type="button" onclick="triggerCheat('UDASUKHA')" class="w-full rounded-xl border-l-4 border-transparent hover:border-primary bg-card hover:bg-secondary p-4 text-left transition-all">
+                  <span class="block font-mono text-lg font-bold text-foreground">UDASUKHA</span>
+                  <span class="mt-1 block text-xs text-muted-foreground">Zero-G Antigravity auto flight mode</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==========================================
+           SECTION 7: THREE STEPS NO DOWNLOAD
+           ========================================== -->
+      <section id="how" class="bg-background text-foreground py-28 border-t border-border/40">
+        <div class="mx-auto max-w-screen-xl px-6">
+          <header class="flex flex-col md:flex-row items-start md:items-end justify-between gap-8 mb-16">
+            <div>
+              <span class="font-mono text-xs font-bold uppercase tracking-widest text-primary">INSTANT ACCESS</span>
+              <h2 id="how-h" class="text-4xl sm:text-6xl font-bold leading-tight tracking-tight mt-1">
+                Three steps.<br>
+                <span class="text-primary">No download.</span>
+              </h2>
+            </div>
+            <div class="flex items-center gap-4">
+              <a href="index.html" class="inline-flex h-12 items-center justify-center rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground hover:brightness-110 transition-all">
+                Play 3D Free Now
+              </a>
+              <a href="namma-metro.html" class="inline-flex h-12 items-center justify-center rounded-xl border border-border px-6 text-sm font-medium text-foreground hover:bg-secondary transition-all">
+                Namma Metro 2D
+              </a>
+            </div>
+          </header>
+
+          <ol class="grid grid-cols-1 md:grid-cols-3 gap-8" role="list">
+            <li class="p-8 rounded-2xl bg-card border border-border">
+              <span class="text-3xl font-black text-primary font-mono">01</span>
+              <h3 class="mt-6 text-xl font-bold tracking-tight">Open on any screen</h3>
+              <p class="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Works on Chrome, Edge, Safari, Firefox on your laptop or smartphone. Touch joystick and on-screen buttons ready for mobile.
+              </p>
+            </li>
+            <li class="p-8 rounded-2xl bg-card border border-border">
+              <span class="text-3xl font-black text-primary font-mono">02</span>
+              <h3 class="mt-6 text-xl font-bold tracking-tight">Press Play & Roam</h3>
+              <p class="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Self-contained in a single file with zero external CDNs. Loads in seconds and runs 100% offline.
+              </p>
+            </li>
+            <li class="p-8 rounded-2xl bg-card border border-border">
+              <span class="text-3xl font-black text-primary font-mono">03</span>
+              <h3 class="mt-6 text-xl font-bold tracking-tight">Auto-saved Progress</h3>
+              <p class="mt-3 text-sm leading-relaxed text-muted-foreground">
+                Your rupees, XP, Dahibara checkpoints, and story progress save automatically in localStorage. No account, no sign-up.
+              </p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+
+      <!-- ==========================================
+           SECTION 8: COMMUNITY & AREA VOTING MODAL
+           ========================================== -->
+      <section id="follow" class="relative overflow-hidden bg-background px-6 py-28 text-foreground border-t border-border/40">
+        <div class="relative mx-auto flex flex-col justify-between max-w-[1240px]">
+          <div class="max-w-2xl">
+            <p class="mb-4 flex items-center gap-2.5 text-xs font-semibold uppercase tracking-widest text-primary">
+              <span class="h-2 w-2 rounded-full bg-primary animate-pulse"></span>
+              <span>GRAND LAUNCH</span>
+              <b class="text-foreground">Utkala Dibasa Special Edition (ଉତ୍କଳ ଦିବସ)</b>
+            </p>
+
+            <h2 id="follow-h" class="text-4xl sm:text-7xl font-bold leading-tight tracking-tight">
+              The city is<br><span class="text-primary">open now</span>
+            </h2>
+
+            <p class="mt-6 text-base sm:text-lg leading-relaxed text-muted-foreground">
+              Chapter 1: Baramunda to Old Town is playable right now. Which Odisha district or heritage landmark should we expand into next? Vote below.
+            </p>
+
+            <div class="mt-8 flex flex-wrap gap-4">
+              <a class="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-bold text-primary-foreground hover:brightness-110 transition-all shadow-lg" href="index.html">
+                <iconify-icon icon="lucide:play" width="16"></iconify-icon>
+                Play Free Now
+              </a>
+              <button type="button" onclick="document.getElementById('more-close').showModal()" class="inline-flex items-center gap-2 rounded-full border border-border px-6 py-3.5 text-sm font-bold text-foreground hover:bg-secondary transition-all">
+                <iconify-icon icon="lucide:vote" width="16"></iconify-icon>
+                <span>Vote For Next Landmark</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Dialog for voting next expansion -->
+          <dialog id="more-close" class="w-full max-w-4xl rounded-2xl border border-border bg-card p-0 text-foreground backdrop:bg-black/75 shadow-2xl">
+            <div class="p-8">
+              <div class="flex items-center justify-between border-b border-border/60 pb-5">
+                <div>
+                  <span class="font-mono text-xs font-bold uppercase tracking-wider text-primary">COMMUNITY EXPANSION POLL</span>
+                  <h3 class="text-2xl font-bold mt-1">Which Odisha area should we build next?</h3>
+                </div>
+                <button type="button" onclick="document.getElementById('more-close').close()" class="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                  <iconify-icon icon="lucide:x" width="22"></iconify-icon>
+                </button>
+              </div>
+
+              <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3.5" id="poll-options">
+                <label class="tile flex items-center gap-3 p-4 rounded-xl border border-border bg-secondary/50 cursor-pointer hover:border-primary/50 transition-colors">
+                  <input type="checkbox" class="h-4 w-4 rounded accent-amber-500" checked />
+                  <div>
+                    <span class="block font-bold text-sm">Cuttack Silver City (କଟକ)</span>
+                    <span class="block text-xs text-muted-foreground">Barabati Fort, Chandi Mandir & Netaji Birthplace</span>
+                  </div>
+                </label>
+
+                <label class="tile flex items-center gap-3 p-4 rounded-xl border border-border bg-secondary/50 cursor-pointer hover:border-primary/50 transition-colors">
+                  <input type="checkbox" class="h-4 w-4 rounded accent-amber-500" checked />
+                  <div>
+                    <span class="block font-bold text-sm">Puri Jagannath Dham (ପୁରୀ)</span>
+                    <span class="block text-xs text-muted-foreground">Grand Bada Danda road, Gundicha & Golden Beach</span>
+                  </div>
+                </label>
+
+                <label class="tile flex items-center gap-3 p-4 rounded-xl border border-border bg-secondary/50 cursor-pointer hover:border-primary/50 transition-colors">
+                  <input type="checkbox" class="h-4 w-4 rounded accent-amber-500" />
+                  <div>
+                    <span class="block font-bold text-sm">Konark Sun Temple (କୋଣାର୍କ)</span>
+                    <span class="block text-xs text-muted-foreground">Black Pagoda, stone chariot wheels & Marine Drive</span>
+                  </div>
+                </label>
+
+                <label class="tile flex items-center gap-3 p-4 rounded-xl border border-border bg-secondary/50 cursor-pointer hover:border-primary/50 transition-colors">
+                  <input type="checkbox" class="h-4 w-4 rounded accent-amber-500" />
+                  <div>
+                    <span class="block font-bold text-sm">Dhauli Shanti Stupa (ଧଉଳି)</span>
+                    <span class="block text-xs text-muted-foreground">White Buddhist pagoda, Daya River & Ashoka Edicts</span>
+                  </div>
+                </label>
+
+                <label class="tile flex items-center gap-3 p-4 rounded-xl border border-border bg-secondary/50 cursor-pointer hover:border-primary/50 transition-colors">
+                  <input type="checkbox" class="h-4 w-4 rounded accent-amber-500" />
+                  <div>
+                    <span class="block font-bold text-sm">Khandagiri & Udayagiri (ଖଣ୍ଡଗିରି)</span>
+                    <span class="block text-xs text-muted-foreground">Ancient rock-cut caves, Queen's Palace & hilltop monkeys</span>
+                  </div>
+                </label>
+
+                <label class="tile flex items-center gap-3 p-4 rounded-xl border border-border bg-secondary/50 cursor-pointer hover:border-primary/50 transition-colors">
+                  <input type="checkbox" class="h-4 w-4 rounded accent-amber-500" />
+                  <div>
+                    <span class="block font-bold text-sm">Chilika Lagoon (ଚିଲିକା)</span>
+                    <span class="block text-xs text-muted-foreground">Irrawaddy dolphins, Kalijai Island & wooden boats</span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="mt-8 flex justify-end gap-3">
+                <button type="button" onclick="document.getElementById('more-close').close()" class="px-5 py-2.5 rounded-xl border border-border text-sm font-semibold hover:bg-secondary transition-colors">
+                  Cancel
+                </button>
+                <button type="button" onclick="submitVote()" class="px-6 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:brightness-110 transition-all">
+                  Submit Vote
+                </button>
+              </div>
+            </div>
+          </dialog>
+        </div>
+      </section>
+
+
+      <!-- ==========================================
+           SECTION 9: FOOTER
+           ========================================== -->
+      <footer class="bg-card text-foreground border-t border-border">
+        <!-- Odia Cultural Tricolor Banner -->
+        <div class="flex h-1.5 w-full" aria-hidden="true">
+          <span class="w-1/3 bg-amber-500" title="Temple Saffron"></span>
+          <span class="w-1/3 bg-red-700" title="Pattachitra Vermilion"></span>
+          <span class="w-1/3 bg-green-700" title="Sal Leaf Green"></span>
+        </div>
+
+        <div class="mx-auto max-w-[1240px] px-6 py-14">
+          <div class="grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr] gap-10 pb-12 border-b border-border/40">
+            <div>
+              <div class="flex items-center gap-2 mb-3">
+                <span class="text-2xl">🍛</span>
+                <span class="font-bold text-lg font-mono text-primary">AMARA ODISHA 3D</span>
+              </div>
+              <p class="text-sm leading-relaxed text-muted-foreground max-w-sm">
+                Amara Odisha Adventures is an open-world cultural simulation of Bhubaneswar and Odisha. 100% free, runs in your browser, zero downloads or sign-ups.
+              </p>
+              <div class="mt-4 flex gap-2">
+                <span class="font-mono text-xs text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded">Odisha V2.9</span>
+                <span class="font-mono text-xs text-green-400 bg-green-400/10 px-2 py-0.5 rounded">Offline Ready</span>
+              </div>
+            </div>
+
+            <div>
+              <p class="font-mono text-xs font-bold uppercase tracking-widest text-primary mb-4">NAVIGATION</p>
+              <ul class="space-y-2.5 text-sm text-muted-foreground font-medium">
+                <li><a class="hover:text-primary transition-colors" href="index.html">Play 3D Bhubaneswar Game</a></li>
+                <li><a class="hover:text-primary transition-colors" href="namma-metro.html">Namma Metro 2D Runner</a></li>
+                <li><a class="hover:text-primary transition-colors" href="#trailer">Cinematic Showcase</a></li>
+                <li><a class="hover:text-primary transition-colors" href="#cheats">Secret Cheat Codes</a></li>
+                <li><a class="hover:text-primary transition-colors" href="#how">How to Play & Controls</a></li>
+              </ul>
+            </div>
+
+            <div>
+              <p class="font-mono text-xs font-bold uppercase tracking-widest text-primary mb-4">COMMUNITY & SOURCE</p>
+              <ul class="space-y-2.5 text-sm text-muted-foreground font-medium">
+                <li><a class="hover:text-primary transition-colors" href="https://github.com/forbesayush/odisha-simulator" target="_blank" rel="noreferrer">GitHub Repository</a></li>
+                <li><a class="hover:text-primary transition-colors" href="https://forbesayush.github.io/odisha-simulator/" target="_blank" rel="noreferrer">Live GitHub Pages</a></li>
+                <li><a class="hover:text-primary transition-colors" href="mailto:hello@amaraodisha.in">Developer Feedback</a></li>
+                <li><a class="hover:text-primary transition-colors" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap Data</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-muted-foreground gap-4">
+            <p>© 2026 Amara Odisha Adventures. Dedicated to the cuisine, heritage, and people of Odisha.</p>
+            <p>Made with ❤️ in Bhubaneswar & Bengaluru.</p>
+          </div>
+        </div>
+      </footer>
+
+    </div>
+
+    <!-- ==========================================
+         INTERACTIVE JAVASCRIPT: CHEATS, SOUND & CANVASES
+         ========================================== -->
+    <script>
+      (function() {
+        "use strict";
+
+        // Web Audio Synthesizer for Interactive Cheats & SFX
+        let actx = null;
+        function getAudio() {
+          if (!actx) {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (AC) actx = new AC();
+          }
+          if (actx && actx.state === 'suspended') actx.resume();
+          return actx;
+        }
+
+        function playTone(freq, dur, type = 'sine', vol = 0.2, delay = 0) {
+          const ctx = getAudio();
+          if (!ctx) return;
+          const t = ctx.currentTime + delay;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, t);
+          gain.gain.setValueAtTime(0.0001, t);
+          gain.gain.exponentialRampToValueAtTime(vol, t + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+          osc.connect(gain).connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + dur + 0.05);
+        }
+
+        // Cheats Dictionary
+        const CHEATS = {
+          'BARSHA': {
+            title: '"The Monsoon Has Arrived"',
+            desc: 'Heavy Kalabaishakhi thunderstorm, rain particles on screen, and thunder audio!',
+            action: triggerRain
+          },
+          'DAHIBARA': {
+            title: '"Steaming Dahibara Plate"',
+            desc: '+50 Speed Boost & savory aloo dum ghuguni bonus!',
+            action: () => {
+              playTone(280, 0.16, 'triangle', 0.35);
+              playTone(540, 0.22, 'sine', 0.4, 0.08);
+              playTone(850, 0.12, 'sine', 0.3, 0.2);
+            }
+          },
+          'KALIA': {
+            title: '"Kalia Bhai Turbo Auto"',
+            desc: 'Yellow-and-black auto spawned with tuned nitro acceleration!',
+            action: () => {
+              playTone(180, 0.3, 'sawtooth', 0.3);
+              playTone(240, 0.4, 'sawtooth', 0.35, 0.15);
+              playTone(320, 0.4, 'sawtooth', 0.3, 0.3);
+            }
+          },
+          'BAPUJI': {
+            title: '"+₹50,000 Cash in Wallet"',
+            desc: 'Bapuji Nagar currency bundle added for PG deposit!',
+            action: () => {
+              playTone(987.77, 0.1, 'sine', 0.25, 0);
+              playTone(1318.51, 0.2, 'sine', 0.3, 0.1);
+            }
+          },
+          'POLICEBEDA': {
+            title: '"Police PCR Wanted Level Cleared"',
+            desc: 'Commissionerate sirens stopped. Free to cruise!',
+            action: () => {
+              playTone(587.33, 0.15, 'sine', 0.2, 0);
+              playTone(880.00, 0.25, 'sine', 0.25, 0.12);
+            }
+          },
+          'RASAGOLA': {
+            title: '"Pahala Rasagola Blessing"',
+            desc: 'Full health restored with warm sweet syrup aroma!',
+            action: () => {
+              playTone(523.25, 0.15, 'triangle', 0.25, 0);
+              playTone(659.25, 0.15, 'triangle', 0.25, 0.1);
+              playTone(783.99, 0.15, 'triangle', 0.25, 0.2);
+              playTone(1046.50, 0.3, 'triangle', 0.3, 0.3);
+            }
+          },
+          'UDASUKHA': {
+            title: '"Zero-G Auto Antigravity"',
+            desc: 'Auto flies upward into the clouds with Q/E altitude!',
+            action: () => {
+              playTone(220, 0.2, 'sine', 0.25, 0);
+              playTone(440, 0.2, 'sine', 0.25, 0.1);
+              playTone(880, 0.3, 'sine', 0.3, 0.2);
+            }
+          }
+        };
+
+        window.triggerCheat = function(code) {
+          const c = CHEATS[code];
+          if (!c) return;
+          document.getElementById('active-cheat-code').textContent = code;
+          document.getElementById('active-cheat-title').textContent = c.title;
+          document.getElementById('active-cheat-desc').textContent = c.desc;
+
+          // Show Toast
+          const toast = document.getElementById('cheat-toast');
+          document.getElementById('toast-title').textContent = code + ' ACTIVATED';
+          document.getElementById('toast-desc').textContent = c.title;
+          toast.classList.remove('hidden');
+          toast.classList.add('flex');
+          clearTimeout(window.__toastTimer);
+          window.__toastTimer = setTimeout(() => {
+            toast.classList.add('hidden');
+            toast.classList.remove('flex');
+          }, 3500);
+
+          if (c.action) c.action();
+        };
+
+        // Rain simulation
+        function triggerRain() {
+          const rl = document.getElementById('rain-layer');
+          rl.innerHTML = '';
+          rl.classList.remove('hidden');
+
+          // Play thunder sound
+          playTone(60, 0.8, 'sawtooth', 0.4, 0);
+          playTone(45, 1.2, 'triangle', 0.5, 0.1);
+
+          for (let i = 0; i < 90; i++) {
+            const drop = document.createElement('div');
+            drop.className = 'rain-drop';
+            drop.style.left = Math.random() * 100 + 'vw';
+            drop.style.top = Math.random() * -100 + 'px';
+            drop.style.animation = 'fall ' + (0.5 + Math.random() * 0.4) + 's linear infinite';
+            drop.style.animationDelay = (Math.random() * 1) + 's';
+            rl.appendChild(drop);
+          }
+
+          // Inject fall animation style if not present
+          if (!document.getElementById('rain-style')) {
+            const st = document.createElement('style');
+            st.id = 'rain-style';
+            st.textContent = '@keyframes fall { to { transform: translateY(110vh); } }';
+            document.head.appendChild(st);
+          }
+
+          setTimeout(() => {
+            rl.classList.add('hidden');
+            rl.innerHTML = '';
+          }, 7000);
+        }
+
+        // Keyboard listening for secret codes
+        let keyBuffer = '';
+        window.addEventListener('keydown', e => {
+          if (e.key === 'Enter') {
+            // Jump to game if enter pressed
+            window.location.href = 'index.html';
+            return;
+          }
+          if (e.key && e.key.length === 1) {
+            keyBuffer += e.key.toUpperCase();
+            if (keyBuffer.length > 12) keyBuffer = keyBuffer.slice(-12);
+            for (const code of Object.keys(CHEATS)) {
+              if (keyBuffer.endsWith(code)) {
+                triggerCheat(code);
+                keyBuffer = '';
+                break;
+              }
+            }
+          }
+        });
+
+        window.submitVote = function() {
+          const modal = document.getElementById('more-close');
+          modal.close();
+          const toast = document.getElementById('cheat-toast');
+          document.getElementById('toast-title').textContent = 'VOTE RECORDED!';
+          document.getElementById('toast-desc').textContent = 'Thank you for shaping Chapter 2 of Amara Odisha!';
+          toast.classList.remove('hidden');
+          toast.classList.add('flex');
+          playTone(659.25, 0.15, 'sine', 0.25, 0);
+          playTone(880.00, 0.25, 'sine', 0.3, 0.1);
+          setTimeout(() => {
+            toast.classList.add('hidden');
+            toast.classList.remove('flex');
+          }, 3500);
+        };
+
+        // -------------------------------------------------------------
+        // PROCEDURAL HERO CANVAS: BHUBANESWAR SUNSET & JANPATH STREET
+        // -------------------------------------------------------------
+        const heroCvs = document.getElementById('hero-canvas');
+        if (heroCvs) {
+          const hctx = heroCvs.getContext('2d');
+          let hw = 0, hh = 0;
+          function resizeHero() {
+            hw = heroCvs.width = window.innerWidth;
+            hh = heroCvs.height = window.innerHeight;
+          }
+          window.addEventListener('resize', resizeHero);
+          resizeHero();
+
+          let t = 0;
+          function drawHero() {
+            t += 0.016;
+            // Warm Golden Sunset / Twilight Sky
+            const grad = hctx.createLinearGradient(0, 0, 0, hh);
+            grad.addColorStop(0, '#120b1e');
+            grad.addColorStop(0.45, '#351528');
+            grad.addColorStop(0.72, '#9a3412');
+            grad.addColorStop(0.92, '#ea580c');
+            grad.addColorStop(1, '#f59e0b');
+            hctx.fillStyle = grad;
+            hctx.fillRect(0, 0, hw, hh);
+
+            // Sun disc
+            hctx.beginPath();
+            hctx.arc(hw * 0.72, hh * 0.48, 55, 0, Math.PI * 2);
+            hctx.fillStyle = '#fef08a';
+            hctx.shadowColor = 'rgba(251, 191, 36, 0.7)';
+            hctx.shadowBlur = 40;
+            hctx.fill();
+            hctx.shadowBlur = 0;
+
+            // Lingaraj Temple Rekha Deul Silhouettes
+            const tempX = hw * 0.68;
+            hctx.fillStyle = '#1c0f18';
+            hctx.beginPath();
+            hctx.moveTo(tempX - 45, hh * 0.78);
+            hctx.quadraticCurveTo(tempX - 35, hh * 0.38, tempX, hh * 0.28);
+            hctx.quadraticCurveTo(tempX + 35, hh * 0.38, tempX + 45, hh * 0.78);
+            hctx.fill();
+            // Amalaka stone disc & Kalasa crown
+            hctx.fillRect(tempX - 16, hh * 0.26, 32, 8);
+            hctx.fillRect(tempX - 4, hh * 0.22, 8, 14);
+            // Saffron Pataka Flag fluttering
+            hctx.fillStyle = '#f97316';
+            hctx.beginPath();
+            const fl = Math.sin(t * 8) * 6;
+            hctx.moveTo(tempX + 4, hh * 0.22);
+            hctx.lineTo(tempX + 28, hh * 0.22 + fl);
+            hctx.lineTo(tempX + 4, hh * 0.28);
+            hctx.fill();
+
+            // Distant palms & trees
+            hctx.fillStyle = '#180c14';
+            for (let i = 0; i < hw + 100; i += 75) {
+              const th = 60 + Math.sin(i * 0.05) * 20;
+              hctx.fillRect(i, hh * 0.75 - th, 16, th);
+              hctx.beginPath();
+              hctx.arc(i + 8, hh * 0.75 - th, 28, 0, Math.PI * 2);
+              hctx.fill();
+            }
+
+            // Road surface
+            const ry = hh * 0.78;
+            hctx.fillStyle = '#1f1a29';
+            hctx.fillRect(0, ry, hw, hh - ry);
+
+            // Animated Yellow Auto Rickshaw cruising across
+            const autoX = ((t * 180) % (hw + 300)) - 150;
+            const autoY = ry + 40;
+            hctx.save();
+            hctx.translate(autoX, autoY);
+            // Auto body
+            hctx.fillStyle = '#15803d'; // Green bottom
+            hctx.fillRect(-35, -20, 70, 20);
+            hctx.fillStyle = '#facc15'; // Yellow top
+            hctx.beginPath();
+            hctx.roundRect(-35, -42, 70, 24, [8, 8, 0, 0]);
+            hctx.fill();
+            // Wheels
+            hctx.fillStyle = '#0f172a';
+            hctx.fillRect(-26, -5, 14, 10);
+            hctx.fillRect(14, -5, 14, 10);
+            // Headlight beam
+            hctx.fillStyle = 'rgba(254, 240, 138, 0.35)';
+            hctx.beginPath();
+            hctx.moveTo(35, -20);
+            hctx.lineTo(130, -35);
+            hctx.lineTo(130, 10);
+            hctx.fill();
+            hctx.restore();
+
+            requestAnimationFrame(drawHero);
+          }
+          drawHero();
+        }
+
+        // -------------------------------------------------------------
+        // PROCEDURAL TRAILER CANVAS
+        // -------------------------------------------------------------
+        const trCvs = document.getElementById('trailer-canvas');
+        if (trCvs) {
+          const tctx = trCvs.getContext('2d');
+          function resizeTrailer() {
+            trCvs.width = trCvs.offsetWidth || 1200;
+            trCvs.height = trCvs.offsetHeight || 500;
+          }
+          window.addEventListener('resize', resizeTrailer);
+          setTimeout(resizeTrailer, 100);
+
+          let tt = 0;
+          function drawTrailer() {
+            tt += 0.02;
+            const w = trCvs.width, h = trCvs.height;
+            // Cinematic Night/Dusk atmosphere
+            tctx.fillStyle = '#0f0a18';
+            tctx.fillRect(0, 0, w, h);
+
+            // Distant Street Lights on Janpath
+            for (let x = 60; x < w; x += 180) {
+              tctx.fillStyle = '#374151';
+              tctx.fillRect(x - 3, h * 0.3, 6, h * 0.45);
+              // Amber bulb glow
+              tctx.beginPath();
+              tctx.arc(x, h * 0.3, 8, 0, Math.PI * 2);
+              tctx.fillStyle = '#f59e0b';
+              tctx.shadowColor = 'rgba(245, 158, 11, 0.8)';
+              tctx.shadowBlur = 25;
+              tctx.fill();
+              tctx.shadowBlur = 0;
+            }
+
+            // Road surface
+            tctx.fillStyle = '#171222';
+            tctx.fillRect(0, h * 0.65, w, h * 0.35);
+
+            // Dahibara pushcart in foreground
+            const cx = w * 0.35;
+            const cy = h * 0.72;
+            tctx.save();
+            tctx.translate(cx, cy);
+            // Cart table
+            tctx.fillStyle = '#78350f';
+            tctx.fillRect(-60, -25, 120, 25);
+            // Big yellow umbrella
+            tctx.fillStyle = '#eab308';
+            tctx.beginPath();
+            tctx.arc(0, -75, 75, Math.PI, 0);
+            tctx.fill();
+            tctx.fillStyle = '#9ca3af';
+            tctx.fillRect(-2, -75, 4, 52);
+            // Stainless steel pots
+            tctx.fillStyle = '#e2e8f0';
+            tctx.fillRect(-45, -42, 28, 18);
+            tctx.fillRect(15, -42, 28, 18);
+            // Steam rising
+            tctx.strokeStyle = 'rgba(255,255,255,0.4)';
+            tctx.lineWidth = 2;
+            tctx.beginPath();
+            const sOff = Math.sin(tt * 6) * 4;
+            tctx.moveTo(-31, -44);
+            tctx.quadraticCurveTo(-35 + sOff, -58, -31, -68);
+            tctx.moveTo(29, -44);
+            tctx.quadraticCurveTo(33 - sOff, -58, 29, -68);
+            tctx.stroke();
+            tctx.restore();
+
+            requestAnimationFrame(drawTrailer);
+          }
+          drawTrailer();
+        }
+
+      })();
+    </script>
+  </body>
+</html>
