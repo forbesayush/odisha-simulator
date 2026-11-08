@@ -1541,6 +1541,9 @@
         <button class="hud-pill-btn" id="hud-vehicle-btn" onclick="toggleVehicle()" title="Switch Vehicle [V]">
           🛵 <span id="hud-vehicle-label">WALK</span>
         </button>
+        <button class="hud-pill-btn" id="hud-jobs-btn" onclick="openContractsModal()" title="Courier Contracts [J]">
+          📋 <span>JOBS [J]</span>
+        </button>
         <button class="hud-pill-btn" id="hud-menu-btn" onclick="pause()" title="Pause Menu [Esc]">
           ☰ <span>MENU [ESC]</span>
         </button>
@@ -2144,6 +2147,13 @@
     dahibaraBoost: false,
     dahibaraBoostTimer: 0,
     ramMandirBlessed: false,
+    reputation: 0,
+    repTier: 'Newcomer',
+    activeContract: null,
+    contractTimer: 0,
+    cargoHealth: 100,
+    fuel: 100,
+    contractsCompleted: 0,
     modalActive: false,
     activeCutscene: null,
     rainSoundActive: false
@@ -5179,6 +5189,387 @@ let __weave=null;
      ========================================================================= */
 
   const keys = {};
+
+  /* =========================================================================
+     BHUBANESWAR COURIER DELIVERY CONTRACTS & REPUTATION ENGINE (SYSTEMS A-C)
+     ========================================================================= */
+  const CONTRACTS = [
+    {
+      id: "c_dahibara_ram",
+      client: "Raghu Bhai (Baramunda)",
+      clientIcon: "🍛",
+      title: {
+        or: "ରାମ ମନ୍ଦିର ପୂଜକଙ୍କ ପାଇଁ ଗରମ ଦହିବରା",
+        hi: "राम मंदिर पुजारी के लिए गरमा-गरम दहीबड़ा",
+        en: "Hot Dahibara for Ram Mandir Priest"
+      },
+      cargo: "Spicy Dahibara-Aloodum",
+      pickup: POI.dahibaraBaramunda,
+      dropoff: POI.ramMandirPriest,
+      destName: { or: "ରାମ ମନ୍ଦିର", hi: "राम मंदिर", en: "Ram Mandir" },
+      distanceKm: 2.4,
+      basePayout: 120,
+      timeLimitSec: 180,
+      fragile: false,
+      repRequired: 0,
+      repReward: 5,
+      desc: {
+        or: "ରାମ ମନ୍ଦିରର ପୂଜକ ସକାଳ ଆଳତି ପରେ ରଘୁଙ୍କ ଦହିବରା ଚାହୁଁଛନ୍ତି। ୩ ମିନିଟ୍ ଭିତରେ ପହଞ୍ଚାନ୍ତୁ!",
+        hi: "राम मंदिर के पुजारी सुबह की आरती के बाद रघु का दहीबड़ा चाहते हैं। 3 मिनट में पहुंचाएं!",
+        en: "The Ram Mandir priest wants hot Dahibara after morning aarti. Deliver in 3 minutes!"
+      }
+    },
+    {
+      id: "c_bank_saheed",
+      client: "Master Canteen Station Bank",
+      clientIcon: "🏦",
+      title: {
+        or: "ଶହୀଦ ନଗର ପିଜିକୁ ଜରୁରୀ ଋଣ ଫାଇଲ୍",
+        hi: "शहीद नगर पीजी को जरूरी लोन फाइल",
+        en: "Urgent Loan Dossier to Saheed Nagar PG"
+      },
+      cargo: "Confidential Loan Files",
+      pickup: POI.canteen,
+      dropoff: POI.saheedPG,
+      destName: { or: "ଶହୀଦ ନଗର ପିଜି", hi: "शहीद नगर पीजी", en: "Saheed Nagar PG" },
+      distanceKm: 1.8,
+      basePayout: 150,
+      timeLimitSec: 130,
+      fragile: false,
+      repRequired: 0,
+      repReward: 6,
+      desc: {
+        or: "ବ୍ୟାଙ୍କ ମ୍ୟାନେଜରଙ୍କ ଜରୁରୀ ଋଣ ଡକ୍ୟୁମେଣ୍ଟ ଶହୀଦ ନଗର ପିଜି ମାଲିକାଣୀଙ୍କ ପାଖକୁ ଶୀଘ୍ର ନିଅନ୍ତୁ!",
+        hi: "बैंक मैनेजर के जरूरी लोन कागजात शहीद नगर पीजी मालकिन के पास तुरंत पहुंचाएं!",
+        en: "Express bank clearance documents needed by Saheed Nagar PG owner before office closing!"
+      }
+    },
+    {
+      id: "c_pattachitra_lingaraj",
+      client: "Ekamra Haat Master Artisan",
+      clientIcon: "🎨",
+      title: {
+        or: "ଲିଙ୍ଗରାଜ କଲେକ୍ଟରଙ୍କୁ ସୂକ୍ଷ୍ମ ପଟ୍ଟଚିତ୍ର",
+        hi: "लिंगराज कलेक्टर को नाजुक पट्टचित्र",
+        en: "Fragile Pattachitra Scroll to Lingaraj Collector"
+      },
+      cargo: "Mineral Pigment Palm-leaf Scroll",
+      pickup: POI.ekamraHaat,
+      dropoff: POI.templeLingaraj,
+      destName: { or: "ଲିଙ୍ଗରାଜ ମନ୍ଦିର ପ୍ରବେଶ", hi: "लिंगराज मंदिर प्रवेश", en: "Lingaraj Temple Gateway" },
+      distanceKm: 3.1,
+      basePayout: 220,
+      timeLimitSec: 210,
+      fragile: true,
+      repRequired: 50,
+      repReward: 8,
+      desc: {
+        or: "ଏହା ଅତି ମୂଲ୍ୟବାନ ପଟ୍ଟଚିତ୍ର। ରାସ୍ତାରେ ଗାଡ଼ି ଧକ୍କା ହେଲେ ପେମେଣ୍ଟ କଟିବ। ସାବଧାନରେ ଚଲାନ୍ତୁ!",
+        hi: "यह बेहद कीमती पट्टचित्र है। रास्ते में टक्कर हुई तो हर्जाना कटेगा। संभलकर चलाएं!",
+        en: "Priceless natural pigment palm-leaf artwork. Traffic collisions severely damage cargo!"
+      }
+    },
+    {
+      id: "c_flowers_lingaraj",
+      client: "Ram Mandir Head Pujari",
+      clientIcon: "🌺",
+      title: {
+        or: "ଓଲ୍ଡ ଟାଉନ୍ ମହାପ୍ରଭୁଙ୍କ ପାଇଁ ପବିତ୍ର ତୁଳସୀ ଓ ଫୁଲ",
+        hi: "ओल्ड टाउन महाप्रभु के लिए पवित्र तुलसी व पुष्प",
+        en: "Sacred Tulsi & Flowers to Old Town"
+      },
+      cargo: "Consecrated Flower Basket",
+      pickup: POI.ramMandirPriest,
+      dropoff: POI.templeLingaraj,
+      destName: { or: "ଲିଙ୍ଗରାଜ ମନ୍ଦିର", hi: "लिंगराज मंदिर", en: "Lingaraj Temple" },
+      distanceKm: 2.8,
+      basePayout: 140,
+      timeLimitSec: 190,
+      fragile: false,
+      repRequired: 50,
+      repReward: 6,
+      desc: {
+        or: "ସନ୍ଧ୍ୟା ଆଳତି ପାଇଁ ରାମ ମନ୍ଦିରରୁ ଲିଙ୍ଗରାଜ ମନ୍ଦିରକୁ ପବିତ୍ର ତୁଳସୀ ଫୁଲ ନେଇ ଯାଆନ୍ତୁ।",
+        hi: "संध्या आरती हेतु राम मंदिर से लिंगराज मंदिर पवित्र तुलसी और फूल लेकर जाएं।",
+        en: "Carry consecrated marigold garlands and sacred Tulsi leaves for the Lingaraj evening aarti."
+      }
+    },
+    {
+      id: "c_medicine_canteen",
+      client: "Capital Ayurvedic Dispensary",
+      clientIcon: "💊",
+      title: {
+        or: "ରେଳ ଷ୍ଟେସନ ଯାତ୍ରୀଙ୍କୁ ଜରୁରୀ ଆୟୁର୍ବେଦିକ ଔଷଧ",
+        hi: "रेलवे स्टेशन यात्री को आपातकालीन आयुर्वेदिक दवा",
+        en: "Emergency Ayurvedic Medicine to Railway Station"
+      },
+      cargo: "Glass Tonic Bottles",
+      pickup: POI.canteen,
+      dropoff: POI.canteen,
+      destName: { or: "ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଷ୍ଟେସନ", hi: "मास्टर कैंटीन स्टेशन", en: "Master Canteen Station" },
+      distanceKm: 1.5,
+      basePayout: 180,
+      timeLimitSec: 120,
+      fragile: true,
+      repRequired: 150,
+      repReward: 7,
+      desc: {
+        or: "କଟକ ଏକ୍ସପ୍ରେସ୍ ଟ୍ରେନ୍ ଛାଡ଼ିବା ପୂର୍ବରୁ ପ୍ଲାଟଫର୍ମ ନମ୍ବର ୧ ରେ ଯାତ୍ରୀଙ୍କୁ ଔଷଧ ଦିଅନ୍ତୁ!",
+        hi: "कटक एक्सप्रेस ट्रेन छूटने से पहले प्लेटफॉर्म 1 पर यात्री को दवा पहुंचाएं!",
+        en: "Deliver tonic bottles to passenger on Platform 1 before the Cuttack Express departs!"
+      }
+    }
+  ];
+
+  function getRepTier(rep) {
+    if (rep >= 700) return { name: "Samrat", icon: "👑", perk: "All Sectors + Syndicate Finale Unlocked" };
+    if (rep >= 350) return { name: "Bhai", icon: "🏆", perk: "Saheed Nagar PG & Khandagiri Unlocked" };
+    if (rep >= 150) return { name: "Trusted", icon: "🥇", perk: "Old Town & Lingaraj Unlocked" };
+    if (rep >= 50)  return { name: "Local", icon: "🥈", perk: "Janpath & Ram Mandir Unlocked" };
+    return { name: "Newcomer", icon: "🥉", perk: "Baramunda & Master Canteen Runs" };
+  }
+
+  function openContractsModal() {
+    state.modalActive = true;
+    let m = document.getElementById('contracts-modal');
+    if (!m) {
+      m = document.createElement('div');
+      m.id = 'contracts-modal';
+      m.style.cssText = 'position:fixed;inset:0;background:rgba(8,6,14,0.85);backdrop-filter:blur(10px);z-index:90;display:flex;align-items:center;justify-content:center;padding:16px;';
+      document.body.appendChild(m);
+    }
+    m.style.display = 'flex';
+
+    const currentTier = getRepTier(state.reputation || 0);
+    state.repTier = currentTier.name;
+
+    m.innerHTML = `
+      <div style="max-width:680px;width:100%;background:#151022;border:1px solid rgba(245,158,11,0.4);border-radius:24px;padding:28px;color:#fff;box-shadow:0 24px 60px rgba(0,0,0,0.85);font-family:Inter,sans-serif;max-height:90vh;overflow-y:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:16px;margin-bottom:20px;">
+          <div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#f59e0b;letter-spacing:2px;text-transform:uppercase;">
+              ବାରମୁଣ୍ଡା କୋରିଅର ଡକ • BHUBANESWAR DISPATCH
+            </div>
+            <h2 style="font-size:24px;font-weight:900;margin-top:4px;">Delivery Contracts Board</h2>
+          </div>
+          <button onclick="closeContractsModal()" style="background:none;border:none;color:#94a3b8;font-size:24px;cursor:pointer;padding:4px;">✕</button>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:12px 18px;margin-bottom:20px;">
+          <div>
+            <span style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;display:block;">REPUTATION TIER</span>
+            <span style="font-size:16px;font-weight:800;color:#fde68a;">${currentTier.icon} ${currentTier.name.toUpperCase()} (${state.reputation || 0} REP)</span>
+          </div>
+          <div style="text-align:right;">
+            <span style="font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;display:block;">COMPLETED</span>
+            <span style="font-size:16px;font-weight:800;color:#34d399;">${state.contractsCompleted || 0} DELIVERIES</span>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          ${CONTRACTS.map(c => {
+            const locked = (state.reputation || 0) < c.repRequired;
+            const isCurrent = state.activeContract && state.activeContract.id === c.id;
+            return `
+              <div style="border:1px solid ${isCurrent ? '#f59e0b' : locked ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.15)'};background:${isCurrent ? 'rgba(245,158,11,0.08)' : locked ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.02)'};border-radius:16px;padding:16px;opacity:${locked ? 0.6 : 1};">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="font-size:24px;">${c.clientIcon}</span>
+                    <div>
+                      <h3 style="font-size:16px;font-weight:800;color:${locked ? '#94a3b8' : '#fff'};">${c.title[state.lang] || c.title.en}</h3>
+                      <span style="font-size:12px;color:#94a3b8;">Client: ${c.client} · Cargo: ${c.cargo}</span>
+                    </div>
+                  </div>
+                  <div style="text-align:right;">
+                    <span style="font-size:18px;font-weight:900;color:#fde68a;">₹${c.basePayout}</span>
+                    <span style="display:block;font-size:11px;color:#34d399;font-weight:700;">+${c.repReward} REP</span>
+                  </div>
+                </div>
+
+                <p style="font-size:13px;color:#cbd5e1;margin:10px 0 12px;line-height:1.4;">${c.desc[state.lang] || c.desc.en}</p>
+
+                <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.06);padding-top:10px;">
+                  <div style="font-size:12px;color:#94a3b8;display:flex;gap:14px;">
+                    <span>⏱️ ${Math.floor(c.timeLimitSec/60)}m ${c.timeLimitSec%60}s</span>
+                    <span>📍 ${c.distanceKm} km</span>
+                    ${c.fragile ? '<span style="color:#f87171;font-weight:700;">⚠️ FRAGILE</span>' : ''}
+                  </div>
+                  <div>
+                    ${locked ? `<span style="font-size:12px;color:#f87171;font-weight:700;">🔒 Requires ${c.repRequired} Rep</span>` :
+                      isCurrent ? `<span style="font-size:12px;color:#f59e0b;font-weight:800;">ACTIVE CONTRACT</span>` :
+                      `<button onclick="acceptContract('${c.id}')" style="background:linear-gradient(135deg,#f59e0b,#d97706);border:none;border-radius:10px;padding:8px 18px;color:#000;font-weight:800;font-size:13px;cursor:pointer;">ACCEPT RUN</button>`
+                    }
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function closeContractsModal() {
+    const m = document.getElementById('contracts-modal');
+    if (m) m.style.display = 'none';
+    state.modalActive = false;
+  }
+
+  function acceptContract(contractId) {
+    const c = CONTRACTS.find(x => x.id === contractId);
+    if (!c) return;
+    state.activeContract = c;
+    state.contractTimer = c.timeLimitSec;
+    state.cargoHealth = 100;
+    closeContractsModal();
+
+    // Position glowing wayMarker at dropoff coordinates!
+    if (typeof wayMarker !== 'undefined' && wayMarker && wayMarker.group) {
+      wayMarker.group.position.set(c.dropoff[0], 0, c.dropoff[1]);
+      wayMarker.group.visible = true;
+    }
+
+    updateDeliveryHud();
+
+    // Audio cue
+    try {
+      tone(440, 0.1, 'sine', 0.25, 0);
+      tone(554.37, 0.1, 'sine', 0.25, 0.08);
+      tone(659.25, 0.2, 'sine', 0.3, 0.16);
+    } catch(e){}
+
+    const titleText = c.title[state.lang] || c.title.en;
+    popup('📦 ' + (state.lang === 'or' ? 'ଅର୍ଡର ଗ୍ରହଣ ହେଲା: ' : 'ऑर्डर स्वीकृत: ') + titleText);
+
+    // Prompt to use scooty if on foot
+    if (state.mode === 'walk') {
+      setTimeout(() => {
+        popup('🛵 ' + (state.lang === 'or' ? 'ସ୍କୁଟି ଚଢ଼ନ୍ତୁ [V] ସମୟ ପୂର୍ବରୁ ପହଞ୍ଚିବା ପାଇଁ!' : 'स्कूटी पर बैठें [V] समय पर पहुंचने के लिए!'));
+      }, 2500);
+    }
+  }
+
+  function updateDeliveryHud() {
+    let card = document.getElementById('hud-delivery-card');
+    if (!card) {
+      card = document.createElement('div');
+      card.id = 'hud-delivery-card';
+      card.style.cssText = 'position:fixed;top:66px;left:50%;transform:translateX(-50%);z-index:34;display:none;background:rgba(18,14,28,0.92);border:1px solid rgba(245,158,11,0.5);border-radius:999px;padding:8px 20px;color:#fff;backdrop-filter:blur(8px);box-shadow:0 8px 30px rgba(0,0,0,0.6);font-family:Inter,sans-serif;pointer-events:none;white-space:nowrap;';
+      document.body.appendChild(card);
+    }
+
+    if (!state.activeContract || state.screen !== 'game') {
+      card.style.display = 'none';
+      return;
+    }
+
+    card.style.display = 'flex';
+    card.style.alignItems = 'center';
+    card.style.gap = '14px';
+
+    const t = Math.max(0, Math.floor(state.contractTimer));
+    const mins = Math.floor(t / 60);
+    const secs = t % 60;
+    const timeStr = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+    const timerColor = t < 30 ? '#ef4444' : t < 60 ? '#f59e0b' : '#34d399';
+
+    const cargoColor = state.cargoHealth > 70 ? '#34d399' : state.cargoHealth > 35 ? '#f59e0b' : '#ef4444';
+    const c = state.activeContract;
+    const dest = c.destName[state.lang] || c.destName.en;
+
+    card.innerHTML = `
+      <span style="font-size:16px;">${c.clientIcon}</span>
+      <span style="font-weight:800;font-size:13px;color:#fde68a;">➔ ${dest}</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-weight:900;font-size:14px;color:${timerColor};">⏱️ ${timeStr}</span>
+      <span style="font-size:12px;font-weight:700;color:${cargoColor};">📦 ${Math.floor(state.cargoHealth)}%</span>
+      <span style="font-weight:900;font-size:13px;color:#fde68a;">₹${c.basePayout}</span>
+    `;
+  }
+
+  function completeDelivery() {
+    const c = state.activeContract;
+    if (!c) return;
+
+    const onTime = state.contractTimer > 0;
+    const fastBonus = state.contractTimer > 35 ? 25 : 0;
+    const intactBonus = state.cargoHealth >= 85 ? 30 : 0;
+    const totalPayout = c.basePayout + fastBonus + intactBonus;
+
+    state.coins = (state.coins || 0) + totalPayout;
+    state.reputation = (state.reputation || 0) + c.repReward;
+    state.contractsCompleted = (state.contractsCompleted || 0) + 1;
+    state.activeContract = null;
+
+    if (typeof wayMarker !== 'undefined' && wayMarker && wayMarker.group) {
+      wayMarker.group.visible = false;
+    }
+
+    updateDeliveryHud();
+    updateHudLabels();
+
+    // Sound fanfare
+    try {
+      tone(523.25, 0.15, 'sine', 0.3, 0);
+      tone(659.25, 0.15, 'sine', 0.3, 0.1);
+      tone(783.99, 0.15, 'sine', 0.3, 0.2);
+      tone(1046.50, 0.35, 'sine', 0.35, 0.3);
+    } catch(e){}
+
+    const prevTier = state.repTier;
+    const nextTier = getRepTier(state.reputation);
+    state.repTier = nextTier.name;
+
+    let tierMsg = '';
+    if (nextTier.name !== prevTier) {
+      tierMsg = `<div style="margin-top:14px;padding:12px;background:rgba(245,158,11,0.15);border:1px solid #f59e0b;border-radius:12px;font-size:14px;color:#fde68a;font-weight:800;">
+        🎉 PROMOTED TO ${nextTier.icon} ${nextTier.name.toUpperCase()} TIER!
+        <span style="display:block;font-size:12px;font-weight:500;color:#fff;margin-top:2px;">${nextTier.perk}</span>
+      </div>`;
+    }
+
+    // Modal display
+    let m = document.getElementById('delivery-complete-modal');
+    if (!m) {
+      m = document.createElement('div');
+      m.id = 'delivery-complete-modal';
+      m.style.cssText = 'position:fixed;inset:0;background:rgba(8,6,14,0.85);backdrop-filter:blur(10px);z-index:95;display:flex;align-items:center;justify-content:center;padding:16px;';
+      document.body.appendChild(m);
+    }
+    m.style.display = 'flex';
+    state.modalActive = true;
+
+    m.innerHTML = `
+      <div style="max-width:480px;width:100%;background:#151022;border:2px solid #f59e0b;border-radius:24px;padding:32px;color:#fff;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.9);font-family:Inter,sans-serif;">
+        <span style="font-size:48px;">📦✨</span>
+        <h2 style="font-size:24px;font-weight:900;margin:12px 0 4px;color:#fde68a;">DELIVERY COMPLETED!</h2>
+        <p style="font-size:14px;color:#cbd5e1;margin-bottom:20px;">${c.title[state.lang] || c.title.en}</p>
+
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;text-align:left;font-size:13px;line-height:1.8;">
+          <div style="display:flex;justify-content:space-between;"><span>Base Contract Payout:</span><b style="color:#fde68a;">₹${c.basePayout}</b></div>
+          <div style="display:flex;justify-content:space-between;"><span>Speed Bonus:</span><b style="color:${fastBonus ? '#34d399' : '#94a3b8'};">+₹${fastBonus}</b></div>
+          <div style="display:flex;justify-content:space-between;"><span>Intact Cargo Bonus (${Math.floor(state.cargoHealth)}%):</span><b style="color:${intactBonus ? '#34d399' : '#94a3b8'};">+₹${intactBonus}</b></div>
+          <div style="border-top:1px solid rgba(255,255,255,0.1);margin-top:8px;padding-top:8px;display:flex;justify-content:space-between;font-size:16px;font-weight:800;">
+            <span>Total Earnings:</span><span style="color:#34d399;">+₹${totalPayout}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;color:#f59e0b;font-weight:800;margin-top:4px;">
+            <span>Reputation Gained:</span><span>+${c.repReward} REP</span>
+          </div>
+        </div>
+
+        ${tierMsg}
+
+        <button onclick="document.getElementById('delivery-complete-modal').style.display='none';state.modalActive=false;openContractsModal();" style="margin-top:24px;width:100%;background:linear-gradient(135deg,#f59e0b,#d97706);border:none;border-radius:14px;padding:14px;color:#000;font-weight:900;font-size:15px;cursor:pointer;">
+          TAKE NEXT CONTRACT [J]
+        </button>
+      </div>
+    `;
+  }
+
+  window.openContractsModal = openContractsModal;
+  window.closeContractsModal = closeContractsModal;
+  window.acceptContract = acceptContract;
+  window.completeDelivery = completeDelivery;
+
   window.addEventListener('keydown', e => {
     const k = e.key.toLowerCase();
     keys[k] = true;
@@ -5202,6 +5593,7 @@ let __weave=null;
       const m = document.getElementById('chapter-modal');
       if (m && m.style.display === 'block') closeChapterModal();
       else openChapterModal();
+    if (k === 'j') openContractsModal();
     }
     if (k === 'o') {
       const m = document.getElementById('settings-modal');
@@ -5655,6 +6047,17 @@ let __weave=null;
   // PROXIMITY CHECKING TO NPCS, DAHIBARA CARTS & SCOOTIES (NO POPUP SPAM)
   function checkNpcInteraction(pos) {
     let foundTarget = false;
+
+    // 00. Check active Courier Contract Dropoff
+    if (state.activeContract) {
+      const drop = state.activeContract.dropoff;
+      const dDist = Math.hypot(pos.x - drop[0], pos.z - drop[1]);
+      if (dDist < 6.0) {
+        foundTarget = true;
+        const dTitle = state.activeContract.destName[state.lang] || state.activeContract.destName.en;
+        showInteractBubble('📦 DELIVER TO ' + dTitle.toUpperCase() + ' [E]', () => completeDelivery());
+      }
+    }
 
     // 0. Check nearby Dahibara-Aloodum carts (Accessible on foot or vehicle)
     if (worldData && worldData.dahibaraCarts) {
@@ -7384,6 +7787,20 @@ let __weave=null;
     const activeFocus = state.mode === 'walk' ? babuGroup.position : state.mode === 'scooty' ? playerScooty.group.position : playerAuto.group.position;
 
     // Dahibara Speed Boost countdown
+    // Courier Contract Timer Countdown & Fail State
+    if (state.activeContract && state.screen === 'game') {
+      state.contractTimer -= dt;
+      updateDeliveryHud();
+      if (state.contractTimer <= 0) {
+        const c = state.activeContract;
+        state.activeContract = null;
+        state.reputation = Math.max(0, (state.reputation || 0) - 4);
+        updateDeliveryHud();
+        popup('❌ ' + (state.lang === 'or' ? 'ଅର୍ଡର ସମୟ ସରିଗଲା! ରେପୁଟେସନ୍ -୪' : 'ऑर्डर समय समाप्त! रेपुटेशन -4'));
+        if (typeof wayMarker !== 'undefined' && wayMarker && wayMarker.group) wayMarker.group.visible = false;
+      }
+    }
+
     if (state.dahibaraBoost) {
       state.dahibaraBoostTimer -= dt;
       if (state.dahibaraBoostTimer <= 0) {
@@ -7680,7 +8097,21 @@ T(()=>{
     const nx=(p.x-x)/(dd||1),nz=(p.z-z)/(dd||1);const R=ROADS.find(r=>{const hz=r.z1===r.z2;return hz?Math.abs(p.z-r.z1)<r.w/2&&p.x>=Math.min(r.x1,r.x2)&&p.x<=Math.max(r.x1,r.x2):Math.abs(p.x-r.x1)<r.w/2&&p.z>=Math.min(r.z1,r.z2)&&p.z<=Math.max(r.z1,r.z2);})||c.r;
     const L2=Math.hypot(R.x2-R.x1,R.z2-R.z1),ax=(R.x2-R.x1)/L2,az=(R.z2-R.z1)/L2,sg=(nx*ax+nz*az)>=0?1:-1;
     p.x+=ax*sg*1.2;p.z+=az*sg*1.2;state.speed*=.3;try{tone(130,.3,'sawtooth',.35,0,50);tone(900,.08,'square',.2);}catch(e){}
-    state.health=Math.max(0,state.health-8);state.xp=Math.max(0,state.xp-10);popup('💥 Collision! -10 XP');
+    state.health=Math.max(0,state.health-8);state.xp=Math.max(0,state.xp-10);
+    if(state.activeContract){
+      const dmg = state.activeContract.fragile ? 20 : 8;
+      state.cargoHealth = Math.max(0, state.cargoHealth - dmg);
+      popup('💥 Collision! Cargo: ' + Math.floor(state.cargoHealth) + '%');
+      if(state.cargoHealth <= 0){
+        state.activeContract = null;
+        state.reputation = Math.max(0, (state.reputation || 0) - 5);
+        popup('❌ ' + (state.lang === 'or' ? 'ମାଲ ନଷ୍ଟ ହେଲା! ରେପୁଟେସନ୍ -୫' : 'माल नष्ट हुआ! रेपुटेशन -5'));
+        if(typeof wayMarker !== 'undefined' && wayMarker && wayMarker.group) wayMarker.group.visible = false;
+      }
+      updateDeliveryHud();
+    } else {
+      popup('💥 Collision! -10 XP');
+    }
     if(state.health<=0){state.health=100;state.coins=Math.max(0,state.coins-30);popup('🔧 Vehicle repaired: -₹30');}
     updateHudLabels();window.__setHp&&window.__setHp();}
    c.cur+=((blk?0:c.v)-c.cur)*Math.min(dt*2.5,1);
