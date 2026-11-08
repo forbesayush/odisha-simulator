@@ -7593,12 +7593,12 @@ const P=()=>state.mode==='walk'?babuGroup.position:state.mode==='scooty'?playerS
 /* LAYER 6: OPEN-WORLD TRAFFIC (left-hand lanes, brake for you and for each other) */
 T(()=>{
  const rs=ROADS.filter(r=>Math.hypot(r.x2-r.x1,r.z2-r.z1)>40),cars=[],cols=['#ef4444','#3b82f6','#f59e0b','#10b981','#a855f7','#e5e7eb'];
- const n=state.lowGraphics?6:16;
+ const n=state.lowGraphics?6:16;window.__cars=cars;
  for(let i=0;i<n;i++){
   const r=rs[i%rs.length],L=Math.hypot(r.x2-r.x1,r.z2-r.z1),k=i%4;
   const m=k===0?makeAuto():k===1?makeBus():makeScooty(cols[i%cols.length]),g=m.group||m;
   scene.add(g);
-  cars.push({g,r,L,dx:(r.x2-r.x1)/L,dz:(r.z2-r.z1)/L,s:Math.random()*L,sign:Math.random()<.5?1:-1,v:k===1?6+Math.random()*2:8+Math.random()*4,cur:0});
+  cars.push({g,r,L,dx:(r.x2-r.x1)/L,dz:(r.z2-r.z1)/L,s:Math.random()*L,sign:Math.random()<.5?1:-1,v:k===1?6+Math.random()*2:8+Math.random()*4,cur:0,hold:0,wait:0});
  }
  let nt=0;const _t=window.__tick;
  window.__tick=dt=>{_t&&_t(dt);if(state.screen!=='game')return;const p=P();
@@ -7606,14 +7606,25 @@ T(()=>{
    const x=c.r.x1+c.dx*c.s+lx*off,z=c.r.z1+c.dz*c.s+lz*off;
    const rx=p.x-x,rz=p.z-z,ah=rx*dx+rz*dz,sd=Math.abs(rx*lx+rz*lz);
    let blk=ah>0&&ah<11&&sd<2.8;const byPlayer=blk;
-   if(!blk)for(const o of cars)if(o!==c&&o.r===c.r&&o.sign===c.sign){const gp=(o.s-c.s)*c.sign;if(gp>0&&gp<9){blk=true;break;}}
+   if(!blk)for(const o of cars){if(o===c)continue;const ox=o.g.position.x-x,oz=o.g.position.z-z,a=ox*dx+oz*dz,l=Math.abs(ox*lx+oz*lz),same=o.r===c.r;
+    if(a>0&&a<9&&l<(same?2.2:3.4)&&(same?o.sign===c.sign:cars.indexOf(o)<cars.indexOf(c))){blk=true;break;}}
+   if(c.hold>0){c.hold-=dt;blk=true;}
+   if(blk&&!byPlayer&&c.hold<=0&&c.cur<.3){c.wait+=dt;if(c.wait>3.5){blk=false;if(c.wait>5.5)c.wait=0;}}else if(!blk)c.wait=0;
+   const dd=Math.hypot(p.x-x,p.z-z);
+   if(state.mode!=='walk'&&dd<2.7&&!window.__hitCd){window.__hitCd=1;setTimeout(()=>window.__hitCd=0,1100);c.hold=1.2;c.cur=0;
+    const nx=(p.x-x)/(dd||1),nz=(p.z-z)/(dd||1);const R=ROADS.find(r=>{const hz=r.z1===r.z2;return hz?Math.abs(p.z-r.z1)<r.w/2&&p.x>=Math.min(r.x1,r.x2)&&p.x<=Math.max(r.x1,r.x2):Math.abs(p.x-r.x1)<r.w/2&&p.z>=Math.min(r.z1,r.z2)&&p.z<=Math.max(r.z1,r.z2);})||c.r;
+    const L2=Math.hypot(R.x2-R.x1,R.z2-R.z1),ax=(R.x2-R.x1)/L2,az=(R.z2-R.z1)/L2,sg=(nx*ax+nz*az)>=0?1:-1;
+    p.x+=ax*sg*1.2;p.z+=az*sg*1.2;state.speed*=.3;try{tone(130,.3,'sawtooth',.35,0,50);tone(900,.08,'square',.2);}catch(e){}
+    state.health=Math.max(0,state.health-8);state.xp=Math.max(0,state.xp-10);popup('💥 Collision! -10 XP');
+    if(state.health<=0){state.health=100;state.coins=Math.max(0,state.coins-30);popup('🔧 Vehicle repaired: -₹30');}
+    updateHudLabels();window.__setHp&&window.__setHp();}
    c.cur+=((blk?0:c.v)-c.cur)*Math.min(dt*2.5,1);
    c.s+=c.cur*dt*c.sign;if(c.s>c.L){c.s=c.L;c.sign=-1;}if(c.s<0){c.s=0;c.sign=1;}
-   c.g.position.set(x,0,z);c.g.rotation.y=Math.atan2(dx,dz);
-   if(byPlayer&&c.cur<.5&&ah<7&&Math.random()<dt*.15)popup('📢 Traffic ahead, go around!');});
+   c.g.position.set(x,0,z);c.g.rotation.y=Math.atan2(dx,dz);c.g.rotation.z=c.hold>0?Math.sin(performance.now()*.05)*.07:0;
+   if(byPlayer&&c.cur<.5&&ah<7&&Math.random()<dt*.15){popup('📢 Traffic ahead, go around!');try{tone(430,.35,'square',.12);}catch(e){}}});
   nt+=dt;if(nt<.5)return;nt=0;
   const r=ROADS.find(r=>{const hz=r.z1===r.z2;return hz?Math.abs(p.z-r.z1)<r.w/2&&p.x>=Math.min(r.x1,r.x2)&&p.x<=Math.max(r.x1,r.x2):Math.abs(p.x-r.x1)<r.w/2&&p.z>=Math.min(r.z1,r.z2)&&p.z<=Math.max(r.z1,r.z2);});
-  if(r&&r!==window.__lastRoad){window.__lastRoad=r;const e=document.getElementById('road-toast');e.textContent='📍 '+r.name;e.style.opacity=1;clearTimeout(e._h);e._h=setTimeout(()=>e.style.opacity=0,2600);}};
+  if(r&&r!==window.__lastRoad){window.__lastRoad=r;const e=document.getElementById('road-toast');e.textContent=r.name;e.style.opacity=1;clearTimeout(e._h);e._h=setTimeout(()=>e.style.opacity=0,2600);}};
  const e=document.createElement('div');e.id='road-toast';
  e.style.cssText='position:fixed;left:50%;bottom:24vh;transform:translateX(-50%);z-index:30;padding:8px 22px;background:rgba(0,0,0,.6);color:#fde68a;font:700 15px "Plus Jakarta Sans",sans-serif;letter-spacing:2px;border-left:4px solid #facc15;opacity:0;transition:opacity .5s;pointer-events:none';
  document.body.appendChild(e);
@@ -7633,6 +7644,89 @@ T(()=>{
  document.head.appendChild(s);
 });
 })();
+
+
+/* LAYER 9: VEHICLE DAMAGE BAR + MENU & MAP RESTYLE */
+(function(){try{
+ if(state.health===undefined)state.health=100;
+ const h=document.createElement('div');h.id='hp-bar';
+ h.style.cssText='position:fixed;left:14px;bottom:150px;z-index:30;width:130px;padding:5px 8px;background:rgba(0,0,0,.6);border-left:4px solid #22c55e;color:#fff;font:700 11px "JetBrains Mono",monospace;pointer-events:none';
+ h.innerHTML='🔧 VEHICLE <span id="hp-val">100</span>%<div style="height:4px;margin-top:3px;background:#374151"><div id="hp-fill" style="height:100%;width:100%;background:#22c55e;transition:width .3s"></div></div>';
+ document.body.appendChild(h);
+ window.__setHp=()=>{const v=state.health,f=document.getElementById('hp-fill');document.getElementById('hp-val').textContent=v;f.style.width=v+'%';f.style.background=v>55?'#22c55e':v>25?'#f59e0b':'#ef4444';};
+ const st=document.createElement('style');
+ st.textContent="#dialogue-modal,#scene-selector-modal,#mission-complete-modal{backdrop-filter:blur(10px)!important;border:1px solid rgba(250,204,21,.55)!important;border-radius:14px!important;box-shadow:0 18px 50px rgba(0,0,0,.6)!important}.dia-opt-btn{border-radius:10px!important;transition:transform .12s,filter .12s!important}.dia-opt-btn:hover{transform:translateX(5px);filter:brightness(1.12)}#tactical-canvas{border-radius:12px;border:2px solid #facc15;box-shadow:0 10px 30px rgba(0,0,0,.55);filter:saturate(1.2) contrast(1.05)}";
+ document.head.appendChild(st);
+}catch(e){console.warn('layer9',e)}})();
+
+
+/* LAYER 10: TACTICAL MAP OVERLAY (road names, live traffic, heading arrow, legend) */
+(function(){try{
+ const _d=drawTacticalMap;
+ drawTacticalMap=function(){_d();const cv=document.getElementById('tactical-canvas');if(!cv)return;const c=cv.getContext('2d'),w=cv.width,h=cv.height,ox=w/2,oy=80,s=.55;
+  c.font='bold 8px "JetBrains Mono",monospace';c.fillStyle='#fde68a';
+  ROADS.forEach(r=>c.fillText(r.name.split(' ').slice(0,2).join(' '),ox+(r.x1+r.x2)/2*s+4,oy-(r.z1+r.z2)/2*s-4));
+  c.fillStyle='#fb7185';(window.__cars||[]).forEach(k=>c.fillRect(ox+k.g.position.x*s-1.5,oy-k.g.position.z*s-1.5,3,3));
+  const g=state.mode==='walk'?babuGroup:state.mode==='scooty'?playerScooty.group:playerAuto.group,bx=ox+g.position.x*s,by=oy-g.position.z*s;
+  c.strokeStyle='#fff';c.lineWidth=3;c.beginPath();c.moveTo(bx,by);c.lineTo(bx+Math.sin(playerAngle)*14,by-Math.cos(playerAngle)*14);c.stroke();
+  c.fillStyle='rgba(0,0,0,.65)';c.fillRect(12,h-30,w-24,20);c.font='bold 9px "JetBrains Mono",monospace';
+  [['#22c55e','YOU'],['#fb7185','TRAFFIC'],['#B71C1C','SECTOR'],['#57534e','ROAD']].forEach(([col,t],i)=>{c.fillStyle=col;c.fillRect(22+i*88,h-23,8,8);c.fillStyle='#fff';c.fillText(t,35+i*88,h-15);});
+  c.fillStyle='#facc15';c.font='bold 12px sans-serif';c.fillText('N ▲',w-40,26);};
+}catch(e){console.warn('layer10',e)}})();
+
+/* ===== LAYER 11: NAMMA-BENGALOORU-STYLE UI (pause menu, wallet, phone, titles, loading) ===== */
+(function(){try{
+ const lk=document.createElement('link');lk.rel='stylesheet';lk.href='https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@500;700&display=swap';document.head.appendChild(lk);
+ const F='"Bebas Neue",Impact,"Arial Narrow",sans-serif',st=document.createElement('style');
+ st.textContent=`
+ #title-screen .title-btn-group button,#title-screen .title-btn-group .title-btn{font-family:${F}!important;font-size:30px!important;letter-spacing:1px;background:#fbbf24!important;color:#111!important;border:none!important;border-radius:0!important;clip-path:polygon(0 0,100% 0,96% 100%,3% 100%);padding:12px 44px!important;transition:transform .12s}
+ #title-screen .title-btn-group button:hover{transform:translateX(6px)}
+ #title-screen h1,.title-subtitle{font-family:${F}!important;letter-spacing:2px}
+ #load-bar-fill{background:#fbbf24!important}#load-trivia-text{border-left:4px solid #fbbf24;background:rgba(0,0,0,.55);padding:12px 16px;border-radius:6px}
+ #load-pct{position:fixed;right:40px;bottom:30px;font:400 56px ${F};color:#fff;z-index:99999}
+ #minimap-canvas{border-radius:18px!important;border:2px solid rgba(255,255,255,.2)!important}
+ #hud-interact-bubble{border-radius:999px!important;background:rgba(15,15,20,.72)!important;backdrop-filter:blur(8px)}
+ .wallet-card .wallet-item:first-child{display:none!important}
+ #hud-mission-obj{font:700 19px Inter,sans-serif!important;border-left:5px solid #fbbf24;padding-left:10px}
+ #road-toast{left:auto!important;right:28px!important;bottom:150px!important;transform:none!important;background:none!important;border:none!important;font:400 46px ${F}!important;color:#fff!important;letter-spacing:1px!important;text-shadow:0 3px 8px rgba(0,0,0,.7)}
+ #wallet-card{position:fixed;right:18px;top:14px;z-index:31;padding:8px 22px 8px 38px;background:rgba(15,15,20,.7);border:1px solid rgba(255,255,255,.12);border-radius:14px;text-align:right;color:#fff;pointer-events:none}
+ #wallet-card:before{content:'';position:absolute;left:16px;top:8px;width:3px;height:44px;background:#fbbf24;transform:skewX(-18deg)}
+ #wallet-card small{display:block;font:400 18px ${F};letter-spacing:3px;color:#a7f3d0}#wallet-card b{font:400 48px ${F}}
+ #key-chip{position:fixed;right:18px;top:92px;z-index:31;font:600 12px Inter,sans-serif;color:#fff;background:rgba(15,15,20,.7);padding:4px 10px;border-radius:8px;pointer-events:none}
+ #phone{position:fixed;right:22px;bottom:-70px;width:290px;z-index:29;padding:14px 12px;background:linear-gradient(160deg,#4c2a85,#2a1550);border:4px solid #14101f;border-radius:30px;color:#fff;font-family:Inter,sans-serif;transform:rotate(-3deg);box-shadow:0 12px 30px rgba(0,0,0,.6);pointer-events:none}
+ #phone .ph-top{display:flex;justify-content:space-between;font-weight:700;font-size:13px}#phone .ph-n{margin-top:8px;padding:10px;background:rgba(255,255,255,.12);border-radius:14px;font-size:13px;line-height:1.35}#phone .ph-n b{display:block;font-size:14px}
+ @media(max-width:800px){#phone,#key-chip{display:none}}
+ #pause{position:fixed;inset:0;z-index:10001;display:none;padding:5vh 6vw;background:linear-gradient(90deg,rgba(8,6,14,.9),rgba(8,6,14,.35));backdrop-filter:blur(4px);color:#fff;font-family:${F}}
+ #pause h1{font:400 clamp(60px,11vh,110px)/.9 ${F};margin:0}#pause p{font:500 18px Inter,sans-serif;margin:8px 0}
+ #pause .obj{font:700 17px Inter,sans-serif;color:#fbbf24;border-left:5px solid #fbbf24;padding-left:10px;margin:14px 0 22px}
+ #pause .it{display:flex;align-items:center;gap:12px;width:fit-content;padding:2px 28px 0 14px;font-size:clamp(26px,4.4vh,40px);letter-spacing:1px;color:#d4d4d8;cursor:pointer}
+ #pause .it.on{background:#fbbf24;color:#111;clip-path:polygon(0 0,100% 0,95% 100%,0 100%)}
+ #pause .it kbd{font:700 14px Inter,sans-serif;background:#fff;color:#111;border-radius:6px;padding:2px 8px}`;
+ document.head.appendChild(st);
+ /* loading percent */
+ const lp=document.createElement('div');lp.id='load-pct';document.body.appendChild(lp);
+ const li=setInterval(()=>{const f=document.getElementById('load-bar-fill'),l=document.getElementById('loading-screen');if(!f||!l)return;
+  lp.textContent=(parseInt(f.style.width)||0)+'%';if(getComputedStyle(l).display==='none'){lp.remove();clearInterval(li);}},150);
+ /* wallet, key chip, phone */
+ const w=document.createElement('div');w.id='wallet-card';w.innerHTML='<small>WALLET</small><b id="wc-v">₹ 0</b>';document.body.appendChild(w);
+ const kc=document.createElement('div');kc.id='key-chip';kc.textContent='F1 Keys · Esc Menu';document.body.appendChild(kc);
+ const ph=document.createElement('div');ph.id='phone';ph.innerHTML='<div class="ph-top"><span id="ph-t">07:02</span><span>Odisha Net 4G</span></div><div class="ph-n"><b>Rasta Maps</b><span id="ph-o"></span></div>';document.body.appendChild(ph);
+ setInterval(()=>{const g=state.screen==='game'||state.screen==='paused';[w,kc,ph].forEach(e=>e.style.display=g?'':'none');if(!g)return;
+  document.getElementById('wc-v').textContent='₹ '+state.coins;
+  document.getElementById('ph-t').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false});
+  document.getElementById('ph-o').textContent=tr((CHAPTERS[state.currentChapter]||CHAPTERS[0]).obj);},1000);
+ /* pause menu */
+ const pm=document.createElement('div');pm.id='pause';document.body.appendChild(pm);let idx=0,prev='game';
+ const out=f=>()=>{resume();f();};
+ const ITEMS=[['RESUME','ESC',()=>resume()],['SAVE GAME','',()=>{saveGameState();popup('💾 Game saved');}],['MAP','M',out(openEmergentMap)],['QUESTS','Q',out(openChapterModal)],['SCENES','C',out(openSceneSelector)],['SETTINGS','O',out(openSettingsModal)],['LANGUAGE','L',()=>{cycleLanguage();draw();}],["I'M STUCK",'',out(unstuckPlayer)]];
+ function draw(){pm.innerHTML='<h1>CHAI<br>BREAK</h1><p>Game paused. Chai is getting cold.</p><div class="obj">'+tr((CHAPTERS[state.currentChapter]||CHAPTERS[0]).obj)+'</div>'+ITEMS.map((it,i)=>'<div class="it'+(i===idx?' on':'')+'" data-i="'+i+'"><span>'+it[0]+'</span>'+(it[1]?'<kbd>'+it[1]+'</kbd>':'')+'</div>').join('');
+  pm.querySelectorAll('.it').forEach(e=>{e.onmouseenter=()=>{idx=+e.dataset.i;draw();};e.onclick=()=>ITEMS[+e.dataset.i][2]();});}
+ function pause(){prev=state.screen;state.screen='paused';state.modalActive=true;idx=0;draw();pm.style.display='block';}
+ function resume(){pm.style.display='none';state.screen=prev;state.modalActive=false;}
+ window.addEventListener('keydown',e=>{
+  if(state.screen==='paused'){if(e.key==='Escape')resume();else if(e.key==='ArrowDown'){idx=(idx+1)%ITEMS.length;draw();}else if(e.key==='ArrowUp'){idx=(idx+ITEMS.length-1)%ITEMS.length;draw();}else if(e.key==='Enter')ITEMS[idx][2]();else return;e.preventDefault();e.stopImmediatePropagation();}
+  else if(e.key==='Escape'&&state.screen==='game'&&!state.modalActive){pause();e.preventDefault();e.stopImmediatePropagation();}},true);
+}catch(e){console.warn('layer11',e)}})();
 
   loadSavedState();
   checkSavedGame();
