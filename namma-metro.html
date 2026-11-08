@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Namma Metro Rush — A Bengaluru Street Runner</title>
+<style>
+  :root {
+    --jute: #E0A96D; --vermilion: #B71C1C; --forest: #15803D;
+    --gold: #F59E0B; --ink: #0C0A09; --ivory: #FFFDF5;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0807; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: var(--ivory); }
+  #cvs { display: block; position: fixed; inset: 0; width: 100vw; height: 100vh; touch-action: none; }
+  #hud { position: fixed; inset: 0; pointer-events: none; z-index: 5; padding: 18px 22px; display: flex; flex-direction: column; justify-content: space-between; }
+  .row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .pill { background: rgba(18,15,13,.82); border: 1px solid rgba(245,158,11,.38); border-radius: 20px; padding: 8px 16px; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; backdrop-filter: blur(10px); }
+  .pill b { color: var(--gold); }
+  #title { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 24px; background: radial-gradient(circle at center 40%, rgba(12,10,8,.72), rgba(5,4,3,.96)); backdrop-filter: blur(8px); transition: opacity .6s, visibility .6s; }
+  #title.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+  .card { max-width: 560px; width: 100%; padding: 40px 30px; border-radius: 22px; background: rgba(20,17,15,.9); border: 1px solid rgba(245,158,11,.35); box-shadow: 0 16px 48px rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.1); }
+  .emblem { font-size: 52px; margin-bottom: 10px; filter: drop-shadow(0 0 20px rgba(245,158,11,.7)); animation: bob 4s ease-in-out infinite; }
+  @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+  h1 { font-size: clamp(26px, 6vw, 42px); letter-spacing: 1.5px; background: linear-gradient(135deg, #FFFDF5 0%, #FCD34D 45%, #F59E0B 80%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
+  .tag { font-size: 12px; letter-spacing: 4px; color: var(--jute); margin-bottom: 16px; font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+  .desc { font-size: 14px; line-height: 1.6; color: #E2E8F0; margin-bottom: 22px; }
+  .btn { display: inline-block; font-family: 'Cinzel', serif; font-size: 17px; font-weight: 900; letter-spacing: 1.5px; padding: 14px 40px; border: 2px solid #FCD34D; border-radius: 14px; background: linear-gradient(135deg, #DC2626, #D97706 50%, #F59E0B); color: #fff; cursor: pointer; transition: transform .2s, box-shadow .2s; box-shadow: 0 8px 30px rgba(220,38,38,.55); }
+  .btn:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 12px 40px rgba(245,158,11,.8); }
+  .ctrl { margin-top: 20px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; color: #94A3B8; letter-spacing: .5px; }
+  .ctrl span { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 4px; padding: 2px 6px; color: var(--ivory); margin: 0 2px; }
+  #gameover { position: fixed; inset: 0; z-index: 90; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 24px; background: radial-gradient(circle at center, rgba(12,10,8,.85), rgba(5,4,3,.97)); backdrop-filter: blur(6px); }
+  #gameover.show { display: flex; }
+  #go-title { font-family: 'Cinzel', serif; font-size: 34px; color: #FCA5A5; letter-spacing: 2px; margin-bottom: 8px; }
+  #go-score { font-family: 'JetBrains Mono', monospace; font-size: 26px; color: var(--gold); margin: 14px 0 22px; }
+  #go-best { font-size: 13px; color: #94A3B8; margin-bottom: 24px; }
+</style>
+</head>
+<body>
+<canvas id="cvs"></canvas>
+
+<div id="hud">
+  <div class="row">
+    <div class="pill">SCORE <b id="score">0</b></div>
+    <div class="pill">☕ <b id="coffee">0</b></div>
+    <div class="pill">♥ <b id="lives">3</b></div>
+  </div>
+  <div class="row" style="justify-content: center;">
+    <div class="pill" id="streak" style="opacity:0; transition: opacity .3s;">🔥 STREAK <b id="streakN">0</b></div>
+  </div>
+</div>
+
+<div id="title">
+  <div class="card">
+    <div class="emblem">🛺</div>
+    <h1>NAMMA METRO RUSH</h1>
+    <div class="tag">A BENGALURU STREET RUNNER</div>
+    <p class="desc">Scoot through Bangalore traffic on your Activa. Dodge autos, cows, cabs, and potholes. Grab filter coffee for bonus points. Survive as long as you can.</p>
+    <button class="btn" id="startBtn">▶ START RIDE</button>
+    <div class="ctrl"><span>SPACE</span>/<span>TAP</span> jump &nbsp;·&nbsp; <span>↓</span>/<span>SWIPE DOWN</span> slide</div>
+  </div>
+</div>
+
+<div id="gameover">
+  <div class="card" style="max-width:420px;">
+    <div id="go-title">GAME OVER</div>
+    <div id="go-score">SCORE: 0</div>
+    <div id="go-best">BEST: 0</div>
+    <button class="btn" id="retryBtn">↺ RIDE AGAIN</button>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+const cvs = document.getElementById('cvs');
+const ctx = cvs.getContext('2d');
+const DPR = Math.min(window.devicePixelRatio || 1, 2);
+let W = 0, H = 0;
+
+function resize(){
+  W = window.innerWidth; H = window.innerHeight;
+  cvs.width = Math.floor(W * DPR);
+  cvs.height = Math.floor(H * DPR);
+  cvs.style.width = W + 'px';
+  cvs.style.height = H + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ---------- Game state ----------
+const G = {
+  running: false,
+  t: 0,
+  score: 0,
+  coffee: 0,
+  lives: 3,
+  speed: 320,          // world scroll px/sec
+  baseSpeed: 320,
+  spawnTimer: 0,
+  spawnEvery: 0.85,    // seconds
+  obstacles: [],
+  coffees: [],
+  playerY: 0,          // 0 = ground, negative = jump
+  playerVY: 0,
+  jump: false,
+  slide: 0,            // seconds remaining for slide
+  streak: 0,
+  best: +(localStorage.getItem('nmr_best') || 0),
+  skyline: [],
+  clouds: [],
+  shakeT: 0,
+  particles: [],
+  metroTrainX: -600,
+  roadDashesOffset: 0
+};
+
+const LANES = 3;
+function laneX(i){ return W * (0.30 + i * 0.20); }
+function groundY(){ return H * 0.78; }
+const PLAYER_W = 54, PLAYER_H = 74;
+const JUMP_V = -820, GRAV = 2400;
+
+// ---------- Obstacles ----------
+const OBS_TYPES = [
+  { k: 'auto', w: 76, h: 58, color: '#F2C418', trim: '#15803D', icon: '🛺', cost: 1 },
+  { k: 'cab',  w: 88, h: 52, color: '#2563EB', trim: '#1E40AF', icon: '🚖', cost: 1 },
+  { k: 'cow',  w: 78, h: 62, color: '#F1F5F9', trim: '#9A3412', icon: '🐄', cost: 1 },
+  { k: 'poth', w: 66, h: 22, color: '#141414', trim: '#3F3F46', icon: '⚠️', cost: 1, isGround: true },
+  { k: 'bus',  w: 110, h: 86, color: '#15803D', trim: '#052E16', icon: '🚌', cost: 1 }
+];
+
+function spawnObstacle(){
+  const lane = Math.floor(Math.random() * LANES);
+  const type = OBS_TYPES[Math.floor(Math.random() * OBS_TYPES.length)];
+  G.obstacles.push({
+    lane, x: laneX(lane) + W, y: groundY(),
+    w: type.w, h: type.h, type
+  });
+  // occasionally spawn coffee over the free lane
+  if (Math.random() < 0.40) {
+    const freeLanes = [0,1,2].filter(l => l !== lane);
+    const cl = freeLanes[Math.floor(Math.random() * freeLanes.length)];
+    G.coffees.push({ lane: cl, x: laneX(cl) + W * 0.65, y: groundY() - 95 });
+  }
+}
+
+// ---------- Input ----------
+function doJump(){
+  if (!G.running) return;
+  if (G.playerY >= 0 && !G.jump){
+    G.jump = true;
+    G.playerVY = JUMP_V;
+    try { beep(660, 0.06, 'sine', 0.18); } catch(e){}
+  }
+}
+function doSlide(){
+  if (!G.running) return;
+  if (G.playerY >= 0 && G.slide <= 0){
+    G.slide = 0.55;
+    try { beep(220, 0.08, 'triangle', 0.16); } catch(e){}
+  }
+}
+window.addEventListener('keydown', e => {
+  const k = e.key.toLowerCase();
+  if (k === ' ' || k === 'arrowup' || k === 'w') { e.preventDefault(); doJump(); }
+  if (k === 'arrowdown' || k === 's') { e.preventDefault(); doSlide(); }
+  if (k === 'enter' && !G.running) { start(); }
+});
+let touchStartY = 0;
+cvs.addEventListener('touchstart', e => {
+  const t = e.touches[0]; touchStartY = t.clientY;
+}, { passive: true });
+cvs.addEventListener('touchend', e => {
+  const t = e.changedTouches[0];
+  const dy = t.clientY - touchStartY;
+  if (dy > 40) doSlide(); else doJump();
+}, { passive: true });
+cvs.addEventListener('mousedown', doJump);
+
+// ---------- Audio ----------
+let actx = null, masterGain = null;
+function ensureAudio(){
+  if (!actx){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    actx = new AC();
+    masterGain = actx.createGain();
+    masterGain.gain.value = 0.7;
+    masterGain.connect(actx.destination);
+  }
+  if (actx.state === 'suspended') actx.resume();
+}
+function beep(freq, dur, type, vol, when){
+  ensureAudio();
+  if (!actx) return;
+  const t = actx.currentTime + (when || 0);
+  const o = actx.createOscillator();
+  const g = actx.createGain();
+  o.type = type || 'sine';
+  o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol || 0.2, t + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(masterGain);
+  o.start(t); o.stop(t + dur + 0.05);
+}
+
+// ---------- Skyline parallax ----------
+function buildSkyline(){
+  G.skyline = [];
+  let x = 0;
+  while (x < W * 2.5){
+    const h = 80 + Math.random() * 220;
+    const w = 45 + Math.random() * 85;
+    const hasWindows = Math.random() > 0.3;
+    G.skyline.push({ x, w, h, hasWindows });
+    x += w + 14;
+  }
+}
+buildSkyline();
+for (let i = 0; i < 7; i++){
+  G.clouds.push({ x: Math.random() * W, y: 30 + Math.random() * 140, w: 90 + Math.random() * 150, spd: 12 + Math.random() * 20 });
+}
+window.addEventListener('resize', buildSkyline);
+
+// ---------- Start / Retry ----------
+function start(){
+  ensureAudio();
+  G.running = true;
+  G.t = 0;
+  G.score = 0;
+  G.coffee = 0;
+  G.lives = 3;
+  G.speed = G.baseSpeed;
+  G.obstacles = [];
+  G.coffees = [];
+  G.particles = [];
+  G.playerY = 0;
+  G.playerVY = 0;
+  G.jump = false;
+  G.slide = 0;
+  G.streak = 0;
+  G.shakeT = 0;
+  document.getElementById('title').classList.add('hidden');
+  document.getElementById('gameover').classList.remove('show');
+  try {
+    beep(523.25, 0.1, 'sine', 0.2, 0);
+    beep(659.25, 0.1, 'sine', 0.2, 0.1);
+    beep(783.99, 0.18, 'sine', 0.25, 0.2);
+  } catch(e){}
+}
+document.getElementById('startBtn').addEventListener('click', start);
+document.getElementById('retryBtn').addEventListener('click', start);
+
+// ---------- Update ----------
+function update(dt){
+  if (!G.running) return;
+  G.t += dt;
+  G.speed = G.baseSpeed + Math.min(320, G.t * 7);
+  G.score += dt * 14;
+
+  // Road offset
+  G.roadDashesOffset = (G.roadDashesOffset + G.speed * dt) % 80;
+
+  // Metro train loop overhead
+  G.metroTrainX += (G.speed * 1.35) * dt;
+  if (G.metroTrainX > W + 800) G.metroTrainX = -700 - Math.random() * 400;
+
+  // Player physics
+  if (G.jump){
+    G.playerVY += GRAV * dt;
+    G.playerY += G.playerVY * dt;
+    if (G.playerY >= 0){ G.playerY = 0; G.playerVY = 0; G.jump = false; }
+  }
+  if (G.slide > 0) G.slide = Math.max(0, G.slide - dt);
+
+  // Spawning
+  G.spawnTimer += dt;
+  if (G.spawnTimer >= G.spawnEvery){
+    G.spawnTimer = 0;
+    G.spawnEvery = Math.max(0.48, 0.85 - G.t * 0.005);
+    spawnObstacle();
+  }
+
+  // Scroll world objects
+  const dx = G.speed * dt;
+  const playerX = laneX(1);
+
+  G.obstacles.forEach(o => { o.x -= dx; });
+  G.coffees.forEach(c => { c.x -= dx; });
+
+  // Collision detection
+  G.obstacles = G.obstacles.filter(o => {
+    if (o.x + o.w < -80) return false;
+    const px = playerX - PLAYER_W/2, py = groundY() + G.playerY - PLAYER_H + (G.slide > 0 ? 25 : 0);
+    const pw = PLAYER_W, ph = G.slide > 0 ? PLAYER_H * 0.5 : PLAYER_H;
+    const ox = o.x - o.w/2, oy = o.type.isGround ? groundY() - 10 : groundY() - o.h;
+    const oW = o.w, oH = o.type.isGround ? 20 : o.h;
+    if (px < ox + oW && px + pw > ox && py < oy + oH && py + ph > oy){
+      hit(o);
+      return false;
+    }
+    return true;
+  });
+
+  // Coffee pickup
+  G.coffees = G.coffees.filter(c => {
+    if (c.x < -80) return false;
+    const px = playerX, py = groundY() + G.playerY - PLAYER_H/2;
+    if (Math.abs(c.x - px) < 46 && Math.abs(c.y - py) < 65){
+      G.coffee++;
+      G.score += 50;
+      G.streak++;
+      G.shakeT = Math.max(G.shakeT, 0.05);
+      try {
+        beep(880, 0.08, 'sine', 0.2);
+        beep(1320, 0.12, 'sine', 0.18, 0.05);
+      } catch(e){}
+      for (let i = 0; i < 8; i++){
+        G.particles.push({
+          x: c.x, y: c.y,
+          vx: (Math.random() - 0.5) * 160,
+          vy: -Math.random() * 180,
+          life: 0.45, color: '#F59E0B'
+        });
+      }
+      return false;
+    }
+    return true;
+  });
+
+  // Update particles
+  G.particles = G.particles.filter(p => {
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    p.life -= dt;
+    return p.life > 0;
+  });
+
+  // Clouds
+  G.clouds.forEach(c => {
+    c.x -= c.spd * dt;
+    if (c.x + c.w < 0){ c.x = W + Math.random() * 200; c.y = 30 + Math.random() * 140; }
+  });
+
+  if (G.shakeT > 0) G.shakeT -= dt;
+
+  // Update HUD
+  document.getElementById('score').textContent = Math.floor(G.score);
+  document.getElementById('coffee').textContent = G.coffee;
+  document.getElementById('lives').textContent = G.lives;
+  const st = document.getElementById('streak');
+  if (G.streak > 1){ st.style.opacity = '1'; document.getElementById('streakN').textContent = G.streak; }
+  else st.style.opacity = '0';
+}
+
+function hit(o){
+  G.lives--;
+  G.streak = 0;
+  G.shakeT = 0.32;
+  try { beep(120, 0.28, 'sawtooth', 0.3, 0); beep(80, 0.32, 'triangle', 0.25, 0.05); } catch(e){}
+  // spawn hit particles
+  for (let i = 0; i < 18; i++){
+    G.particles.push({
+      x: laneX(1) + (Math.random() - 0.5) * 40,
+      y: groundY() - 30 + (Math.random() - 0.5) * 40,
+      vx: (Math.random() - 0.5) * 360,
+      vy: -Math.random() * 340,
+      life: 0.55, color: '#EF4444'
+    });
+  }
+  if (G.lives <= 0) endGame();
+}
+
+function endGame(){
+  G.running = false;
+  const s = Math.floor(G.score);
+  if (s > G.best){ G.best = s; localStorage.setItem('nmr_best', String(s)); }
+  document.getElementById('go-score').textContent = 'SCORE: ' + s;
+  document.getElementById('go-best').textContent = 'BEST: ' + G.best;
+  document.getElementById('gameover').classList.add('show');
+  try {
+    beep(392, 0.25, 'sawtooth', 0.25, 0);
+    beep(330, 0.25, 'sawtooth', 0.25, 0.25);
+    beep(262, 0.55, 'sawtooth', 0.3, 0.5);
+  } catch(e){}
+}
+
+// ---------- Render ----------
+function render(){
+  ctx.save();
+  if (G.shakeT > 0){
+    const s = G.shakeT * 22;
+    ctx.translate((Math.random()-0.5)*s, (Math.random()-0.5)*s);
+  }
+
+  // 1. Twilight / Golden Hour Bengaluru Sky
+  const sky = ctx.createLinearGradient(0, 0, 0, groundY());
+  sky.addColorStop(0, '#110E1A');
+  sky.addColorStop(0.55, '#2D1B36');
+  sky.addColorStop(0.85, '#782C2E');
+  sky.addColorStop(1, '#D97706');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, W, groundY());
+
+  // Distant glowing moon / sun
+  ctx.beginPath();
+  ctx.arc(W * 0.82, groundY() * 0.32, 38, 0, Math.PI * 2);
+  ctx.fillStyle = '#FEF3C7';
+  ctx.shadowColor = 'rgba(251,191,36,0.6)';
+  ctx.shadowBlur = 35;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // 2. Clouds
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  G.clouds.forEach(c => {
+    ctx.beginPath();
+    ctx.roundRect(c.x, c.y, c.w, 24, 12);
+    ctx.fill();
+  });
+
+  // 3. Parallax Skyline (Bangalore tech towers & Vidhana Soudha dome silhouette)
+  ctx.fillStyle = '#1A121E';
+  G.skyline.forEach(b => {
+    const by = groundY() - b.h;
+    ctx.fillRect(b.x, by, b.w, b.h);
+    if (b.hasWindows) {
+      ctx.fillStyle = 'rgba(254, 240, 138, 0.35)';
+      for (let wy = by + 12; wy < groundY() - 15; wy += 22){
+        for (let wx = b.x + 8; wx < b.x + b.w - 10; wx += 14){
+          ctx.fillRect(wx, wy, 6, 8);
+        }
+      }
+      ctx.fillStyle = '#1A121E';
+    }
+  });
+
+  // Vidhana Soudha central dome silhouette in distance
+  const domeX = W * 0.42;
+  ctx.fillStyle = '#170E1A';
+  ctx.beginPath();
+  ctx.arc(domeX, groundY() - 110, 42, Math.PI, 0);
+  ctx.fill();
+  ctx.fillRect(domeX - 44, groundY() - 110, 88, 110);
+  ctx.fillRect(domeX - 2, groundY() - 165, 4, 55); // Kalasa spire
+
+  // 4. Elevated Namma Metro Viaduct (overhead railway line)
+  const metroY = groundY() * 0.38;
+  // Pillars
+  ctx.fillStyle = '#262626';
+  for (let px = 80; px < W + 200; px += 260){
+    ctx.fillRect(px - 14, metroY + 14, 28, groundY() - metroY - 14);
+    // Pillar cross-beam top
+    ctx.fillRect(px - 32, metroY + 8, 64, 12);
+  }
+  // Track beam
+  ctx.fillStyle = '#374151';
+  ctx.fillRect(0, metroY, W, 14);
+  ctx.fillStyle = '#4B5563';
+  ctx.fillRect(0, metroY - 6, W, 6);
+
+  // Overhead Purple / Green Namma Metro Train
+  ctx.save();
+  const tx = G.metroTrainX;
+  const ty = metroY - 32;
+  // Train coaches
+  for (let c = 0; c < 3; c++){
+    const cx = tx + c * 155;
+    ctx.fillStyle = '#E5E7EB';
+    ctx.fillRect(cx, ty, 146, 26);
+    // Purple stripe (Namma Metro Purple Line)
+    ctx.fillStyle = '#7C3AED';
+    ctx.fillRect(cx, ty + 15, 146, 6);
+    // Green accent stripe
+    ctx.fillStyle = '#10B981';
+    ctx.fillRect(cx, ty + 21, 146, 3);
+    // Windows
+    ctx.fillStyle = '#1E293B';
+    for (let w = 12; w < 130; w += 22){
+      ctx.fillRect(cx + w, ty + 4, 14, 9);
+    }
+  }
+  ctx.restore();
+
+  // 5. Road Surface (Asphalt & 3 Traffic Lanes)
+  const gy = groundY();
+  ctx.fillStyle = '#1F2937';
+  ctx.fillRect(0, gy, W, H - gy);
+
+  // Kerb stone / pavement edging
+  ctx.fillStyle = '#9CA3AF';
+  ctx.fillRect(0, gy - 6, W, 6);
+  // Alternating black and yellow Bangalore sidewalk pattern
+  for (let sx = 0; sx < W + 60; sx += 60){
+    ctx.fillStyle = (Math.floor(sx / 60) % 2 === 0) ? '#EAB308' : '#111827';
+    ctx.fillRect(sx, gy - 6, 60, 6);
+  }
+
+  // Dashed lane divider lines
+  ctx.strokeStyle = '#FCD34D';
+  ctx.lineWidth = 4;
+  ctx.setLineDash([26, 34]);
+  ctx.lineDashOffset = -G.roadDashesOffset;
+  [laneX(0) + (laneX(1) - laneX(0))/2, laneX(1) + (laneX(2) - laneX(1))/2].forEach(lx => {
+    ctx.beginPath();
+    ctx.moveTo(lx, gy);
+    ctx.lineTo(lx, H);
+    ctx.stroke();
+  });
+  ctx.setLineDash([]);
+
+  // 6. Draw Collectibles (Filter Coffee ☕)
+  G.coffees.forEach(c => {
+    ctx.save();
+    ctx.translate(c.x, c.y);
+    // Steel dabarah saucer
+    ctx.fillStyle = '#CBD5E1';
+    ctx.beginPath();
+    ctx.ellipse(0, 16, 22, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Tumbler cup
+    ctx.fillStyle = '#E2E8F0';
+    ctx.fillRect(-12, -4, 24, 20);
+    // Frothy coffee top
+    ctx.fillStyle = '#78350F';
+    ctx.beginPath();
+    ctx.ellipse(0, -4, 12, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#FDE68A';
+    ctx.beginPath();
+    ctx.ellipse(0, -4, 8, 2, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Rising aromatic steam curves
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    const stOff = Math.sin(G.t * 6) * 4;
+    ctx.moveTo(-4, -8);
+    ctx.quadraticCurveTo(-8 + stOff, -22, -2, -34);
+    ctx.moveTo(4, -8);
+    ctx.quadraticCurveTo(8 - stOff, -20, 3, -32);
+    ctx.stroke();
+    // Glow ring
+    ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
+    ctx.beginPath();
+    ctx.arc(0, 0, 26, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  });
+
+  // 7. Draw Obstacles (Auto, Cab, Cow, Pothole, BMTC Bus)
+  G.obstacles.forEach(o => {
+    ctx.save();
+    ctx.translate(o.x, o.type.isGround ? groundY() : groundY());
+
+    if (o.type.k === 'auto'){
+      // Namma Bengaluru Auto Rickshaw (Yellow top, Green bottom)
+      const w = o.w, h = o.h;
+      // Shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.4)';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, w * 0.48, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Green bottom body
+      ctx.fillStyle = '#15803D';
+      ctx.fillRect(-w/2, -h * 0.55, w, h * 0.45);
+      // Yellow canopy hood
+      ctx.fillStyle = '#FACC15';
+      ctx.beginPath();
+      ctx.roundRect(-w/2, -h, w, h * 0.52, [10, 10, 0, 0]);
+      ctx.fill();
+      // Windshield & driver opening
+      ctx.fillStyle = '#1E293B';
+      ctx.fillRect(-w/2 + 8, -h * 0.88, w * 0.45, h * 0.35);
+      // Headlight
+      ctx.fillStyle = '#FEF08A';
+      ctx.beginPath();
+      ctx.arc(-w/2 + 4, -h * 0.35, 6, 0, Math.PI * 2);
+      ctx.fill();
+      // Black wheels
+      ctx.fillStyle = '#111827';
+      ctx.fillRect(-w * 0.42, -10, 14, 10);
+      ctx.fillRect(w * 0.22, -10, 16, 10);
+    } else if (o.type.k === 'cab'){
+      // App Taxi Sedan
+      const w = o.w, h = o.h;
+      ctx.fillStyle = 'rgba(0,0,0,0.4)';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, w * 0.5, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Lower body
+      ctx.fillStyle = '#2563EB';
+      ctx.fillRect(-w/2, -h * 0.65, w, h * 0.55);
+      // Cabin roof
+      ctx.fillStyle = '#1D4ED8';
+      ctx.beginPath();
+      ctx.roundRect(-w * 0.28, -h, w * 0.56, h * 0.45, [8, 8, 0, 0]);
+      ctx.fill();
+      // Windows
+      ctx.fillStyle = '#0F172A';
+      ctx.fillRect(-w * 0.22, -h * 0.92, w * 0.44, h * 0.30);
+      // Taxi rooftop illuminated sign
+      ctx.fillStyle = '#FEF08A';
+      ctx.fillRect(-10, -h - 8, 20, 8);
+      // Wheels
+      ctx.fillStyle = '#111827';
+      ctx.fillRect(-w * 0.38, -10, 16, 10);
+      ctx.fillRect(w * 0.22, -10, 16, 10);
+    } else if (o.type.k === 'cow'){
+      // Sacred Cow
+      const w = o.w, h = o.h;
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, w * 0.45, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Cow body
+      ctx.fillStyle = '#F8FAFC';
+      ctx.beginPath();
+      ctx.roundRect(-w * 0.45, -h * 0.85, w * 0.70, h * 0.60, 12);
+      ctx.fill();
+      // Cow head
+      ctx.fillRect(-w * 0.55, -h * 0.95, 24, 28);
+      // Horns
+      ctx.fillStyle = '#78350F';
+      ctx.fillRect(-w * 0.52, -h - 8, 6, 12);
+      // Red garland / collar
+      ctx.fillStyle = '#DC2626';
+      ctx.fillRect(-w * 0.36, -h * 0.80, 8, 26);
+      // Legs
+      ctx.fillStyle = '#E2E8F0';
+      ctx.fillRect(-w * 0.35, -h * 0.3, 10, h * 0.3);
+      ctx.fillRect(-w * 0.15, -h * 0.3, 10, h * 0.3);
+      ctx.fillRect(w * 0.05, -h * 0.3, 10, h * 0.3);
+      ctx.fillRect(w * 0.20, -h * 0.3, 10, h * 0.3);
+    } else if (o.type.k === 'poth'){
+      // Bangalore Pothole
+      ctx.fillStyle = '#0F0F14';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, o.w * 0.5, 9, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#4B5563';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      // Broken asphalt chunks
+      ctx.fillStyle = '#6B7280';
+      ctx.fillRect(-18, -4, 8, 6);
+      ctx.fillRect(8, 0, 10, 5);
+    } else if (o.type.k === 'bus'){
+      // BMTC Green City Bus
+      const w = o.w, h = o.h;
+      ctx.fillStyle = 'rgba(0,0,0,0.45)';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, w * 0.5, 10, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Bus body
+      ctx.fillStyle = '#15803D';
+      ctx.beginPath();
+      ctx.roundRect(-w/2, -h, w, h * 0.88, 8);
+      ctx.fill();
+      // White top half
+      ctx.fillStyle = '#F8FAFC';
+      ctx.fillRect(-w/2, -h, w, h * 0.38);
+      // Glass windows
+      ctx.fillStyle = '#1E293B';
+      for (let bx = -w/2 + 10; bx < w/2 - 12; bx += 24){
+        ctx.fillRect(bx, -h * 0.88, 16, 20);
+      }
+      // Electronic LED destination board
+      ctx.fillStyle = '#F59E0B';
+      ctx.fillRect(-w/2 + 12, -h * 0.96, w * 0.55, 6);
+      // Heavy bus wheels
+      ctx.fillStyle = '#111827';
+      ctx.fillRect(-w * 0.38, -14, 20, 14);
+      ctx.fillRect(w * 0.22, -14, 20, 14);
+    }
+
+    ctx.restore();
+  });
+
+  // 8. Draw Player Character (Commuter riding Blue Honda Activa Scooty)
+  const px = laneX(1);
+  const py = groundY() + G.playerY;
+  ctx.save();
+  ctx.translate(px, py);
+
+  // Player shadow on asphalt
+  ctx.fillStyle = 'rgba(0,0,0,0.4)';
+  ctx.beginPath();
+  const shadowW = Math.max(16, PLAYER_W * (1 - Math.abs(G.playerY) / 450));
+  ctx.ellipse(0, 0, shadowW * 0.5, 7, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  const isSlide = G.slide > 0;
+  const crouchY = isSlide ? 20 : 0;
+
+  // Scooty Headlight Beam casting forward
+  ctx.save();
+  const beam = ctx.createLinearGradient(0, -22, -120, -10);
+  beam.addColorStop(0, 'rgba(254, 240, 138, 0.45)');
+  beam.addColorStop(1, 'rgba(254, 240, 138, 0)');
+  ctx.fillStyle = beam;
+  ctx.beginPath();
+  ctx.moveTo(-16, -24 + crouchY);
+  ctx.lineTo(-140, -42 + crouchY);
+  ctx.lineTo(-140, 15);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  // Scooty body (Royal Blue Activa)
+  ctx.fillStyle = '#1D4ED8';
+  ctx.beginPath();
+  ctx.roundRect(-22, -26 + crouchY, 44, 18, [6, 6, 4, 4]);
+  ctx.fill();
+  // Floorboard
+  ctx.fillStyle = '#374151';
+  ctx.fillRect(-14, -14 + crouchY, 28, 6);
+  // Wheels
+  ctx.fillStyle = '#111827';
+  ctx.beginPath();
+  ctx.arc(-16, -6 + crouchY, 8, 0, Math.PI * 2);
+  ctx.arc(16, -6 + crouchY, 8, 0, Math.PI * 2);
+  ctx.fill();
+  // Chrome hub caps
+  ctx.fillStyle = '#CBD5E1';
+  ctx.beginPath();
+  ctx.arc(-16, -6 + crouchY, 3, 0, Math.PI * 2);
+  ctx.arc(16, -6 + crouchY, 3, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Rider body
+  // Pants
+  ctx.fillStyle = '#1F2937';
+  ctx.fillRect(-8, -36 + crouchY, 16, 18);
+  // Casual Jacket (Emerald Green)
+  ctx.fillStyle = '#10B981';
+  ctx.fillRect(-12, -56 + crouchY, 24, 22);
+  // Tech Backpack (Navy blue)
+  ctx.fillStyle = '#1E3A8A';
+  ctx.fillRect(8, -54 + crouchY, 9, 18);
+  // Helmet (Gloss Red)
+  ctx.fillStyle = '#DC2626';
+  ctx.beginPath();
+  ctx.arc(0, -66 + crouchY, 13, 0, Math.PI * 2);
+  ctx.fill();
+  // Dark Visor
+  ctx.fillStyle = '#0F172A';
+  ctx.fillRect(-12, -69 + crouchY, 10, 6);
+
+  ctx.restore();
+
+  // 9. Draw Particle Effects
+  G.particles.forEach(p => {
+    ctx.save();
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.life * 2;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  });
+
+  ctx.restore();
+}
+
+// ---------- Main Game Loop ----------
+let lastTime = performance.now();
+function loop(now){
+  const dt = Math.min((now - lastTime) / 1000, 0.1);
+  lastTime = now;
+  update(dt);
+  render();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+})();
+</script>
+</body>
+</html>

@@ -4847,7 +4847,7 @@ let __weave=null;
       if (playerScooty && playerScooty.spotLight) playerScooty.spotLight.intensity = 3.5;
 
       popup('🌧️ ' + (state.lang === 'or' ? 'ମୌସୁମୀ ବର୍ଷା ଆରମ୍ଭ! ରାସ୍ତା ଖସଡ଼ା।' : 'मानसून बारिश शुरू! सड़कें फिसलनी हैं।'));
-      playVoiceLine('rain_monsoon');
+      playVoiceLine('announcer');
 
     } else if (weatherMode === 'dusk') {
       // Golden Dusk / Twilight
@@ -6723,8 +6723,9 @@ let __weave=null;
     if (m) m.style.display = 'none';
   }
   function setMasterVolume(v) {
-    if (typeof master !== 'undefined' && master) master.gain.value = Math.max(0, Math.min(1, v));
-    if (window.__masterGain) window.__masterGain.gain.value = Math.max(0, Math.min(1, v));
+    const clamped = Math.max(0, Math.min(1, v));
+    if (typeof master !== 'undefined' && master) master.gain.value = clamped;
+    if (window.__masterGain) window.__masterGain.gain.value = clamped;
   }
   window.setMasterVolume = setMasterVolume;
 
