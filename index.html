@@ -6,31 +6,51 @@
   <title>Amara Odisha Adventures — Bhubaneswar Grand Open World (ଆମ ଓଡ଼ିଶା)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Noto+Sans+Oriya:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Noto+Sans+Oriya:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
     :root {
-      --light-jute-ochre: #D9A05B;
-      --vivid-green: #2E7D32;
-      --terracotta-red: #B71C1C;
-      --temple-laterite: #8D4004;
-      --charcoal-black: #1C1917;
-      --warm-ivory: #FFFBEB;
-      --pattachitra-gold: #EAB308;
-      --scam-alert-red: #DC2626;
-      --hud-surface: rgba(28, 25, 23, 0.88);
-      --hud-border: rgba(217, 160, 91, 0.45);
-      --pattachitra-border: linear-gradient(90deg, #B71C1C, #D9A05B, #2E7D32, #B71C1C);
+      /* Brand Color Palette: Cyber-Pattachitra & Temple Laterite */
+      --light-jute-ochre: #E0A96D;
+      --vivid-green: #10B981;
+      --terracotta-red: #DC2626;
+      --temple-laterite: #9A3412;
+      --charcoal-black: #0C0A09;
+      --warm-ivory: #FFFDF5;
+      --pattachitra-gold: #F59E0B;
+      --gold-bright: #FCD34D;
+      --scam-alert-red: #EF4444;
+      --sky-cyan: #38BDF8;
+
+      /* Glassmorphism & Surface Tokens */
+      --hud-surface: rgba(18, 15, 13, 0.88);
+      --hud-surface-light: rgba(30, 26, 23, 0.78);
+      --hud-border: rgba(245, 158, 11, 0.38);
+      --hud-border-glow: rgba(245, 158, 11, 0.22);
+      --card-shadow: 0 16px 48px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+      --pattachitra-border: linear-gradient(135deg, #DC2626 0%, #F59E0B 35%, #10B981 70%, #DC2626 100%);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body, html {
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: #0c0a09;
+      background: #080706;
       font-family: 'Plus Jakarta Sans', 'Noto Sans Oriya', 'Noto Sans Devanagari', sans-serif;
       color: var(--warm-ivory);
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
     }
+
     #webgl-canvas {
       position: fixed;
       top: 0;
@@ -38,139 +58,264 @@
       width: 100vw;
       height: 100vh;
       z-index: 1;
+      display: block;
     }
 
-    /* CINEMATIC BARS */
+    /* CINEMATIC LETTERBOX BARS */
     .cine-bar {
       position: fixed;
       left: 0;
       right: 0;
       height: 0;
-      background: #000;
+      background: #050403;
       z-index: 35;
-      transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: height 0.65s cubic-bezier(0.16, 1, 0.3, 1);
       pointer-events: none;
     }
-    .cine-bar.top { top: 0; border-bottom: 2px solid var(--pattachitra-gold); }
-    .cine-bar.bottom { bottom: 0; border-top: 2px solid var(--pattachitra-gold); }
-    body.cinematic-active .cine-bar { height: 11vh; }
+    .cine-bar.top {
+      top: 0;
+      border-bottom: 2px solid var(--pattachitra-gold);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    }
+    .cine-bar.bottom {
+      bottom: 0;
+      border-top: 2px solid var(--pattachitra-gold);
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.8);
+    }
+    body.cinematic-active .cine-bar {
+      height: 10vh;
+    }
 
-    /* PATTACHITRA ORNAMENTAL CARD */
+    /* ORNAMENTAL PATTACHITRA GLASS CARD */
     .pat-card {
       background: var(--hud-surface);
-      border: 3px solid var(--light-jute-ochre);
-      border-image: var(--pattachitra-border) 1;
-      box-shadow: 0 0 35px rgba(0,0,0,0.9), 6px 6px 0 #000;
+      border: 1px solid var(--hud-border);
+      border-radius: 16px;
+      box-shadow: var(--card-shadow);
       position: relative;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     }
+    .pat-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 17px;
+      padding: 1px;
+      background: var(--pattachitra-border);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0.65;
+      pointer-events: none;
+    }
+
     .pat-tag {
       position: absolute;
       top: -12px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--terracotta-red);
+      left: 28px;
+      background: linear-gradient(135deg, #DC2626 0%, #9A3412 100%);
       color: var(--warm-ivory);
-      font-size: 11px;
-      font-weight: 700;
+      font-size: 10.5px;
+      font-weight: 800;
       letter-spacing: 2px;
-      padding: 2px 10px;
+      padding: 3px 12px;
       border: 1px solid var(--pattachitra-gold);
-      border-radius: 4px;
+      border-radius: 20px;
+      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
       white-space: nowrap;
+      text-transform: uppercase;
     }
 
-    /* TITLE SCREEN */
+    /* =========================================================================
+       TITLE SCREEN & CINEMATIC GAME LAUNCHER
+       ========================================================================= */
     #title-screen {
       position: fixed;
       inset: 0;
       z-index: 100;
-      background: radial-gradient(circle at center, rgba(28, 25, 23, 0.45) 0%, rgba(12, 10, 9, 0.84) 100%);
-      backdrop-filter: blur(4px);
+      background: radial-gradient(circle at center 45%, rgba(12, 10, 8, 0.72) 0%, rgba(5, 4, 3, 0.94) 85%);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      padding: 24px;
       text-align: center;
-      transition: opacity 0.6s ease, visibility 0.6s;
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.7s;
     }
-    #title-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    #title-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
     .title-box {
-      max-width: 720px;
+      max-width: 820px;
       width: 95%;
-      padding: 34px 28px;
-      border-radius: 12px;
+      padding: 42px 34px 34px;
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
+
+    .title-emblem {
+      font-size: 46px;
+      line-height: 1;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.7));
+      animation: emblemFloat 4s ease-in-out infinite;
+    }
+    @keyframes emblemFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
     .main-odia-title {
       font-family: 'Cinzel', 'Noto Sans Oriya', serif;
-      font-size: 42px;
+      font-size: clamp(32px, 5.5vw, 54px);
       font-weight: 900;
-      color: var(--pattachitra-gold);
-      letter-spacing: 2px;
-      text-shadow: 0 4px 15px rgba(0,0,0,0.9), 0 0 25px rgba(217, 160, 91, 0.5);
+      letter-spacing: 2.5px;
+      background: linear-gradient(135deg, #FFFDF5 0%, #FCD34D 45%, #F59E0B 80%, #E0A96D 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.9));
       margin-bottom: 4px;
+      line-height: 1.15;
     }
+
     .title-subtitle {
       font-family: 'Cinzel', serif;
-      font-size: 18px;
-      letter-spacing: 4px;
+      font-size: clamp(13px, 2vw, 17px);
+      letter-spacing: 5px;
       color: var(--light-jute-ochre);
       text-transform: uppercase;
-      margin-bottom: 12px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
+    .title-subtitle::before, .title-subtitle::after {
+      content: '❖';
+      font-size: 11px;
+      color: var(--pattachitra-gold);
+    }
+
     .title-tagline {
-      font-size: 14px;
-      color: #e7e5e4;
-      line-height: 1.6;
-      margin-bottom: 22px;
-      max-width: 580px;
-      margin-left: auto;
-      margin-right: auto;
+      font-size: 14.5px;
+      color: #E2E8F0;
+      line-height: 1.65;
+      margin-bottom: 24px;
+      max-width: 620px;
     }
+
+    /* Feature Highlights Chips */
+    .title-features-chips {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 26px;
+      max-width: 700px;
+    }
+    .feat-chip {
+      background: rgba(30, 26, 23, 0.75);
+      border: 1px solid rgba(245, 158, 11, 0.28);
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #F1F5F9;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(10px);
+    }
+    .feat-chip b {
+      color: var(--pattachitra-gold);
+    }
+
     .lang-row {
       display: flex;
       justify-content: center;
-      gap: 12px;
-      margin-bottom: 22px;
+      gap: 14px;
+      margin-bottom: 26px;
     }
     .lang-btn {
-      background: rgba(41, 37, 36, 0.85);
-      border: 1px solid var(--hud-border);
+      background: rgba(28, 25, 23, 0.85);
+      border: 1.5px solid var(--hud-border);
       color: var(--warm-ivory);
-      padding: 8px 18px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
+      padding: 10px 22px;
+      border-radius: 24px;
+      font-size: 13.5px;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .lang-btn:hover {
+      border-color: var(--pattachitra-gold);
+      background: rgba(245, 158, 11, 0.15);
+      transform: translateY(-2px);
     }
     .lang-btn.active {
-      background: var(--terracotta-red);
+      background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
       border-color: var(--pattachitra-gold);
       color: #fff;
-      box-shadow: 0 0 12px rgba(234, 179, 8, 0.5);
-    }
-    .btn-start {
-      background: linear-gradient(135deg, #B71C1C 0%, #D9A05B 100%);
-      color: #fff;
-      font-family: 'Cinzel', 'Noto Sans Oriya', serif;
-      font-size: 18px;
-      font-weight: 800;
-      padding: 14px 38px;
-      border: 2px solid var(--pattachitra-gold);
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 6px 20px rgba(183, 28, 28, 0.6);
-      transition: all 0.25s ease;
-      letter-spacing: 1px;
-    }
-    .btn-start:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 8px 25px rgba(234, 179, 8, 0.7);
+      box-shadow: 0 0 20px rgba(220, 38, 38, 0.55);
     }
 
-    /* HUD OVERLAY */
+    .btn-start {
+      background: linear-gradient(135deg, #DC2626 0%, #D97706 50%, #F59E0B 100%);
+      color: #fff;
+      font-family: 'Cinzel', 'Noto Sans Oriya', serif;
+      font-size: clamp(16px, 2.2vw, 20px);
+      font-weight: 900;
+      padding: 16px 46px;
+      border: 2px solid var(--gold-bright);
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 8px 30px rgba(220, 38, 38, 0.65), 0 0 25px rgba(245, 158, 11, 0.4);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      letter-spacing: 1.5px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-start:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 12px 40px rgba(245, 158, 11, 0.8), 0 0 35px rgba(220, 38, 38, 0.6);
+      border-color: #fff;
+    }
+    .btn-start:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .title-controls-preview {
+      margin-top: 22px;
+      font-size: 11.5px;
+      color: #94A3B8;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.5px;
+    }
+    .title-controls-preview span {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      padding: 2px 6px;
+      color: var(--warm-ivory);
+      margin: 0 2px;
+    }
+
+    /* =========================================================================
+       IN-GAME HUD SYSTEM (OVERHAULED DOCK, MISSION TRACKER, TELEMETRY)
+       ========================================================================= */
     #hud {
       position: fixed;
       inset: 0;
@@ -179,69 +324,106 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 18px;
+      padding: 16px 20px;
     }
+
+    /* HUD Top Bar */
     .hud-top-bar {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 12px;
+      gap: 16px;
     }
+
+    /* Redesigned Mission & Quest Tracker (Top Left) */
     .mission-banner {
       background: var(--hud-surface);
-      border: 2px solid var(--light-jute-ochre);
-      border-left: 6px solid var(--terracotta-red);
-      padding: 10px 18px;
-      border-radius: 8px;
-      max-width: 460px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-      backdrop-filter: blur(8px);
+      border: 1px solid var(--hud-border);
+      border-left: 5px solid var(--pattachitra-gold);
+      padding: 12px 18px;
+      border-radius: 14px;
+      max-width: 440px;
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      pointer-events: auto;
+      transition: all 0.25s ease;
     }
     .mission-header-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 4px;
+      margin-bottom: 5px;
     }
     .mission-title {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
       color: var(--pattachitra-gold);
-      font-weight: 700;
+      font-weight: 800;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .mission-title::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--pattachitra-gold);
+      box-shadow: 0 0 8px var(--pattachitra-gold);
+      display: inline-block;
+      animation: pulseDot 2s infinite;
+    }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.75); }
     }
     .mission-dist-badge {
-      background: rgba(183, 28, 28, 0.4);
-      border: 1px solid var(--terracotta-red);
-      padding: 2px 6px;
-      border-radius: 4px;
+      background: rgba(220, 38, 38, 0.35);
+      border: 1px solid rgba(239, 68, 68, 0.6);
+      padding: 2px 8px;
+      border-radius: 6px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: #fca5a5;
+      font-size: 11px;
+      font-weight: 700;
+      color: #FCA5A5;
+      letter-spacing: 0.5px;
     }
     .mission-text {
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 600;
       color: var(--warm-ivory);
-      line-height: 1.35;
+      line-height: 1.4;
     }
     .scam-flags-badge {
-      display: inline-block;
-      margin-top: 5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
       font-size: 11px;
-      color: #f87171;
-      font-weight: 700;
-      background: rgba(220, 38, 38, 0.2);
-      padding: 2px 8px;
-      border-radius: 4px;
-      border: 1px solid rgba(220, 38, 38, 0.4);
+      color: #F87171;
+      font-weight: 800;
+      background: rgba(220, 38, 38, 0.22);
+      padding: 3px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      animation: flagAlertPulse 2s infinite;
+    }
+    @keyframes flagAlertPulse {
+      0%, 100% { border-color: rgba(239, 68, 68, 0.45); }
+      50% { border-color: rgba(239, 68, 68, 0.9); box-shadow: 0 0 10px rgba(220, 38, 38, 0.4); }
     }
 
+    /* Redesigned Quick Command Dock (Top Right) */
     .hud-top-btns {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
+      justify-content: flex-end;
+      pointer-events: auto;
     }
     .hud-pill-btn {
       background: var(--hud-surface);
@@ -252,208 +434,361 @@
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
-      backdrop-filter: blur(8px);
-      transition: all 0.2s ease;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       align-items: center;
       gap: 6px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
     }
     .hud-pill-btn:hover {
-      background: rgba(217, 160, 91, 0.2);
+      background: rgba(245, 158, 11, 0.22);
       border-color: var(--pattachitra-gold);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3);
+      color: #fff;
+    }
+    .hud-pill-btn:active {
+      transform: translateY(0);
     }
     .hud-pill-btn.active {
-      background: var(--vivid-green);
-      border-color: #4ade80;
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      border-color: #6EE7B7;
+      color: #fff;
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.5);
     }
 
+    /* Contextual Floating Interaction HUD */
+    #hud-interact-bubble {
+      display: none;
+      position: fixed;
+      bottom: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, rgba(28, 25, 23, 0.94) 0%, rgba(12, 10, 9, 0.96) 100%);
+      border: 2px solid var(--pattachitra-gold);
+      border-radius: 28px;
+      padding: 10px 22px;
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.9), 0 0 25px rgba(245, 158, 11, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 25;
+      pointer-events: auto;
+      cursor: pointer;
+      align-items: center;
+      gap: 12px;
+      animation: floatPrompt 2.4s ease-in-out infinite;
+    }
+    @keyframes floatPrompt {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-5px); }
+    }
+    #hud-interact-bubble:hover {
+      border-color: #fff;
+      box-shadow: 0 12px 36px rgba(245, 158, 11, 0.7);
+    }
+    .interact-key-pill {
+      background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--gold-bright);
+      box-shadow: 0 2px 10px rgba(220, 38, 38, 0.6);
+      display: inline-block;
+    }
+    #interact-bubble-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--warm-ivory);
+      letter-spacing: 0.5px;
+    }
+
+    /* HUD Bottom Bar (Telemetry, Speedometer, Minimap, Key Legend) */
     .hud-bottom-bar {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
+      gap: 16px;
     }
+
     .stats-hub {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
+      pointer-events: auto;
     }
+
+    /* Redesigned Curved Digital Speedometer */
     .speedo-dial {
       background: var(--hud-surface);
-      border: 2px solid var(--light-jute-ochre);
-      width: 78px;
-      height: 78px;
+      border: 2px solid var(--pattachitra-gold);
+      width: 88px;
+      height: 88px;
       border-radius: 50%;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.7);
-      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.85), inset 0 0 15px rgba(245, 158, 11, 0.2);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      position: relative;
+    }
+    .speedo-dial::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      border: 1px dashed rgba(245, 158, 11, 0.4);
+      pointer-events: none;
     }
     .speedo-num {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--pattachitra-gold);
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--gold-bright);
       line-height: 1;
+      text-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
     }
     .speedo-lbl {
-      font-size: 9px;
+      font-size: 8px;
       letter-spacing: 1px;
-      color: #a8a29e;
-      margin-top: 2px;
+      color: #94A3B8;
+      margin-top: 3px;
       text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
     }
+
+    /* Redesigned Wallet & Citizen XP Hub */
     .wallet-card {
       background: var(--hud-surface);
       border: 1px solid var(--hud-border);
-      border-radius: 8px;
-      padding: 8px 14px;
+      border-radius: 14px;
+      padding: 10px 16px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-      backdrop-filter: blur(8px);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
-    .wallet-item { display: flex; justify-content: space-between; gap: 14px; }
-    .wallet-val { font-weight: 700; color: var(--pattachitra-gold); }
+    .wallet-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+    }
+    .wallet-item span:first-child {
+      color: #94A3B8;
+      font-weight: 600;
+    }
+    .wallet-val {
+      font-weight: 800;
+      color: var(--pattachitra-gold);
+    }
 
-    /* MINIMAP RADAR DISC */
+    /* Keybinding Controls Legend (Bottom Center) */
+    .hud-controls-legend {
+      background: rgba(18, 15, 13, 0.72);
+      border: 1px solid rgba(245, 158, 11, 0.22);
+      border-radius: 12px;
+      padding: 6px 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #CBD5E1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(12px);
+      pointer-events: auto;
+      max-width: 580px;
+      margin-bottom: 4px;
+    }
+    .key-badge {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      padding: 1px 5px;
+      color: var(--gold-bright);
+      font-weight: 700;
+      font-size: 10.5px;
+    }
+
+    /* Redesigned Minimap Radar Disc (Bottom Right) */
     .minimap-card {
       background: var(--hud-surface);
-      border: 2px solid var(--light-jute-ochre);
+      border: 2px solid var(--pattachitra-gold);
       border-radius: 50%;
-      width: 140px;
-      height: 140px;
+      width: 148px;
+      height: 148px;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.8);
-      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9), 0 0 20px rgba(245, 158, 11, 0.35);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      pointer-events: auto;
     }
-    #minimap-canvas { width: 100%; height: 100%; display: block; }
+    #minimap-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
     .minimap-north {
       position: absolute;
-      top: 4px;
+      top: 5px;
       left: 50%;
       transform: translateX(-50%);
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      font-weight: 800;
+      font-size: 11px;
+      font-weight: 900;
       color: var(--terracotta-red);
-      text-shadow: 0 0 4px #000;
+      text-shadow: 0 0 6px #000, 0 0 8px rgba(220, 38, 38, 0.8);
+      pointer-events: none;
     }
 
-    /* SUBTITLES CARD */
+    /* =========================================================================
+       SUBTITLES & CINEMATIC OVERLAYS
+       ========================================================================= */
     #subtitle-card {
       position: fixed;
       bottom: 24px;
       left: 50%;
       transform: translateX(-50%);
       width: 90%;
-      max-width: 660px;
+      max-width: 700px;
       z-index: 40;
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 12px 18px;
-      border-radius: 10px;
-      transition: all 0.3s ease;
+      gap: 16px;
+      padding: 14px 22px;
+      border-radius: 14px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       opacity: 0;
       pointer-events: none;
     }
-    #subtitle-card.visible { opacity: 1; pointer-events: auto; }
+    #subtitle-card.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
     .sub-speaker-avatar {
-      width: 44px;
-      height: 44px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
-      background: #292524;
+      background: #1C1917;
       border: 2px solid var(--pattachitra-gold);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 20px;
+      font-size: 22px;
       flex-shrink: 0;
     }
     .sub-content { flex: 1; }
     .sub-speaker {
       font-size: 11px;
       font-weight: 800;
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       color: var(--pattachitra-gold);
       text-transform: uppercase;
       margin-bottom: 2px;
+      font-family: 'JetBrains Mono', monospace;
     }
     .sub-text-odia {
-      font-size: 15px;
+      font-size: 15.5px;
       font-weight: 600;
       color: var(--warm-ivory);
-      line-height: 1.35;
+      line-height: 1.4;
     }
     .sub-text-hindi {
-      font-size: 13px;
+      font-size: 13.5px;
       font-weight: 500;
-      color: #cbd5e1;
+      color: #CBD5E1;
       margin-top: 2px;
     }
 
-    /* DIALOGUE MODAL */
+    /* =========================================================================
+       MODALS: DIALOGUE VISUAL NOVEL STAGE
+       ========================================================================= */
     #dialogue-modal {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       width: 92%;
-      max-width: 580px;
+      max-width: 680px;
       z-index: 50;
-      border-radius: 12px;
-      padding: 26px 22px;
       display: none;
+      padding: 30px 28px 26px;
+      border-radius: 20px;
+      animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
+    @keyframes modalPop {
+      0% { opacity: 0; transform: translate(-50%, -46%) scale(0.96); }
+      100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+
     .dia-header {
       display: flex;
       align-items: center;
-      gap: 14px;
-      margin-bottom: 14px;
+      gap: 16px;
+      margin-bottom: 16px;
     }
     .dia-speaker-avatar {
-      width: 52px;
-      height: 52px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      background: #292524;
-      border: 2px solid var(--pattachitra-gold);
+      background: #1C1917;
+      border: 2.5px solid var(--pattachitra-gold);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.45);
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 26px;
+      font-size: 28px;
+      flex-shrink: 0;
     }
     .dia-speaker-info h3 {
       font-family: 'Cinzel', 'Noto Sans Oriya', serif;
-      font-size: 18px;
-      color: var(--pattachitra-gold);
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--gold-bright);
     }
+    .dia-role-badge {
+      font-size: 12px;
+      color: #94A3B8;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
     .dia-speech-box {
-      background: rgba(12, 10, 9, 0.7);
-      border-left: 4px solid var(--light-jute-ochre);
-      padding: 12px 14px;
-      border-radius: 6px;
+      background: rgba(12, 10, 9, 0.75);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      border-left: 4px solid var(--pattachitra-gold);
+      border-radius: 12px;
+      padding: 16px 20px;
       font-size: 15px;
-      line-height: 1.45;
-      margin-bottom: 18px;
+      line-height: 1.6;
+      color: var(--warm-ivory);
+      margin-bottom: 20px;
     }
+
     .dia-choices-group {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
     }
     .dia-opt-btn {
-      background: rgba(41, 37, 36, 0.85);
-      border: 1px solid var(--hud-border);
+      background: rgba(30, 26, 23, 0.85);
+      border: 1.5px solid rgba(245, 158, 11, 0.35);
       color: var(--warm-ivory);
-      padding: 12px 16px;
-      border-radius: 8px;
+      padding: 12px 18px;
+      border-radius: 12px;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
@@ -464,456 +799,526 @@
       text-align: left;
     }
     .dia-opt-btn:hover {
-      background: var(--terracotta-red);
+      background: rgba(245, 158, 11, 0.2);
       border-color: var(--pattachitra-gold);
       transform: translateX(4px);
+      box-shadow: 0 4px 18px rgba(245, 158, 11, 0.25);
     }
     .dia-tag-pill {
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid var(--pattachitra-gold);
+      color: var(--gold-bright);
       font-size: 11px;
-      padding: 2px 8px;
-      border-radius: 10px;
-      background: rgba(0,0,0,0.5);
-      color: var(--pattachitra-gold);
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      white-space: nowrap;
     }
 
-    /* MISSION COMPLETE MODAL */
-    #mission-complete-modal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 92%;
-      max-width: 620px;
-      z-index: 60;
-      border-radius: 12px;
-      padding: 28px 24px;
-      display: none;
-      text-align: center;
-    }
-    .mc-title {
-      font-family: 'Cinzel', serif;
-      font-size: 24px;
-      font-weight: 900;
-      color: var(--pattachitra-gold);
-      margin-bottom: 6px;
-    }
-    .mc-sub { font-size: 14px; color: #cbd5e1; margin-bottom: 18px; }
-    .rating-badge {
-      display: inline-block;
-      background: rgba(234, 179, 8, 0.15);
-      border: 2px solid var(--pattachitra-gold);
-      padding: 8px 18px;
-      border-radius: 20px;
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--pattachitra-gold);
-      margin-bottom: 18px;
-    }
-    .breakdown-table {
-      background: rgba(12, 10, 9, 0.6);
-      border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 18px;
-      text-align: left;
-      font-size: 13px;
-    }
-    .breakdown-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 6px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-    .breakdown-row.total {
-      border-top: 2px solid var(--light-jute-ochre);
-      font-weight: 800;
-      font-size: 15px;
-      color: var(--pattachitra-gold);
-      padding-top: 8px;
-      margin-top: 4px;
-    }
-    .puri-route-card {
-      background: linear-gradient(135deg, rgba(29, 78, 137, 0.4) 0%, rgba(46, 125, 50, 0.3) 100%);
-      border: 1px dashed var(--pattachitra-gold);
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 18px;
-      text-align: left;
-    }
-    .puri-header { font-size: 13px; font-weight: 800; color: #93c5fd; margin-bottom: 4px; }
-    .puri-desc { font-size: 12px; color: #e2e8f0; line-height: 1.4; }
-
-    /* EMERGENT MAP ATLAS */
+    /* =========================================================================
+       MODALS: EMERGENT 10-SECTOR TACTICAL ATLAS
+       ========================================================================= */
     #emergent-map-modal {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       width: 94%;
-      max-width: 860px;
-      max-height: 90vh;
-      overflow-y: auto;
-      z-index: 55;
-      border-radius: 12px;
-      padding: 24px;
+      max-width: 920px;
+      z-index: 60;
       display: none;
+      padding: 30px;
+      border-radius: 20px;
+      animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .map-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
     .map-header h2 {
       font-family: 'Cinzel', serif;
-      font-size: 18px;
-      color: var(--pattachitra-gold);
+      font-size: clamp(18px, 2.5vw, 24px);
+      font-weight: 800;
+      color: var(--gold-bright);
     }
+
+    .sector-pills-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--pattachitra-gold) transparent;
+    }
+    .sector-pills-row::-webkit-scrollbar {
+      height: 4px;
+    }
+    .sector-pills-row::-webkit-scrollbar-thumb {
+      background: var(--pattachitra-gold);
+      border-radius: 2px;
+    }
+
     .map-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      gap: 20px;
     }
-    @media (max-width: 680px) { .map-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) {
+      .map-grid { grid-template-columns: 1fr; }
+    }
     .map-cvs-wrap {
-      background: #000;
-      border: 2px solid var(--light-jute-ochre);
-      border-radius: 8px;
-      aspect-ratio: 4 / 3;
-      position: relative;
-      overflow: hidden;
-    }
-    #tactical-canvas { width: 100%; height: 100%; display: block; }
-    .sector-pills-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 12px;
-    }
-    .map-sector-detail {
-      background: rgba(12, 10, 9, 0.7);
       border: 1px solid var(--hud-border);
-      border-radius: 8px;
-      padding: 14px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #0C0A09;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
+      height: 290px;
+    }
+    #tactical-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .sector-dossier {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       gap: 12px;
     }
     .sec-title {
-      font-family: 'Cinzel', serif;
-      font-size: 16px;
+      font-family: 'Cinzel', 'Noto Sans Oriya', serif;
+      font-size: 19px;
       font-weight: 800;
-      color: var(--pattachitra-gold);
-      margin-bottom: 4px;
+      color: var(--gold-bright);
+      margin-bottom: 6px;
     }
-    .sec-desc { font-size: 13px; color: #e2e8f0; line-height: 1.45; }
+    .sec-desc {
+      font-size: 13.5px;
+      color: #E2E8F0;
+      line-height: 1.55;
+    }
     .sec-rules {
+      background: rgba(12, 10, 9, 0.65);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #94A3B8;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      color: #94a3b8;
-      background: rgba(0,0,0,0.4);
-      padding: 8px;
-      border-radius: 4px;
-      margin-top: 8px;
+    }
+    .map-actions-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    /* SCENE SELECTOR MODAL */
-    #scene-selector-modal {
+    /* =========================================================================
+       MODALS: 14 CUTSCENES THEATER & STORY CHAPTERS
+       ========================================================================= */
+    #scene-selector-modal, #chapter-modal, #settings-modal, #mission-complete-modal {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       width: 94%;
-      max-width: 820px;
+      max-width: 880px;
+      z-index: 60;
+      display: none;
+      padding: 30px;
+      border-radius: 20px;
+      animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       max-height: 85vh;
       overflow-y: auto;
-      z-index: 56;
-      border-radius: 12px;
-      padding: 24px;
-      display: none;
     }
+
     .scene-cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 12px;
-      margin-top: 14px;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
     }
     .scene-card-item {
-      background: rgba(41, 37, 36, 0.85);
+      background: rgba(30, 26, 23, 0.85);
       border: 1px solid var(--hud-border);
-      border-radius: 8px;
-      padding: 12px;
+      border-radius: 14px;
+      padding: 16px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      gap: 10px;
     }
     .scene-card-item:hover {
-      background: rgba(183, 28, 28, 0.35);
+      background: rgba(245, 158, 11, 0.15);
       border-color: var(--pattachitra-gold);
-      transform: translateY(-2px);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
     }
     .scene-num-badge {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
+      font-size: 10.5px;
       font-weight: 800;
       color: var(--pattachitra-gold);
-      margin-bottom: 4px;
+      letter-spacing: 1px;
     }
     .scene-card-title {
-      font-size: 14px;
-      font-weight: 700;
+      font-size: 14.5px;
+      font-weight: 800;
       color: var(--warm-ivory);
-      margin-bottom: 4px;
+      line-height: 1.3;
     }
     .scene-card-desc {
-      font-size: 11px;
-      color: #a8a29e;
-      line-height: 1.35;
-      margin-bottom: 8px;
+      font-size: 12px;
+      color: #94A3B8;
+      line-height: 1.45;
     }
 
-    /* CHAPTER QUESTS MODAL */
-    #chapter-modal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 92%;
-      max-width: 700px;
-      max-height: 85vh;
-      overflow-y: auto;
-      z-index: 57;
-      border-radius: 12px;
-      padding: 24px;
-      display: none;
-    }
+    /* Chapter Quests Modal */
     .chapter-step-row {
       display: flex;
-      gap: 14px;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
       align-items: flex-start;
+      gap: 14px;
+      background: rgba(30, 26, 23, 0.7);
+      border: 1px solid var(--hud-border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
     }
     .chap-badge {
-      width: 32px;
-      height: 32px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
-      background: #292524;
+      background: #1C1917;
       border: 2px solid var(--pattachitra-gold);
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 14px;
       font-weight: 800;
-      color: var(--pattachitra-gold);
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--gold-bright);
       flex-shrink: 0;
     }
     .chap-badge.done {
       background: var(--vivid-green);
+      border-color: #6EE7B7;
       color: #fff;
-      border-color: #4ade80;
     }
 
-    /* TOAST POPUPS */
-    #popups-container {
-      position: fixed;
-      top: 80px;
-      right: 20px;
-      z-index: 70;
+    /* Settings Modal Custom Controls */
+    .settings-group {
+      background: rgba(20, 17, 15, 0.85);
+      border: 1px solid var(--hud-border);
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin-bottom: 16px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      pointer-events: none;
+      gap: 10px;
     }
-    .toast-msg {
-      background: var(--hud-surface);
-      border: 1px solid var(--pattachitra-gold);
-      border-left: 5px solid var(--vivid-green);
-      padding: 10px 16px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--warm-ivory);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.8);
-      animation: toastIn 0.3s ease, toastOut 0.4s ease 3.2s forwards;
-      backdrop-filter: blur(8px);
-    }
-    .toast-msg.scam {
-      border-left-color: var(--scam-alert-red);
-      color: #fca5a5;
-    }
-    @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-    @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-10px); } }
-
-    /* MOBILE TOUCH CONTROLS */
-    #touch-controls {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      right: 20px;
-      z-index: 25;
+    .settings-row {
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .settings-slider {
+      flex: 1;
+      max-width: 240px;
+      accent-color: var(--pattachitra-gold);
+      cursor: pointer;
+    }
+
+    /* Mission Complete Modal */
+    .mc-stars {
+      font-size: 32px;
+      color: var(--gold-bright);
+      margin: 12px 0;
+      text-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
+    }
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px dashed rgba(245, 158, 11, 0.2);
+      font-size: 13.5px;
+    }
+    .breakdown-row.total {
+      border-top: 2px solid var(--pattachitra-gold);
+      border-bottom: none;
+      padding-top: 12px;
+      font-weight: 800;
+      font-size: 16px;
+      color: var(--gold-bright);
+    }
+
+    /* =========================================================================
+       TOAST POPUPS SYSTEM
+       ========================================================================= */
+    #popups-container {
+      position: fixed;
+      top: 100px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 80;
+      pointer-events: none;
+      max-width: 380px;
+    }
+    .toast-popup {
+      background: rgba(20, 17, 15, 0.94);
+      border: 1px solid var(--pattachitra-gold);
+      border-left: 5px solid var(--pattachitra-gold);
+      padding: 12px 18px;
+      border-radius: 12px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.85);
+      color: var(--warm-ivory);
+      font-size: 13px;
+      font-weight: 700;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      animation: slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(40px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    .toast-popup.scam {
+      border-left-color: var(--scam-alert-red);
+      background: rgba(45, 10, 10, 0.95);
+    }
+
+    /* =========================================================================
+       MOBILE TOUCH CONTROLS
+       ========================================================================= */
+    #touch-controls {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 30;
       pointer-events: none;
     }
-    .touch-dpad, .touch-actions {
-      display: flex;
-      gap: 8px;
+    @media (pointer: coarse), (max-width: 900px) {
+      #touch-controls { display: block; }
+      .hud-controls-legend { display: none; }
+    }
+    body.cinematic-active #touch-controls {
+      display: none !important;
+    }
+
+    .touch-dpad {
+      position: absolute;
+      bottom: 24px;
+      left: 20px;
+      width: 140px;
+      height: 140px;
       pointer-events: auto;
     }
     .touch-btn {
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      background: rgba(28, 25, 23, 0.75);
-      border: 2px solid var(--light-jute-ochre);
-      color: var(--warm-ivory);
-      font-size: 18px;
-      font-weight: 800;
+      position: absolute;
+      width: 44px;
+      height: 44px;
+      background: rgba(28, 25, 23, 0.78);
+      border: 1.5px solid var(--hud-border);
+      border-radius: 12px;
       display: flex;
       justify-content: center;
       align-items: center;
-      touch-action: none;
+      font-size: 18px;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      touch-action: manipulation;
     }
-    .touch-btn:active { background: var(--terracotta-red); transform: scale(0.92); }
-    @media (pointer: fine) { #touch-controls { display: none; } }
-    /* CONTEXTUAL FLOATING INTERACTION BUBBLE */
-    #hud-interact-bubble {
-      position: fixed;
-      bottom: 110px;
-      left: 50%;
-      transform: translateX(-50%) translateY(25px);
-      background: var(--hud-surface);
-      border: 2px solid var(--pattachitra-gold);
-      box-shadow: 0 4px 25px rgba(0,0,0,0.85), 0 0 15px rgba(234, 179, 8, 0.45);
-      padding: 9px 20px;
-      border-radius: 30px;
+    .touch-btn:active {
+      background: rgba(245, 158, 11, 0.4);
+      border-color: var(--pattachitra-gold);
+    }
+    #t-up { top: 0; left: 48px; }
+    #t-down { bottom: 0; left: 48px; }
+    #t-left { top: 48px; left: 0; }
+    #t-right { top: 48px; right: 0; }
+
+    .touch-actions {
+      position: absolute;
+      bottom: 24px;
+      right: 20px;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 12px;
-      z-index: 30;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      font-weight: 700;
-      font-size: 13px;
-      letter-spacing: 0.5px;
-      color: var(--warm-ivory);
-      cursor: pointer;
-    }
-    #hud-interact-bubble.visible {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
       pointer-events: auto;
     }
-    .interact-key-pill {
-      background: var(--terracotta-red);
+    .touch-act-btn {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: rgba(28, 25, 23, 0.85);
+      border: 2px solid var(--pattachitra-gold);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px;
       color: #fff;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 900;
-      font-size: 13px;
-      box-shadow: 0 2px 0 #7f1d1d;
-      border: 1px solid var(--pattachitra-gold);
-      animation: keyPulse 1.4s infinite alternate;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      touch-action: manipulation;
     }
-    @keyframes keyPulse {
-      0% { transform: scale(1); box-shadow: 0 2px 0 #7f1d1d; }
-      100% { transform: scale(1.08); box-shadow: 0 0 10px rgba(234, 179, 8, 0.6); }
+    .touch-act-btn:active {
+      transform: scale(0.92);
+      background: var(--pattachitra-gold);
+      color: #000;
     }
-    .interactive { pointer-events: auto; }
   </style>
 </head>
 <body>
+
+  <!-- CINEMATIC BARS -->
   <div class="cine-bar top"></div>
   <div class="cine-bar bottom"></div>
 
-  <!-- CINEMATIC SKIP / CONTINUE OVERLAY -->
-  <div id="cinematic-overlay" style="display:none; position:fixed; bottom:12vh; left:50%; transform:translateX(-50%); z-index:40; pointer-events:auto;">
-    <button class="hud-pill-btn" onclick="nextCinematicStep()" style="font-size:13px; font-weight:700; padding:8px 22px; background:rgba(28,25,23,0.9); border:2px solid var(--pattachitra-gold); color:#FFFBEB; cursor:pointer; border-radius:30px; box-shadow:0 4px 18px rgba(0,0,0,0.8);">
-      ⏩ CONTINUE [SPACE] • SKIP [ESC]
+  <!-- CINEMATIC SKIP / CONTINUE CONTROLS -->
+  <div id="cinematic-overlay" style="display:none; position:fixed; bottom:12vh; left:50%; transform:translateX(-50%); z-index:45; pointer-events:auto; display:flex; gap:12px;">
+    <button class="hud-pill-btn" onclick="nextCinematicStep()" style="font-size:13px; font-weight:700; background:linear-gradient(135deg, #10B981, #059669); border-color:#6EE7B7;">
+      NEXT SCENE ▶
+    </button>
+    <button class="hud-pill-btn" onclick="skipCinematic()" style="font-size:13px; font-weight:700; background:rgba(220,38,38,0.85); border-color:#F87171;">
+      SKIP CINEMATIC ✕
     </button>
   </div>
 
+  <!-- 3D WEBGL CANVAS -->
   <canvas id="webgl-canvas"></canvas>
 
-  <!-- TITLE SCREEN -->
+  <!-- TITLE SCREEN / CINEMATIC LAUNCHER -->
   <div id="title-screen">
     <div class="title-box pat-card">
-      <div class="pat-tag">ODISHA PATTACHITRA GRAND OPEN WORLD</div>
-      <div class="main-odia-title">ଆମ ଓଡ଼ିଶା</div>
-      <div class="title-subtitle">Amara Odisha Adventures — Bhubaneswar</div>
-      <div class="title-tagline">
-        Arrive at Baramunda Bus Terminal as Babu. Explore Ram Mandir, Raj Mahal Flyover, Master Canteen, Ekamra Haat, and Old Town Lingaraj on foot, by auto-rickshaw, or by scooty! Experience dynamic natural weather from tropical sunshine to monsoon rain!
+      <div class="pat-tag">ODISHA OPEN WORLD SIMULATOR</div>
+      <div class="title-emblem">🛕</div>
+      <h1 class="main-odia-title">AMARA ODISHA ADVENTURES</h1>
+      <div class="title-subtitle">BHUBANESWAR METROPOLIS LEVEL</div>
+
+      <p class="title-tagline">
+        Experience a 3D open-world adventure in Bhubaneswar! Cruise at 30–40 km/h on a scooter, negotiate auto fares at Baramunda, bust rental mafia scams, explore Khandagiri rock caves, and immerse yourself in authentic Odisha culture.
+      </p>
+
+      <div class="title-features-chips">
+        <div class="feat-chip">🛵 <b>30–40 KM/H</b> Scooty Cruising</div>
+        <div class="feat-chip">🛺 <b>Kalia Bhai</b> Auto Bargain</div>
+        <div class="feat-chip">👵 <b>Kanta Aunty</b> PG Scam & Memes</div>
+        <div class="feat-chip">🏛️ <b>Khandagiri</b> Ancient Rock Caves</div>
+        <div class="feat-chip">🌦️ <b>Monsoon</b> Dynamic Weather</div>
+        <div class="feat-chip">🗺️ <b>10-Sector</b> Tactical GPS Atlas</div>
       </div>
+
       <div class="lang-row">
-        <button class="lang-btn active" id="lang-btn-or" onclick="setLanguage('or')">ଓଡ଼ିଆ (Odia)</button>
-        <button class="lang-btn" id="lang-btn-hi" onclick="setLanguage('hi')">हिंदी (Hindi)</button>
+        <button class="lang-btn active" id="lang-btn-or" onclick="setLanguage('or')">
+          <span>🇮🇳</span> ଓଡ଼ିଆ (Odia)
+        </button>
+        <button class="lang-btn" id="lang-btn-hi" onclick="setLanguage('hi')">
+          <span>🇮🇳</span> हिंदी (Hindi)
+        </button>
       </div>
-      <div>
-        <button class="btn-start" onclick="startGame()">▶️ Tap to Start / ଖେଳ ଆରମ୍ଭ କରନ୍ତୁ</button>
-      </div>
-      <div style="margin-top: 18px; font-size: 12px; color: #a8a29e;">
-        Controls: W/A/S/D • E: Interact/Ride • Space: Brake • V: Switch Vehicle (Auto/Scooty/Walk)<br>
-        M: Map • X: Scenes • C: Chapters • T: Toggle Weather (Sun/Rain/Dusk) • G: Zero-G
+
+      <button class="btn-start" onclick="startGame()">
+        <span>▶</span> <span>ENTER BHUBANESWAR • ଆରମ୍ଭ କରନ୍ତୁ</span>
+      </button>
+
+      <div class="title-controls-preview">
+        <span>W</span><span>A</span><span>S</span><span>D</span> Move & Drive • <span>SHIFT</span> Boost • <span>E</span> Interact • <span>M</span> Map • <span>C</span> Cinema • <span>O</span> Settings
       </div>
     </div>
   </div>
 
-  <!-- HUD -->
+  <!-- IN-GAME HUD -->
   <div id="hud">
+    <!-- Top Bar: Mission Tracker & Command Dock -->
     <div class="hud-top-bar">
-      <div class="mission-banner interactive">
+      <!-- Mission Tracker -->
+      <div class="mission-banner" id="hud-mission-banner">
         <div class="mission-header-row">
           <span class="mission-title" id="hud-mission-title">CHAPTER 1: THE BARAMUNDA ARRIVAL</span>
           <span class="mission-dist-badge" id="hud-mission-dist">1.2 KM</span>
         </div>
-        <div class="mission-text" id="hud-mission-obj">Go to the auto stand at Baramunda Terminal and find Kalia Bhai</div>
+        <div class="mission-text" id="hud-mission-obj">Go to the auto stand at Baramunda Terminal and negotiate fare with Kalia Bhai.</div>
         <div class="scam-flags-badge" id="hud-scam-flags" style="display:none;">
           🚩 <span id="hud-flags-count">RED FLAGS DETECTED: 0 / 3</span>
         </div>
       </div>
 
-      <div class="hud-top-btns interactive">
-        <button class="hud-pill-btn" id="hud-weather-btn" onclick="cycleWeather()">🌤️ <span id="hud-weather-label">SUNNY</span></button>
-        <button class="hud-pill-btn" id="hud-vehicle-btn" onclick="toggleVehicle()">🛵 <span id="hud-vehicle-label">WALK</span></button>
-        <button class="hud-pill-btn" onclick="openEmergentMap()">🗺️ MAP [M]</button>
-        <button class="hud-pill-btn" onclick="openSceneSelector()">🎬 SCENES [X]</button>
-        <button class="hud-pill-btn" onclick="openChapterModal()">📜 QUESTS [C]</button>
-        <button class="hud-pill-btn" onclick="cycleLanguage()">🌐 <span id="hud-lang-label">ଓଡ଼ିଆ</span></button>
+      <!-- Quick Command Bar / Dock -->
+      <div class="hud-top-btns">
+        <button class="hud-pill-btn" id="hud-weather-btn" onclick="cycleWeather()" title="Cycle Weather [V]">
+          🌤️ <span id="hud-weather-label">SUNNY</span>
+          <span id="hud-weather-badge" style="display:none;"></span>
+        </button>
+        <button class="hud-pill-btn" id="hud-vehicle-btn" onclick="toggleVehicle()" title="Switch Vehicle [V]">
+          🛵 <span id="hud-vehicle-label">WALK</span>
+        </button>
+        <button class="hud-pill-btn" onclick="openEmergentMap()" title="Tactical Map [M]">
+          🗺️ <span>ATLAS [M]</span>
+        </button>
+        <button class="hud-pill-btn" onclick="openSceneSelector()" title="Cinematic Scenes [C]">
+          🎬 <span>SCENES [C]</span>
+        </button>
+        <button class="hud-pill-btn" onclick="openChapterModal()" title="Story Campaign [Q]">
+          📜 <span>QUESTS [Q]</span>
+        </button>
+        <button class="hud-pill-btn" onclick="openSettingsModal()" title="Settings & Audio [O]">
+          ⚙️ <span>CONFIG [O]</span>
+        </button>
+        <button class="hud-pill-btn" onclick="cycleLanguage()" title="Toggle Language">
+          🌐 <span id="hud-lang-label">ଓଡ଼ିଆ</span>
+        </button>
       </div>
     </div>
 
-    <!-- CONTEXTUAL FLOATING INTERACTION BUBBLE (DISPLAYS ONCE WHEN NEAR) -->
+    <!-- Contextual Floating Interaction HUD Bubble -->
     <div id="hud-interact-bubble" onclick="triggerActiveInteraction()">
-      <span class="interact-key-pill">E</span>
+      <span class="interact-key-pill">[E]</span>
       <span id="interact-bubble-label">RIDE SCOOTY • ସ୍କୁଟି ଚଲାନ୍ତୁ</span>
     </div>
 
+    <!-- Bottom Bar: Speedometer, Keybind Legend, Minimap -->
     <div class="hud-bottom-bar">
-      <div class="stats-hub interactive">
+      <!-- Stats & Speedometer Hub -->
+      <div class="stats-hub">
         <div class="speedo-dial">
           <div class="speedo-num" id="speedo-val">0</div>
           <div class="speedo-lbl" id="speedo-lbl">KM/H • WALKING</div>
         </div>
         <div class="wallet-card">
-          <div class="wallet-item"><span>COINS:</span> <span class="wallet-val" id="hud-coins">₹ 200</span></div>
-          <div class="wallet-item"><span>XP:</span> <span class="wallet-val" id="hud-xp">0</span></div>
+          <div class="wallet-item"><span>CASH:</span> <span class="wallet-val" id="hud-coins">₹ 200</span></div>
+          <div class="wallet-item"><span>CITIZEN XP:</span> <span class="wallet-val" id="hud-xp">0</span></div>
           <div class="wallet-item"><span>BLESSING:</span> <span class="wallet-val" id="hud-blessing">None</span></div>
         </div>
       </div>
 
-      <div class="minimap-card interactive" onclick="openEmergentMap()" title="Click to open Full Tactical Map">
-        <div class="minimap-north">N</div>
-        <canvas id="minimap-canvas" width="140" height="140"></canvas>
+      <!-- Keybinds Quick Reference Dock -->
+      <div class="hud-controls-legend">
+        <span><span class="key-badge">W</span><span class="key-badge">A</span><span class="key-badge">S</span><span class="key-badge">D</span> Move</span>
+        <span><span class="key-badge">SHIFT</span> Boost</span>
+        <span><span class="key-badge">SPACE</span> Brake</span>
+        <span><span class="key-badge">E</span> Action</span>
+        <span><span class="key-badge">M</span> Map</span>
+        <span><span class="key-badge">C</span> Cinema</span>
+        <span><span class="key-badge">Q</span> Quests</span>
+        <span><span class="key-badge">O</span> Config</span>
+      </div>
+
+      <!-- Minimap Radar Disc -->
+      <div class="minimap-card" id="minimap-card">
+        <canvas id="minimap-canvas" width="148" height="148"></canvas>
+        <div class="minimap-north">▲ N</div>
       </div>
     </div>
   </div>
 
-  <!-- SUBTITLES -->
+  <!-- SUBTITLES CARD -->
   <div id="subtitle-card" class="pat-card">
     <div class="sub-speaker-avatar" id="sub-portrait">🎙️</div>
     <div class="sub-content">
@@ -925,16 +1330,16 @@
 
   <!-- DIALOGUE MODAL -->
   <div id="dialogue-modal" class="pat-card">
-    <div class="pat-tag">INTERACTION</div>
+    <div class="pat-tag">STREET ENCOUNTER</div>
     <div class="dia-header">
       <div class="dia-speaker-avatar" id="dia-avatar">🛺</div>
       <div class="dia-speaker-info">
         <h3 id="dia-name">Kalia Bhai (Auto Driver)</h3>
-        <p style="font-size: 13px; color: #d6d3d1;" id="dia-role">Baramunda Auto Stand</p>
+        <p class="dia-role-badge" id="dia-role">Baramunda Auto Stand</p>
       </div>
     </div>
     <div class="dia-speech-box" id="dia-text">
-      "ବାବୁ! କୁଆଡ଼େ ଯିବେ?"
+      ଭାଇ! ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଯିବେ? ₹୫୦ ଲାଗିବ, ମିଟର ଖରାପ ଅଛି।
     </div>
     <div class="dia-choices-group" id="dia-choices">
       <!-- Options injected dynamically -->
@@ -942,45 +1347,33 @@
   </div>
 
   <!-- MISSION COMPLETE MODAL -->
-  <div id="mission-complete-modal" class="pat-card">
-    <div class="pat-tag">GRAND FINALE</div>
-    <div class="mc-title">🎉 ମିଶନ୍ ସଫଳ! BHUBANESWAR MASTER!</div>
-    <div class="mc-sub">Babu uncovered all scams, experienced Ram Mandir & Ekamra Haat, and conquered Master Canteen!</div>
+  <div id="mission-complete-modal" class="pat-card" style="text-align: center;">
+    <div class="pat-tag">CHAPTER COMPLETED</div>
+    <div class="title-emblem" style="margin-top: 10px;">🏆</div>
+    <h2 style="font-family:'Cinzel',serif; font-size: 26px; color: var(--gold-bright);">VICTORY! ସଫଳତା ପ୍ରାପ୍ତ</h2>
+    <p style="font-size: 14px; color: #CBD5E1; margin-top: 6px;">You survived the streets of Bhubaneswar and outsmarted the rental syndicate!</p>
 
-    <div class="rating-badge">
-      ⭐ <span id="mc-rating-text">Street-Smart Rating: 5 Stars / ଉତ୍ତମ ନାଗରିକ</span>
+    <div class="mc-stars" id="mc-rating-text">
+      ⭐⭐⭐⭐⭐
     </div>
 
-    <div class="breakdown-table">
-      <div class="breakdown-row"><span>Bhubaneswar Circuit Covered (3.5 km):</span> <span>+350 XP</span></div>
-      <div class="breakdown-row"><span>Sacred Cow Pranam Bonus:</span> <span id="mc-score-cow">+100 XP</span></div>
-      <div class="breakdown-row"><span>Ram Mandir Spiritual Blessing:</span> <span>+150 XP</span></div>
-      <div class="breakdown-row"><span>Old Town Rent Scam Syndicate Busted:</span> <span id="mc-score-scams">+300 XP</span></div>
-      <div class="breakdown-row"><span>Ekamra Haat Master Artisan Award:</span> <span>+250 XP</span></div>
-      <div class="breakdown-row"><span>Total Coins Retained:</span> <span id="mc-score-coins">+₹ 450</span></div>
-      <div class="breakdown-row total"><span>TOTAL XP EARNED:</span> <span id="mc-score-total">+1150 XP</span></div>
+    <div style="background: rgba(12,10,9,0.7); border: 1px solid var(--hud-border); border-radius: 12px; padding: 16px 20px; margin: 18px 0; text-align: left;">
+      <div class="breakdown-row"><span>Sacred Cow Pranam Bonus:</span> <span id="mc-score-cow" style="color:var(--pattachitra-gold);">+100 XP</span></div>
+      <div class="breakdown-row"><span>Old Town Rent Scam Busted:</span> <span id="mc-score-rent" style="color:var(--pattachitra-gold);">+600 XP</span></div>
+      <div class="breakdown-row"><span>Total Coins Retained:</span> <span id="mc-score-coins" style="color:var(--vivid-green);">+₹ 450</span></div>
+      <div class="breakdown-row total"><span>TOTAL XP EARNED:</span> <span id="mc-score-total" style="color:var(--gold-bright);">+1150 XP</span></div>
     </div>
 
-    <div class="puri-route-card">
-      <div class="puri-header">🌊 UNLOCKED: MISSION 02 — PURI SEA BEACH EXPRESS</div>
-      <div class="puri-desc">
-        "ଭୁବନେଶ୍ୱର ତ ଜିତିଲି, ଏବେ ଚାଲ ପୁରୀ ବେଳାଭୂମି!"<br>
-        Drive past Dhauli Peace Pagoda and Pipili applique village onto NH-316 to Jagannath Temple and the Puri Golden Beach!
-      </div>
-    </div>
-
-    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-      <button class="btn-start" style="padding: 10px 22px; font-size: 15px;" onclick="closeMissionComplete()">🎮 CONTINUE FREE ROAM</button>
-      <button class="hud-pill-btn" onclick="openEmergentMap()">🗺️ EXPLORE ATLAS</button>
-      <button class="hud-pill-btn" onclick="openSceneSelector()">🎬 WATCH CUTSCENES</button>
-    </div>
+    <button class="btn-start" onclick="closeMissionComplete()" style="margin: 0 auto; padding: 12px 34px;">
+      CONTINUE ADVENTURE • ଆଗକୁ ବଢ଼ନ୍ତୁ
+    </button>
   </div>
 
-  <!-- EMERGENT MAP ATLAS -->
+  <!-- EMERGENT 10-SECTOR TACTICAL ATLAS -->
   <div id="emergent-map-modal" class="pat-card">
-    <div class="pat-tag">EMERGENT ATLAS</div>
+    <div class="pat-tag">TACTICAL GPS RADAR</div>
     <div class="map-header">
-      <h2>🗺️ BHUBANESWAR 10-SECTOR TACTICAL ATLAS</h2>
+      <h2>🗺️ BHUBANESWAR 10-SECTOR ATLAS</h2>
       <button class="hud-pill-btn" onclick="closeEmergentMap()">✕ CLOSE [ESC]</button>
     </div>
 
@@ -990,52 +1383,123 @@
 
     <div class="map-grid">
       <div class="map-cvs-wrap">
-        <canvas id="tactical-canvas" width="400" height="300"></canvas>
+        <canvas id="tactical-canvas" width="400" height="290"></canvas>
       </div>
 
-      <div class="map-sector-detail">
+      <div class="sector-dossier">
         <div>
           <div class="sec-title" id="sec-title">BARAMUNDA BUS TERMINAL</div>
-          <div class="sec-desc" id="sec-desc">Gateway to Western & Southern Odisha. Bounded by Mo Bus stops, tea stalls, and active auto rickshaw bargaining.</div>
-          <div class="sec-rules" id="sec-rules">
-            <strong>⚡ SECTOR TELEMETRY:</strong><br>
-            • Traffic Congestion: High Mo Bus convergence<br>
-            • Bovine Calamity Index: Medium<br>
-            • Culture Points: Auto bargaining hub
+          <div class="sec-desc" id="sec-desc">Gateway to Western & Southern Odisha. Bounded by Mo Bus stops, rickshaw stands, and street tea corners.</div>
+          <div class="sec-rules" id="sec-rules" style="margin-top: 12px;">
+            ⚠️ PROTOCOL: Watch for auto fare inflation and navigate crowded traffic lanes.
           </div>
         </div>
 
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-          <button class="hud-pill-btn" style="background: var(--pattachitra-gold); color: #1c1917;" onclick="narrateActiveSector()">🎙️ AUDIO GUIDE</button>
-          <button class="hud-pill-btn" onclick="setGpsWaypoint()">📍 SET GPS WAYPOINT</button>
-          <button class="hud-pill-btn" style="border-color: #38bdf8; color: #38bdf8;" onclick="fastTravelToSector()">🚀 FAST TRAVEL</button>
+        <div class="map-actions-row">
+          <button class="hud-pill-btn" onclick="narrateActiveSector()" style="background: rgba(245, 158, 11, 0.2); border-color: var(--pattachitra-gold);">
+            🎙️ Read Aloud
+          </button>
+          <button class="hud-pill-btn" onclick="setGpsWaypoint()" style="background: rgba(16, 185, 129, 0.25); border-color: var(--vivid-green);">
+            📍 Set GPS Waypoint
+          </button>
+          <button class="hud-pill-btn" onclick="fastTravelToSector()" style="background: rgba(220, 38, 38, 0.3); border-color: var(--scam-alert-red);">
+            ⚡ Fast Travel
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SCENE SELECTOR MODAL -->
+  <!-- 14 CINEMATIC CUTSCENES THEATER MODAL -->
   <div id="scene-selector-modal" class="pat-card">
-    <div class="pat-tag">CINEMATIC THEATER</div>
+    <div class="pat-tag">CINEMA VAULT</div>
     <div class="map-header">
-      <h2>🎬 14 BHUBANESWAR CINEMATIC CUTSCENES</h2>
+      <h2>🎬 14 BHUBANESWAR CINEMATIC SCENES</h2>
       <button class="hud-pill-btn" onclick="closeSceneSelector()">✕ CLOSE [ESC]</button>
     </div>
-    <p style="font-size: 13px; color: #cbd5e1;">Select any scene below to experience its cinematic camera angles, soundscapes, and bilingual voice acting:</p>
+    <p style="font-size: 13.5px; color: #CBD5E1;">Select any scene below to experience its cinematic camera angles, soundscapes, and bilingual voice acting:</p>
     <div class="scene-cards-grid" id="scene-cards-grid">
-      <!-- 10 cutscenes injected dynamically -->
+      <!-- 14 cutscenes injected dynamically -->
     </div>
   </div>
 
   <!-- CHAPTER QUESTS MODAL -->
   <div id="chapter-modal" class="pat-card">
-    <div class="pat-tag">STORY CAMPAIGN</div>
+    <div class="pat-tag">CAMPAIGN STORYLINE</div>
     <div class="map-header">
       <h2>📜 5-CHAPTER ODIA ADVENTURES CAMPAIGN</h2>
       <button class="hud-pill-btn" onclick="closeChapterModal()">✕ CLOSE [ESC]</button>
     </div>
+    <p style="font-size: 13.5px; color: #CBD5E1; margin-bottom: 14px;">Track your journey from arrival at Baramunda to exposing the Old Town rent syndicate:</p>
     <div id="chapters-list-container">
       <!-- Injected dynamically -->
+    </div>
+  </div>
+
+  <!-- SETTINGS & AUDIO MODAL [O] -->
+  <div id="settings-modal" class="pat-card">
+    <div class="pat-tag">SYSTEM CONFIGURATION</div>
+    <div class="map-header">
+      <h2>⚙️ GAME SETTINGS & AUDIO</h2>
+      <button class="hud-pill-btn" onclick="closeSettingsModal()">✕ CLOSE [ESC]</button>
+    </div>
+
+    <!-- Audio Master -->
+    <div class="settings-group">
+      <div class="settings-row">
+        <div>
+          <div style="font-size: 15px; font-weight: 800; color: var(--gold-bright);">🔊 Audio Volume</div>
+          <div style="font-size: 12px; color: #94A3B8;">Master synthesizer and music level</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <input type="range" min="0" max="100" value="85" class="settings-slider" id="vol-slider" oninput="handleVolumeChange(this.value)">
+          <span id="vol-val" style="font-family:'JetBrains Mono',monospace; font-weight:700; width:45px;">85%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weather Selector -->
+    <div class="settings-group">
+      <div class="settings-row">
+        <div>
+          <div style="font-size: 15px; font-weight: 800; color: var(--gold-bright);">🌦️ Weather Environment</div>
+          <div style="font-size: 12px; color: #94A3B8;">Cycle dynamic natural lighting and rain</div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="hud-pill-btn" onclick="setWeatherMode('sunny')">☀️ Noon</button>
+          <button class="hud-pill-btn" onclick="setWeatherMode('rain')">🌧️ Monsoon</button>
+          <button class="hud-pill-btn" onclick="setWeatherMode('sunset')">🌅 Sunset</button>
+          <button class="hud-pill-btn" onclick="setWeatherMode('night')">🌙 Night</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vehicle Selector -->
+    <div class="settings-group">
+      <div class="settings-row">
+        <div>
+          <div style="font-size: 15px; font-weight: 800; color: var(--gold-bright);">🛵 Vehicle Mode</div>
+          <div style="font-size: 12px; color: #94A3B8;">Switch between on-foot and city vehicles</div>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="hud-pill-btn" onclick="setVehicleMode('walk')">🚶 Walk</button>
+          <button class="hud-pill-btn" onclick="setVehicleMode('scooty')">🛵 Scooty (35 km/h)</button>
+          <button class="hud-pill-btn" onclick="setVehicleMode('drive')">🛺 Auto</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unstuck & Reset -->
+    <div class="settings-group">
+      <div class="settings-row">
+        <div>
+          <div style="font-size: 15px; font-weight: 800; color: var(--gold-bright);">🆘 Player Unstuck Helper</div>
+          <div style="font-size: 12px; color: #94A3B8;">If vehicle gets wedged into buildings or barriers</div>
+        </div>
+        <button class="hud-pill-btn" onclick="unstuckPlayer()" style="background: rgba(220, 38, 38, 0.4); border-color: var(--scam-alert-red);">
+          🔄 Reset to Road Center
+        </button>
+      </div>
     </div>
   </div>
 
@@ -1051,9 +1515,9 @@
       <div class="touch-btn" id="t-right">▶</div>
     </div>
     <div class="touch-actions">
-      <div class="touch-btn" id="t-act" style="background: rgba(183,28,28,0.7); border-color: var(--pattachitra-gold);">E</div>
-      <div class="touch-btn" id="t-veh" style="background: rgba(30,58,138,0.7); font-size:14px;">🛵</div>
-      <div class="touch-btn" id="t-brake">🛑</div>
+      <div class="touch-act-btn" id="t-act" style="background: rgba(220,38,38,0.85); border-color: var(--pattachitra-gold);">⚡</div>
+      <div class="touch-act-btn" id="t-veh" style="background: rgba(30,58,138,0.85); font-size:18px;">🛵</div>
+      <div class="touch-act-btn" id="t-brake" style="background: rgba(28,25,23,0.85);">🛑</div>
     </div>
   </div>
 
@@ -3354,6 +3818,27 @@
     }
     if (k === 'z') toggleZeroG();
     if (k === 'v') toggleVehicle();
+    if (k === 'm') {
+      const m = document.getElementById('emergent-map-modal');
+      if (m && m.style.display === 'block') closeEmergentMap();
+      else openEmergentMap();
+    }
+    if (k === 'c') {
+      const m = document.getElementById('scene-selector-modal');
+      if (m && m.style.display === 'block') closeSceneSelector();
+      else openSceneSelector();
+    }
+    if (k === 'q') {
+      const m = document.getElementById('chapter-modal');
+      if (m && m.style.display === 'block') closeChapterModal();
+      else openChapterModal();
+    }
+    if (k === 'o') {
+      const m = document.getElementById('settings-modal');
+      if (m && m.style.display === 'block') closeSettingsModal();
+      else openSettingsModal();
+    }
+    if (k === 'l') cycleLanguage();
     if (k === 'escape') closeAllModals();
   });
   window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
@@ -3427,15 +3912,29 @@
       ctx.beginPath(); ctx.moveTo(rx1, rz1); ctx.lineTo(rx2, rz2); ctx.stroke();
     });
 
-    // POI Blips
+    // Animated Radar Sweep Beam
+    const sweepAngle = (Date.now() * 0.0022) % (Math.PI * 2);
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, cx - 2, sweepAngle - 0.45, sweepAngle);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(245, 158, 11, 0.15)';
+    ctx.fill();
+    ctx.restore();
+
+    // POI Blips (Complete 10-POI Set)
     const blips = [
       { pos: POI.driver, color: '#f59e0b', label: '🛺' },
-      { pos: POI.scootyBaramunda, color: '#3b82f6', label: '🛵' },
+      { pos: POI.scootyBaramunda, color: '#38bdf8', label: '🛵' },
       { pos: POI.ramMandir, color: '#ea580c', label: '🪔' },
       { pos: POI.canteen, color: '#ef4444', label: '⚔️' },
       { pos: POI.rentHouse, color: '#3b82f6', label: '🏢' },
       { pos: POI.ekamraHaat, color: '#10b981', label: '🎨' },
-      { pos: POI.dhauli, color: '#38bdf8', label: '🕊️' }
+      { pos: POI.dhauli, color: '#38bdf8', label: '🕊️' },
+      { pos: POI.khandagiri, color: '#f59e0b', label: '🏛️' },
+      { pos: POI.saheedPG, color: '#ec4899', label: '👵' },
+      { pos: POI.policePanda, color: '#eab308', label: '👮' }
     ];
 
     blips.forEach(b => {
@@ -4510,6 +5009,81 @@
     closeSceneSelector();
     closeChapterModal();
     closeMissionComplete();
+    closeSettingsModal();
+  }
+
+  // SETTINGS & QUICK DOCK ENGINE
+  function openSettingsModal() {
+    state.modalActive = true;
+    const m = document.getElementById('settings-modal');
+    if (m) m.style.display = 'block';
+  }
+  function closeSettingsModal() {
+    state.modalActive = false;
+    const m = document.getElementById('settings-modal');
+    if (m) m.style.display = 'none';
+  }
+  function handleVolumeChange(val) {
+    const num = parseInt(val, 10);
+    const txt = document.getElementById('vol-val');
+    if (txt) txt.innerText = num + '%';
+    state.volume = num / 100;
+    setMasterVolume(state.volume);
+    sfx.chime();
+  }
+  function setWeatherMode(mode) {
+    state.weather = mode;
+    applyWeather();
+    updateHudLabels();
+    popup('🌦️ Weather: ' + mode.toUpperCase());
+    sfx.chime();
+  }
+  function setVehicleMode(mode) {
+    if (mode === state.mode) return;
+    let currPos = babuGroup.position;
+    if (state.mode === 'scooty') currPos = playerScooty.group.position;
+    else if (state.mode === 'drive') currPos = playerAuto.group.position;
+
+    if (mode === 'walk') {
+      state.mode = 'walk';
+      babuGroup.visible = true;
+      playerScooty.group.visible = false;
+      playerAuto.group.visible = false;
+      scootyRider.visible = false;
+      babuGroup.position.set(currPos.x, 0, currPos.z);
+      playerAngle = babuGroup.rotation.y;
+      popup('🚶 ' + (state.lang === 'or' ? 'ପାଦରେ ଚାଲିବା ମୋଡ୍!' : 'पैदल चलना मोड!'));
+    } else if (mode === 'scooty') {
+      state.mode = 'scooty';
+      babuGroup.visible = false;
+      playerScooty.group.visible = true;
+      scootyRider.visible = true;
+      playerAuto.group.visible = false;
+      playerScooty.group.position.set(currPos.x, 0, currPos.z);
+      playerAngle = playerScooty.group.rotation.y;
+      sfx.scootyHorn();
+      popup('🛵 ' + (state.lang === 'or' ? 'ସ୍କୁଟି ଚଲାନ୍ତୁ (୩୦-୪୦ କି.ମି./ଘଣ୍ଟା)!' : 'स्कूटी चलाएं (30-40 किमी/घंटा)!'));
+    } else if (mode === 'drive') {
+      state.mode = 'drive';
+      babuGroup.visible = false;
+      playerScooty.group.visible = false;
+      scootyRider.visible = false;
+      playerAuto.group.visible = true;
+      playerAuto.group.position.set(currPos.x, 0, currPos.z);
+      playerAngle = playerAuto.group.rotation.y;
+      sfx.horn();
+      popup('🛺 ' + (state.lang === 'or' ? 'କାଳିଆ ଭାଇଙ୍କ ଅଟୋ ଚଲାନ୍ତୁ!' : 'कालिया भाई का ऑटो चलाएं!'));
+    }
+    updateHudLabels();
+  }
+  function unstuckPlayer() {
+    const targetGroup = state.mode === 'walk' ? babuGroup : state.mode === 'scooty' ? playerScooty.group : playerAuto.group;
+    targetGroup.position.set(POI.babuSpawn[0], 0, POI.babuSpawn[1]);
+    playerSpeed = 0;
+    playerAngle = 0;
+    sfx.chime();
+    popup('🔄 Position reset to Baramunda Road Center!');
+    closeSettingsModal();
   }
 
   function openMissionComplete() {
