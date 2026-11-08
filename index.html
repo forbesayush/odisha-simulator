@@ -779,6 +779,51 @@
     }
     .touch-btn:active { background: var(--terracotta-red); transform: scale(0.92); }
     @media (pointer: fine) { #touch-controls { display: none; } }
+    /* CONTEXTUAL FLOATING INTERACTION BUBBLE */
+    #hud-interact-bubble {
+      position: fixed;
+      bottom: 110px;
+      left: 50%;
+      transform: translateX(-50%) translateY(25px);
+      background: var(--hud-surface);
+      border: 2px solid var(--pattachitra-gold);
+      box-shadow: 0 4px 25px rgba(0,0,0,0.85), 0 0 15px rgba(234, 179, 8, 0.45);
+      padding: 9px 20px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 30;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      color: var(--warm-ivory);
+      cursor: pointer;
+    }
+    #hud-interact-bubble.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+    .interact-key-pill {
+      background: var(--terracotta-red);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 900;
+      font-size: 13px;
+      box-shadow: 0 2px 0 #7f1d1d;
+      border: 1px solid var(--pattachitra-gold);
+      animation: keyPulse 1.4s infinite alternate;
+    }
+    @keyframes keyPulse {
+      0% { transform: scale(1); box-shadow: 0 2px 0 #7f1d1d; }
+      100% { transform: scale(1.08); box-shadow: 0 0 10px rgba(234, 179, 8, 0.6); }
+    }
     .interactive { pointer-events: auto; }
   </style>
 </head>
@@ -840,6 +885,12 @@
         <button class="hud-pill-btn" onclick="openChapterModal()">📜 QUESTS [C]</button>
         <button class="hud-pill-btn" onclick="cycleLanguage()">🌐 <span id="hud-lang-label">ଓଡ଼ିଆ</span></button>
       </div>
+    </div>
+
+    <!-- CONTEXTUAL FLOATING INTERACTION BUBBLE (DISPLAYS ONCE WHEN NEAR) -->
+    <div id="hud-interact-bubble" onclick="triggerActiveInteraction()">
+      <span class="interact-key-pill">E</span>
+      <span id="interact-bubble-label">RIDE SCOOTY • ସ୍କୁଟି ଚଲାନ୍ତୁ</span>
     </div>
 
     <div class="hud-bottom-bar">
@@ -929,7 +980,7 @@
   <div id="emergent-map-modal" class="pat-card">
     <div class="pat-tag">EMERGENT ATLAS</div>
     <div class="map-header">
-      <h2>🗺️ BHUBANESWAR 8-SECTOR TACTICAL ATLAS</h2>
+      <h2>🗺️ BHUBANESWAR 10-SECTOR TACTICAL ATLAS</h2>
       <button class="hud-pill-btn" onclick="closeEmergentMap()">✕ CLOSE [ESC]</button>
     </div>
 
@@ -967,7 +1018,7 @@
   <div id="scene-selector-modal" class="pat-card">
     <div class="pat-tag">CINEMATIC THEATER</div>
     <div class="map-header">
-      <h2>🎬 10 BHUBANESWAR CINEMATIC CUTSCENES</h2>
+      <h2>🎬 14 BHUBANESWAR CINEMATIC CUTSCENES</h2>
       <button class="hud-pill-btn" onclick="closeSceneSelector()">✕ CLOSE [ESC]</button>
     </div>
     <p style="font-size: 13px; color: #cbd5e1;">Select any scene below to experience its cinematic camera angles, soundscapes, and bilingual voice acting:</p>
@@ -1066,7 +1117,15 @@
     "npc_oldman": { "speaker": "oldman", "or": "ଜୟ ଜଗନ୍ନାଥ ବାବୁ! ଲିଙ୍ଗରାଜ ମନ୍ଦିର ଓ ରାମ ମନ୍ଦିର ଦେଖିବାକୁ ଭୁଲିବେ ନାହିଁ।", "hi": "जय जगन्नाथ बाबू! लिंगराज मंदिर और राम मंदिर देखना मत भूलना।" },
     "npc_woman": { "speaker": "woman", "or": "ଭୁବନେଶ୍ୱରକୁ ମନ୍ଦିର ନଗରୀ କୁହାଯାଏ, ସ୍ମାର୍ଟ ସିଟି ମଧ୍ୟ!", "hi": "भुवनेश्वर को मंदिरों का शहर और स्मार्ट सिटी भी कहते हैं!" },
     "npc_student": { "speaker": "student", "or": "ଇନ୍ଫୋସିଟି ଆଉ କିଟ୍ ରୋଡ଼ରେ ଷ୍ଟାର୍ଟଅପ୍ ଏକୋସିଷ୍ଟମ୍ ବହୁତ ବଢ଼ିଆ!", "hi": "इन्फोसिटी और कीट रोड में स्टार्टअप इकोसिस्टम बहुत बढ़िया है!" },
-    "npc_vendor": { "speaker": "vendor", "or": "ପାହାଳ ରସଗୋଲା ଓ ଗରମ ଛେନାପୋଡ଼ ଖାଇକି ଯାଆନ୍ତୁ!", "hi": "पहाल रसगुल्ला और गरमा-गरम छेनापोड़ा खाकर जाइए!" }
+    "npc_vendor": { "speaker": "vendor", "or": "ପାହାଳ ରସଗୋଲା ଓ ଗରମ ଛେନାପୋଡ଼ ଖାଇକି ଯାଆନ୍ତୁ!", "hi": "पहाल रसगुल्ला और गरमा-गरम छेनापोड़ा खाकर जाइए!" },
+    "pg_aunty_rules": { "speaker": "aunty", "or": "ରହ ବାବୁ! ଏଇଟା ସଂସ୍କାରୀ ପିଜି! ରାତି ୯ଟାରେ ମେନ୍ ଗେଟ୍ ତାଲା! ସାଙ୍ଗ ମନା, ₹୫୦୦୦ ନଗଦ ଆଡଭାନ୍ସ ଏବେ ଦିଅ!", "hi": "रुक बाबू! यह संस्कारी पीजी है! रात 9:00 बजे मेन गेट पर ताला! दोस्त लाना मना, ₹5000 कैश एडवांस अभी दो!" },
+    "pg_uncle_meter": { "speaker": "uncle", "or": "ଏଗ୍ରିମେଣ୍ଟ-ଫେଗ୍ରିମେଣ୍ଟ କିଛି ନାହିଁ! ବିଜୁଳି ୟୁନିଟ୍ ₹୨୫! ଆରେ ମିଟରରେ ଚୁମ୍ବକ କାହିଁକି ଲାଗିଛି ପଚାରୁଛ? ଆୟେଁ?!", "hi": "एग्रीमेंट-फेग्रीमेंट कुछ नहीं! बिजली ₹25 पर यूनिट! अरे मीटर में चुंबक क्यों लगा है पूछ रहे हो? आयेँ?!" },
+    "babu_pg_aayein": { "speaker": "babu", "or": "ଆୟେଁ?! ୯ଟାରେ ତାଲା, ଡାଲିରେ କେବଳ ପାଣି, ଆଉ ବିଜୁଳି ମିଟରରେ ଚୁମ୍ବକ?! ଏଇଟା ତ ମହା ସ୍କାମ୍! ମୁଁ ଏଗ୍ରିମେଣ୍ଟ ବିନା ପଇସା ଦେବିନି!", "hi": "आयेँ?! 9 बजे ताला, दाल में सिर्फ पानी, और मीटर पर चुंबक?! ये तो खुला स्कैम है! मैं बिना एग्रीमेंट पैसे नहीं दूँगा!" },
+    "aunty_drama": { "speaker": "aunty", "or": "ହାୟ ହାୟ! ମୋ ଘରେ ରହି ମୋତେ ନିୟମ ଶିଖାଉଛୁ?! କିଏ ଅଛ ପୋଲିସ୍ ଡାକ!", "hi": "हाय हाय! मेरे घर में रहकर मुझे नियम सिखाते हो?! कोई है पुलिस बुलाओ!" },
+    "uncle_busted": { "speaker": "uncle", "or": "ବାବୁ ଭୁଲ୍ ହୋଇଗଲା! ଚୁମ୍ବକ ବାହାର କରୁଛି, ଏଗ୍ରିମେଣ୍ଟ ବି କରୁଛି, ମୋତେ ଜେଲ୍ ପଠାଅନି!", "hi": "बाबू गलती हो गई! चुंबक हटा रहा हूँ, एग्रीमेंट भी बना रहा हूँ, मुझे जेल मत भेजो!" },
+    "tushar_kiit": { "speaker": "student", "or": "ସାବାସ୍ ବାବୁ! ଏଇ ପିଜି ଆଣ୍ଟି ଆଉ ଅଙ୍କଲ୍ ଛାତ୍ରଙ୍କୁ ବହୁତ ଠକିଥିଲେ! ତୁମେ ଆମର ହିରୋ!", "hi": "शाबाश बाबू! इन पीजी आंटी और अंकल ने छात्रों को बहुत लूटा था! तुमने सही पोल खोली!" },
+    "panda_sir": { "speaker": "police", "or": "ଟ୍ରାଫିକ୍ SI ପଣ୍ଡା: ୱାଃ ବାବୁ ୱାଃ! ୩୫ କି.ମି. ସ୍ପୀଡ୍ରେ ସୁରକ୍ଷିତ ସ୍କୁଟି ଚଳାଇଲ, ଆଉ ପିଜି ମାଫିଆଙ୍କୁ ବି ଜବତ କଲ!", "hi": "ट्रैफिक SI पांडा: वाह बाबू वाह! 35 किमी की सुरक्षित स्पीड में स्कूटी चलाई और पीजी माफिया को भी पकड़ा!" },
+    "khandagiri_scene": { "speaker": "guide", "or": "ଦେଖନ୍ତୁ ବାବୁ, ପ୍ରାଚୀନ ଖଣ୍ଡଗିରି ଓ ଉଦୟଗିରି ଗୁମ୍ଫା! ରାଣୀ ଗୁମ୍ଫାର ଶିଳ୍ପକଳା ଓ ମାଙ୍କଡ଼ଙ୍କ ଖେଳ ଦେଖିବା ଭଳି!", "hi": "देखिए बाबू, प्राचीन खंडगिरि और उदयगिरि गुफाएं! रानी गुम्फा की नक्काशी और बंदरों की अटखेलियां देखने लायक हैं!" }
   };
 
   const SPEAKERS = {
@@ -1085,8 +1144,10 @@
     guide: { or: "ଧଉଳି ଗାଇଡ୍", hi: "धउलि गाइड", color: "#38bdf8", icon: "🕊️" },
     oldman: { or: "ଜେଜେବାପା", hi: "दादाजी", color: "#D9A05B", icon: "👴" },
     woman: { or: "ଦିଦି", hi: "दीदी", color: "#D9A05B", icon: "👩" },
-    student: { or: "ଛାତ୍ର", hi: "छात्र", color: "#D9A05B", icon: "🎒" },
-    vendor: { or: "ଫେରିବାଲା", hi: "फेरीवाला", color: "#D9A05B", icon: "🧺" }
+    student: { or: "ଛାତ୍ର ତୁଷାର", hi: "छात्र तुषार", color: "#38bdf8", icon: "🎒" },
+    vendor: { or: "ଫେରିବାଲା", hi: "फेरीवाला", color: "#D9A05B", icon: "🧺" },
+    aunty: { or: "କାନ୍ତା ଆଣ୍ଟି (ପିଜି ମାଲିକାଣୀ)", hi: "कांता आंटी (पीजी मालकिन)", color: "#b91c1c", icon: "👵" },
+    uncle: { or: "ବାବୁ ଲାଲ୍ ଅଙ୍କଲ୍ (ଲାଳଚୀ ମାଲିକ)", hi: "बाबू लाल अंकल (लालची मालिक)", color: "#c2410c", icon: "👴" }
   };
 
   const CHAPTERS = [
@@ -1158,7 +1219,11 @@
     { x1: 40, z1: -120, x2: -120, z2: -120, w: 12, name: "INFOCITY TECH AVENUE" },
     // 9. Dhauli Buddhist Highway (South Link)
     { x1: 40, z1: -350, x2: 180, z2: -350, w: 10, name: "DHAULI PEACE HIGHWAY" },
-    { x1: 180, z1: -350, x2: 180, z2: -420, w: 10, name: "DHAULI ASCENT ROAD" }
+    { x1: 180, z1: -350, x2: 180, z2: -420, w: 10, name: "DHAULI ASCENT ROAD" },
+    // 10. Khandagiri & Udayagiri Ancient Caves Way (North-West)
+    { x1: -50, z1: 15, x2: -150, z2: 15, w: 10, name: "KHANDAGIRI HISTORIC ROAD" },
+    // 11. Saheed Nagar Student PG Hub & Coaching Lane (East)
+    { x1: 40, z1: -120, x2: 110, z2: -120, w: 10, name: "SAHEED NAGAR PG LANE" }
   ];
 
   // STRATEGIC POI COORDINATES
@@ -1170,6 +1235,8 @@
     scootyRamMandir: [62, -168],
     scootyCanteen: [52, -320],
     scootyInfocity: [-105, -125],
+    scootyKhandagiri: [-135, 18],
+    scootySaheed: [88, -125],
     driver: [24, 15],
     tea1: [14, 15],
     routeTea: [40, -110],
@@ -1185,6 +1252,14 @@
     ownerHouse: [84, -308],
     neighbour: [118, -310],
     police: [96, -330],
+    policePanda: [32, -250],
+    khandagiri: [-140, 20],
+    khandagiriGuide: [-130, 16],
+    saheedPG: [92, -118],
+    kantaAunty: [94, -114],
+    babuLalUncle: [90, -114],
+    studentTushar: [85, -124],
+    gupchupWala: [46, -95],
     ekamraHaat: [-85, -280],
     artisan: [-80, -276],
     infocity: [-110, -130],
@@ -1770,7 +1845,46 @@
       tone(700, 0.35, "sine", 0.3, 0, 950);
       tone(950, 0.35, "sine", 0.3, 0.35, 700);
     },
-    conch: () => tone(220, 2.0, "sawtooth", 0.3, 0, 260)
+    conch: () => tone(220, 2.0, "sawtooth", 0.3, 0, 260),
+    memeDramatic: () => {
+      // Iconic Indian Serial 3-hit shock sound ("DUN... DUN... DUUUUN!")
+      tone(120, 0.28, "sawtooth", 0.45, 0, 75);
+      tone(180, 0.25, "square", 0.35, 0, 110);
+      tone(110, 0.32, "sawtooth", 0.5, 0.35, 70);
+      tone(165, 0.3, "square", 0.4, 0.35, 95);
+      tone(85, 0.9, "sawtooth", 0.65, 0.72, 38);
+      tone(130, 0.85, "square", 0.5, 0.72, 55);
+      tone(55, 1.2, "sine", 0.7, 0.72, 28);
+    },
+    memeAayein: () => {
+      // Iconic viral "Aayein?!" meme sound (bending sliding pitch shift)
+      tone(260, 0.45, "triangle", 0.5, 0, 520);
+      tone(390, 0.35, "sawtooth", 0.35, 0.05, 580);
+      tone(520, 0.35, "sine", 0.45, 0.25, 240);
+    },
+    memeSadTrombone: () => {
+      // Wah-wah-wah-waaaahhh fail meme trombone
+      const notes = [392, 370, 349.2, 329.6];
+      notes.forEach((f, idx) => {
+        if (idx < 3) {
+          tone(f, 0.28, "sawtooth", 0.35, idx * 0.32);
+        } else {
+          tone(f, 0.85, "sawtooth", 0.4, idx * 0.32, 240);
+        }
+      });
+    },
+    memeBonk: () => {
+      tone(580, 0.08, "sine", 0.45, 0, 140);
+      tone(290, 0.12, "triangle", 0.35, 0.02, 90);
+    },
+    memeWhistle: () => {
+      // "Wah bete wah!" celebration whistle stinger
+      [587.33, 880, 1174.66, 1760].forEach((f, i) => tone(f, 0.15, "sine", 0.35, i * 0.08));
+    },
+    memeGaddari: () => {
+      tone(90, 0.5, "sawtooth", 0.45, 0, 50);
+      tone(135, 0.45, "triangle", 0.35, 0.1, 75);
+    }
   };
 
   // SPEECH SYNTHESIS ENGINE
@@ -2537,6 +2651,121 @@
     return { group: g, arrow, ring };
   }
 
+  // 18. KHANDAGIRI & UDAYAGIRI ANCIENT ROCK CAVES
+  function makeKhandagiriCaves() {
+    const g = new THREE.Group();
+    const rockMat = M("#b45309", 0.95); // Ancient Kalinga sandstone
+    const darkCave = M("#1c1917", 0.9);
+
+    // Terraced rock-cut hill massif
+    addMesh(g, box(36, 12, 22), rockMat, [0, 6, 0]);
+    addMesh(g, box(30, 8, 18), rockMat, [0, 14, -2]);
+
+    // Lower Cave Veranda (3 Arched Rock Chambers)
+    [-9, 0, 9].forEach(x => {
+      // Cave entrance recess
+      addMesh(g, box(5.5, 4.8, 3.5), darkCave, [x, 2.4, 9.5]);
+      // Carved rock pillars
+      addMesh(g, cyl(0.3, 0.35, 4.8, 8), rockMat, [x - 2.5, 2.4, 11.2]);
+      addMesh(g, cyl(0.3, 0.35, 4.8, 8), rockMat, [x + 2.5, 2.4, 11.2]);
+      // Carved lintel beam
+      addMesh(g, box(6.2, 0.8, 1.2), rockMat, [x, 5.2, 11]);
+    });
+
+    // Upper Cave (Rani Gumpha Terrace)
+    addMesh(g, box(26, 1.2, 8), rockMat, [0, 5.8, 8]); // Upper terrace walkway
+    [-6, 6].forEach(x => {
+      addMesh(g, box(4.5, 3.8, 3), darkCave, [x, 8.8, 6]);
+      addMesh(g, cyl(0.25, 0.3, 3.8, 8), rockMat, [x - 2, 8.8, 7.5]);
+      addMesh(g, cyl(0.25, 0.3, 3.8, 8), rockMat, [x + 2, 8.8, 7.5]);
+    });
+
+    // Stone steps climbing the rock
+    for (let st = 0; st < 6; st++) {
+      addMesh(g, box(3.5, 0.5, 1.2), rockMat, [15, 0.25 * (st + 1), 11 + (5 - st) * 1.2]);
+    }
+
+    // Carved rock balustrade
+    addMesh(g, box(26, 0.8, 0.4), rockMat, [0, 6.8, 11.8]);
+
+    // Mischievous Temple Monkeys sitting on rock parapets
+    [[-11, 7.4, 11.8], [0, 7.4, 11.8], [11, 7.4, 11.8], [-5, 18.2, 2]].forEach(([mx, my, mz]) => {
+      const monkey = new THREE.Group();
+      monkey.position.set(mx, my, mz);
+      const mMat = M("#78350f", 0.8);
+      addMesh(monkey, box(0.35, 0.45, 0.3), mMat, [0, 0.25, 0]); // Body
+      addMesh(monkey, new THREE.SphereGeometry(0.16, 8, 8), mMat, [0, 0.55, 0]); // Head
+      addMesh(monkey, cyl(0.04, 0.04, 0.6, 6), mMat, [0, 0.2, -0.25], [-0.8, 0, 0]); // Tail
+      g.add(monkey);
+    });
+
+    // Landmark Signboard
+    addMesh(g, new THREE.PlaneGeometry(12, 2.4), new THREE.MeshStandardMaterial({ map: signTex("ଖଣ୍ଡଗିରି ଓ ଉଦୟଗିରି ଗୁମ୍ଫା", "KHANDAGIRI & UDAYAGIRI ROCK CAVES", "#8D4004") }), [0, 15, 7.2], null, null, false);
+
+    return g;
+  }
+
+  // 19. SAHEED NAGAR STUDENT PG HOSTEL & SCAM COMPLEX
+  function makeSaheedStudentPG() {
+    const g = new THREE.Group();
+    const pgWall = new THREE.MeshStandardMaterial({ map: facade("#fef08a"), roughness: 0.9 });
+    const roofMat = new THREE.MeshStandardMaterial({ map: roof(), roughness: 0.9 });
+
+    // 3-Story PG Hostel Building
+    addMesh(g, box(18, 12, 14), [pgWall, pgWall, roofMat, roofMat, pgWall, pgWall], [0, 6, 0]);
+
+    // Hanging Balconies with Student Laundry Clotheslines
+    [4.2, 8.2].forEach(y => {
+      addMesh(g, box(14, 0.4, 2.2), M("#cbd5e1", 0.7), [0, y, 7.5]);
+      addMesh(g, box(14, 0.8, 0.15), M("#475569", 0.7), [0, y + 0.6, 8.5]);
+      // Hanging colorful clothes
+      [-4, -2, 0, 2, 4].forEach(cx => {
+        const clothMat = M(["#ef4444", "#3b82f6", "#22c55e", "#f59e0b", "#ec4899"][Math.abs(cx) % 5], 0.8);
+        addMesh(g, box(0.9, 0.9, 0.04), clothMat, [cx, y - 0.2, 8.4]);
+      });
+    });
+
+    // Huge Hostel Name Banner
+    addMesh(g, new THREE.PlaneGeometry(15, 2.2), new THREE.MeshStandardMaterial({ map: signTex("ଶ୍ରୀ ସାଇ ଛାତ୍ର ପିଜି • ୯ PM ତାଲା", "SHREE SAI PG HOSTEL • STRICT 9 PM CURFEW", "#b91c1c") }), [0, 11, 7.15], null, null, false);
+
+    // Rigged Electric Meter Box on Ground Floor Wall (The Scam Meter!)
+    const meterBox = addMesh(g, box(1.2, 1.4, 0.5), M("#334155"), [6.5, 2.2, 7.2]);
+    // The Suspicious Red Magnet stuck to the meter!
+    addMesh(g, box(0.6, 0.35, 0.2), new THREE.MeshStandardMaterial({ color: "#dc2626", emissive: "#ef4444", emissiveIntensity: 0.8 }), [6.5, 2.2, 7.55]);
+    // Danger Warning Plate
+    addMesh(g, box(1.1, 0.3, 0.05), new THREE.MeshStandardMaterial({ color: "#facc15" }), [6.5, 2.8, 7.48]);
+
+    // PG Rules Notice Board
+    addMesh(g, new THREE.PlaneGeometry(3.5, 2.0), new THREE.MeshStandardMaterial({ map: signTex("ପିଜି ନିୟମାବଳୀ (RULES)", "1. GATE CLOSES 9PM 2. NO FRIENDS 3. BIJLI ₹25/UNIT", "#1c1917", "#fef08a") }), [-5.5, 2.4, 7.15]);
+
+    // Rooftop Sintex Water Tanks
+    addMesh(g, cyl(0.8, 0.8, 1.4, 12), mats.sintexBlack, [-4, 12.8, -2]);
+    addMesh(g, cyl(0.8, 0.8, 1.4, 12), mats.sintexBlack, [4, 12.8, -2]);
+
+    return g;
+  }
+
+  // 20. TRAFFIC POLICE POST & BARRICADES (RAJ MAHAL JUNCTION)
+  function makeTrafficPolicePost() {
+    const g = new THREE.Group();
+    // Traffic Kiosk Umbrella
+    addMesh(g, cyl(0.12, 0.12, 3.2, 8), mats.black, [0, 1.6, 0]);
+    addMesh(g, new THREE.ConeGeometry(2.2, 1.1, 14), new THREE.MeshStandardMaterial({ color: "#1d4ed8" }), [0, 3.6, 0]);
+    // Round pedestal with yellow-black zebra warning
+    addMesh(g, cyl(1.4, 1.5, 0.4, 16), new THREE.MeshStandardMaterial({ color: "#facc15" }), [0, 0.2, 0]);
+
+    // Red-and-White Striped Police Barricades
+    [-3.5, 3.5].forEach(x => {
+      const bar = new THREE.Group();
+      bar.position.set(x, 0, 0);
+      addMesh(bar, box(2.6, 1.1, 0.25), new THREE.MeshStandardMaterial({ color: "#dc2626" }), [0, 0.55, 0]);
+      addMesh(bar, box(2.6, 0.2, 0.28), new THREE.MeshStandardMaterial({ color: "#f8fafc" }), [0, 0.55, 0]);
+      g.add(bar);
+    });
+
+    return g;
+  }
+
 
   /* =========================================================================
      EXPANDED WORLD BUILDER: BHUBANESWAR OPEN WORLD
@@ -2734,13 +2963,15 @@
       scene.add(banyan);
     });
 
-    // 16. Parked Scooties around the city (Baramunda, Ram Mandir, Master Canteen, Infocity)
+    // 16. Parked Scooties around the city (Baramunda, Ram Mandir, Master Canteen, Infocity, Khandagiri, Saheed Nagar)
     const parkedScooties = [];
     const scootySpots = [
       { pos: POI.scootyBaramunda, col: "#2563eb", rot: -Math.PI / 3, id: "baramunda" },
       { pos: POI.scootyRamMandir, col: "#dc2626", rot: Math.PI / 2, id: "ramMandir" },
       { pos: POI.scootyCanteen, col: "#16a34a", rot: -Math.PI / 4, id: "canteen" },
-      { pos: POI.scootyInfocity, col: "#9333ea", rot: 0, id: "infocity" }
+      { pos: POI.scootyInfocity, col: "#9333ea", rot: 0, id: "infocity" },
+      { pos: POI.scootyKhandagiri, col: "#ea580c", rot: Math.PI / 2, id: "khandagiri" },
+      { pos: POI.scootySaheed, col: "#facc15", rot: -Math.PI / 2, id: "saheed" }
     ];
     scootySpots.forEach(s => {
       const sc = makeScooty(s.col);
@@ -2750,6 +2981,24 @@
       parkedScooties.push({ ...sc, id: s.id, pos: s.pos });
     });
 
+    // 17. Khandagiri & Udayagiri Ancient Rock Caves Complex
+    const caves = makeKhandagiriCaves();
+    caves.position.set(POI.khandagiri[0], 0, POI.khandagiri[1]);
+    scene.add(caves);
+    collide(POI.khandagiri[0], POI.khandagiri[1], 40, 26);
+
+    // 18. Saheed Nagar Student PG Hostel & Scam Center
+    const studentPG = makeSaheedStudentPG();
+    studentPG.position.set(POI.saheedPG[0], 0, POI.saheedPG[1]);
+    scene.add(studentPG);
+    collide(POI.saheedPG[0], POI.saheedPG[1], 20, 16);
+
+    // 19. Raj Mahal Traffic Police Post & Panda Sir's Checkpoint
+    const policePost = makeTrafficPolicePost();
+    policePost.position.set(POI.policePanda[0], 0, POI.policePanda[1]);
+    scene.add(policePost);
+    collide(POI.policePanda[0], POI.policePanda[1], 10, 4);
+
     return {
       colliders,
       bus: bus1,
@@ -2757,7 +3006,10 @@
       ramFlag: ramMandir.flag,
       streetLamps,
       roadMeshes,
-      parkedScooties
+      parkedScooties,
+      caves,
+      studentPG,
+      policePost
     };
   }
 
@@ -3062,7 +3314,12 @@
     broker: { group: makePedestrian("#dc2626"), name: "Dalal Raghu" },
     neighbour: { group: makePedestrian("#22c55e"), name: "Padosan Mausi" },
     owner: { group: makePedestrian("#eab308"), name: "Makan Malkin" },
-    police: { group: makePedestrian("#1e3a8a"), name: "Police SI" }
+    police: { group: makePedestrian("#1e3a8a"), name: "Police SI" },
+    kantaAunty: { group: makePedestrian("#b91c1c", "#f3c698"), name: "Kanta Aunty" },
+    babuLalUncle: { group: makePedestrian("#c2410c", "#d49b78"), name: "Babu Lal Uncle" },
+    studentTushar: { group: makePedestrian("#0284c7", "#e0ac69"), name: "Student Tushar" },
+    policePanda: { group: makePedestrian("#b45309", "#c68642"), name: "Traffic SI Panda" },
+    khandagiriGuide: { group: makePedestrian("#059669", "#c68642"), name: "Khandagiri Guide" }
   };
 
   npcs.driver.group.position.set(POI.driver[0], 0, POI.driver[1]);
@@ -3074,6 +3331,11 @@
   npcs.neighbour.group.position.set(POI.neighbour[0], 0, POI.neighbour[1]);
   npcs.owner.group.position.set(POI.ownerHouse[0], 0, POI.ownerHouse[1]);
   npcs.police.group.position.set(POI.police[0] + 1.2, 0, POI.police[1]);
+  npcs.kantaAunty.group.position.set(POI.kantaAunty[0], 0, POI.kantaAunty[1]);
+  npcs.babuLalUncle.group.position.set(POI.babuLalUncle[0], 0, POI.babuLalUncle[1]);
+  npcs.studentTushar.group.position.set(POI.studentTushar[0], 0, POI.studentTushar[1]);
+  npcs.policePanda.group.position.set(POI.policePanda[0], 0, POI.policePanda[1]);
+  npcs.khandagiriGuide.group.position.set(POI.khandagiriGuide[0], 0, POI.khandagiriGuide[1]);
 
   Object.values(npcs).forEach(n => scene.add(n.group));
 
@@ -3335,28 +3597,29 @@
       return;
     }
 
-    // 3. RIDABLE SCOOTY (HONDA ACTIVA / TVS JUPITER BIKE)
+    // 3. RIDABLE SCOOTY (HONDA ACTIVA / TVS JUPITER BIKE - 30 TO 40 KM/H CITY CRUISING)
     if (state.mode === 'scooty') {
       engineSound(false);
-      const maxSpeed = state.teaBoost ? 1.05 : 0.88;
-      const accel = state.teaBoost ? 0.048 : 0.035;
-      const friction = state.weather === 'rain' ? 0.985 : 0.965;
+      // Calibrated for smooth realistic 30-40 km/h city cruising speed (Tea Boost up to 50 km/h)
+      const maxSpeed = state.teaBoost ? 0.62 : 0.46;
+      const accel = 0.016;
+      const friction = state.weather === 'rain' ? 0.982 : 0.968;
 
       if (keys['w'] || keys['arrowup']) {
         playerSpeed = Math.min(maxSpeed, playerSpeed + accel);
       } else if (keys['s'] || keys['arrowdown']) {
-        playerSpeed = Math.max(-0.2, playerSpeed - accel * 1.4);
+        playerSpeed = Math.max(-0.16, playerSpeed - accel * 1.3);
       } else {
         playerSpeed *= friction;
       }
 
       if (keys[' '] || keys['space']) {
-        playerSpeed *= state.weather === 'rain' ? 0.90 : 0.82;
-        if (Math.abs(playerSpeed) > 0.15 && Math.random() < 0.2) sfx.brake();
+        playerSpeed *= state.weather === 'rain' ? 0.88 : 0.80;
+        if (Math.abs(playerSpeed) > 0.12 && Math.random() < 0.2) sfx.brake();
       }
 
       // Scooty has sharper agile handling & bank leaning
-      const turnSens = 0.048 / (1.0 + Math.abs(playerSpeed) * 1.4);
+      const turnSens = 0.046 / (1.0 + Math.abs(playerSpeed) * 1.2);
       let turnSteer = 0;
       if (keys['a'] || keys['arrowleft']) {
         playerAngle += turnSens * (playerSpeed >= 0 ? 1 : -1);
@@ -3389,10 +3652,10 @@
 
       scootyEngineSound(true, Math.abs(playerSpeed) * 12);
 
-      // Speedometer & Distance
-      const kmh = Math.round(Math.abs(playerSpeed) * 95);
+      // Speedometer & Distance (Accurately calibrated to 30 - 40 KM/H)
+      const kmh = Math.round(Math.abs(playerSpeed) * 80);
       document.getElementById('speedo-val').innerText = kmh;
-      document.getElementById('speedo-lbl').innerText = 'KM/H • SCOOTY';
+      document.getElementById('speedo-lbl').innerText = 'KM/H • SCOOTY (30-40 CITY SPEED)';
 
       const distM = Math.round(playerScooty.group.position.distanceTo(new THREE.Vector3(POI.canteen[0], 0, POI.canteen[1])) * 10);
       state.distance = distM;
@@ -3410,40 +3673,107 @@
     }
   }
 
-  // PROXIMITY CHECKING TO NPCS & SCOOTIES
+  // CONTEXTUAL INTERACTION SYSTEM (PREVENTS POPUP SPAM)
+  let activeInteraction = null;
+
+  function showInteractBubble(label, actionFn) {
+    activeInteraction = actionFn;
+    const bubble = document.getElementById('hud-interact-bubble');
+    const lbl = document.getElementById('interact-bubble-label');
+    if (bubble && lbl) {
+      lbl.innerText = label;
+      bubble.classList.add('visible');
+    }
+  }
+
+  function hideInteractBubble() {
+    activeInteraction = null;
+    const bubble = document.getElementById('hud-interact-bubble');
+    if (bubble) bubble.classList.remove('visible');
+  }
+
+  function triggerActiveInteraction() {
+    if (activeInteraction) {
+      const fn = activeInteraction;
+      hideInteractBubble();
+      fn();
+    }
+  }
+  window.triggerActiveInteraction = triggerActiveInteraction;
+
+  // PROXIMITY CHECKING TO NPCS & SCOOTIES (NO POPUP SPAM)
   function checkNpcInteraction(pos) {
-    // Check nearby parked scooties to ride
+    if (state.mode !== 'walk') {
+      hideInteractBubble();
+      return;
+    }
+
+    let foundTarget = false;
+
+    // 1. Check nearby parked scooties to ride
     if (worldData && worldData.parkedScooties) {
       for (const sc of worldData.parkedScooties) {
         if (pos.distanceTo(new THREE.Vector3(sc.pos[0], 0, sc.pos[1])) < 3.8) {
-          popup('🛵 ' + (state.lang === 'or' ? '[E] ଦବାଇ ସ୍କୁଟି ଚଲାନ୍ତୁ!' : '[E] दबाकर स्कूटी चलाएं!'));
-          if (keys['e']) {
-            keys['e'] = false;
-            mountScooty(sc.pos);
-            return;
-          }
+          showInteractBubble(state.lang === 'or' ? 'ସ୍କୁଟି ଚଲାନ୍ତୁ [E]' : 'RIDE SCOOTY • स्कूटी चलाएं [E]', () => mountScooty(sc.pos));
+          foundTarget = true;
+          break;
         }
       }
     }
 
-    if (keys['e']) {
-      keys['e'] = false;
+    // 2. Check nearby NPCs
+    if (!foundTarget) {
       for (const [key, npc] of Object.entries(npcs)) {
-        if (pos.distanceTo(npc.group.position) < 3.2) {
-          interactWithNpc(key);
-          return;
+        if (pos.distanceTo(npc.group.position) < 3.4) {
+          let label = "INTERACT [E]";
+          if (key === 'kantaAunty' || key === 'babuLalUncle') {
+            label = state.lang === 'or' ? 'ପିଜି ଆଣ୍ଟି ସ୍କାମ୍ [E]' : 'PG RENT SCAM • आंटी-अंकल [E]';
+          } else if (key === 'driver') {
+            label = state.lang === 'or' ? 'ଅଟୋ ଦରଦାମ୍ [E]' : 'AUTO BARGAIN • कालिया भाई [E]';
+          } else if (key === 'studentTushar') {
+            label = state.lang === 'or' ? 'ଛାତ୍ର ତୁଷାର [E]' : 'STUDENT TUSHAR • छात्र तुषार [E]';
+          } else if (key === 'policePanda') {
+            label = state.lang === 'or' ? 'ଟ୍ରାଫିକ୍ ପୋଲିସ୍ ପଣ୍ଡା [E]' : 'TRAFFIC POLICE PANDA [E]';
+          } else if (key === 'khandagiriGuide') {
+            label = state.lang === 'or' ? 'ଖଣ୍ଡଗିରି ଗୁମ୍ଫା [E]' : 'KHANDAGIRI CAVES • गुफाएं [E]';
+          } else if (key === 'priest') {
+            label = state.lang === 'or' ? 'ରାମ ମନ୍ଦିର ପୂଜକ [E]' : 'RAM MANDIR PRIEST [E]';
+          } else if (key === 'artisan') {
+            label = state.lang === 'or' ? 'ଏକାମ୍ର ହାଟ ଶିଳ୍ପୀ [E]' : 'EKAMRA HAAT ARTISAN [E]';
+          }
+          showInteractBubble(label, () => interactWithNpc(key));
+          foundTarget = true;
+          break;
         }
       }
-      // Check Ram Mandir sanctum
-      if (pos.distanceTo(new THREE.Vector3(POI.ramMandir[0], 0, POI.ramMandir[1])) < 16) {
-        visitRamMandir();
-        return;
-      }
-      // Check Ekamra Haat
-      if (pos.distanceTo(new THREE.Vector3(POI.ekamraHaat[0], 0, POI.ekamraHaat[1])) < 18) {
-        visitEkamraHaat();
-        return;
-      }
+    }
+
+    // 3. Check Ram Mandir sanctum
+    if (!foundTarget && pos.distanceTo(new THREE.Vector3(POI.ramMandir[0], 0, POI.ramMandir[1])) < 16) {
+      showInteractBubble(state.lang === 'or' ? 'ରାମ ମନ୍ଦିର ପ୍ରଣାମ [E]' : 'RAM MANDIR BLESSING [E]', () => visitRamMandir());
+      foundTarget = true;
+    }
+
+    // 4. Check Ekamra Haat village
+    if (!foundTarget && pos.distanceTo(new THREE.Vector3(POI.ekamraHaat[0], 0, POI.ekamraHaat[1])) < 18) {
+      showInteractBubble(state.lang === 'or' ? 'ଏକାମ୍ର ହାଟ କଳା [E]' : 'EKAMRA HAAT CRAFTS [E]', () => visitEkamraHaat());
+      foundTarget = true;
+    }
+
+    // 5. Check Khandagiri Caves
+    if (!foundTarget && pos.distanceTo(new THREE.Vector3(POI.khandagiri[0], 0, POI.khandagiri[1])) < 22) {
+      showInteractBubble(state.lang === 'or' ? 'ଖଣ୍ଡଗିରି ଗୁମ୍ଫା ଦର୍ଶନ [E]' : 'KHANDAGIRI CAVES [E]', () => visitKhandagiri());
+      foundTarget = true;
+    }
+
+    if (!foundTarget) {
+      hideInteractBubble();
+    }
+
+    // Trigger on [E] key
+    if (keys['e']) {
+      keys['e'] = false;
+      triggerActiveInteraction();
     }
   }
 
@@ -3521,7 +3851,15 @@
   }
 
   let popupIdx = 0;
+  let lastPopupText = '';
+  let lastPopupTime = 0;
+
   function popup(text, kind = "normal") {
+    const now = Date.now();
+    if (text === lastPopupText && now - lastPopupTime < 2500) return; // Prevent toast spam!
+    lastPopupText = text;
+    lastPopupTime = now;
+
     const c = document.getElementById('popups-container');
     if (!c) return;
     const div = document.createElement('div');
@@ -3627,6 +3965,14 @@
       startAutoBargain();
     } else if (key === 'broker') {
       startRentHouseMystery();
+    } else if (key === 'kantaAunty' || key === 'babuLalUncle') {
+      startPGRentScam();
+    } else if (key === 'studentTushar') {
+      talkToTushar();
+    } else if (key === 'policePanda') {
+      talkToPolicePanda();
+    } else if (key === 'khandagiriGuide') {
+      visitKhandagiri();
     } else if (key === 'priest') {
       visitRamMandir();
     } else if (key === 'artisan') {
@@ -3639,6 +3985,184 @@
       popup(text);
       playVoiceLine(lineId);
     }
+  }
+
+  // HILARIOUS PG RENT SCAM & HINDI MEME SOUNDS SCENE (KANTA AUNTY & BABU LAL UNCLE)
+  function startPGRentScam() {
+    state.modalActive = true;
+    const m = document.getElementById('dialogue-modal');
+    if (!m) return;
+    m.style.display = 'block';
+    document.getElementById('dia-avatar').innerText = "👵";
+    document.getElementById('dia-name').innerText = tr(SPEAKERS.aunty);
+    document.getElementById('dia-role').innerText = "Shree Sai Student PG Hostel (Saheed Nagar)";
+    document.getElementById('dia-text').innerText = tr(LINES.pg_aunty_rules);
+
+    // Play classic Indian dramatic shock meme sound!
+    sfx.memeDramatic();
+    playVoiceLine('pg_aunty_rules');
+
+    const grp = document.getElementById('dia-choices');
+    grp.innerHTML = '';
+
+    // Choice 1: "Aunty ji, 9 baje gate kyu band karte ho?!"
+    const b1 = document.createElement('button');
+    b1.className = 'dia-opt-btn';
+    b1.innerHTML = '<span>😱 ' + (state.lang === 'or' ? 'ଆଣ୍ଟି! ରାତି ୯ଟାରେ କାହିଁକି ତାଲା ପକାଉଛନ୍ତି?!' : 'आंटी! 9:00 बजे गेट क्यों बंद करते हो?!') + '</span><span class="dia-tag-pill">Meme Curfew</span>';
+    b1.onclick = () => {
+      sfx.memeDramatic();
+      document.getElementById('dia-avatar').innerText = "👴";
+      document.getElementById('dia-name').innerText = tr(SPEAKERS.uncle);
+      document.getElementById('dia-text').innerText = tr(LINES.pg_uncle_meter);
+      playVoiceLine('pg_uncle_meter').then(() => {
+        showPGAayeinChoices();
+      });
+    };
+    grp.appendChild(b1);
+
+    // Choice 2: Expose the magnet on the electric meter immediately
+    const b2 = document.createElement('button');
+    b2.className = 'dia-opt-btn';
+    b2.style.background = 'var(--terracotta-red)';
+    b2.innerHTML = '<span>🧲 ' + (state.lang === 'or' ? 'ଅଙ୍କଲ୍! ବିଜୁଳି ମିଟରରେ ଏଇ ଲାଲ୍ ଚୁମ୍ବକ କାହିଁକି?! (ସ୍କାମ୍)' : 'अंकल! बिजली मीटर पर ये लाल चुंबक क्यों है?!') + '</span><span class="dia-tag-pill">+100 XP</span>';
+    b2.onclick = () => {
+      sfx.memeAayein();
+      showPGAayeinChoices();
+    };
+    grp.appendChild(b2);
+  }
+
+  function showPGAayeinChoices() {
+    const grp = document.getElementById('dia-choices');
+    grp.innerHTML = '';
+
+    document.getElementById('dia-avatar').innerText = "🚶";
+    document.getElementById('dia-name').innerText = tr(SPEAKERS.babu);
+    document.getElementById('dia-text').innerText = tr(LINES.babu_pg_aayein);
+
+    // Play the famous "Aayein?!" meme sound!
+    sfx.memeAayein();
+    playVoiceLine('babu_pg_aayein');
+
+    // Option A: Call Police Panda SI & Bust the PG Mafia
+    const bBust = document.createElement('button');
+    bBust.className = 'dia-opt-btn';
+    bBust.style.background = 'var(--vivid-green)';
+    bBust.innerHTML = '<span>🚨 ' + (state.lang === 'or' ? 'ପୋଲିସ୍ SI ପଣ୍ଡାଙ୍କୁ ଡାକନ୍ତୁ! (ସ୍କାମ୍ ପର୍ଦ୍ଦାଫାଶ)' : 'पुलिस SI पांडा को बुलाओ! (स्कैम भंडाफोड़)') + '</span><span class="dia-tag-pill">+200 XP</span>';
+    bBust.onclick = () => {
+      sfx.siren();
+      sfx.memeSadTrombone();
+      document.getElementById('dia-avatar').innerText = "👴";
+      document.getElementById('dia-name').innerText = tr(SPEAKERS.uncle);
+      document.getElementById('dia-text').innerText = tr(LINES.uncle_busted);
+      playVoiceLine('uncle_busted').then(() => {
+        setTimeout(() => {
+          sfx.memeWhistle();
+          popup('🏆 ' + (state.lang === 'or' ? 'ପିଜି ସ୍କାମ୍ ପର୍ଦ୍ଦାଫାଶ! +200 XP' : 'पीजी स्कैम भंडाफोड़! +200 XP'));
+          state.xp += 200;
+          state.coins += 100;
+          updateHudLabels();
+          closeDialogue();
+        }, 1200);
+      });
+    };
+    grp.appendChild(bBust);
+
+    // Option B: Sarcastic response
+    const bFail = document.createElement('button');
+    bFail.className = 'dia-opt-btn';
+    bFail.innerHTML = '<span>🤦 ' + (state.lang === 'or' ? 'ଦାଲିରେ କେବଳ ପାଣି ପିଇବା ଅଭ୍ୟାସ ନାହିଁ!' : 'दाल में सिर्फ पानी पीने की आदत नहीं है!') + '</span>';
+    bFail.onclick = () => {
+      sfx.memeSadTrombone();
+      closeDialogue();
+      popup('🤣 ' + (state.lang === 'or' ? 'କାନ୍ତା ଆଣ୍ଟି ରାଗିଗଲେ!' : 'कांता आंटी नाराज़ हो गईं!'));
+    };
+    grp.appendChild(bFail);
+  }
+
+  // TALK TO STUDENT TUSHAR (KIIT Engineering Student on Scooty)
+  function talkToTushar() {
+    state.modalActive = true;
+    const m = document.getElementById('dialogue-modal');
+    if (!m) return;
+    m.style.display = 'block';
+    document.getElementById('dia-avatar').innerText = "🎒";
+    document.getElementById('dia-name').innerText = tr(SPEAKERS.student);
+    document.getElementById('dia-role').innerText = "KIIT Engineering Student (Saheed Nagar Hub)";
+    document.getElementById('dia-text').innerText = tr(LINES.tushar_kiit);
+    playVoiceLine('tushar_kiit');
+
+    const grp = document.getElementById('dia-choices');
+    grp.innerHTML = '';
+    const bThanks = document.createElement('button');
+    bThanks.className = 'dia-opt-btn';
+    bThanks.style.background = 'var(--vivid-green)';
+    bThanks.innerHTML = '<span>🛵 ' + (state.lang === 'or' ? 'ସ୍କୁଟିରେ ସହର ବୁଲନ୍ତୁ, ସାବଧାନରେ ଚଳାନ୍ତୁ!' : 'स्कूटी पर शहर घूमें, संभलकर चलाएं!') + '</span><span class="dia-tag-pill">+50 XP</span>';
+    bThanks.onclick = () => {
+      closeDialogue();
+      state.xp += 50;
+      updateHudLabels();
+      sfx.chime();
+      popup('🎒 ' + (state.lang === 'or' ? 'ତୁଷାର ସହ ବନ୍ଧୁତା! +50 XP' : 'तुषार से दोस्ती! +50 XP'));
+    };
+    grp.appendChild(bThanks);
+  }
+
+  // TALK TO TRAFFIC POLICE PANDA SIR
+  function talkToPolicePanda() {
+    state.modalActive = true;
+    const m = document.getElementById('dialogue-modal');
+    if (!m) return;
+    m.style.display = 'block';
+    document.getElementById('dia-avatar').innerText = "👮";
+    document.getElementById('dia-name').innerText = "Traffic SI Panda";
+    document.getElementById('dia-role').innerText = "Raj Mahal Traffic Police Post";
+    document.getElementById('dia-text').innerText = tr(LINES.panda_sir);
+    sfx.memeWhistle();
+    playVoiceLine('panda_sir');
+
+    const grp = document.getElementById('dia-choices');
+    grp.innerHTML = '';
+    const bSafe = document.createElement('button');
+    bSafe.className = 'dia-opt-btn';
+    bSafe.style.background = 'var(--vivid-green)';
+    bSafe.innerHTML = '<span>🫡 ' + (state.lang === 'or' ? 'ଜୟ ହିନ୍ଦ୍ ସାର୍! ୩୫ କି.ମି. ସୁରକ୍ଷିତ ସ୍ପୀଡ୍!' : 'जय हिन्द सर! 35 किमी सुरक्षित स्पीड!') + '</span><span class="dia-tag-pill">Safe Rider</span>';
+    bSafe.onclick = () => {
+      closeDialogue();
+      state.xp += 75;
+      updateHudLabels();
+      sfx.chime();
+      popup('👮 ' + (state.lang === 'or' ? 'ସୁରକ୍ଷିତ ଚାଳକ ପ୍ରମାଣପତ୍ର! +75 XP' : 'सुरक्षित चालक प्रमाणपत्र! +75 XP'));
+    };
+    grp.appendChild(bSafe);
+  }
+
+  // VISIT KHANDAGIRI & UDAYAGIRI CAVES
+  function visitKhandagiri() {
+    state.modalActive = true;
+    const m = document.getElementById('dialogue-modal');
+    if (!m) return;
+    m.style.display = 'block';
+    document.getElementById('dia-avatar').innerText = "🕊️";
+    document.getElementById('dia-name').innerText = "Khandagiri Heritage Guide";
+    document.getElementById('dia-role').innerText = "Rani Gumpha Rock-cut Caves";
+    document.getElementById('dia-text').innerText = tr(LINES.khandagiri_scene);
+    playVoiceLine('khandagiri_scene');
+
+    const grp = document.getElementById('dia-choices');
+    grp.innerHTML = '';
+    const bPranam = document.createElement('button');
+    bPranam.className = 'dia-opt-btn';
+    bPranam.style.background = 'var(--vivid-green)';
+    bPranam.innerHTML = '<span>🏛️ ' + (state.lang === 'or' ? 'ପ୍ରାଚୀନ ଐତିହ୍ୟ ଦର୍ଶନ କରନ୍ତୁ' : 'प्राचीन ऐतिहासिक गुफाएं देखें') + '</span><span class="dia-tag-pill">+100 XP</span>';
+    bPranam.onclick = () => {
+      closeDialogue();
+      state.xp += 100;
+      updateHudLabels();
+      sfx.chime();
+      popup('🏛️ ' + (state.lang === 'or' ? 'ଖଣ୍ଡଗିରି ରାଣୀ ଗୁମ୍ଫା ଦର୍ଶନ! +100 XP' : 'खंडगिरि रानी गुम्फा दर्शन! +100 XP'));
+    };
+    grp.appendChild(bPranam);
   }
 
   // AUTO STAND BARGAIN (CHAPTER 1 ➔ 2)
@@ -4100,6 +4624,46 @@
       camEnd: [175, 34, -410],
       voice: "dhauli_peace",
       nextVoice: "puri_teaser_announcer"
+    },
+    {
+      id: "scene_pg_curfew",
+      title: { or: "୧୧. କାନ୍ତା ଆଣ୍ଟିଙ୍କ ରାତି ୯ଟା କର୍ଫ୍ୟୁ ନିୟମ", hi: "11. कांता आंटी का रात 9 बजे कर्फ्यू नियम" },
+      desc: { or: "ଶହୀଦ ନଗର ପିଜି ଗେଟ୍ ବନ୍ଦ, ଡ୍ରାମାଟିକ୍ ମେମେ ସାଉଣ୍ଡ ଏବଂ ବାବୁଙ୍କୁ ହଷ୍ଟେଲ ନିୟମ ଚେତାବନୀ।", hi: "शहीद नगर पीजी में 9 बजे गेट बंद, टीवी सीरियल शॉक साउंड और सख्त हॉस्टल नियम।" },
+      camStart: [-130, 4.2, 50],
+      camLook: [POI.kantaAunty[0], 1.5, POI.kantaAunty[1]],
+      camEnd: [-145, 2.8, 38],
+      voice: "pg_aunty_rules",
+      nextVoice: "aunty_drama"
+    },
+    {
+      id: "scene_pg_meter",
+      title: { or: "୧୨. ବାବୁଲାଲ୍ ଅଙ୍କଲଙ୍କ ଲାଲ୍ ଚୁମ୍ବକ ମିଟର ସ୍କାମ୍", hi: "12. बाबू लाल अंकल का लाल चुंबक मीटर स्कैम" },
+      desc: { or: "ମିଟର ଉପରେ ବଡ଼ ନାଲି ମ୍ୟାଗ୍ନେଟ୍ ଲଗାଇ ୟୁନିଟ୍ ବଢାଇବା ଏବଂ ବାବୁ ଲାଲ୍‌ଙ୍କ 'ଆୟେଁ?!' ଚିତ୍କାର।", hi: "मीटर पर लाल चुंबक से फर्जी बिलिंग और अंकल का वायरल 'आयेँ?!' शॉक।" },
+      camStart: [-135, 3.2, 28],
+      camLook: [POI.babuLalUncle[0], 1.6, POI.babuLalUncle[1]],
+      camEnd: [-138, 2.0, 32],
+      voice: "pg_uncle_meter",
+      nextVoice: "uncle_busted"
+    },
+    {
+      id: "scene_khandagiri",
+      title: { or: "୧୩. ଖଣ୍ଡଗିରି ଓ ଉଦୟଗିରି ପ୍ରାଚୀନ ଗୁମ୍ଫା", hi: "13. खंडागिरि व उदयगिरि प्राचीन गुफाएं" },
+      desc: { or: "ଦ୍ୱିତୀୟ ଶତାବ୍ଦୀ ଖ୍ରୀଷ୍ଟପୂର୍ବର ଖାରବେଳ ଶିଳାଲେଖ, ବାନର ସେନା ଏବଂ ପଥର ଖୋଦେଇ।", hi: "सम्राट खारवेल के शिलालेख, वानर सेना और 2000 वर्ष पुरानी प्राचीन गुफाएं।" },
+      camStart: [110, 16, 75],
+      camLook: [POI.khandagiri[0], 8, POI.khandagiri[1]],
+      camEnd: [95, 10, 50],
+      voice: "khandagiri_scene",
+      nextVoice: "announcer"
+    },
+    {
+      id: "scene_traffic_panda",
+      title: { or: "୧୪. ରାଜମହଲ ଟ୍ରାଫିକ୍ ଏସ୍ଆଇ ପଣ୍ଡା ସାର୍ ଚେକ୍", hi: "14. राजमहल ट्रैफिक एसआई पंडा सर चेकिंग" },
+      desc: { or: "ଜନପଥ ହେଲମେଟ୍ ଯାଞ୍ଚ, ୩୫ କି.ମି./ଘଣ୍ଟା ସ୍କୁଟି ସ୍ପୀଡ୍ ନିୟନ୍ତ୍ରଣ ଏବଂ ଟ୍ରାଫିକ୍ ସଚେତନତା।", hi: "जनपथ हेलमेट चेकिंग, 35 किमी/घंटा सुरक्षित स्कूटी स्पीड और चालान सुरक्षा।" },
+      camStart: [46, 3.5, -250],
+      camLook: [POI.policePanda[0], 1.5, POI.policePanda[1]],
+      camEnd: [38, 2.2, -260],
+      voice: "panda_sir",
+      nextVoice: "announcer"
     }
   ];
 
@@ -4227,7 +4791,7 @@
     if (m) m.style.display = 'none';
   }
 
-  // 3. EMERGENT 8-SECTOR ATLAS
+  // 3. EMERGENT 10-SECTOR ATLAS
   const citySectors = [
     { title: "BARAMUNDA BUS TERMINAL", desc: "Inter-district bus gateway from Western and Southern Odisha. Busy auto rickshaws, scooty stands, and tea stalls.", hi: "बारामुंडा बस टर्मिनल पश्चिमी व दक्षिणी ओडिशा का प्रवेश द्वार है।", pos: POI.babuSpawn },
     { title: "RAM MANDIR JANPATH", desc: "Iconic 30-meter Kalinga pink stone temple with stepped Pida roof, Amalaka crown and brass prayer bell.", hi: "राम मंदिर जनपथ का ऐतिहासिक कलिंग शैली का मंदिर व फूल बाजार है।", pos: POI.ramMandir },
@@ -4236,7 +4800,9 @@
     { title: "OLD TOWN RENT STREET", desc: "Residential sector where landlords, tenants, and rental syndicates negotiate room agreements.", hi: "ओल्ड टाउन रेंट स्ट्रीट जहाँ मकान मालिक और किराएदार रहते हैं।", pos: POI.rentHouse },
     { title: "LINGARAJ TEMPLE & BINDUSAGAR", desc: "1000-year-old monumental Kalinga architecture, holy Bindusagar water and sacred Mahaprasad.", hi: "श्री लिंगराज मंदिर, पवित्र बिंदुसागर सरोवर और महाप्रसाद का केंद्र।", pos: POI.templeLingaraj },
     { title: "EKAMRA HAAT CRAFT VILLAGE", desc: "Thatched tribal craft cottages with Saura tribal art murals, Pattachitra scrolls, applique and stone carvings.", hi: "एकाम्र हाट शिल्प ग्राम जहाँ सौरा कला और हथकरघा मिलता है।", pos: POI.ekamraHaat },
-    { title: "INFOCITY CYBER HUB", desc: "High-tech glass skyscraper cyber towers, IT tech parks, startups and digital corridor.", hi: "इन्फोसिटी साइबर हब आधुनिक कांच के आईटी टावर और टेक पार्क है।", pos: POI.infocity }
+    { title: "INFOCITY CYBER HUB", desc: "High-tech glass skyscraper cyber towers, IT tech parks, startups and digital corridor.", hi: "इन्फोसिटी साइबर हब आधुनिक कांच के आईटी टावर और टेक पार्क है।", pos: POI.infocity },
+    { title: "KHANDAGIRI & UDAYAGIRI CAVES", desc: "Ancient 2nd-century BCE rock-cut monk caves, Hatigumpha inscriptions, sandstone carvings, and climbing stairs.", hi: "खंडागिरि और उदयगिरि की 2000 वर्ष पुरानी गुफाएं और हाथीगुंफा शिलालेख।", pos: POI.khandagiri },
+    { title: "SAHEED NAGAR STUDENT PG HUB", desc: "Bustling student residential hub with Kanta Aunty's PG, strict 9 PM curfew, and Babu Lal Uncle's rigged electric meter.", hi: "शहीद नगर छात्र पीजी हब, कांता आंटी का सख्त हॉस्टल और बाबू लाल अंकल का बिजली मीटर।", pos: POI.saheedPG }
   ];
   let currentSecIdx = 0;
 
