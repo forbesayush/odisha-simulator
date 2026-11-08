@@ -893,6 +893,44 @@
       color: var(--warm-ivory);
       line-height: 1.4;
     }
+    .sub-text-english {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #93C5FD;
+      line-height: 1.45;
+      letter-spacing: 0.2px;
+      margin-top: 4px;
+      border-top: 1px dashed rgba(147, 197, 253, 0.25);
+      padding-top: 4px;
+    }
+    .tri-speech-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .tri-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.5;
+    }
+    .tri-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      text-transform: uppercase;
+    }
+    .tri-badge-or { background: rgba(220, 38, 38, 0.25); color: #FCA5A5; border: 1px solid rgba(239, 68, 68, 0.4); font-family: 'Noto Sans Oriya', sans-serif; }
+    .tri-badge-hi { background: rgba(245, 158, 11, 0.25); color: #FCD34D; border: 1px solid rgba(245, 158, 11, 0.4); font-family: 'Noto Sans Devanagari', sans-serif; }
+    .tri-badge-en { background: rgba(59, 130, 246, 0.25); color: #93C5FD; border: 1px solid rgba(59, 130, 246, 0.4); font-family: 'Plus Jakarta Sans', sans-serif; }
+    .tri-odia { font-family: 'Noto Sans Oriya', serif; font-size: 15px; color: #FEF08A; }
+    .tri-hindi { font-family: 'Noto Sans Devanagari', sans-serif; font-size: 14.5px; color: #F8FAFC; }
+    .tri-english { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13.5px; color: #94A3B8; font-style: italic; }
     .sub-text-hindi {
       font-size: 13.5px;
       font-weight: 500;
@@ -1428,8 +1466,10 @@
       <h1 class="main-odia-title">AMARA ODISHA ADVENTURES</h1>
       <div class="title-subtitle">BHUBANESWAR METROPOLIS LEVEL</div>
 
-      <p class="title-tagline">
-        Taste legendary Dahibara-Aloodum across 5 stalls, cruise at 30–40 km/h on an Activa scooty, negotiate auto fares at Baramunda, bust the Saheed Nagar PG rental mafia, and explore ancient Khandagiri rock caves!
+      <p class="title-tagline" style="line-height: 1.6;">
+        <span style="display:block; color:#F8FAFC; margin-bottom:4px; font-weight:500;">Taste legendary Dahibara-Aloodum across 5 stalls, cruise at 30–40 km/h on an Activa scooty, bargain auto fares at Baramunda, bust Saheed Nagar PG scams, and explore ancient Khandagiri rock caves!</span>
+        <span style="font-family:'Noto Sans Oriya', serif; color:#FEF08A; font-size:13px; display:block; margin-bottom:2px;">ବାରମୁଣ୍ଡା ରଘୁ ଦହିବରା-ଆଳୁଦମ୍, ଅଟୋ ଦରଦାମ୍, ୩୫ କି.ମି. ସ୍କୁଟି ରାଇଡ୍, ପିଜି ସ୍କାମ୍ ରହସ୍ୟ ଓ ରାମ ମନ୍ଦିର!</span>
+        <span style="font-family:'Noto Sans Devanagari', sans-serif; color:#CBD5E1; font-size:12.5px; display:block;">बारामुंडा रघु दहीबड़ा-आलूदम, ऑटो मोलभाव, 35 किमी स्कूटी राइड, पीजी स्कैम पर्दाफाश और राम मंदिर!</span>
       </p>
 
       <div class="title-features-chips">
@@ -1448,11 +1488,17 @@
         <button class="lang-btn" id="lang-btn-hi" onclick="setLanguage('hi')">
           <span>🇮🇳</span> हिंदी (Hindi)
         </button>
+        <button class="lang-btn" id="lang-btn-en" onclick="setLanguage('en')">
+          <span>🇬🇧</span> English
+        </button>
+        <button class="lang-btn" id="lang-btn-all" onclick="setLanguage('all')">
+          <span>🌐</span> ALL 3 (SIDE-BY-SIDE)
+        </button>
       </div>
 
       <div class="title-btn-group">
         <button class="btn-start" onclick="startGame()">
-          <span>▶</span> <span>ENTER BHUBANESWAR • ଆରମ୍ଭ କରନ୍ତୁ</span>
+          <span>▶</span> <span>ENTER BHUBANESWAR • ଆରମ୍ଭ କରନ୍ତୁ • प्रवेश करें</span>
         </button>
         <button class="btn-start btn-continue" id="btn-continue-game" onclick="resumeGame()">
           <span>↺</span> <span id="continue-game-lbl">CONTINUE ADVENTURE</span>
@@ -1569,6 +1615,7 @@
       <div class="sub-speaker" id="sub-speaker-name">ANNOUNCER</div>
       <div class="sub-text-odia" id="sub-text-primary">ଓଡ଼ିଶାର ରାଜଧାନୀ ଭୁବନେଶ୍ୱରରେ ଆପଣଙ୍କୁ ସ୍ୱାଗତ।</div>
       <div class="sub-text-hindi" id="sub-text-secondary">ओडिशा की राजधानी भुवनेश्वर में आपका स्वागत है।</div>
+      <div class="sub-text-english" id="sub-text-tertiary">Welcome to Bhubaneswar, the capital city of Odisha.</div>
     </div>
   </div>
 
@@ -1794,142 +1841,134 @@
      ========================================================================= */
 
   const LINES = {
-    "announcer": { "speaker": "announcer", "or": "ଓଡ଼ିଶାର ରାଜଧାନୀ ଭୁବନେଶ୍ୱରରେ ଆପଣଙ୍କୁ ସ୍ୱାଗତ। ବାରମୁଣ୍ଡା ବସ୍ ଟର୍ମିନାଲ୍ରେ ରଘୁଙ୍କ ଦହିବରା-ଆଳୁଦମ୍ ବାସ୍ନା ଆସୁଛି!", "hi": "ओडिशा की राजधानी भुवनेश्वर में आपका स्वागत है। बारामुंडा बस टर्मिनल पर रघु के दहीबड़ा-आलूदम की खुशबू आ रही है!" },
-    "babu_arrival": { "speaker": "babu", "or": "ଆହା! ଶେଷରେ ଭୁବନେଶ୍ୱର ପହଞ୍ଚିଗଲି। ପେଟରେ ଭୋକ ହେଲାଣି, ଆଗେ ଗରମ ଦହିବରା-ଆଳୁଦମ୍ ଖାଇବି, ତା'ପରେ ଅଟୋ କିମ୍ବା ସ୍କୁଟିରେ ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ବାହାରିବି।", "hi": "आहा! आख़िरकार भुवनेश्वर पहुँच गया। भूख लगी है, पहले गरमा-गरम दहीबड़ा-आलूदम खाऊंगा, फिर ऑटो या स्कूटी से मास्टर कैंटीन निकलूंगा।" },
-    
-    // DAHIBARA DIALOGUES (CORE LOOP)
-    "dahibara_raghu": { "speaker": "dahibara", "or": "ଆସନ୍ତୁ ବାବୁ! ଆମ ବାରମୁଣ୍ଡା ସ୍ପେଶାଲ୍ ଦହିବରା-ଆଳୁଦମ୍ ଖାଇବେ? ଦହି ଖଟା-ମିଠା, ଝୋଳ ତତଲା-ରାଗ, ଉପରେ ପିଆଜ-ଧନିଆ-ସେଓ୍ୱ! ₹୨୦ ପ୍ଲେଟ୍!", "hi": "आइए बाबू! हमारे बारामुंडा का प्रसिद्ध दहीबड़ा-आलूदम खाइए! दही खट्टा-मीठा, तरी मसालेदार, ऊपर से प्याज-धनिया-सेव! ₹20 प्लेट!" },
-    "dahibara_spicy": { "speaker": "babu", "or": "ଗୋଟେ ପ୍ଲେଟ୍ ଦହିବରା ଟିକେ ରାଗ ଆଳୁଦମ୍ ଆଉ ଦହି-ପାଣି ଗ୍ଲାସେ ଦିଅନ୍ତୁ!", "hi": "एक प्लेट दहीबड़ा थोड़ा तीखा आलूदम और एक गिलास दही-पानी दीजिए!" },
-    "dahibara_bargain": { "speaker": "babu", "or": "ଭାଇ କଲେଜ ପିଲା, ₹୧୫ ରେ ଗୋଟେ ପ୍ଲେଟ୍ ଦିଅନ୍ତୁ!", "hi": "भाई कॉलेज का छात्र हूँ, ₹15 में एक प्लेट दीजिए!" },
-    "dahibara_pani_only": { "speaker": "babu", "or": "ଭାଇ ଖାଲି ଥଣ୍ଡା ମସଲା ଦହି-ପାଣି ଗ୍ଲାସେ ଦିଅନ୍ତୁ! (₹୫)", "hi": "भाई सिर्फ ठंडा मसाला दही-पानी का एक गिलास दीजिए! (₹5)" },
-    "dahibara_yum": { "speaker": "babu", "or": "ଆହାଃ! କି ଅମୃତ ସ୍ୱାଦ! କଟକ-ଭୁବନେଶ୍ୱର ଦହିବରା-ଆଳୁଦମ୍‌ର କୌଣସି ତୁଳନା ନାହିଁ! (ଶକ୍ତି ଓ +୨୫% ସ୍ପୀଡ୍ ବୁଷ୍ଟ ମିଳିଲା)", "hi": "आहा! क्या लाजवाब स्वाद है! कटक-भुवनेश्वर के दहीबड़ा-आलूदम का कोई मुकाबला नहीं! (ऊर्जा व +25% स्पीड बूस्ट मिला)" },
-    
-    // SACRED COW PRANAM
-    "cow_warning": { "speaker": "auto", "or": "ଆରେ ଦେଖି ଚଳାନ୍ତୁ! ଗୋ-ମାତା ରାସ୍ତା ମଝିରେ ବସିଛନ୍ତି!", "hi": "अरे देख के चलाइए! गोमाता रास्ते के बीच में बैठी हैं!" },
-    "babu_cow": { "speaker": "babu", "or": "ନମସ୍କାର ଗୋମାତା! ଆମକୁ ରାସ୍ତା ଛାଡ଼ିଦିଅନ୍ତୁ!", "hi": "नमस्ते गोमाता! हमें रास्ता दे दीजिए!" },
-    "cow_pranam": { "speaker": "babu", "or": "ଜୟ ଗୋ-ମାତା! ଭୁବନେଶ୍ୱର ଯାତ୍ରା ନିର୍ବିଘ୍ନ ଓ ସୁରକ୍ଷିତ ହେଉ। (+୧୦୦ XP ଆଶୀର୍ବାଦ)", "hi": "जय गोमाता! भुवनेश्वर यात्रा सुरक्षित और शुभ हो। (+100 XP आशीर्वाद)" },
-
-    // BRANCHING AUTO BARGAINING
-    "auto_q1": { "speaker": "auto", "or": "ବାବୁ! କୁଆଡ଼େ ଯିବେ?", "hi": "बाबू! कहाँ जाना है?" },
-    "babu_mc": { "speaker": "babu", "or": "ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଯିବି ଭାଇ, କେତେ ନେବେ?", "hi": "मास्टर कैंटीन जाना है भाई, कितना लोगे?" },
-    "auto_offer_50": { "speaker": "auto", "or": "ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଯିବେ? ₹୫୦ ଲାଗିବ ବାବୁ! ପେଟ୍ରୋଲ ₹୧୦୬ ହେଲାଣି!", "hi": "मास्टर कैंटीन जाना है? ₹50 लगेगा बाबू! पेट्रोल ₹106 हो गया है!" },
-    "babu_counter_30": { "speaker": "babu", "or": "ଆରେ କାଳିଆ ଭାଇ! ପ୍ରତିଦିନ ₹୩୦ ଚାଲେ, ଆମେ ଲୋକାଲ ପିଲା!", "hi": "अरे कालिया भाई! रोज़ ₹30 लगता है, हम लोकल हैं!" },
-    "auto_counter_40": { "speaker": "auto", "or": "ଆରେ ବାବୁ, ତମେ ଛାତ୍ର ଜଣାପଡୁଛ, ଆଚ୍ଛା ₹୪୦ ଦିଅ, ଆସ ବସନ୍ତୁ!", "hi": "अरे बाबू, छात्र लगते हो, अच्छा ₹40 दो, बैठो!" },
-    "babu_demand_meter": { "speaker": "babu", "or": "ମିଟର ଚଲାନ୍ତୁ ଭାଇ! ସରକାରୀ ନିୟମ ଅନୁସାରେ ଯିବି!", "hi": "मीटर चाइए भाई! सरकारी नियम से चलेंगे!" },
-    "auto_meter_excuse": { "speaker": "auto", "or": "ଆରେ ଭାଇ, ମିଟରରେ ଗଲେ ₹୬୦ ଉଠିବ! ରାଜମହଲ ଜାମ୍ ଅଛି! ₹୪୦ ଫିକ୍ସ କରନ୍ତୁ!", "hi": "अरे भाई, मीटर से ₹60 आएगा! राजमहल में जाम है! ₹40 तय करो!" },
-    "babu_bluff_mobus": { "speaker": "babu", "or": "ଠିକ୍ ଅଛି ଭାଇ, ମୁଁ 'ମୋ ବସ୍' (Mo Bus) ରେ ₹୨୦ ରେ ଚାଲିଯିବି!", "hi": "ठीक है भाई, मैं 'मो बस' (Mo Bus) से ₹20 में चला जाऊँगा!" },
-    "auto_call_back": { "speaker": "auto", "or": "ଆରେ ଆରେ ରୁହ ବାବୁ! ଖରାରେ କାହିଁକି ବସ୍ ଖୋଜିବ? ଆସ ₹୩୫ ରେ ଛାଡ଼ିଦେବି!", "hi": "अरे अरे रुको बाबू! धूप में बस क्यों ढूँढोगे? आओ ₹35 में छोड़ दूंगा!" },
-    "babu_pay_full": { "speaker": "babu", "or": "ଠିକ୍ ଅଛି, ଏଇ ନିଅନ୍ତୁ ₹୫୦!", "hi": "ठीक है, ये लीजिए ₹50!" },
-    "auto_offer": { "speaker": "auto", "or": "୫୦ ଟଙ୍କା ହେବ ବାବୁ!", "hi": "50 रुपये लगेगा बाबू!" },
-    "babu_negotiate": { "speaker": "babu", "or": "ଆରେ ୪୦ ଟଙ୍କାରେ ଚାଲନ୍ତୁ ନା ଭାଇ!", "hi": "अरे 40 रुपये में चलिए ना भाई!" },
-    "auto_accept": { "speaker": "auto", "or": "ଠିକ୍ ଅଛି ବାବୁ, ବସନ୍ତୁ! କିନ୍ତୁ ଆଜି ଟ୍ରାଫିକ୍ ବହୁତ!", "hi": "ठीक है बाबू, बैठिए! लेकिन आज ट्रैफिक बहुत है!" },
-    "auto_lingaraj": { "speaker": "auto", "or": "ବାବୁ, ଆଗେ ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ କାମ ସାରନ୍ତୁ, ପରେ ଲିଙ୍ଗରାଜ ଦର୍ଶନ କରାଇଦେବି!", "hi": "बाबू, पहले मास्टर कैंटीन का काम निपटा लीजिए, फिर लिंगराज दर्शन करा दूँगा!" },
-    "auto_tea": { "speaker": "auto", "or": "ପ୍ରଥମେ ଗରମ ଚା' ପିଇନିଅନ୍ତୁ, ସାମ୍ନାରେ ଦୋକାନ ଅଛି!", "hi": "पहले गरमा-गरम चाय पी लीजिए, सामने दुकान है!" },
-    "tutorial": { "speaker": "announcer", "or": "W/A/S/D କିମ୍ବା ତୀର ଚିହ୍ନରେ ଗାଡ଼ି ଚଲାନ୍ତୁ। ସ୍ପେସ୍ ମାରିଲେ ବ୍ରେକ୍ ଲାଗିବ।", "hi": "W/A/S/D या एरो कीज़ से गाड़ी चलाएं। स्पेस से ब्रेक लगेगा।" },
-    "bike_overtake": { "speaker": "bike", "or": "ହେ ବାବୁ! ସାଇଡ୍ କର, ଜଲ୍ଦି ଅଛି!", "hi": "ए बाबू! साइड करो, जल्दी है!" },
-    "babu_bike": { "speaker": "babu", "or": "ଆରେ ଭାଇ, ଏତେ ଜଲ୍ଦି କ'ଣ! ସମ୍ଭାଳିକି ଚଳାଅ!", "hi": "अरे भाई, इतनी जल्दी क्या है! संभलकर चलाओ!" },
-    "scooty_ride": { "speaker": "babu", "or": "ବାଃ! ୧୧୦cc ହୋଣ୍ଡା ଏକ୍ଟିଭା ସ୍କୁଟି! ଏଥିରେ ଭୁବନେଶ୍ୱର ରାସ୍ତାରେ ବୁଲିବା କି ଆନନ୍ଦ!", "hi": "वाह! 110cc होंडा एक्टिवा स्कूटी! इससे भुवनेश्वर की सड़कों पर घूमने का मज़ा ही कुछ और है!" },
-    "tea_seller": { "speaker": "tea", "or": "ଆସନ୍ତୁ ବାବୁ! ଧବଳେଶ୍ୱର ସ୍ପେଶାଲ୍ ଅଦା ଚା' ଅଛି!", "hi": "आइए बाबू! धबलेश्वर स्पेशल अदरक चाय है!" },
-    "babu_tea_no": { "speaker": "babu", "or": "ଏବେ ନୁହେଁ ଭାଇ, ଫେରିବା ବେଳେ ପିଇବି!", "hi": "अभी नहीं भाई, लौटते समय पिएंगे!" },
-    "babu_tea_yes": { "speaker": "babu", "or": "ଗୋଟେ କୁଲ୍ଲଡ଼ ଚା' ଦିଅନ୍ତୁ ଭାଇ! ମନ ତାଜା ହୋଇଗଲା!", "hi": "एक कुल्हड़ चाय दीजिए भाई! मन तरोताज़ा हो गया!" },
-    "ram_mandir_darshan": { "speaker": "babu", "or": "ଜୟ ଶ୍ରୀରାମ! ଜନପଥର ଏଇ ଭବ୍ୟ ରାମ ମନ୍ଦିର ଚିତ୍ତାକର୍ଷକ!", "hi": "जय श्रीराम! जनपथ का यह भव्य राम मंदिर अति सुंदर है!" },
-    "priest_blessing": { "speaker": "priest", "or": "କଲ୍ୟାଣ ହେଉ ବାବୁ! ପ୍ରଭୁ ଶ୍ରୀରାମ ତୁମର ମନସ୍କାମନା ପୂର୍ଣ୍ଣ କରନ୍ତୁ!", "hi": "कल्याण हो बाबू! प्रभु श्रीराम तुम्हारी मनोकामना पूर्ण करें!" },
-    "flyover_kalia": { "speaker": "auto", "or": "ଏଇଟା ରାଜମହଲ ଫ୍ଲାଏଓଭର ବାବୁ, ଏଠାରୁ ଟ୍ରାଫିକ୍ ଉପରେ ସିଧା ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍!", "hi": "ये राजमहल फ्लाईओवर है बाबू, यहाँ से सीधे मास्टर कैंटीन!" },
-    "flyover_babu": { "speaker": "babu", "or": "କାଳିଆ ଭାଇ, କ'ଣ ସ୍ପୀଡ୍ ନେଉଛ ଗାଡ଼ିକୁ!", "hi": "कालिया भाई, क्या गज़ब स्पीड पकड़ी है गाड़ी ने!" },
-    "drop_driver": { "speaker": "auto", "or": "ବାସ୍ ବାବୁ, ଏଇଠି। ଆଗ ରାସ୍ତା ବନ୍ଦ ଅଛି। ୬୦ ଟଙ୍କା ଦିଅନ୍ତୁ।", "hi": "बस बाबू, यहीं तक। आगे रास्ता बंद है। 60 रुपये दीजिए।" },
-    "babu_argue": { "speaker": "babu", "or": "ଆରେ ଭାଇ, ମ୍ୟାପ୍ ଦେଖନ୍ତୁ! ରାସ୍ତା ତ ଖୋଲା ଅଛି। ୪୦ ଟଙ୍କା କଥା ହୋଇଥିଲା।", "hi": "अरे भाई, मैप देखिए! रास्ता तो खुला है। 40 रुपये की बात हुई थी।" },
-    "driver_giveup": { "speaker": "auto", "or": "ଆଚ୍ଛା ଆଚ୍ଛା, ବସନ୍ତୁ, ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଘୋଡ଼ା ପାଖରେ ଓହ୍ଲାଇଦେବି।", "hi": "अच्छा अच्छा, बैठिए, मास्टर कैंटीन घोड़े के पास छोड़ देता हूँ।" },
-    "babu_walk": { "speaker": "babu", "or": "ଠିକ୍ ଅଛି, ଏଇ ନିଅନ୍ତୁ ୩୦ ଟଙ୍କା। ବାକି ମୁଁ ଚାଲିକି ଯିବି।", "hi": "ठीक है, ये लीजिए 30 रुपये। बाकी मैं पैदल चला जाऊँगा।" },
-    "babu_payextra": { "speaker": "babu", "or": "ଠିକ୍ ଅଛି, ୬୦ ନିଅନ୍ତୁ।", "hi": "ठीक है, 60 ले लीजिए।" },
-    "driver_arrived": { "speaker": "auto", "or": "ନିଅନ୍ତୁ ବାବୁ, କୋଣାର୍କ ଯୁଦ୍ଧ-ଘୋଡ଼ା ସ୍ମାରକ ପାଖରେ ପହଞ୍ଚିଗଲୁ।", "hi": "लीजिए बाबू, कोणार्क युद्ध-अश्व स्मारक के पास पहुँच गए।" },
-    "babu_thanks": { "speaker": "babu", "or": "ଧନ୍ୟବାଦ କାଳିଆ ଭାଇ! ବହୁତ ବଢ଼ିଆ ଚଳାଇଲ!", "hi": "धन्यवाद कालिया भाई! बहुत बढ़िया चलाया!" },
-    "driver_bye": { "speaker": "auto", "or": "ଆଉ କେବେ ଆସିବେ! ଭୁବନେଶ୍ୱର ବୁଲାଇଦେବି!", "hi": "फिर कभी आइएगा! पूरा भुवनेश्वर घुमा दूँगा!" },
-    "broker_hello": { "speaker": "broker", "or": "ନମସ୍କାର ବାବୁ! ନୂଆ ଆସିଛନ୍ତି କି? ଶସ୍ତାରେ ୧-BHK ରୁମ୍ ଦରକାର କି?", "hi": "नमस्ते बाबू! नए आए हो? सस्ते में 1-BHK रूम चाहिए क्या?" },
-    "broker_scam": { "speaker": "broker", "or": "ରୁମ୍ ଭଡ଼ା ମାତ୍ର ₹୨୫୦୦! କିନ୍ତୁ ଆଜି ହିଁ ₹୨୦୦୦ ଆଡଭାନ୍ସ ଦେବାକୁ ପଡ଼ିବ!", "hi": "रूम का किराया सिर्फ ₹2500! लेकिन आज ही ₹2000 एडवांस देना होगा!" },
-    "broker_noagree": { "speaker": "broker", "or": "ଏଗ୍ରିମେଣ୍ଟ ପରେ ହେବ ବାବୁ, ଏଠି ବିଶ୍ୱାସରେ କାମ ଚାଲେ!", "hi": "एग्रीमेंट बाद में होगा बाबू, यहाँ विश्वास पर काम चलता है!" },
-    "neighbour_warn": { "speaker": "neighbour", "or": "ବାବୁ! ଏ ଦଲାଲ କଥାରେ ପଡ଼ନି! ଏ ଘର ମାଲିକ କଲିକତାରେ ରହନ୍ତି, ଏ ଠକ ଲୋକ!", "hi": "बाबू! इस दलाल के चक्कर में मत पड़ो! इस घर के मालिक कोलकाता में रहते हैं, यह धोखेबाज़ है!" },
-    "police_catch": { "speaker": "police", "or": "ରଘୁ ଦଲାଲ! ତୋତେ ଖୋଜୁଥିଲୁ! ଚାଲ ଥାନାକୁ! ବାବୁ, ଆପଣ ବହୁତ ଚାଲାକ୍!", "hi": "रघु दलाल! तुम्हें ही ढूँढ रहे थे! चलो थाने! बाबू, आप बहुत होशियार निकले!" },
-    "owner_real": { "speaker": "owner", "or": "ଧନ୍ୟବାଦ ପୁଅ! ଏ ଠକ ମୋ ଘରକୁ ନିଜର କହି ଲୋକଙ୍କୁ ଲୁଟୁଥିଲା!", "hi": "धन्यवाद बेटा! यह धोखेबाज़ मेरे घर को अपना बताकर लोगों को लूट रहा था!" },
-    "babu_happy": { "speaker": "babu", "or": "ଜୟ ଜଗନ୍ନାଥ! ସ୍କାମ୍‌ରୁ ବଞ୍ଚିଗଲି, ଏବେ ଏକାମ୍ର ହାଟ କଳା ଗ୍ରାମ ବୁଲିବାକୁ ଯିବି!", "hi": "जय जगन्नाथ! स्कैम से बच गया, अब एकाम्र हाट कला ग्राम घूमने जाऊँगा!" },
-    "artisan_greet": { "speaker": "artisan", "or": "ନମସ୍କାର ବାବୁ! ଆମ ରଘୁରାଜପୁର ହସ୍ତଶିଳ୍ପ ଓ ପଟ୍ଟଚିତ୍ର ଦେଖନ୍ତୁ!", "hi": "नमस्ते बाबू! हमारे रघुराजपुर के हस्तशिल्प और पट्टचित्र देखिए!" },
-    "artisan_award": { "speaker": "artisan", "or": "ଆପଣଙ୍କ ସଚେତନତା ଓ ଓଡ଼ିଶା ପ୍ରେମ ଦେଖି ଖୁସି ଲାଗିଲା। ଏଇ ସ୍ୱର୍ଣ୍ଣ ପଟ୍ଟଚିତ୍ର ଉପହାର ଗ୍ରହଣ କରନ୍ତୁ!", "hi": "आपकी समझदारी और ओडिशा प्रेम देखकर खुशी हुई। यह स्वर्ण पट्टचित्र उपहार स्वीकार करें!" },
-    "dhauli_peace": { "speaker": "guide", "or": "ଏଇଟା ଧଉଳି ଶାନ୍ତି ସ୍ତୂପ। ଏଠାରେ ସମ୍ରାଟ ଅଶୋକ ଚଣ୍ଡାଶୋକରୁ ଧର୍ମାଶୋକ ହୋଇଥିଲେ।", "hi": "यह धउलि शांति स्तूप है। यहाँ सम्राट अशोक ने चंडाशोक से धर्माशोक का रूप लिया था।" },
-    "puri_teaser_announcer": { "speaker": "announcer", "or": "ଅଭିନନ୍ଦନ! ଆପଣ ଭୁବନେଶ୍ୱର ସଫଳତାର ସହ ପୂର୍ଣ୍ଣ କଲେ। ଆଗାମୀ ସ୍ତର: ଜାତୀୟ ରାଜପଥ-୩୧୬ ଦେଇ ପୁରୀ ଶ୍ରୀମନ୍ଦିର ଓ ସମୁଦ୍ର କୂଳ!", "hi": "बधाई! आपने भुवनेश्वर सफलतापूर्वक पूरा कर लिया। आगामी स्तर: राष्ट्रीय राजमार्ग-316 से पुरी श्रीमंदिर और समुद्र तट!" },
-
-    // PG RENT SCAM & MEME SOUNDS DIALOGUES
-    "pg_aunty_rules": { "speaker": "aunty", "or": "ଶୁଣ ବାବୁ! ଶ୍ରୀ ସାଇ ପିଜିର ନିୟମ ଏକଦମ୍ କଡ଼ା! ରାତି ୯ଟାରେ ମେନ୍ ଗେଟ୍ ବନ୍ଦ! ବାହାର ଖାଇବା ମନା, ସାଙ୍ଗ-ସାଥୀ ଆସିବା ମନା, ଆଉ ରବିବାର ପତଳା ପାଣିଆ ଡାଲି ଛଡ଼ା କିଛି ମିଳିବନି!", "hi": "सुनो बाबू! श्री साई पीजी के नियम बहुत सख्त हैं! रात 9:00 बजे मेन गेट बंद! बाहर का खाना मना, दोस्त लाना मना, और रविवार को सिर्फ पतली दाल मिलेगी!" },
-    "pg_uncle_meter": { "speaker": "uncle", "or": "ଆରେ ବାବୁ, ତମ ରୁମ୍ର ବିଜୁଳି ବିଲ୍ ଏ ମାସ ₹୩,୫୦୦ ଆସିଛି! କାରଣ ଆମ ଫ୍ୟାନ୍ ୨୨୦ ଭୋଲ୍ଟ ହାଇ-ପାୱାର୍‌ରେ ଘୁରୁଛି!", "hi": "अरे बाबू, तुम्हारे कमरे का बिजली बिल इस महीने ₹3,500 आया है! क्योंकि हमारा पंखा 220 वोल्ट हाई-पावर पर चलता है!" },
-    "babu_pg_aayein": { "speaker": "babu", "or": "ଅଙ୍କଲ୍! ଆୟେଁ?! ଛୋଟ ଗୋଟେ ଏଲ୍‌ଇଡି ବଲ୍ବ ଆଉ ପଙ୍ଖା ଚାଲିଲେ ₹୩,୫୦୦ ବିଲ୍?! ଆରେ ଏଇ ମିଟର ଉପରେ ଏଡ଼େ ବଡ଼ ନାଲି ଚୁମ୍ବକ (ମ୍ୟାଗ୍ନେଟ୍) କାହିଁକି ଲାଗିଛି?!", "hi": "अंकल! आयेँ?! एक छोटे से बल्ब और पंखे का बिल ₹3,500?! अरे इस मीटर पर इतना बड़ा लाल चुंबक (मैग्नेट) क्यों चिपका रखा है?!" },
-    "aunty_drama": { "speaker": "aunty", "or": "କ'ଣ କହିଲୁ?! ମୋ ନିୟମ ଉପରେ କଥା କହୁଛୁ?! ପିଜି ଛାଡ଼ି ଏବେ ପଳାଅ!", "hi": "क्या कहा?! हमारे नियमों पर सवाल उठाते हो?! तुरंत पीजी खाली करो!" },
-    "uncle_busted": { "speaker": "uncle", "or": "ଆରେ ବାବୁ, ପୋଲିସ୍ ଡାକନି! ମୁଁ ଚୁମ୍ବକ ବାହାର କରିଦେଉଛି, ବିଲ୍ ₹୨୦୦ କରିଦେବି!", "hi": "अरे बाबू, पुलिस मत बुलाओ! मैं चुंबक हटा लेता हूँ, बिल सिर्फ ₹200 कर दूँगा!" },
-    "tushar_kiit": { "speaker": "student", "or": "ଆରେ ଭାଇ! ମୁଁ KIIT ଇଞ୍ଜିନିୟରିଂ ଛାତ୍ର ତୁଷାର। ଶହୀଦ ନଗର ପିଜି ଆଣ୍ଟିଙ୍କୁ ସବୁ ପିଲା ଡରନ୍ତି! ସ୍କୁଟି ଧରି ସହର ବୁଲନ୍ତୁ, ଖୁବ୍ ମଜା ଲାଗିବ!", "hi": "अरे भाई! मैं KIIT इंजीनियरिंग का छात्र तुषार हूँ। शहीद नगर पीजी वाली आंटी से सब डरते हैं! स्कूटी लेकर शहर घूमो, बहुत मज़ा आएगा!" },
-    "panda_sir": { "speaker": "police", "or": "ଜୟ ହିନ୍ଦ୍ ବାବୁ! ରାଜମହଲ ଛକରେ ହେଲମେଟ୍ ପିନ୍ଧି ସ୍କୁଟି ୩୫ କି.ମି./ଘଣ୍ଟାରେ ସୁରକ୍ଷିତ ଭାବେ ଚଳାନ୍ତୁ। ଭଲ ଚାଳକ ହେଲେ ଚାଲାଣ କଟିବନି!", "hi": "जय हिन्द बाबू! राजमहल चौक पर हेलमेट पहनकर स्कूटी 35 किमी/घंटे से सुरक्षित चलाएं। नियमों का पालन करेंगे तो कभी चालान नहीं कटेगा!" },
-    "khandagiri_scene": { "speaker": "guide", "or": "ନମସ୍କାର! ଏଇଟା ହେଉଛି ଖଣ୍ଡଗିରି ଓ ଉଦୟଗିରି ରାଣୀ ଗୁମ୍ଫା। ଦ୍ୱିତୀୟ ଶତାବ୍ଦୀ ଖ୍ରୀଷ୍ଟପୂର୍ବର ଖାରବେଳଙ୍କ ଶିଳାଲେଖ ଓ ବାନର ସେନା ଏଠାକାର ଶୋଭା ବଢ଼ାନ୍ତି।", "hi": "नमस्ते! यह खंडागिरि और उदयगिरि की रानी गुम्फा है। ईसा पूर्व दूसरी सदी के सम्राट खारवेल के शिलालेख और वानर सेना यहाँ की शान हैं।" }
+    "announcer": { speaker: "announcer", or: "ଓଡ଼ିଶାର ରାଜଧାନୀ ଭୁବନେଶ୍ୱରରେ ଆପଣଙ୍କୁ ସ୍ୱାଗତ। ବାରମୁଣ୍ଡା ବସ୍ ଟର୍ମିନାଲ୍ରେ ରଘୁଙ୍କ ଦହିବରା-ଆଳୁଦମ୍ ବାସ୍ନା ଆସୁଛି!", hi: "ओडिशा की राजधानी भुवनेश्वर में आपका स्वागत है। बारामुंडा बस टर्मिनल पर रघु के दहीबड़ा-आलूदम की खुशबू आ रही है!", en: "Welcome to Bhubaneswar, the Temple Capital of Odisha! Raghu's Dahibara-Aloodum aroma fills the Baramunda bus terminal!" },
+    "babu_arrival": { speaker: "babu", or: "ଆହା! ଶେଷରେ ଭୁବନେଶ୍ୱର ପହଞ୍ଚିଗଲି। ପେଟରେ ଭୋକ ହେଲାଣି, ଆଗେ ଗରମ ଦହିବରା-ଆଳୁଦମ୍ ଖାଇବି, ତା'ପରେ ଅଟୋ କିମ୍ବା ସ୍କୁଟିରେ ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ବାହାରିବି।", hi: "आहा! आख़िरकार भुवनेश्वर पहुँच गया। भूख लगी है, पहले गरमा-गरम दहीबड़ा-आलूदम खाऊंगा, फिर ऑटो या स्कूटी से मास्टर कैंटीन निकलूंगा।", en: "Aha! Finally arrived in Bhubaneswar. I'm starving! First I'll taste piping hot Dahibara-Aloodum, then ride an auto or scooty to Master Canteen!" },
+    "dahibara_raghu": { speaker: "dahibara", or: "ଆସନ୍ତୁ ବାବୁ! ଆମ ବାରମୁଣ୍ଡା ସ୍ପେଶାଲ୍ ଦହିବରା-ଆଳୁଦମ୍ ଖାଇବେ? ଦହି ଖଟା-ମିଠା, ଝୋଳ ତତଲା-ରାଗ, ଉପରେ ପିଆଜ-ଧନିଆ-ସେଓ୍ୱ! ₹୨୦ ପ୍ଲେଟ୍!", hi: "आइए बाबू! हमारे बारामुंडा का प्रसिद्ध दहीबड़ा-आलूदम खाइए! दही खट्टा-मीठा, तरी मसालेदार, ऊपर से प्याज-धनिया-सेव! ₹20 प्लेट!", en: "Welcome Babu! Try our Baramunda special Dahibara-Aloodum! Sweet-tangy dahi, sizzling spicy gravy, topped with onions, coriander and sev! ₹20 a plate!" },
+    "dahibara_spicy": { speaker: "babu", or: "ଗୋଟେ ପ୍ଲେଟ୍ ଦହିବରା ଟିକେ ରାଗ ଆଳୁଦମ୍ ଆଉ ଦହି-ପାଣି ଗ୍ଲାସେ ଦିଅନ୍ତୁ!", hi: "एक प्लेट दहीबड़ा थोड़ा तीखा आलूदम और एक गिलास दही-पानी दीजिए!", en: "Give me one plate of Dahibara with extra spicy Aloodum and a tall glass of cold Dahi-Pani!" },
+    "dahibara_bargain": { speaker: "babu", or: "ଭାଇ କଲେଜ ପିଲା, ₹୧୫ ରେ ଗୋଟେ ପ୍ଲେଟ୍ ଦିଅନ୍ତୁ!", hi: "भाई कॉलेज का छात्र हूँ, ₹15 में एक प्लेट दीजिए!", en: "Bhai, I'm a college student, please give me a plate for ₹15!" },
+    "dahibara_pani_only": { speaker: "babu", or: "ଭାଇ ଖାଲି ଥଣ୍ଡା ମସଲା ଦହି-ପାଣି ଗ୍ଲାସେ ଦିଅନ୍ତୁ! (₹୫)", hi: "भाई सिर्फ ठंडा मसाला दही-पानी का एक गिलास दीजिए! (₹5)", en: "Bhai, just give me a glass of refreshing spiced Dahi-Pani! (₹5)" },
+    "dahibara_yum": { speaker: "babu", or: "ଆହାଃ! କି ଅମୃତ ସ୍ୱାଦ! କଟକ-ଭୁବନେଶ୍ୱର ଦହିବରା-ଆଳୁଦମ୍‌ର କୌଣସି ତୁଳନା ନାହିଁ! (ଶକ୍ତି ଓ +୨୫% ସ୍ପୀଡ୍ ବୁଷ୍ଟ ମିଳିଲା)", hi: "आहा! क्या लाजवाब स्वाद है! कटक-भुवनेश्वर के दहीबड़ा-आलूदम का कोई मुकाबला नहीं! (ऊर्जा व +25% स्पीड बूस्ट मिला)", en: "Ah! Divine taste! Nothing matches Cuttack-Bhubaneswar Dahibara-Aloodum! (Energy & +25% Speed Boost received)" },
+    "cow_warning": { speaker: "auto", or: "ଆରେ ଦେଖି ଚଳାନ୍ତୁ! ଗୋ-ମାତା ରାସ୍ତା ମଝିରେ ବସିଛନ୍ତି!", hi: "अरे देख के चलाइए! गोमाता रास्ते के बीच में बैठी हैं!", en: "Hey, drive carefully! Sacred Go-Mata is resting right in the middle of the road!" },
+    "babu_cow": { speaker: "babu", or: "ନମସ୍କାର ଗୋମାତା! ଆମକୁ ରାସ୍ତା ଛାଡ଼ିଦିଅନ୍ତୁ!", hi: "नमस्ते गोमाता! हमें रास्ता दे दीजिए!", en: "Namaskar Go-Mata! Please grant us safe passage!" },
+    "cow_pranam": { speaker: "babu", or: "ଜୟ ଗୋ-ମାତା! ଭୁବନେଶ୍ୱର ଯାତ୍ରା ନିର୍ବିଘ୍ନ ଓ ସୁରକ୍ଷିତ ହେଉ। (+୧୦୦ XP ଆଶୀର୍ବାଦ)", hi: "जय गोमाता! भुवनेश्वर यात्रा सुरक्षित और शुभ हो। (+100 XP आशीर्वाद)", en: "Jai Go-Mata! May our journey through Bhubaneswar be peaceful and blessed. (+100 XP Blessing)" },
+    "auto_q1": { speaker: "auto", or: "ବାବୁ! କୁଆଡ଼େ ଯିବେ?", hi: "बाबू! कहाँ जाना है?", en: "Babu! Where do you want to go?" },
+    "babu_mc": { speaker: "babu", or: "ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଯିବି ଭାଇ, କେତେ ନେବେ?", hi: "मास्टर कैंटीन जाना है भाई, कितना लोगे?", en: "Going to Master Canteen brother, how much will you charge?" },
+    "auto_offer_50": { speaker: "auto", or: "ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଯିବେ? ₹୫୦ ଲାଗିବ ବାବୁ! ପେଟ୍ରୋଲ ₹୧୦୬ ହେଲାଣି!", hi: "मास्टर कैंटीन जाना है? ₹50 लगेगा बाबू! पेट्रोल ₹106 हो गया है!", en: "Going to Master Canteen? That's ₹50, sir! Petrol is ₹106 now!" },
+    "babu_counter_30": { speaker: "babu", or: "ଆରେ କାଳିଆ ଭାଇ! ପ୍ରତିଦିନ ₹୩୦ ଚାଲେ, ଆମେ ଲୋକାଲ ପିଲା!", hi: "अरे कालिया भाई! रोज़ ₹30 लगता है, हम लोकल हैं!", en: "Arrey Kalia Bhai! It's ₹30 everyday, we are local passengers!" },
+    "auto_counter_40": { speaker: "auto", or: "ଆରେ ବାବୁ, ତମେ ଛାତ୍ର ଜଣାପଡୁଛ, ଆଚ୍ଛା ₹୪୦ ଦିଅ, ଆସ ବସନ୍ତୁ!", hi: "अरे बाबू, छात्र लगते हो, अच्छा ₹40 दो, बैठो!", en: "Arrey Babu, you look like a student. Okay, pay ₹40 and hop in!" },
+    "babu_demand_meter": { speaker: "babu", or: "ମିଟର ଚଲାନ୍ତୁ ଭାଇ! ସରକାରୀ ନିୟମ ଅନୁସାରେ ଯିବି!", hi: "मीटर चाइए भाई! सरकारी नियम से चलेंगे!", en: "Please turn on the meter! I'll travel strictly by official government rates!" },
+    "auto_meter_excuse": { speaker: "auto", or: "ଆରେ ଭାଇ, ମିଟରରେ ଗଲେ ₹୬୦ ଉଠିବ! ରାଜମହଲ ଜାମ୍ ଅଛି! ₹୪୦ ଫିକ୍ସ କରନ୍ତୁ!", hi: "अरे भाई, मीटर से ₹60 आएगा! राजमहल में जाम है! ₹40 तय करो!", en: "Arrey bhai, by meter it'll reach ₹60! Raj Mahal has traffic jam! Settle on ₹40 fixed!" },
+    "babu_bluff_mobus": { speaker: "babu", or: "ଠିକ୍ ଅଛି ଭାଇ, ମୁଁ 'ମୋ ବସ୍' (Mo Bus) ରେ ₹୨୦ ରେ ଚାଲିଯିବି!", hi: "ठीक है भाई, मैं 'मो बस' (Mo Bus) से ₹20 में चला जाऊँगा!", en: "Alright brother, I'll take the air-conditioned Mo Bus for just ₹20!" },
+    "auto_call_back": { speaker: "auto", or: "ଆରେ ଆରେ ରୁହ ବାବୁ! ଖରାରେ କାହିଁକି ବସ୍ ଖୋଜିବ? ଆସ ₹୩୫ ରେ ଛାଡ଼ିଦେବି!", hi: "अरे अरे रुको बाबू! धूप में बस क्यों ढूँढोगे? आओ ₹35 में छोड़ दूंगा!", en: "Wait, wait Babu! Why search for buses in this blazing sun? Come, I'll drop you for ₹35!" },
+    "babu_pay_full": { speaker: "babu", or: "ଠିକ୍ ଅଛି, ଏଇ ନିଅନ୍ତୁ ₹୫୦!", hi: "ठीक है, ये लीजिए ₹50!", en: "Alright brother, here is ₹50!" },
+    "auto_offer": { speaker: "auto", or: "୫୦ ଟଙ୍କା ହେବ ବାବୁ!", hi: "50 रुपये लगेगा बाबू!", en: "That will be 50 rupees, Babu!" },
+    "babu_negotiate": { speaker: "babu", or: "ଆରେ ୪୦ ଟଙ୍କାରେ ଚାଲନ୍ତୁ ନା ଭାଇ!", hi: "अरे 40 रुपये में चलिए ना भाई!", en: "Arrey, please come for 40 rupees brother!" },
+    "auto_accept": { speaker: "auto", or: "ଠିକ୍ ଅଛି ବାବୁ, ବସନ୍ତୁ! କିନ୍ତୁ ଆଜି ଟ୍ରାଫିକ୍ ବହୁତ!", hi: "ठीक है बाबू, बैठिए! लेकिन आज ट्रैफिक बहुत है!", en: "Alright Babu, hop in! But traffic is heavy today!" },
+    "auto_lingaraj": { speaker: "auto", or: "ବାବୁ, ଆଗେ ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ କାମ ସାରନ୍ତୁ, ପରେ ଲିଙ୍ଗରାଜ ଦର୍ଶନ କରାଇଦେବି!", hi: "बाबू, पहले मास्टर कैंटीन का काम निपटा लीजिए, फिर लिंगराज दर्शन करा दूँगा!", en: "Babu, first finish your work at Master Canteen, later I'll take you for Lingaraj Temple darshan!" },
+    "auto_tea": { speaker: "auto", or: "ପ୍ରଥମେ ଗରମ ଚା' ପିଇନିଅନ୍ତୁ, ସାମ୍ନାରେ ଦୋକାନ ଅଛି!", hi: "पहले गरमा-गरम चाय पी लीजिए, सामने दुकान है!", en: "First let's have a hot cup of tea, there's a stall right ahead!" },
+    "tutorial": { speaker: "announcer", or: "W/A/S/D କିମ୍ବା ତୀର ଚିହ୍ନରେ ଗାଡ଼ି ଚଲାନ୍ତୁ। ସ୍ପେସ୍ ମାରିଲେ ବ୍ରେକ୍ ଲାଗିବ।", hi: "W/A/S/D या एरो कीज़ से गाड़ी चलाएं। स्पेस से ब्रेक लगेगा।", en: "Drive with W/A/S/D or Arrow keys. Press Spacebar for brake." },
+    "bike_overtake": { speaker: "bike", or: "ହେ ବାବୁ! ସାଇଡ୍ କର, ଜଲ୍ଦି ଅଛି!", hi: "ए बाबू! साइड करो, जल्दी है!", en: "Hey Babu! Move aside, I'm in a hurry!" },
+    "babu_bike": { speaker: "babu", or: "ଆରେ ଭାଇ, ଏତେ ଜଲ୍ଦି କ'ଣ! ସମ୍ଭାଳିକି ଚଳାଅ!", hi: "अरे भाई, इतनी जल्दी क्या है! संभलकर चलाओ!", en: "Arrey brother, what's the rush! Drive safely!" },
+    "scooty_ride": { speaker: "babu", or: "ବାଃ! ୧୧୦cc ହୋଣ୍ଡା ଏକ୍ଟିଭା ସ୍କୁଟି! ଏଥିରେ ଭୁବନେଶ୍ୱର ରାସ୍ତାରେ ବୁଲିବା କି ଆନନ୍ଦ!", hi: "वाह! 110cc होंडा एक्टिवा स्कूटी! इससे भुवनेश्वर की सड़कों पर घूमने का मज़ा ही कुछ और है!", en: "Wow! 110cc Honda Activa scooty! Cruising the streets of Bhubaneswar feels so exhilarating!" },
+    "tea_seller": { speaker: "tea", or: "ଆସନ୍ତୁ ବାବୁ! ଧବଳେଶ୍ୱର ସ୍ପେଶାଲ୍ ଅଦା ଚା' ଅଛି!", hi: "आइए बाबू! धबलेश्वर स्पेशल अदरक चाय है!", en: "Welcome Babu! We have special Dhabaleswar ginger tea!" },
+    "babu_tea_no": { speaker: "babu", or: "ଏବେ ନୁହେଁ ଭାଇ, ଫେରିବା ବେଳେ ପିଇବି!", hi: "अभी नहीं भाई, लौटते समय पिएंगे!", en: "Not now brother, I'll drink on my way back!" },
+    "babu_tea_yes": { speaker: "babu", or: "ଗୋଟେ କୁଲ୍ଲଡ଼ ଚା' ଦିଅନ୍ତୁ ଭାଇ! ମନ ତାଜା ହୋଇଗଲା!", hi: "एक कुल्हड़ चाय दीजिए भाई! मन तरोताज़ा हो गया!", en: "Give me one kulhad chai brother! So refreshing!" },
+    "ram_mandir_darshan": { speaker: "babu", or: "ଜୟ ଶ୍ରୀରାମ! ଜନପଥର ଏଇ ଭବ୍ୟ ରାମ ମନ୍ଦିର ଚିତ୍ତାକର୍ଷକ!", hi: "जय श्रीराम! जनपथ का यह भव्य राम मंदिर अति सुंदर है!", en: "Jai Shri Ram! This magnificent Ram Mandir on Janpath is truly breathtaking!" },
+    "priest_blessing": { speaker: "priest", or: "କଲ୍ୟାଣ ହେଉ ବାବୁ! ପ୍ରଭୁ ଶ୍ରୀରାମ ତୁମର ମନସ୍କାମନା ପୂର୍ଣ୍ଣ କରନ୍ତୁ!", hi: "कल्याण हो बाबू! प्रभु श्रीराम तुम्हारी मनोकामना पूर्ण करें!", en: "May you be blessed Babu! May Lord Shri Ram fulfill all your noble wishes!" },
+    "flyover_kalia": { speaker: "auto", or: "ଏଇଟା ରାଜମହଲ ଫ୍ଲାଏଓଭର ବାବୁ, ଏଠାରୁ ଟ୍ରାଫିକ୍ ଉପରେ ସିଧା ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍!", hi: "ये राजमहल फ्लाईओवर है बाबू, यहाँ से सीधे मास्टर कैंटीन!", en: "This is Raj Mahal flyover Babu, from here we glide straight over traffic into Master Canteen!" },
+    "flyover_babu": { speaker: "babu", or: "କାଳିଆ ଭାଇ, କ'ଣ ସ୍ପୀଡ୍ ନେଉଛ ଗାଡ଼ିକୁ!", hi: "कालिया भाई, क्या गज़ब स्पीड पकड़ी है गाड़ी ने!", en: "Kalia Bhai, what incredible speed this auto has picked up!" },
+    "drop_driver": { speaker: "auto", or: "ବାସ୍ ବାବୁ, ଏଇଠି। ଆଗ ରାସ୍ତା ବନ୍ଦ ଅଛି। ୬୦ ଟଙ୍କା ଦିଅନ୍ତୁ।", hi: "बस बाबू, यहीं तक। आगे रास्ता बंद है। 60 रुपये दीजिए।", en: "That's it Babu, right here. Road ahead is closed. Give me 60 rupees." },
+    "babu_argue": { speaker: "babu", or: "ଆରେ ଭାଇ, ମ୍ୟାପ୍ ଦେଖନ୍ତୁ! ରାସ୍ତା ତ ଖୋଲା ଅଛି। ୪୦ ଟଙ୍କା କଥା ହୋଇଥିଲା।", hi: "अरे भाई, मैप देखिए! रास्ता तो खुला है। 40 रुपये की बात हुई थी।", en: "Arrey brother, check the GPS map! The road is wide open. We agreed on 40 rupees." },
+    "driver_giveup": { speaker: "auto", or: "ଆଚ୍ଛା ଆଚ୍ଛା, ବସନ୍ତୁ, ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଘୋଡ଼ା ପାଖରେ ଓହ୍ଲାଇଦେବି।", hi: "अच्छा अच्छा, बैठिए, मास्टर कैंटीन घोड़े के पास छोड़ देता हूँ।", en: "Alright alright, sit, I'll drop you right beside the Master Canteen Konark War Horse statue." },
+    "babu_walk": { speaker: "babu", or: "ଠିକ୍ ଅଛି, ଏଇ ନିଅନ୍ତୁ ୩୦ ଟଙ୍କା। ବାକି ମୁଁ ଚାଲିକି ଯିବି।", hi: "ठीक है, ये लीजिए 30 रुपये। बाकी मैं पैदल चला जाऊँगा।", en: "Alright, take 30 rupees. I'll walk the rest of the way." },
+    "babu_payextra": { speaker: "babu", or: "ଠିକ୍ ଅଛି, ୬୦ ନିଅନ୍ତୁ।", hi: "ठीक है, 60 ले लीजिए।", en: "Alright, take 60 rupees." },
+    "driver_arrived": { speaker: "auto", or: "ନିଅନ୍ତୁ ବାବୁ, କୋଣାର୍କ ଯୁଦ୍ଧ-ଘୋଡ଼ା ସ୍ମାରକ ପାଖରେ ପହଞ୍ଚିଗଲୁ।", hi: "लीजिए बाबू, कोणार्क युद्ध-अश्व स्मारक के पास पहुँच गए।", en: "Here we are Babu, right beside the Konark War Stallion monument." },
+    "babu_thanks": { speaker: "babu", or: "ଧନ୍ୟବାଦ କାଳିଆ ଭାଇ! ବହୁତ ବଢ଼ିଆ ଚଳାଇଲ!", hi: "धन्यवाद कालिया भाई! बहुत बढ़िया चलाया!", en: "Thank you Kalia Bhai! You drove wonderfully!" },
+    "driver_bye": { speaker: "auto", or: "ଆଉ କେବେ ଆସିବେ! ଭୁବନେଶ୍ୱର ବୁଲାଇଦେବି!", hi: "फिर कभी आइएगा! पूरा भुवनेश्वर घुमा दूँगा!", en: "Come visit again! I'll show you all of Bhubaneswar!" },
+    "broker_hello": { speaker: "broker", or: "ନମସ୍କାର ବାବୁ! ନୂଆ ଆସିଛନ୍ତି କି? ଶସ୍ତାରେ ୧-BHK ରୁମ୍ ଦରକାର କି?", hi: "नमस्ते बाबू! नए आए हो? सस्ते में 1-BHK रूम चाहिए क्या?", en: "Namaskar Babu! Are you new here? Looking for an affordable 1-BHK room?" },
+    "broker_scam": { speaker: "broker", or: "ରୁମ୍ ଭଡ଼ା ମାତ୍ର ₹୨୫୦୦! କିନ୍ତୁ ଆଜି ହିଁ ₹୨୦୦୦ ଆଡଭାନ୍ସ ଦେବାକୁ ପଡ଼ିବ!", hi: "रूम का किराया सिर्फ ₹2500! लेकिन आज ही ₹2000 एडवांस देना होगा!", en: "Room rent is only ₹2,500! But you must pay ₹2,000 cash advance today!" },
+    "broker_noagree": { speaker: "broker", or: "ଏଗ୍ରିମେଣ୍ଟ ପରେ ହେବ ବାବୁ, ଏଠି ବିଶ୍ୱାସରେ କାମ ଚାଲେ!", hi: "एग्रीमेंट बाद में होगा बाबू, यहाँ विश्वास पर काम चलता है!", en: "Agreement will be made later Babu, here everything runs on mutual trust!" },
+    "neighbour_warn": { speaker: "neighbour", or: "ବାବୁ! ଏ ଦଲାଲ କଥାରେ ପଡ଼ନି! ଏ ଘର ମାଲିକ କଲିକତାରେ ରହନ୍ତି, ଏ ଠକ ଲୋକ!", hi: "बाबू! इस दलाल के चक्कर में मत पड़ो! इस घर के मालिक कोलकाता में रहते हैं, यह धोखेबाज़ है!", en: "Babu! Don't fall for this broker's trap! The real owner lives in Kolkata, he is a fraudster!" },
+    "police_catch": { speaker: "police", or: "ରଘୁ ଦଲାଲ! ତୋତେ ଖୋଜୁଥିଲୁ! ଚାଲ ଥାନାକୁ! ବାବୁ, ଆପଣ ବହୁତ ଚାଲାକ୍!", hi: "रघु दलाल! तुम्हें ही ढूँढ रहे थे! चलो थाने! बाबू, आप बहुत होशियार निकले!", en: "Raghu broker! We were looking for you! Off to the station! Babu, you are very sharp!" },
+    "owner_real": { speaker: "owner", or: "ଧନ୍ୟବାଦ ପୁଅ! ଏ ଠକ ମୋ ଘରକୁ ନିଜର କହି ଲୋକଙ୍କୁ ଲୁଟୁଥିଲା!", hi: "धन्यवाद बेटा! यह धोखेबाज़ मेरे घर को अपना बताकर लोगों को लूट रहा था!", en: "Thank you son! This crook was claiming my property as his own and cheating tenants!" },
+    "babu_happy": { speaker: "babu", or: "ଜୟ ଜଗନ୍ନାଥ! ସ୍କାମ୍‌ରୁ ବଞ୍ଚିଗଲି, ଏବେ ଏକାମ୍ର ହାଟ କଳା ଗ୍ରାମ ବୁଲିବାକୁ ଯିବି!", hi: "जय जगन्नाथ! स्कैम से बच गया, अब एकाम्र हाट कला ग्राम घूमने जाऊँगा!", en: "Jai Jagannath! Saved from the rental scam, now I'll tour the Ekamra Haat craft village!" },
+    "artisan_greet": { speaker: "artisan", or: "ନମସ୍କାର ବାବୁ! ଆମ ରଘୁରାଜପୁର ହସ୍ତଶିଳ୍ପ ଓ ପଟ୍ଟଚିତ୍ର ଦେଖନ୍ତୁ!", hi: "नमस्ते बाबू! हमारे रघुराजपुर के हस्तशिल्प और पट्टचित्र देखिए!", en: "Namaskar Babu! Behold our Raghurajpur handicrafts and authentic Pattachitra art!" },
+    "artisan_award": { speaker: "artisan", or: "ଆପଣଙ୍କ ସଚେତନତା ଓ ଓଡ଼ିଶା ପ୍ରେମ ଦେଖି ଖୁସି ଲାଗିଲା। ଏଇ ସ୍ୱର୍ଣ୍ଣ ପଟ୍ଟଚିତ୍ର ଉପହାର ଗ୍ରହଣ କରନ୍ତୁ!", hi: "आपकी समझदारी और ओडिशा प्रेम देखकर खुशी हुई। यह स्वर्ण पट्टचित्र उपहार स्वीकार करें!", en: "Seeing your cultural awareness and love for Odisha brings joy. Please accept this Golden Pattachitra award!" },
+    "dhauli_peace": { speaker: "guide", or: "ଏଇଟା ଧଉଳି ଶାନ୍ତି ସ୍ତୂପ। ଏଠାରେ ସମ୍ରାଟ ଅଶୋକ ଚଣ୍ଡାଶୋକରୁ ଧର୍ମାଶୋକ ହୋଇଥିଲେ।", hi: "यह धउलि शांति स्तूप है। यहाँ सम्राट अशोक ने चंडाशोक से धर्माशोक का रूप लिया था।", en: "This is Dhauli Peace Pagoda. Here Emperor Ashoka transformed from fierce warrior Chandashoka to Dharmashoka." },
+    "puri_teaser_announcer": { speaker: "announcer", or: "ଅଭିନନ୍ଦନ! ଆପଣ ଭୁବନେଶ୍ୱର ସଫଳତାର ସହ ପୂର୍ଣ୍ଣ କଲେ। ଆଗାମୀ ସ୍ତର: ଜାତୀୟ ରାଜପଥ-୩୧୬ ଦେଇ ପୁରୀ ଶ୍ରୀମନ୍ଦିର ଓ ସମୁଦ୍ର କୂଳ!", hi: "बधाई! आपने भुवनेश्वर सफलतापूर्वक पूरा कर लिया। आगामी स्तर: राष्ट्रीय राजमार्ग-316 से पुरी श्रीमंदिर और समुद्र तट!", en: "Congratulations! You successfully completed Bhubaneswar. Next Level: NH-316 to Puri Jagannath Temple & Sea Beach!" },
+    "pg_aunty_rules": { speaker: "aunty", or: "ଶୁଣ ବାବୁ! ଶ୍ରୀ ସାଇ ପିଜିର ନିୟମ ଏକଦମ୍ କଡ଼ା! ରାତି ୯ଟାରେ ମେନ୍ ଗେଟ୍ ବନ୍ଦ! ବାହାର ଖାଇବା ମନା, ସାଙ୍ଗ-ସାଥୀ ଆସିବା ମନା, ଆଉ ରବିବାର ପତଳା ପାଣିଆ ଡାଲି ଛଡ଼ା କିଛି ମିଳିବନି!", hi: "सुनो बाबू! श्री साई पीजी के नियम बहुत सख्त हैं! रात 9:00 बजे मेन गेट बंद! बाहर का खाना मना, दोस्त लाना मना, और रविवार को सिर्फ पतली दाल मिलेगी!", en: "Listen Babu! Sri Sai PG has ironclad rules! Main gate locks at 9:00 PM sharp! No outside food, no guests, and Sundays only watery dal!" },
+    "pg_uncle_meter": { speaker: "uncle", or: "ଆରେ ବାବୁ, ତମ ରୁମ୍ର ବିଜୁଳି ବିଲ୍ ଏ ମାସ ₹୩,୫୦୦ ଆସିଛି! କାରଣ ଆମ ଫ୍ୟାନ୍ ୨୨୦ ଭୋଲ୍ଟ ହାଇ-ପାୱାର୍‌ରେ ଘୁରୁଛି!", hi: "अरे बाबू, तुम्हारे कमरे का बिजली बिल इस महीने ₹3,500 आया है! क्योंकि हमारा पंखा 220 वोल्ट हाई-पावर पर चलता है!", en: "Arrey Babu, your room electric bill this month is ₹3,500! Because our ceiling fan spins on 220V high power!" },
+    "babu_pg_aayein": { speaker: "babu", or: "ଅଙ୍କଲ୍! ଆୟେଁ?! ଛୋଟ ଗୋଟେ ଏଲ୍‌ଇଡି ବଲ୍ବ ଆଉ ପଙ୍ଖା ଚାଲିଲେ ₹୩,୫୦୦ ବିଲ୍?! ଆରେ ଏଇ ମିଟର ଉପରେ ଏଡ଼େ ବଡ଼ ନାଲି ଚୁମ୍ବକ (ମ୍ୟାଗ୍ନେଟ୍) କାହିଁକି ଲାଗିଛି?!", hi: "अंकल! आयेँ?! एक छोटे से बल्ब और पंखे का बिल ₹3,500?! अरे इस मीटर पर इतना बड़ा लाल चुंबक (मैग्नेट) क्यों चिपका रखा है?!", en: "Uncle! Aayein?! A ₹3,500 bill for a tiny LED bulb and a fan?! Arrey, why is this giant red magnet stuck on the electricity meter?!" },
+    "aunty_drama": { speaker: "aunty", or: "କ'ଣ କହିଲୁ?! ମୋ ନିୟମ ଉପରେ କଥା କହୁଛୁ?! ପିଜି ଛାଡ଼ି ଏବେ ପଳାଅ!", hi: "क्या कहा?! हमारे नियमों पर सवाल उठाते हो?! तुरंत पीजी खाली करो!", en: "What did you say?! Questioning our hostel rules?! Pack your bags and leave right now!" },
+    "uncle_busted": { speaker: "uncle", or: "ଆରେ ବାବୁ, ପୋଲିସ୍ ଡାକନି! ମୁଁ ଚୁମ୍ବକ ବାହାର କରିଦେଉଛି, ବିଲ୍ ₹୨୦୦ କରିଦେବି!", hi: "अरे बाबू, पुलिस मत बुलाओ! मैं चुंबक हटा लेता हूँ, बिल सिर्फ ₹200 कर दूँगा!", en: "Arrey Babu, don't call the police! I'll take off the magnet, I'll make the bill just ₹200!" },
+    "tushar_kiit": { speaker: "student", or: "ଆରେ ଭାଇ! ମୁଁ KIIT ଇଞ୍ଜିନିୟରିଂ ଛାତ୍ର ତୁଷାର। ଶହୀଦ ନଗର ପିଜି ଆଣ୍ଟିଙ୍କୁ ସବୁ ପିଲା ଡରନ୍ତି! ସ୍କୁଟି ଧରି ସହର ବୁଲନ୍ତୁ, ଖୁବ୍ ମଜା ଲାଗିବ!", hi: "अरे भाई! मैं KIIT इंजीनियरिंग का छात्र तुषार हूँ। शहीद नगर पीजी वाली आंटी से सब डरते हैं! स्कूटी लेकर शहर घूमो, बहुत मज़ा आएगा!", en: "Hey bro! I'm Tushar, engineering student at KIIT. Every student dreads the Saheed Nagar PG aunty! Take your scooty and tour the city!" },
+    "panda_sir": { speaker: "police", or: "ଜୟ ହିନ୍ଦ୍ ବାବୁ! ରାଜମହଲ ଛକରେ ହେଲମେଟ୍ ପିନ୍ଧି ସ୍କୁଟି ୩୫ କି.ମି./ଘଣ୍ଟାରେ ସୁରକ୍ଷିତ ଭାବେ ଚଳାନ୍ତୁ। ଭଲ ଚାଳକ ହେଲେ ଚାଲାଣ କଟିବନି!", hi: "जय हिन्द बाबू! राजमहल चौक पर हेलमेट पहनकर स्कूटी 35 किमी/घंटे से सुरक्षित चलाएं। नियमों का पालन करेंगे तो कभी चालान नहीं कटेगा!", en: "Jai Hind Babu! Wear your helmet at Raj Mahal square and ride safe at 35 km/h. Good drivers never get fined!" },
+    "khandagiri_scene": { speaker: "guide", or: "ନମସ୍କାର! ଏଇଟା ହେଉଛି ଖଣ୍ଡଗିରି ଓ ଉଦୟଗିରି ରାଣୀ ଗୁମ୍ଫା। ଦ୍ୱିତୀୟ ଶତାବ୍ଦୀ ଖ୍ରୀଷ୍ଟପୂର୍ବର ଖାରବେଳଙ୍କ ଶିଳାଲେଖ ଓ ବାନର ସେନା ଏଠାକାର ଶୋଭା ବଢ଼ାନ୍ତି।", hi: "नमस्ते! यह खंडागिरि और उदयगिरि की रानी गुम्फा है। ईसा पूर्व दूसरी सदी के सम्राट खारवेल के शिलालेख और वानर सेना यहाँ की शान हैं।", en: "Namaste! These are the ancient Khandagiri & Udayagiri Queen's caves. 2nd-century BC Emperor Kharavela rock inscriptions and monkey troops grace this hill!" }
   };
 
   const SPEAKERS = {
-    announcer: { or: "ଘୋଷଣା", hi: "घोषणा", color: "#EAB308", icon: "🎙️" },
-    babu: { or: "ବାବୁ", hi: "बाबू", color: "#D9A05B", icon: "🚶" },
-    auto: { or: "କାଳିଆ ଭାଇ (ଅଟୋ)", hi: "कालिया भाई (ऑटो)", color: "#2E7D32", icon: "🛺" },
-    dahibara: { or: "ରଘୁ ଭାଇ (ଦହିବରା ସ୍ପେଶାଲ୍)", hi: "रघु भाई (दहीबड़ा स्पेशल)", color: "#EAB308", icon: "🍛" },
-    tea: { or: "ଚା' ବାଲା", hi: "चायवाला", color: "#8D4004", icon: "☕" },
-    bike: { or: "ବାଇକ୍ ଚାଳକ", hi: "बाइक सवार", color: "#B71C1C", icon: "🏍️" },
-    scooty: { or: "ସ୍କୁଟି ରାଇଡ଼ର", hi: "स्कूटी राइडर", color: "#2563eb", icon: "🛵" },
-    broker: { or: "ଦଲାଲ ରଘୁ", hi: "दलाल रघु", color: "#DC2626", icon: "🏢" },
-    neighbour: { or: "ପଡ଼ୋଶୀ ମାଉସୀ", hi: "पड़ोसन मौसी", color: "#2E7D32", icon: "👵" },
-    owner: { or: "ଘର ମାଲିକାଣୀ", hi: "मकान मालकिन", color: "#EAB308", icon: "🔑" },
-    police: { or: "ଟ୍ରାଫିକ୍ SI ପଣ୍ଡା", hi: "ट्रैफिक SI पांडा", color: "#1d4ed8", icon: "👮" },
-    priest: { or: "ରାମ ମନ୍ଦିର ପୂଜକ", hi: "राम मंदिर पुजारी", color: "#EAB308", icon: "🪔" },
-    artisan: { or: "ଶିଳ୍ପୀ ମହାପାତ୍ର", hi: "शिल्पी महापात्रा", color: "#D9A05B", icon: "🎨" },
-    guide: { or: "ଐତିହ୍ୟ ଗାଇଡ୍", hi: "हेरिटेज गाइड", color: "#38bdf8", icon: "🏛️" },
-    student: { or: "ଛାତ୍ର ତୁଷାର", hi: "छात्र तुषार", color: "#38bdf8", icon: "🎒" },
-    aunty: { or: "କାନ୍ତା ଆଣ୍ଟି (ପିଜି ମାଲିକାଣୀ)", hi: "कांता आंटी (पीजी मालकिन)", color: "#b91c1c", icon: "👵" },
-    uncle: { or: "ବାବୁ ଲାଲ୍ ଅଙ୍କଲ୍ (ମିଟର ସ୍କାମ୍)", hi: "बाबू लाल अंकल (मीटर स्कैम)", color: "#c2410c", icon: "👴" }
+    announcer: { or: "ଘୋଷଣା", hi: "घोषणा", en: "Announcer", color: "#EAB308", icon: "🎙️" },
+    babu: { or: "ବାବୁ", hi: "बाबू", en: "Babu (Hero)", color: "#D9A05B", icon: "🚶" },
+    auto: { or: "କାଳିଆ ଭାଇ (ଅଟୋ)", hi: "कालिया भाई (ऑटो)", en: "Kalia Bhai (Auto Driver)", color: "#2E7D32", icon: "🛺" },
+    dahibara: { or: "ରଘୁ ଭାଇ (ଦହିବରା ସ୍ପେଶାଲ୍)", hi: "रघु भाई (दहीबड़ा स्पेशल)", en: "Raghu Bhai (Dahibara Special)", color: "#EAB308", icon: "🍛" },
+    tea: { or: "ଚା' ବାଲା", hi: "चायवाला", en: "Chaiwala (Ginger Tea)", color: "#8D4004", icon: "☕" },
+    bike: { or: "ବାଇକ୍ ଚାଳକ", hi: "बाइक सवार", en: "Biker", color: "#B71C1C", icon: "🏍️" },
+    scooty: { or: "ସ୍କୁଟି ରାଇଡ଼ର", hi: "स्कूटी राइडर", en: "Scooty Rider", color: "#2563eb", icon: "🛵" },
+    broker: { or: "ଦଲାଲ ରଘୁ", hi: "दलाल रघु", en: "Broker Raghu", color: "#DC2626", icon: "🏢" },
+    neighbour: { or: "ପଡ଼ୋଶୀ ମାଉସୀ", hi: "पड़ोसन मौसी", en: "Neighbour Mausi", color: "#2E7D32", icon: "👵" },
+    owner: { or: "ଘର ମାଲିକାଣୀ", hi: "मकान मालकिन", en: "Genuine Landlady", color: "#EAB308", icon: "🔑" },
+    police: { or: "ଟ୍ରାଫିକ୍ SI ପଣ୍ଡା", hi: "ट्रैफिक SI पांडा", en: "Traffic SI Panda", color: "#1d4ed8", icon: "👮" },
+    priest: { or: "ରାମ ମନ୍ଦିର ପୂଜକ", hi: "राम मंदिर पुजारी", en: "Ram Mandir Priest", color: "#EAB308", icon: "🪔" },
+    artisan: { or: "ଶିଳ୍ପୀ ମହାପାତ୍ର", hi: "शिल्पी महापात्रा", en: "Master Craftsman", color: "#D9A05B", icon: "🎨" },
+    guide: { or: "ଐତିହ୍ୟ ଗାଇଡ୍", hi: "हेरिटेज गाइड", en: "Heritage Guide", color: "#38bdf8", icon: "🏛️" },
+    student: { or: "ଛାତ୍ର ତୁଷାର", hi: "छात्र तुषार", en: "Student Tushar", color: "#38bdf8", icon: "🎒" },
+    aunty: { or: "କାନ୍ତା ଆଣ୍ଟି (ପିଜି ମାଲିକାଣୀ)", hi: "कांता आंटी (पीजी मालकिन)", en: "Kanta Aunty (PG Landlady)", color: "#b91c1c", icon: "👵" },
+    uncle: { or: "ବାବୁ ଲାଲ୍ ଅଙ୍କଲ୍ (ମିଟର ସ୍କାମ୍)", hi: "बाबू लाल अंकल (मीटर स्कैम)", en: "Babu Lal Uncle (Meter Scam)", color: "#c2410c", icon: "👴" }
   };
 
   const CHAPTERS = [
     {
       id: "chap1",
       num: "01",
-      title: { or: "ଅଧ୍ୟାୟ ୧: ବାରମୁଣ୍ଡା ଆଗମନ, ଦହିବରା ଓ ଅଟୋ ଦରଦାମ୍", hi: "अध्याय 1: बारामुंडा आगमन, दहीबड़ा और ऑटो मोलभाव" },
-      desc: { or: "ବାରମୁଣ୍ଡା ବସ୍ ଟର୍ମିନାଲ୍ରେ ରଘୁଙ୍କ ଦହିବରା-ଆଳୁଦମ୍ ଆସ୍ୱାଦନ କରନ୍ତୁ, କାଳିଆ ଭାଇଙ୍କ ସହ ଅଟୋ ଦରଦାମ୍ କରନ୍ତୁ ଏବଂ ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଯାତ୍ରା ଆରମ୍ଭ କରନ୍ତୁ।", hi: "बारामुंडा बस टर्मिनल पर रघु का दहीबड़ा-आलूदम चखें, कालिया भाई से ऑटो मोलभाव करें और मास्टर कैंटीन यात्रा शुरू करें।" },
-      obj: { or: "ରଘୁଙ୍କ ଦହିବରା ଖାଆନ୍ତୁ ଓ କାଳିଆ ଭାଇଙ୍କ ସହ କଥା ହୁଅନ୍ତୁ", hi: "रघु का दहीबड़ा खाएं और कालिया भाई से मोलभाव करें" },
+      title: { or: "ଅଧ୍ୟାୟ ୧: ବାରମୁଣ୍ଡା ଆଗମନ, ଦହିବରା ଓ ଅଟୋ ଦରଦାମ୍", hi: "अध्याय 1: बारामुंडा आगमन, दहीबड़ा और ऑटो मोलभाव", en: "Chapter 1: Baramunda Arrival, Dahibara & Auto Bargain" },
+      desc: { or: "ବାରମୁଣ୍ଡା ବସ୍ ଟର୍ମିନାଲ୍ରେ ରଘୁଙ୍କ ଦହିବରା-ଆଳୁଦମ୍ ଆସ୍ୱାଦନ କରନ୍ତୁ, କାଳିଆ ଭାଇଙ୍କ ସହ ଅଟୋ ଦରଦାମ୍ କରନ୍ତୁ ଏବଂ ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଯାତ୍ରା ଆରମ୍ଭ କରନ୍ତୁ।", hi: "बारामुंडा बस टर्मिनल पर रघु का दहीबड़ा-आलूदम चखें, कालिया भाई से ऑटो मोलभाव करें और मास्टर कैंटीन यात्रा शुरू करें।", en: "Taste Raghu's Dahibara-Aloodum at Baramunda Bus Terminal, negotiate auto fare with Kalia Bhai, and set off towards Master Canteen." },
+      obj: { or: "ରଘୁଙ୍କ ଦହିବରା ଖାଆନ୍ତୁ ଓ କାଳିଆ ଭାଇଙ୍କ ସହ କଥା ହୁଅନ୍ତୁ", hi: "रघु का दहीबड़ा खाएं और कालिया भाई से मोलभाव करें", en: "Taste Raghu's Dahibara & negotiate fare with Kalia Bhai" },
       target: "driver",
       done: false
     },
     {
       id: "chap2",
       num: "02",
-      title: { or: "ଅଧ୍ୟାୟ ୨: ଜନପଥ ଯାତ୍ରା, ଗୋ-ମାତା ପ୍ରଣାମ ଓ ରାମ ମନ୍ଦିର", hi: "अध्याय 2: जनपथ यात्रा, गोमाता प्रणाम और राम मंदिर" },
-      desc: { or: "ଜନପଥ ଦେଇ ସ୍କୁଟି କିମ୍ବା ଅଟୋ ଚଲାନ୍ତୁ, ରାସ୍ତା ମଝିରେ ବସିଥିବା ପବିତ୍ର ଗୋ-ମାତାଙ୍କୁ ପ୍ରଣାମ କରନ୍ତୁ, ଚା' ଖାଆନ୍ତୁ ଓ ରାମ ମନ୍ଦିର ଦର୍ଶନ କରନ୍ତୁ।", hi: "जनपथ पर स्कूटी या ऑटो चलाएं, रास्ते में बैठी पवित्र गोमाता को प्रणाम करें, चाय पिएं और राम मंदिर दर्शन करें।" },
-      obj: { or: "ଜନପଥରେ ଗାଡ଼ି ଚଲାନ୍ତୁ, ଗାଈ ଓ ରାମ ମନ୍ଦିର ପାର କରନ୍ତୁ", hi: "जनपथ पर वाहन चलाएं, गाय और राम मंदिर पार करें" },
+      title: { or: "ଅଧ୍ୟାୟ ୨: ଜନପଥ ଯାତ୍ରା, ଗୋ-ମାତା ପ୍ରଣାମ ଓ ରାମ ମନ୍ଦିର", hi: "अध्याय 2: जनपथ यात्रा, गोमाता प्रणाम और राम मंदिर", en: "Chapter 2: Janpath Cruise, Sacred Cow Pranam & Ram Mandir" },
+      desc: { or: "ଜନପଥ ଦେଇ ସ୍କୁଟି କିମ୍ବା ଅଟୋ ଚଲାନ୍ତୁ, ରାସ୍ତା ମଝିରେ ବସିଥିବା ପବିତ୍ର ଗୋ-ମାତାଙ୍କୁ ପ୍ରଣାମ କରନ୍ତୁ, ଚା' ଖାଆନ୍ତୁ ଓ ରାମ ମନ୍ଦିର ଦର୍ଶନ କରନ୍ତୁ।", hi: "जनपथ पर स्कूटी या ऑटो चलाएं, रास्ते में बैठी पवित्र गोमाता को प्रणाम करें, चाय पिएं और राम मंदिर दर्शन करें।", en: "Drive down Janpath, offer respectful Pranam to the sacred cow on the road, take a cutting chai break, and ring the Ram Mandir prayer bell." },
+      obj: { or: "ଜନପଥରେ ଗାଡ଼ି ଚଲାନ୍ତୁ, ଗାଈ ଓ ରାମ ମନ୍ଦିର ପାର କରନ୍ତୁ", hi: "जनपथ पर वाहन चलाएं, गाय और राम मंदिर पार करें", en: "Pranam Sacred Cow (+100 XP), avoid biker overtake & ring Ram Mandir bell" },
       target: "ramMandir",
       done: false
     },
     {
       id: "chap3",
       num: "03",
-      title: { or: "ଅଧ୍ୟାୟ ୩: ରାଜମହଲ ଫ୍ଲାଏଓଭର ସ୍ପୀଡ୍ ରନ୍ ଓ ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍", hi: "अध्याय 3: राजमहल फ्लाईओवर स्पीड रन और मास्टर कैंटीन" },
-      desc: { or: "ରାଜମହଲ ଫ୍ଲାଏଓଭର ଉପରେ ସ୍କୁଟିକୁ ୩୫ କି.ମି. ସ୍ପୀଡ୍‌ରେ ଚଳାଇ ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ କୋଣାର୍କ ଯୁଦ୍ଧ-ଅଶ୍ୱ ସ୍ମାରକ ପାଖରେ ପହଞ୍ଚନ୍ତୁ।", hi: "राजमहल फ्लाईओवर पर स्कूटी को 35 किमी गति से चलाकर मास्टर कैंटीन कोणार्क युद्ध-अश्व स्मारक के पास पहुँचें।" },
-      obj: { or: "ରାଜମହଲ ଫ୍ଲାଏଓଭର ଦେଇ ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଯାଆନ୍ତୁ", hi: "राजमहल फ्लाईओवर पार कर मास्टर कैंटीन पहुँचें" },
+      title: { or: "ଅଧ୍ୟାୟ ୩: ରାଜମହଲ ଫ୍ଲାଏଓଭର ସ୍ପୀଡ୍ ରନ୍ ଓ ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍", hi: "अध्याय 3: राजमहल फ्लाईओवर स्पीड रन और मास्टर कैंटीन", en: "Chapter 3: Raj Mahal Flyover & Master Canteen Horse Monument" },
+      desc: { or: "ରାଜମହଲ ଫ୍ଲାଏଓଭର ଉପରେ ସ୍କୁଟିକୁ ୩୫ କି.ମି. ସ୍ପୀଡ୍‌ରେ ଚଳାଇ ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ କୋଣାର୍କ ଯୁଦ୍ଧ-ଅଶ୍ୱ ସ୍ମାରକ ପାଖରେ ପହଞ୍ଚନ୍ତୁ।", hi: "राजमहल फ्लाईओवर पर स्कूटी को 35 किमी गति से चलाकर मास्टर कैंटीन कोणार्क युद्ध-अश्व स्मारक के पास पहुँचें।", en: "Climb the elevated Raj Mahal flyover, bypass traffic congestion, expose fake roadblock bluff, and reach the heroic Konark War Stallion." },
+      obj: { or: "ରାଜମହଲ ଫ୍ଲାଏଓଭର ଦେଇ ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଯାଆନ୍ତୁ", hi: "राजमहल फ्लाईओवर पार कर मास्टर कैंटीन पहुँचें", en: "Climb Raj Mahal Flyover & reach Konark War Stallion at Master Canteen" },
       target: "canteen",
       done: false
     },
     {
       id: "chap4",
       num: "04",
-      title: { or: "ଅଧ୍ୟାୟ ୪: ଶହୀଦ ନଗର ପିଜି ଓ ଓଲ୍ଡ ଟାଉନ୍ ରୁମ୍ ସ୍କାମ୍ ପର୍ଦ୍ଦାଫାଶ", hi: "अध्याय 4: शहीद नगर पीजी व ओल्ड टाउन रेंट स्कैम भंडाफोड़" },
-      desc: { or: "ଶହୀଦ ନଗର କାନ୍ତା ଆଣ୍ଟିଙ୍କ ପିଜି କର୍ଫ୍ୟୁ ନିୟମ ଓ ବାବୁଲାଲ୍‌ଙ୍କ ଚୁମ୍ବକ ମିଟର ସ୍କାମ୍ ଧରନ୍ତୁ, ଏବଂ ଓଲ୍ଡ ଟାଉନ୍ ଦଲାଲ୍ ରଘୁକୁ ପୋଲିସ୍ ଦ୍ୱାରା ଗିରଫ କରାନ୍ତୁ।", hi: "शहीद नगर कांता आंटी के पीजी नियम व बाबूलाल के चुंबक मीटर स्कैम को पकड़ें, और ओल्ड टाउन दलाल रघु को पुलिस के हवाले करें।" },
-      obj: { or: "ପିଜି ସ୍କାମ୍ ଓ ଦଲାଲ ରଘୁର ୩ଟି ରେଡ୍ ଫ୍ଲାଗ୍ ଧରନ୍ତୁ", hi: "पीजी स्कैम और दलाल रघु के 3 रेड फ्लैग्स पकड़ें" },
+      title: { or: "ଅଧ୍ୟାୟ ୪: ଶହୀଦ ନଗର ପିଜି ଓ ଓଲ୍ଡ ଟାଉନ୍ ରୁମ୍ ସ୍କାମ୍ ପର୍ଦ୍ଦାଫାଶ", hi: "अध्याय 4: शहीद नगर पीजी व ओल्ड टाउन रेंट स्कैम भंडाफोड़", en: "Chapter 4: Old Town PG & Rent Syndicate Mystery" },
+      desc: { or: "ଶହୀଦ ନଗର କାନ୍ତା ଆଣ୍ଟିଙ୍କ ପିଜି କର୍ଫ୍ୟୁ ନିୟମ ଓ ବାବୁଲାଲ୍‌ଙ୍କ ଚୁମ୍ବକ ମିଟର ସ୍କାମ୍ ଧରନ୍ତୁ, ଏବଂ ଓଲ୍ଡ ଟାଉନ୍ ଦଲାଲ୍ ରଘୁକୁ ପୋଲିସ୍ ଦ୍ୱାରା ଗିରଫ କରାନ୍ତୁ।", hi: "शहीद नगर कांता आंटी के पीजी नियम व बाबूलाल के चुंबक मीटर स्कैम को पकड़ें, और ओल्ड टाउन दलाल रघु को पुलिस के हवाले करें।", en: "Inspect rental room in Old Town with broker Raghu, spot 3 red flags (no agreement, absent owner, cash pressure) and bust scam with Police PCR." },
+      obj: { or: "ପିଜି ସ୍କାମ୍ ଓ ଦଲାଲ ରଘୁର ୩ଟି ରେଡ୍ ଫ୍ଲାଗ୍ ଧରନ୍ତୁ", hi: "पीजी स्कैम और दलाल रघु के 3 रेड फ्लैग्स पकड़ें", en: "Spot 3 red flags & recover genuine room keys with Police PCR assistance" },
       target: "rentHouse",
       done: false
     },
     {
       id: "chap5",
       num: "05",
-      title: { or: "ଅଧ୍ୟାୟ ୫: ଏକାମ୍ର ହାଟ ପଟ୍ଟଚିତ୍ର ସମ୍ମାନ ଓ ଦହିବରା ସ୍ୱର୍ଣ୍ଣ ଯାତ୍ରା", hi: "अध्याय 5: एकाम्र हाट पट्टचित्र सम्मान व दहीबड़ा स्वर्ण यात्रा" },
-      desc: { or: "ଏକାମ୍ର ହାଟରେ ପଟ୍ଟଚିତ୍ର ଶିଳ୍ପୀ ମହାପାତ୍ରଙ୍କଠାରୁ ସ୍ୱର୍ଣ୍ଣ ସମ୍ମାନ ନିଅନ୍ତୁ ଏବଂ ଭୁବନେଶ୍ୱରର ୫ଟି ଯାକ ଦହିବରା ଷ୍ଟଲ୍ ଅନଲକ୍ କରନ୍ତୁ।", hi: "एकाम्र हाट में पट्टचित्र शिल्पी महापात्रा से स्वर्ण पदक पाएं और भुवनेश्वर के सभी 5 दहीबड़ा स्टॉल अनलॉक करें।" },
-      obj: { or: "ଏକାମ୍ର ହାଟରେ ଶିଳ୍ପୀ ମହାପାତ୍ରଙ୍କୁ ସାକ୍ଷାତ କରନ୍ତୁ", hi: "एकाम्र हाट जाकर शिल्पी महापात्रा से मिलें" },
+      title: { or: "ଅଧ୍ୟାୟ ୫: ଏକାମ୍ର ହାଟ ପଟ୍ଟଚିତ୍ର ସମ୍ମାନ ଓ ଦହିବରା ସ୍ୱର୍ଣ୍ଣ ଯାତ୍ରା", hi: "अध्याय 5: एकाम्र हाट पट्टचित्र सम्मान व दहीबड़ा स्वर्ण यात्रा", en: "Chapter 5: Ekamra Haat Master Craftsman & Puri Highway" },
+      desc: { or: "ଏକାମ୍ର ହାଟରେ ପଟ୍ଟଚିତ୍ର ଶିଳ୍ପୀ ମହାପାତ୍ରଙ୍କଠାରୁ ସ୍ୱର୍ଣ୍ଣ ସମ୍ମାନ ନିଅନ୍ତୁ ଏବଂ ଭୁବନେଶ୍ୱରର ୫ଟି ଯାକ ଦହିବରା ଷ୍ଟଲ୍ ଅନଲକ୍ କରନ୍ତୁ।", hi: "एकाम्र हाट में पट्टचित्र शिल्पी महापात्रा से स्वर्ण पदक पाएं और भुवनेश्वर के सभी 5 दहीबड़ा स्टॉल अनलॉक करें।", en: "Meet master craftsman at Ekamra Haat craft village, receive Golden Pattachitra award, visit Dhauli Peace Pagoda, and unlock the Puri Grand Highway." },
+      obj: { or: "ଏକାମ୍ର ହାଟରେ ଶିଳ୍ପୀ ମହାପାତ୍ରଙ୍କୁ ସାକ୍ଷାତ କରନ୍ତୁ", hi: "एकाम्र हाट जाकर शिल्पी महापात्रा से मिलें", en: "Receive Golden Pattachitra at Ekamra Haat & cruise past Dhauli" },
       target: "ekamraHaat",
       done: false
     }
@@ -2022,30 +2061,35 @@
   const ODISHA_TRIVIA = [
     {
       or: "କଟକ ଓ ଭୁବନେଶ୍ୱରର ପ୍ରସିଦ୍ଧ 'ଦହିବରା-ଆଳୁଦମ୍' ଓଡ଼ିଶାର ଏକ ଅନନ୍ୟ ରାସ୍ତାକଡ଼ ଖାଦ୍ୟ, ଯାହା ମସଲା ଝୋଳ, ଘୁଗୁନି ଓ ଥଣ୍ଡା ଦହି-ପାଣି ସହ ପରଷାଯାଏ।",
-      hi: "कटक और भुवनेश्वर का प्रसिद्ध 'दहीबड़ा-आलूदम' ओडिशा का अनोखा स्ट्रीट फ़ूड है, जो मसालेदार आलू तरी, घुगुनी और ठंडे दही-पानी के साथ परोसा जाता है।"
+      hi: "कटक और भुवनेश्वर का प्रसिद्ध 'दहीबड़ा-आलूदम' ओडिशा का अनोखा स्ट्रीट फ़ूड है, जो मसालेदार आलू तरी, घुगुनी और ठंडे दही-पानी के साथ परोसा जाता है।",
+      en: "Cuttack & Bhubaneswar's famous 'Dahibara-Aloodum' is Odisha's iconic street delicacy, served with spicy aloo gravy, ghuguni, and refreshing cold dahi-pani."
     },
     {
       or: "୧୧ଶ ଶତାବ୍ଦୀର ଶ୍ରୀ ଲିଙ୍ଗରାଜ ମନ୍ଦିର ୫୫ ମିଟର ଉଚ୍ଚ ଏବଂ ଏହା କଳିଙ୍ଗ ସ୍ଥାପତ୍ୟ କଳାର ଏକ ଚରମ ନିଦର୍ଶନ, ଯାହା ବିନା ସିମେଣ୍ଟରେ କେବଳ ଲାଟେରାଇଟ୍ ପଥରରେ ଗଢ଼ା।",
-      hi: "11वीं सदी का श्री लिंगराज मंदिर 55 मीटर ऊंचा है और बिना सीमेंट के केवल लेटराइट पत्थरों की कलिंग वास्तुकला से निर्मित एक अजूबा है।"
+      hi: "11वीं सदी का श्री लिंगराज मंदिर 55 मीटर ऊंचा है और बिना सीमेंट के केवल लेटराइट पत्थरों की कलिंग वास्तुकला से निर्मित एक अजूबा है।",
+      en: "Sri Lingaraj Temple is an 11th-century masterpiece of Kalinga architecture, with its towering sanctum vimana rising over 55 meters."
     },
     {
       or: "ଖଣ୍ଡଗିରି ଓ ଉଦୟଗିରିର ପ୍ରାଚୀନ ଗୁମ୍ଫାଗୁଡ଼ିକ ଖ୍ରୀଷ୍ଟପୂର୍ବ ୨ୟ ଶତାବ୍ଦୀର ସମ୍ରାଟ ଖାରବେଳଙ୍କ ସମୟର ଜୈନ ସନ୍ୟାସୀମାନଙ୍କ ଶୈଳ-ଖୋଦିତ ଆଶ୍ରୟସ୍ଥଳୀ।",
-      hi: "खंडागिरि और उदयगिरि की प्राचीन गुफाएं ईसा पूर्व दूसरी सदी के सम्राट खारवेल के समय की 2000 वर्ष पुरानी जैन संन्यासियों की शैल-गुफाएं हैं।"
+      hi: "खंडागिरि और उदयगिरि की प्राचीन गुफाएं ईसा पूर्व दूसरी सदी के सम्राट खारवेल के समय की 2000 वर्ष पुरानी जैन संन्यासियों की शैल-गुफाएं हैं।",
+      en: "Dhauli Shanti Stupa overlooks the Daya River, where Emperor Ashoka embraced Buddhism and peace following the 261 BC Kalinga War."
     },
     {
       or: "ଭୁବନେଶ୍ୱର ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଛକର ପ୍ରସିଦ୍ଧ ଯୁଦ୍ଧ-ଘୋଡ଼ା ପ୍ରତିମା କୋଣାର୍କ ସୂର୍ଯ୍ୟ ମନ୍ଦିରର ଐତିହାସିକ ଅଶ୍ୱ ଭାସ୍କର୍ଯ୍ୟରୁ ପ୍ରେରିତ।",
-      hi: "भुवनेश्वर मास्टर कैंटीन चौराहे की प्रसिद्ध युद्ध-अश्व प्रतिमा कोणार्क सूर्य मंदिर के ऐतिहासिक अश्व शिल्प से प्रेरित है।"
+      hi: "भुवनेश्वर मास्टर कैंटीन चौराहे की प्रसिद्ध युद्ध-अश्व प्रतिमा कोणार्क सूर्य मंदिर के ऐतिहासिक अश्व शिल्प से प्रेरित है।",
+      en: "The Konark War Horse monument at Master Canteen Square stands as a proud symbol of Odisha's valor and martial heritage."
     },
     {
       or: "ଏକାମ୍ର ହାଟରେ ଓଡ଼ିଶାର ପାରମ୍ପରିକ ପଟ୍ଟଚିତ୍ର, ତାଳପତ୍ର ଖୋଦେଇ ଏବଂ ପିପିଲିର ଚାନ୍ଦୁଆ କଳା ଗୋଟିଏ ସ୍ଥାନରେ ଦେଖିବାକୁ ମିଳେ।",
-      hi: "एकाम्र हाट में ओडिशा के पारंपरिक पट्टचित्र, ताड़पत्र नक्काशी और पिपिली के प्रसिद्ध एप्लिक शिल्प की समृद्ध विरासत देखने को मिलती है।"
+      hi: "एकाम्र हाट में ओडिशा के पारंपरिक पट्टचित्र, ताड़पत्र नक्काशी और पिपिली के प्रसिद्ध एप्लिक शिल्प की समृद्ध विरासत देखने को मिलती है।",
+      en: "The Pattachitra art of Raghurajpur & Ekamra Haat is world-renowned for its natural mineral pigments and intricate palm-leaf etchings."
     }
   ];
 
   const FLAGS = {
-    agreement: { or: "ରେଣ୍ଟ ଏଗ୍ରିମେଣ୍ଟ ନାହିଁ! (ଦଲାଲ ମନା କଲା)", hi: "रेंट एग्रीमेंट देने से मना किया!" },
-    owner: { or: "ପ୍ରକୃତ ଘର ମାଲିକ ଅନୁପସ୍ଥିତ!", hi: "असली मकान मालिक मौजूद नहीं है!" },
-    pressure: { or: "ଆଜି ହିଁ ଆଡଭାନ୍ସ ଟଙ୍କା ଦେବାକୁ ଚାପ!", hi: "आज ही नकद एडवांस देने का दबाव!" }
+    agreement: { or: "ରେଣ୍ଟ ଏଗ୍ରିମେଣ୍ଟ ନାହିଁ! (ଦଲାଲ ମନା କଲା)", hi: "रेंट एग्रीमेंट देने से मना किया!", en: "No rent agreement! (Broker refused)" },
+    owner: { or: "ପ୍ରକୃତ ଘର ମାଲିକ ଅନୁପସ୍ଥିତ!", hi: "असली मकान मालिक मौजूद नहीं है!", en: "Genuine property owner absent & hidden!" },
+    pressure: { or: "ଆଜି ହିଁ ଆଡଭାନ୍ସ ଟଙ୍କା ଦେବାକୁ ଚାପ!", hi: "आज ही नकद एडवांस देने का दबाव!", en: "High-pressure demand for immediate cash advance!" }
   };
 
   const SAVE_KEY = "amara_odisha_v2_save";
@@ -2666,25 +2710,27 @@
     const item = LINES[lineId];
     if (!item) return Promise.resolve(false);
 
-    const spk = SPEAKERS[item.speaker] || { icon: "🎙️", or: item.speaker, hi: item.speaker };
+    const spk = SPEAKERS[item.speaker] || { icon: "🎙️", or: item.speaker, hi: item.speaker, en: item.speaker };
     const portEl = document.getElementById('sub-portrait');
     const nameEl = document.getElementById('sub-speaker-name');
     const priEl = document.getElementById('sub-text-primary');
     const secEl = document.getElementById('sub-text-secondary');
+    const tertEl = document.getElementById('sub-text-tertiary');
     const subCard = document.getElementById('subtitle-card');
 
-    if (portEl) portEl.innerText = spk.icon;
-    if (nameEl) nameEl.innerText = tr(spk);
-    if (priEl) priEl.innerText = item.or;
-    if (secEl) secEl.innerText = item.hi;
+    if (portEl) portEl.innerText = spk.icon || "🎙️";
+    if (nameEl) nameEl.innerText = (spk.or || "") + " • " + (spk.hi || "") + " • " + (spk.en || "");
+    if (priEl) priEl.innerText = item.or || "";
+    if (secEl) secEl.innerText = item.hi || "";
+    if (tertEl) tertEl.innerText = item.en || "";
     if (subCard) subCard.classList.add('visible');
 
-    const textToSpeak = state.lang === 'hi' ? item.hi : item.hi;
+    const textToSpeak = state.lang === 'en' ? (item.en || item.hi) : (state.lang === 'hi' ? item.hi : item.hi);
     return new Promise(res => {
       if ('speechSynthesis' in window && window.speechSynthesis) {
         window.speechSynthesis.cancel();
         const utter = new SpeechSynthesisUtterance(textToSpeak);
-        utter.lang = 'hi-IN';
+        utter.lang = state.lang === 'en' ? 'en-IN' : 'hi-IN';
 
         if (item.speaker === 'babu') { utter.pitch = 1.1; utter.rate = 1.05; }
         else if (item.speaker === 'auto') { utter.pitch = 0.85; utter.rate = 0.95; }
@@ -4649,8 +4695,8 @@
         if (pos.distanceTo(new THREE.Vector3(cart.pos[0], 0, cart.pos[1])) < 4.2) {
           const eaten = state.dahibaraStallsEaten && state.dahibaraStallsEaten.includes(cart.id);
           const lbl = eaten 
-            ? (state.lang === 'or' ? 'ଦହିବରା-ଆଳୁଦମ୍ (ଖାଇସାରିଛନ୍ତି) [E]' : 'DAHIBARA TASTED • दोबारा खाएं [E]')
-            : (state.lang === 'or' ? 'ଦହିବରା-ଆଳୁଦମ୍ ଖାଆନ୍ତୁ [E]' : 'TASTE DAHIBARA • दहीबड़ा खाएं [E]');
+            ? 'DAHIBARA TASTED • ଦହିବରା ଖାଇସାରିଛନ୍ତି • दोबारा खाएं [E]'
+            : '🍲 TASTE DAHIBARA • ଦହିବରା ଖାଆନ୍ତୁ • दहीबड़ा खाएं [E]';
           showInteractBubble(lbl, () => tasteDahibara(cart.id));
           foundTarget = true;
           break;
@@ -4660,7 +4706,7 @@
 
     // 0.5 Check nearby Sacred Cow (Maa Go-Mata) on Janpath road
     if (!foundTarget && pos.distanceTo(new THREE.Vector3(POI.cow[0], 0, POI.cow[1])) < 4.5) {
-      showInteractBubble(state.lang === 'or' ? 'ପବିତ୍ର ଗୋ-ମାତା ପ୍ରଣାମ [E]' : 'PRANAM TO GO-MATA • गोमाता प्रणाम [E]', () => pranamCow());
+      showInteractBubble('🙏 PRANAM GO-MATA • ଗୋ-ମାତା ପ୍ରଣାମ • गोमाता प्रणाम [E]', () => pranamCow());
       foundTarget = true;
     }
 
@@ -4675,7 +4721,7 @@
     if (!foundTarget && worldData && worldData.parkedScooties) {
       for (const sc of worldData.parkedScooties) {
         if (pos.distanceTo(new THREE.Vector3(sc.pos[0], 0, sc.pos[1])) < 3.8) {
-          showInteractBubble(state.lang === 'or' ? 'ସ୍କୁଟି ଚଲାନ୍ତୁ [E]' : 'RIDE SCOOTY • स्कूटी चलाएं [E]', () => mountScooty(sc.pos));
+          showInteractBubble('🛵 RIDE SCOOTY • ସ୍କୁଟି ଚଳାନ୍ତୁ • स्कूटी चलाएं [E]', () => mountScooty(sc.pos));
           foundTarget = true;
           break;
         }
@@ -4686,21 +4732,21 @@
     if (!foundTarget) {
       for (const [key, npc] of Object.entries(npcs)) {
         if (pos.distanceTo(npc.group.position) < 3.4) {
-          let label = "INTERACT [E]";
+          let label = "INTERACT • କଥା ହୁଅନ୍ତୁ • बात करें [E]";
           if (key === 'kantaAunty' || key === 'babuLalUncle') {
-            label = state.lang === 'or' ? 'ପିଜି ଆଣ୍ଟି ସ୍କାମ୍ [E]' : 'PG RENT SCAM • आंटी-अंकल [E]';
+            label = '👵 PG RENT SCAM • ପିଜି ସ୍କାମ୍ • आंटी-अंकल [E]';
           } else if (key === 'driver') {
-            label = state.lang === 'or' ? 'ଅଟୋ ଦରଦାମ୍ [E]' : 'AUTO BARGAIN • कालिया भाई [E]';
+            label = '🛺 AUTO BARGAIN • ଅଟୋ ଦରଦାମ୍ • कालिया भाई [E]';
           } else if (key === 'studentTushar') {
-            label = state.lang === 'or' ? 'ଛାତ୍ର ତୁଷାର [E]' : 'STUDENT TUSHAR • छात्र तुषार [E]';
+            label = '🎒 STUDENT TUSHAR • ଛାତ୍ର ତୁଷାର • छात्र तुषार [E]';
           } else if (key === 'policePanda') {
-            label = state.lang === 'or' ? 'ଟ୍ରାଫିକ୍ ପୋଲିସ୍ ପଣ୍ଡା [E]' : 'TRAFFIC POLICE PANDA [E]';
+            label = '👮 TRAFFIC SI PANDA • ଟ୍ରାଫିକ୍ ପୋଲିସ୍ • ट्रैफिक पांडा [E]';
           } else if (key === 'khandagiriGuide') {
-            label = state.lang === 'or' ? 'ଖଣ୍ଡଗିରି ଗୁମ୍ଫା [E]' : 'KHANDAGIRI CAVES • गुफाएं [E]';
+            label = '🏛️ KHANDAGIRI CAVES • ଖଣ୍ଡଗିରି ଗୁମ୍ଫା • प्राचीन गुफाएं [E]';
           } else if (key === 'priest') {
-            label = state.lang === 'or' ? 'ରାମ ମନ୍ଦିର ପୂଜକ [E]' : 'RAM MANDIR PRIEST [E]';
+            label = '🪔 RAM MANDIR PRIEST • ପୂଜକ • मंदिर पुजारी [E]';
           } else if (key === 'artisan') {
-            label = state.lang === 'or' ? 'ଏକାମ୍ର ହାଟ ଶିଳ୍ପୀ [E]' : 'EKAMRA HAAT ARTISAN [E]';
+            label = '🎨 MASTER ARTISAN • ଶିଳ୍ପୀ • शिल्पकार [E]';
           }
           showInteractBubble(label, () => interactWithNpc(key));
           foundTarget = true;
@@ -4808,7 +4854,36 @@
 
   function tr(obj) {
     if (!obj) return "";
-    return obj[state.lang] || obj["or"] || "";
+    if (state.lang === 'all') {
+      const parts = [];
+      if (obj.or) parts.push(obj.or);
+      if (obj.hi) parts.push(obj.hi);
+      if (obj.en) parts.push(obj.en);
+      return parts.join(" • ");
+    }
+    return obj[state.lang] || obj.en || obj.or || "";
+  }
+
+  function trAll(obj, separator = " • ") {
+    if (!obj) return "";
+    const parts = [];
+    if (obj.or) parts.push(obj.or);
+    if (obj.hi) parts.push(obj.hi);
+    if (obj.en) parts.push(obj.en);
+    return parts.join(separator);
+  }
+
+  function setDialogueContent(lineOrItem) {
+    const textEl = document.getElementById('dia-text');
+    if (!textEl) return;
+    const item = typeof lineOrItem === 'string' ? LINES[lineOrItem] : lineOrItem;
+    if (!item) { textEl.innerText = ""; return; }
+
+    textEl.innerHTML = '<div class="tri-speech-container">' +
+      '<div class="tri-row tri-odia"><span class="tri-badge tri-badge-or">ଓଡ଼ିଆ</span> <span>' + (item.or || "") + '</span></div>' +
+      '<div class="tri-row tri-hindi"><span class="tri-badge tri-badge-hi">हिंदी</span> <span>' + (item.hi || "") + '</span></div>' +
+      '<div class="tri-row tri-english"><span class="tri-badge tri-badge-en">ENG</span> <span>' + (item.en || "") + '</span></div>' +
+    '</div>';
   }
 
   let popupIdx = 0;
@@ -4834,14 +4909,21 @@
     state.lang = l;
     const bOr = document.getElementById('lang-btn-or');
     const bHi = document.getElementById('lang-btn-hi');
+    const bEn = document.getElementById('lang-btn-en');
+    const bAll = document.getElementById('lang-btn-all');
     if (bOr) bOr.classList.toggle('active', l === 'or');
     if (bHi) bHi.classList.toggle('active', l === 'hi');
+    if (bEn) bEn.classList.toggle('active', l === 'en');
+    if (bAll) bAll.classList.toggle('active', l === 'all');
     updateHudLabels();
-    saveProgress();
+    saveGameState();
+    popup(l === 'or' ? 'ଭାଷା: ଓଡ଼ିଆ' : (l === 'hi' ? 'भाषा: हिंदी' : (l === 'en' ? 'Language: English' : '🌐 All 3 Languages Side-by-Side')));
   }
 
   function cycleLanguage() {
-    setLanguage(state.lang === 'or' ? 'hi' : 'or');
+    const langs = ['or', 'hi', 'en', 'all'];
+    const idx = langs.indexOf(state.lang);
+    setLanguage(langs[(idx + 1) % langs.length]);
   }
 
   function updateHudLabels() {
@@ -4858,7 +4940,12 @@
 
     if (coinsEl) coinsEl.innerText = '₹ ' + state.coins;
     if (xpEl) xpEl.innerText = state.xp;
-    if (langEl) langEl.innerText = state.lang === 'or' ? 'ଓଡ଼ିଆ' : 'हिंदी';
+    if (langEl) {
+      if (state.lang === 'or') langEl.innerText = 'ଓଡ଼ିଆ (OR)';
+      else if (state.lang === 'hi') langEl.innerText = 'हिंदी (HI)';
+      else if (state.lang === 'en') langEl.innerText = 'ENGLISH (EN)';
+      else langEl.innerText = '🌐 ALL 3 (OR•HI•EN)';
+    }
     if (blessEl) blessEl.innerText = state.blessing;
 
     // Full Bilingual UI labels
@@ -5561,9 +5648,9 @@
     const m = document.getElementById('dialogue-modal');
     m.style.display = 'block';
     document.getElementById('dia-avatar').innerText = "🏢";
-    document.getElementById('dia-name').innerText = tr(SPEAKERS.broker);
-    document.getElementById('dia-role').innerText = "Old Town Rental Broker";
-    document.getElementById('dia-text').innerText = tr(LINES.broker_hello);
+    document.getElementById('dia-name').innerText = trAll(SPEAKERS.broker);
+    document.getElementById('dia-role').innerText = "Old Town Rental Broker • ପିଜି ଦଲାଲ";
+    setDialogueContent(LINES.broker_hello);
     playVoiceLine('broker_hello');
 
     const grp = document.getElementById('dia-choices');
@@ -5744,8 +5831,8 @@
   const CUTSCENES = [
     {
       id: "scene_baramunda",
-      title: { or: "୧. ବାରମୁଣ୍ଡା ପ୍ରଭାତ ଆଗମନ", hi: "1. बारामुंडा प्रभात आगमन" },
-      desc: { or: "ଭୁବନେଶ୍ୱର ସହରର ଆକାଶ ମାର୍ଗରୁ ବାରମୁଣ୍ଡା ବସ୍ ଟର୍ମିନାଲ୍ରେ ମୋ ବସ୍ ଆଗମନ ଓ ବାବୁଙ୍କ ଓହ୍ଲାଇବା।", hi: "आकाश से बारामुंडा बस टर्मिनल पर मो बस का पहुँचना और बाबू का उतरना।" },
+      title: { or: "୧. ବାରମୁଣ୍ଡା ପ୍ରଭାତ ଆଗମନ", hi: "1. बारामुंडा प्रभात आगमन", en: "1. Baramunda Morning Arrival" },
+      desc: { or: "ଭୁବନେଶ୍ୱର ସହରର ଆକାଶ ମାର୍ଗରୁ ବାରମୁଣ୍ଡା ବସ୍ ଟର୍ମିନାଲ୍ରେ ମୋ ବସ୍ ଆଗମନ ଓ ବାବୁଙ୍କ ଓହ୍ଲାଇବା।", hi: "आकाश से बारामुंडा बस टर्मिनल पर मो बस का पहुँचना और बाबू का उतरना।", en: "Mo Bus arrives at Baramunda Bus Terminal from Western Odisha and Babu steps out into Bhubaneswar." },
       camStart: [-65, 42, 65],
       camLook: [-10, 4, 15],
       camEnd: [-14, 3.2, 19],
@@ -5754,8 +5841,8 @@
     },
     {
       id: "scene_auto_bargain",
-      title: { or: "୨. ଅଟୋ ଷ୍ଟାଣ୍ଡରେ କାଳିଆ ଭାଇଙ୍କ ସହ ଦରଦାମ୍", hi: "2. ऑटो स्टैंड में कालिया भाई से मोलभाव" },
-      desc: { or: "କାଳିଆ ଭାଇଙ୍କ ₹୫୦ ଦାବି ଏବଂ ବାବୁଙ୍କ ₹୪୦ ଦର ବୁଝାମଣା।", hi: "कालिया भाई की ₹50 मांग और बाबू का ₹40 तय करना।" },
+      title: { or: "୨. ଅଟୋ ଷ୍ଟାଣ୍ଡରେ କାଳିଆ ଭାଇଙ୍କ ସହ ଦରଦାମ୍", hi: "2. ऑटो स्टैंड में कालिया भाई से मोलभाव", en: "2. Auto Stand Fare Bargain" },
+      desc: { or: "କାଳିଆ ଭାଇଙ୍କ ₹୫୦ ଦାବି ଏବଂ ବାବୁଙ୍କ ₹୪୦ ଦର ବୁଝାମଣା।", hi: "कालिया भाई की ₹50 मांग और बाबू का ₹40 नियमित किराया तय करना।", en: "Kalia Bhai demands ₹50 while Babu negotiates down to ₹40 regular passenger fare." },
       camStart: [36, 3.2, 16],
       camLook: [POI.driver[0], 1.5, POI.driver[1]],
       camEnd: [30, 2.8, 8],
@@ -5764,8 +5851,8 @@
     },
     {
       id: "scene_cow",
-      title: { or: "୩. ଜନପଥରେ ପବିତ୍ର ଗୋମାତା ରୋଡ଼ବ୍ଲକ୍", hi: "3. जनपथ पर पवित्र गोमाता रोडब्लॉक" },
-      desc: { or: "ରାସ୍ତା ମଝିରେ ବସିଥିବା ଗାଈଙ୍କୁ ଅଟୋ ହର୍ଣ୍ଣ ଏବଂ ବାବୁଙ୍କ ଶ୍ରଦ୍ଧାଳୁ ପ୍ରଣାମ।", hi: "रास्ते में बैठी गाय को ऑटो हॉर्न और बाबू का आदरपूर्ण प्रणाम।" },
+      title: { or: "୩. ଜନପଥରେ ପବିତ୍ର ଗୋମାତା ରୋଡ଼ବ୍ଲକ୍", hi: "3. जनपथ पर पवित्र गोमाता रोडब्लॉक", en: "3. Sacred Cow Roadblock on Janpath" },
+      desc: { or: "ଜନପଥ ମଝିରେ ପବିତ୍ର ଗୋମାତା ଆରାମରେ ବସିବା ଏବଂ ବାବୁଙ୍କ ଶ୍ରଦ୍ଧାପୂର୍ଣ୍ଣ ପ୍ରଣାମ।", hi: "सड़क के बीच में बैठी गोमाता और बाबू का आदरपूर्वक प्रणाम कर आशीर्वाद लेना।", en: "Sacred Go-Mata rests in the center lane of Janpath. Babu steps down to offer respectful Pranam." },
       camStart: [44, 3.8, -96],
       camLook: [POI.cow[0], 1.2, POI.cow[1]],
       camEnd: [35, 2.5, -118],
@@ -5774,8 +5861,8 @@
     },
     {
       id: "scene_tea",
-      title: { or: "୪. ଧବଳେଶ୍ୱର ଚା' ଖଟ୍ଟି ଓ ସକାଳ ତାଜା", hi: "4. धबलेश्वर चाय खट्टी और ताजगी" },
-      desc: { or: "ମାଟି କୁଲ୍ଲଡ଼ରେ ଗରମ ଅଦା ଚା' ପିଇ ସ୍ପୀଡ୍ ବୁଷ୍ଟ ପାଇବା।", hi: "मिट्टी के कुल्हड़ में अदरक चाय पीकर स्पीड बूस्ट पाना।" },
+      title: { or: "୪. ଧବଳେଶ୍ୱର ଚା' ଖଟ୍ଟି ଓ ସକାଳ ତାଜା", hi: "4. धबलेश्वर चाय खट्टी और ताजगी", en: "4. Dhabaleswar Ginger Tea & Refreshment" },
+      desc: { or: "ଜନପଥ ରାସ୍ତାକଡ଼ ମାଟି କୁଲ୍ଲଡ଼ରେ ଅଦା ଚା' ପିଇ ଶକ୍ତି ବୃଦ୍ଧି।", hi: "जनपथ पर मिट्टी के कुल्हड़ में अदरक चाय की चुस्की और स्पीड बूस्ट।", en: "Traditional kulhad ginger tea stall on Janpath providing a vital energy speed boost." },
       camStart: [56, 3.5, -130],
       camLook: [POI.routeTea[0], 1.4, POI.routeTea[1]],
       camEnd: [50, 2.2, -138],
@@ -5784,8 +5871,8 @@
     },
     {
       id: "scene_ram_mandir",
-      title: { or: "୫. ରାମ ମନ୍ଦିର ଜନପଥ ଦର୍ଶନ ଓ ଆଶୀର୍ବାଦ", hi: "5. राम मंदिर जनपथ दर्शन और आशीर्वाद" },
-      desc: { or: "ଭବ୍ୟ କଳିଙ୍ଗ ତୋରଣ ଓ ଶିଖର ଉପରକୁ ଉଠୁଥିବା କ୍ରେନ୍ କ୍ୟାମେରା ଏବଂ ପୂଜକଙ୍କ ଆଶୀର୍ବାଦ।", hi: "भव्य कलिंग तोरण व शिखर की ओर उठती क्रेन कैमरा और पुजारी का आशीर्वाद।" },
+      title: { or: "୫. ରାମ ମନ୍ଦିର ଜନପଥ ଦର୍ଶନ ଓ ଆଶୀର୍ବାଦ", hi: "5. राम मंदिर जनपथ दर्शन और आशीर्वाद", en: "5. Sri Ram Mandir Darshan & Blessings" },
+      desc: { or: "୩୦ ମିଟର ଉଚ୍ଚ କଳିଙ୍ଗ ଶୈଳୀର ଭବ୍ୟ ରାମ ମନ୍ଦିର, ଆମଳକ ଚୂଳ ଓ ପିତ୍ତଳ ଘଣ୍ଟି।", hi: "30 मीटर ऊंचे भव्य राम मंदिर के दर्शन, कलिंग शिखर और प्रार्थना घंटी बजाना।", en: "Grand Kalinga style Ram Mandir with Amalaka crown, carved Torana archway, and prayer bell." },
       camStart: [68, 6.0, -165],
       camLook: [POI.ramMandir[0], 12, POI.ramMandir[1]],
       camEnd: [74, 22.0, -170],
@@ -5794,8 +5881,8 @@
     },
     {
       id: "scene_flyover",
-      title: { or: "୬. ରାଜମହଲ ଫ୍ଲାଏଓଭର ସ୍ପୀଡ୍ ଚେସ୍", hi: "6. राजमहल फ्लाईओवर स्पीड चेस" },
-      desc: { or: "ରାଜମହଲ ଫ୍ଲାଏଓଭର ଉପରେ କାଳିଆ ଭାଇଙ୍କ ଅଟୋ ସ୍ପୀଡ୍ ରନ୍ ଓ ବାଇକ୍ ଓଭରଟେକ୍।", hi: "राजमहल फ्लाईओवर पर कालिया भाई की ऑटो स्पीड और बाइक ओवरटेक।" },
+      title: { or: "୬. ରାଜମହଲ ଫ୍ଲାଏଓଭର ସ୍ପୀଡ୍ ଚେସ୍", hi: "6. राजमहल फ्लाईओवर स्पीड चेस", en: "6. Raj Mahal Flyover Speed Cruise" },
+      desc: { or: "୪.୯ ମିଟର ଉଚ୍ଚ ଫ୍ଲାଏଓଭର ଉପରେ ଟ୍ରାଫିକ୍ ଜାମ୍‌କୁ ଟପି ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଆଡ଼କୁ ଦ୍ରୁତ ଯାତ୍ରା।", hi: "4.9 मीटर ऊंचे फ्लाईओवर से ट्रैफिक जाम के ऊपर से मास्टर कैंटीन की तेज़ उड़ान।", en: "Elevated 4.9m highway flyover gliding smoothly above congested traffic towards Master Canteen." },
       camStart: [38, 8.5, -245],
       camLook: [40, 5.0, -270],
       camEnd: [40, 7.5, -295],
@@ -5804,8 +5891,8 @@
     },
     {
       id: "scene_canteen_scam",
-      title: { or: "୭. ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଯୁଦ୍ଧ-ଘୋଡ଼ା ଓ ସ୍କାମ୍ ଖଣ୍ଡନ", hi: "7. मास्टर कैंटीन युद्ध-अश्व व स्कैम खंडन" },
-      desc: { or: "ନକଲି ରାସ୍ତା ବନ୍ଦ ବାହାନାକୁ ମ୍ୟାପ୍ ଦେଖାଇ ଚ୍ୟାଲେଞ୍ଜ କରିବା ଏବଂ କୋଣାର୍କ ଯୁଦ୍ଧ-ଅଶ୍ୱ ସ୍ମାରକ ଦର୍ଶନ।", hi: "नकली रास्ता बंद बहाने को मैप दिखाकर चुनौती देना व कोणार्क युद्ध-अश्व स्मारक दर्शन।" },
+      title: { or: "୭. ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଯୁଦ୍ଧ-ଘୋଡ଼ା ଓ ସ୍କାମ୍ ଖଣ୍ଡନ", hi: "7. मास्टर कैंटीन युद्ध-अश्व व स्कैम खंडन", en: "7. Master Canteen Horse Statue & Detour Bust" },
+      desc: { or: "କୋଣାର୍କ ଯୁଦ୍ଧ-ଅଶ୍ୱ ଝରଣା ସ୍ମାରକ ଏବଂ ଅଟୋ ଚାଳକଙ୍କ ଫର୍ଜି ରାସ୍ତା ବନ୍ଦ ବାହାନା ପର୍ଦ୍ଦାଫାଶ।", hi: "कोणार्क युद्ध-अश्व फव्वारा स्मारक और ड्राइवर के फर्जी रोडब्लॉक बहाने का पर्दाफाश।", en: "Heroic Konark War Stallion fountain monument and exposing the driver's fake roadblock excuse." },
       camStart: [45, 4.5, -315],
       camLook: [40, 2.5, -329],
       camEnd: [40, 5.5, -332],
@@ -5814,8 +5901,8 @@
     },
     {
       id: "scene_rent_bust",
-      title: { or: "୮. ଓଲ୍ଡ ଟାଉନ୍ ରେଣ୍ଟ ସିଣ୍ଡିକେଟ୍ ପୋଲିସ୍ ଷ୍ଟିଙ୍ଗ୍", hi: "8. ओल्ड टाउन रेंट सिंडिकेट पुलिस स्टिंग" },
-      desc: { or: "ପଡ଼ୋଶୀ ମାଉସୀଙ୍କ ସହାୟତା, PCR ଭ୍ୟାନ୍ ସାଇରନ୍ ଏବଂ ଦଲାଲ ରଘୁ ଗିରଫ।", hi: "पड़ोसन मौसी की मदद, PCR वैन सायरन और दलाल रघु की गिरफ्तारी।" },
+      title: { or: "୮. ଓଲ୍ଡ ଟାଉନ୍ ରେଣ୍ଟ ସିଣ୍ଡିକେଟ୍ ପୋଲିସ୍ ଷ୍ଟିଙ୍ଗ୍", hi: "8. ओल्ड टाउन रेंट सिंडिकेट पुलिस स्टिंग", en: "8. Old Town Rental Syndicate Police Sting" },
+      desc: { or: "ଦଲାଲ ରଘୁର ନଗଦ ଆଡଭାନ୍ସ ଠକେଇ ଧରାପଡ଼ିବା ଏବଂ ପୋଲିସ୍ ପିସିଆର୍ ଭ୍ୟାନ୍ ଦ୍ୱାରା ଗିରଫ।", hi: "दलाल रघु की एडवांस ठगी को रंगेहाथ पकड़ना और पुलिस पीसीआर वैन द्वारा गिरफ्तारी।", en: "Exposing broker Raghu's advance cash scam with Police PCR van 112 and recovering room keys." },
       camStart: [112, 3.8, -302],
       camLook: [POI.rentHouse[0], 1.6, POI.rentHouse[1]],
       camEnd: [100, 2.5, -310],
@@ -5824,8 +5911,8 @@
     },
     {
       id: "scene_ekamra",
-      title: { or: "୯. ଏକାମ୍ର ହାଟ ପଟ୍ଟଚିତ୍ର ସ୍ୱର୍ଣ୍ଣ ସମ୍ମାନ", hi: "9. एकाम्र हाट पट्टचित्र स्वर्ण सम्मान" },
-      desc: { or: "ମାଷ୍ଟର ଶିଳ୍ପୀ ମହାପାତ୍ରଙ୍କ ହାତରୁ ବାବୁଙ୍କୁ ସ୍ୱର୍ଣ୍ଣ ପଟ୍ଟଚିତ୍ର ମୋହର ସମ୍ମାନ।", hi: "मास्टर शिल्पी महापात्रा के हाथों से बाबू को स्वर्ण पट्टचित्र पदक।" },
+      title: { or: "୯. ଏକାମ୍ର ହାଟ ପଟ୍ଟଚିତ୍ର ସ୍ୱର୍ଣ୍ଣ ସମ୍ମାନ", hi: "9. एकाम्र हाट पट्टचित्र स्वर्ण सम्मान", en: "9. Ekamra Haat Golden Pattachitra Honor" },
+      desc: { or: "ସୌରା ଚିତ୍ରକଳା କୁଟୀର, ରଘୁରାଜପୁର ପଟ୍ଟଚିତ୍ର ଶିଳ୍ପୀଙ୍କ ସହ ଆଳାପ ଓ ସ୍ୱର୍ଣ୍ଣ ସିଲ୍ ପୁରସ୍କାର।", hi: "सौरा चित्रकला कुटीर, रघुराजपुर पट्टचित्र शिल्पकार से भेंट और स्वर्ण सम्मान।", en: "Tribal craft cottages with Saura murals, handlooms, and receiving the Master Craftsman award." },
       camStart: [-92, 4.2, -270],
       camLook: [POI.ekamraHaat[0], 2.5, POI.ekamraHaat[1]],
       camEnd: [-82, 2.4, -278],
@@ -5834,8 +5921,8 @@
     },
     {
       id: "scene_dhauli_teaser",
-      title: { or: "୧୦. ଧଉଳି ଶାନ୍ତି ସ୍ତୂପ ଓ ପୁରୀ ଏକ୍ସପ୍ରେସ୍ ଟିଜର୍", hi: "10. धउलि शांति स्तूप व पुरी एक्सप्रेस टीज़र" },
-      desc: { or: "ଧଉଳି ଶାନ୍ତି ସ୍ତୂପରୁ ସୂର୍ଯ୍ୟାସ୍ତର ଦୃଶ୍ୟ ଏବଂ NH-316 ପୁରୀ ସମୁଦ୍ର ମାର୍ଗ ଉନ୍ମୋଚନ।", hi: "धउलि शांति स्तूप से सूर्यास्त दृश्य और NH-316 पुरी हाईवे का उद्घाटन।" },
+      title: { or: "୧୦. ଧଉଳି ଶାନ୍ତି ସ୍ତୂପ ଓ ପୁରୀ ଏକ୍ସପ୍ରେସ୍ ଟିଜର୍", hi: "10. धउलि शांति स्तूप व पुरी एक्सप्रेस टीज़र", en: "10. Dhauli Peace Pagoda & Puri Express Teaser" },
+      desc: { or: "ଧଉଳି ଶାନ୍ତି ସ୍ତୂପରୁ ସୂର୍ଯ୍ୟାସ୍ତର ଦୃଶ୍ୟ ଏବଂ NH-316 ପୁରୀ ସମୁଦ୍ର ମାର୍ଗ ଉନ୍ମୋଚନ।", hi: "धउलि शांति स्तूप से सूर्यास्त दृश्य और NH-316 पुरी हाईवे का उद्घाटन।", en: "Sunset at Dhauli Shanti Stupa overlooking Daya River and unveiling NH-316 Puri Highway." },
       camStart: [145, 26, -380],
       camLook: [POI.dhauli[0], 28, POI.dhauli[1]],
       camEnd: [175, 34, -410],
@@ -5844,8 +5931,8 @@
     },
     {
       id: "scene_pg_curfew",
-      title: { or: "୧୧. କାନ୍ତା ଆଣ୍ଟିଙ୍କ ରାତି ୯ଟା କର୍ଫ୍ୟୁ ନିୟମ", hi: "11. कांता आंटी का रात 9 बजे कर्फ्यू नियम" },
-      desc: { or: "ଶହୀଦ ନଗର ପିଜି ଗେଟ୍ ବନ୍ଦ, ଡ୍ରାମାଟିକ୍ ମେମେ ସାଉଣ୍ଡ ଏବଂ ବାବୁଙ୍କୁ ହଷ୍ଟେଲ ନିୟମ ଚେତାବନୀ।", hi: "शहीद नगर पीजी में 9 बजे गेट बंद, टीवी सीरियल शॉक साउंड और सख्त हॉस्टल नियम।" },
+      title: { or: "୧୧. କାନ୍ତା ଆଣ୍ଟିଙ୍କ ରାତି ୯ଟା କର୍ଫ୍ୟୁ ନିୟମ", hi: "11. कांता आंटी का रात 9 बजे कर्फ्यू नियम", en: "11. Kanta Aunty's 9 PM Curfew Iron Law" },
+      desc: { or: "ଶହୀଦ ନଗର ପିଜି ଗେଟ୍ ବନ୍ଦ, ଡ୍ରାମାଟିକ୍ ମେମେ ସାଉଣ୍ଡ ଏବଂ ବାବୁଙ୍କୁ ହଷ୍ଟେଲ ନିୟମ ଚେତାବନୀ।", hi: "शहीद नगर पीजी में 9 बजे गेट बंद, टीवी सीरियल शॉक साउंड और सख्त हॉस्टल नियम।", en: "Saheed Nagar PG hostel gates locked at 9 PM sharp with dramatic Indian TV serial sound effects!" },
       camStart: [-130, 4.2, 50],
       camLook: [POI.kantaAunty[0], 1.5, POI.kantaAunty[1]],
       camEnd: [-145, 2.8, 38],
@@ -5854,8 +5941,8 @@
     },
     {
       id: "scene_pg_meter",
-      title: { or: "୧୨. ବାବୁଲାଲ୍ ଅଙ୍କଲଙ୍କ ଲାଲ୍ ଚୁମ୍ବକ ମିଟର ସ୍କାମ୍", hi: "12. बाबू लाल अंकल का लाल चुंबक मीटर स्कैम" },
-      desc: { or: "ମିଟର ଉପରେ ବଡ଼ ନାଲି ମ୍ୟାଗ୍ନେଟ୍ ଲଗାଇ ୟୁନିଟ୍ ବଢାଇବା ଏବଂ ବାବୁ ଲାଲ୍‌ଙ୍କ 'ଆୟେଁ?!' ଚିତ୍କାର।", hi: "मीटर पर लाल चुंबक से फर्जी बिलिंग और अंकल का वायरल 'आयेँ?!' शॉक।" },
+      title: { or: "୧୨. ବାବୁଲାଲ୍ ଅଙ୍କଲଙ୍କ ଲାଲ୍ ଚୁମ୍ବକ ମିଟର ସ୍କାମ୍", hi: "12. बाबू लाल अंकल का लाल चुंबक मीटर स्कैम", en: "12. Babu Lal Uncle's Red Magnet Meter Scam" },
+      desc: { or: "ମିଟର ଉପରେ ବଡ଼ ନାଲି ମ୍ୟାଗ୍ନେଟ୍ ଲଗାଇ ୟୁନିଟ୍ ବଢାଇବା ଏବଂ ବାବୁ ଲାଲ୍‌ଙ୍କ 'ଆୟେଁ?!' ଚିତ୍କାର।", hi: "मीटर पर लाल चुंबक से फर्जी बिलिंग और अंकल का वायरल 'आयेँ?!' शॉक।", en: "Giant red magnet stuck on electric meter producing an absurd ₹3,500 bill and uncle's viral 'Aayein?!' shock." },
       camStart: [-135, 3.2, 28],
       camLook: [POI.babuLalUncle[0], 1.6, POI.babuLalUncle[1]],
       camEnd: [-138, 2.0, 32],
@@ -5864,8 +5951,8 @@
     },
     {
       id: "scene_khandagiri",
-      title: { or: "୧୩. ଖଣ୍ଡଗିରି ଓ ଉଦୟଗିରି ପ୍ରାଚୀନ ଗୁମ୍ଫା", hi: "13. खंडागिरि व उदयगिरि प्राचीन गुफाएं" },
-      desc: { or: "ଦ୍ୱିତୀୟ ଶତାବ୍ଦୀ ଖ୍ରୀଷ୍ଟପୂର୍ବର ଖାରବେଳ ଶିଳାଲେଖ, ବାନର ସେନା ଏବଂ ପଥର ଖୋଦେଇ।", hi: "सम्राट खारवेल के शिलालेख, वानर सेना और 2000 वर्ष पुरानी प्राचीन गुफाएं।" },
+      title: { or: "୧୩. ଖଣ୍ଡଗିରି ଓ ଉଦୟଗିରି ପ୍ରାଚୀନ ଗୁମ୍ଫା", hi: "13. खंडागिरि व उदयगिरि प्राचीन गुफाएं", en: "13. Ancient Khandagiri & Udayagiri Caves" },
+      desc: { or: "ଦ୍ୱିତୀୟ ଶତାବ୍ଦୀ ଖ୍ରୀଷ୍ଟପୂର୍ବର ଖାରବେଳ ଶିଳାଲେଖ, ବାନର ସେନା ଏବଂ ପଥର ଖୋଦେଇ।", hi: "सम्राट खारवेल के शिलालेख, वानर सेना और 2000 वर्ष पुरानी प्राचीन गुफाएं।", en: "2nd-century BC Emperor Kharavela rock inscriptions, Queen's palace caves, and playful monkey troops." },
       camStart: [110, 16, 75],
       camLook: [POI.khandagiri[0], 8, POI.khandagiri[1]],
       camEnd: [95, 10, 50],
@@ -5874,8 +5961,8 @@
     },
     {
       id: "scene_traffic_panda",
-      title: { or: "୧୪. ରାଜମହଲ ଟ୍ରାଫିକ୍ ଏସ୍ଆଇ ପଣ୍ଡା ସାର୍ ଚେକ୍", hi: "14. राजमहल ट्रैफिक एसआई पंडा सर चेकिंग" },
-      desc: { or: "ଜନପଥ ହେଲମେଟ୍ ଯାଞ୍ଚ, ୩୫ କି.ମି./ଘଣ୍ଟା ସ୍କୁଟି ସ୍ପୀଡ୍ ନିୟନ୍ତ୍ରଣ ଏବଂ ଟ୍ରାଫିକ୍ ସଚେତନତା।", hi: "जनपथ हेलमेट चेकिंग, 35 किमी/घंटा सुरक्षित स्कूटी स्पीड और चालान सुरक्षा।" },
+      title: { or: "୧୪. ରାଜମହଲ ଟ୍ରାଫିକ୍ ଏସ୍ଆଇ ପଣ୍ଡା ସାର୍ ଚେକ୍", hi: "14. राजमहल ट्रैफिक एसआई पंडा सर चेकिंग", en: "14. Raj Mahal Traffic SI Panda Checking" },
+      desc: { or: "ଜନପଥ ହେଲମେଟ୍ ଯାଞ୍ଚ, ୩୫ କି.ମି./ଘଣ୍ଟା ସ୍କୁଟି ସ୍ପୀଡ୍ ନିୟନ୍ତ୍ରଣ ଏବଂ ଟ୍ରାଫିକ୍ ସଚେତନତା।", hi: "जनपथ हेलमेट चेकिंग, 35 किमी/घंटा सुरक्षित स्कूटी स्पीड और चालान सुरक्षा।", en: "Helmet inspection on Janpath, maintaining safe 35 km/h scooty speeds, and road safety awareness." },
       camStart: [46, 3.5, -250],
       camLook: [POI.policePanda[0], 1.5, POI.policePanda[1]],
       camEnd: [38, 2.2, -260],
@@ -6009,17 +6096,17 @@
   }
 
   // 3. EMERGENT 10-SECTOR ATLAS
-  const citySectors = [
-    { title: "BARAMUNDA BUS TERMINAL", desc: "Inter-district bus gateway from Western and Southern Odisha. Busy auto rickshaws, scooty stands, and tea stalls.", hi: "बारामुंडा बस टर्मिनल पश्चिमी व दक्षिणी ओडिशा का प्रवेश द्वार है।", pos: POI.babuSpawn },
-    { title: "RAM MANDIR JANPATH", desc: "Iconic 30-meter Kalinga pink stone temple with stepped Pida roof, Amalaka crown and brass prayer bell.", hi: "राम मंदिर जनपथ का ऐतिहासिक कलिंग शैली का मंदिर व फूल बाजार है।", pos: POI.ramMandir },
-    { title: "RAJ MAHAL OVERBRIDGE", desc: "Elevated 4.9-meter highway flyover connecting Khandagiri to Master Canteen.", hi: "राजमहल ओवरब्रिज जो खंडागिरि को सीधे मास्टर कैंटीन से जोड़ता है।", pos: [40, -270] },
-    { title: "MASTER CANTEEN ROUNDABOUT", desc: "Historic Konark War Stallion rearing monument with water fountain and bustling station avenue.", hi: "मास्टर कैंटीन चौक कोणार्क युद्ध-अश्व स्मारक और स्टेशन का केंद्र है।", pos: POI.canteen },
-    { title: "OLD TOWN RENT STREET", desc: "Residential sector where landlords, tenants, and rental syndicates negotiate room agreements.", hi: "ओल्ड टाउन रेंट स्ट्रीट जहाँ मकान मालिक और किराएदार रहते हैं।", pos: POI.rentHouse },
-    { title: "LINGARAJ TEMPLE & BINDUSAGAR", desc: "1000-year-old monumental Kalinga architecture, holy Bindusagar water and sacred Mahaprasad.", hi: "श्री लिंगराज मंदिर, पवित्र बिंदुसागर सरोवर और महाप्रसाद का केंद्र।", pos: POI.templeLingaraj },
-    { title: "EKAMRA HAAT CRAFT VILLAGE", desc: "Thatched tribal craft cottages with Saura tribal art murals, Pattachitra scrolls, applique and stone carvings.", hi: "एकाम्र हाट शिल्प ग्राम जहाँ सौरा कला और हथकरघा मिलता है।", pos: POI.ekamraHaat },
-    { title: "INFOCITY CYBER HUB", desc: "High-tech glass skyscraper cyber towers, IT tech parks, startups and digital corridor.", hi: "इन्फोसिटी साइबर हब आधुनिक कांच के आईटी टावर और टेक पार्क है।", pos: POI.infocity },
-    { title: "KHANDAGIRI & UDAYAGIRI CAVES", desc: "Ancient 2nd-century BCE rock-cut monk caves, Hatigumpha inscriptions, sandstone carvings, and climbing stairs.", hi: "खंडागिरि और उदयगिरि की 2000 वर्ष पुरानी गुफाएं और हाथीगुंफा शिलालेख।", pos: POI.khandagiri },
-    { title: "SAHEED NAGAR STUDENT PG HUB", desc: "Bustling student residential hub with Kanta Aunty's PG, strict 9 PM curfew, and Babu Lal Uncle's rigged electric meter.", hi: "शहीद नगर छात्र पीजी हब, कांता आंटी का सख्त हॉस्टल और बाबू लाल अंकल का बिजली मीटर।", pos: POI.saheedPG }
+    const citySectors = [
+    { title: "BARAMUNDA BUS TERMINAL", or: "ବାରମୁଣ୍ଡା ବସ୍ ଟର୍ମିନାଲ୍", desc: "Inter-district bus gateway from Western and Southern Odisha. Busy auto rickshaws, scooty stands, and Dahibara stalls.", hi: "बारामुंडा बस टर्मिनल पश्चिमी व दक्षिणी ओडिशा का प्रवेश द्वार है।", pos: POI.babuSpawn },
+    { title: "RAM MANDIR JANPATH", or: "ରାମ ମନ୍ଦିର ଜନପଥ", desc: "Iconic 30-meter Kalinga pink stone temple with stepped Pida roof, Amalaka crown and brass prayer bell.", hi: "राम मंदिर जनपथ का ऐतिहासिक कलिंग शैली का मंदिर व फूल बाजार है।", pos: POI.ramMandir },
+    { title: "RAJ MAHAL OVERBRIDGE", or: "ରାଜମହଲ ଓଭରବ୍ରିଜ୍", desc: "Elevated 4.9-meter highway flyover connecting Khandagiri to Master Canteen.", hi: "राजमहल ओवरब्रिज जो खंडागिरि को सीधे मास्टर कैंटीन से जोड़ता है।", pos: [40, -270] },
+    { title: "MASTER CANTEEN ROUNDABOUT", or: "ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଛକ", desc: "Historic Konark War Stallion rearing monument with water fountain and bustling station avenue.", hi: "मास्टर कैंटीन चौक कोणार्क युद्ध-अश्व स्मारक और स्टेशन का केंद्र है।", pos: POI.canteen },
+    { title: "OLD TOWN RENT STREET", or: "ଓଲ୍ଡ ଟାଉନ୍ ରେଣ୍ଟ ଷ୍ଟ୍ରିଟ୍", desc: "Residential sector where landlords, tenants, and rental syndicates negotiate room agreements.", hi: "ओल्ड टाउन रेंट स्ट्रीट जहाँ मकान मालिक और किराएदार रहते हैं।", pos: POI.rentHouse },
+    { title: "LINGARAJ TEMPLE & BINDUSAGAR", or: "ଶ୍ରୀ ଲିଙ୍ଗରାଜ ମନ୍ଦିର ଓ ବିନ୍ଦୁସାଗର", desc: "1000-year-old monumental Kalinga architecture, holy Bindusagar water and sacred Mahaprasad.", hi: "श्री लिंगराज मंदिर, पवित्र बिंदुसागर सरोवर और महाप्रसाद का केंद्र।", pos: POI.templeLingaraj },
+    { title: "EKAMRA HAAT CRAFT VILLAGE", or: "ଏକାମ୍ର ହାଟ କଳା ଗ୍ରାମ", desc: "Thatched tribal craft cottages with Saura tribal art murals, Pattachitra scrolls, applique and stone carvings.", hi: "एकाम्र हाट शिल्प ग्राम जहाँ सौरा कला और हथकरघा मिलता है।", pos: POI.ekamraHaat },
+    { title: "INFOCITY CYBER HUB", or: "ଇନଫୋସିଟି ସାଇବର ହବ୍", desc: "High-tech glass skyscraper cyber towers, IT tech parks, startups and digital corridor.", hi: "इन्फोसिटी साइबर हब आधुनिक कांच के आईटी टावर और टेक पार्क है।", pos: POI.infocity },
+    { title: "KHANDAGIRI & UDAYAGIRI CAVES", or: "ଖଣ୍ଡଗିରି ଓ ଉଦୟଗିରି ଗୁମ୍ଫା", desc: "Ancient 2nd-century BCE rock-cut monk caves, Hatigumpha inscriptions, sandstone carvings, and climbing stairs.", hi: "खंडागिरि और उदयगिरि की 2000 वर्ष पुरानी गुफाएं और हाथीगुंफा शिलालेख।", pos: POI.khandagiri },
+    { title: "SAHEED NAGAR STUDENT PG HUB", or: "ଶହୀଦ ନଗର ଛାତ୍ର ପିଜି ହବ୍", desc: "Bustling student residential hub with Kanta Aunty's PG, strict 9 PM curfew, and Babu Lal Uncle's rigged electric meter.", hi: "शहीद नगर छात्र पीजी हब, कांता आंटी का सख्त हॉस्टल और बाबू लाल अंकल का बिजली मीटर।", pos: POI.saheedPG }
   ];
   let currentSecIdx = 0;
 
@@ -6054,8 +6141,9 @@
     renderSectorPills();
     const st = document.getElementById('sec-title');
     const sd = document.getElementById('sec-desc');
-    if (st) st.innerText = citySectors[i].title;
-    if (sd) sd.innerText = citySectors[i].desc;
+    const secObj = citySectors[i];
+    if (st) st.innerText = secObj.title + (secObj.or ? ' • ' + secObj.or : '');
+    if (sd) sd.innerHTML = '<div style="color:#FEF08A; margin-bottom:4px; font-weight:600;">' + (secObj.or || '') + '</div><div style="color:#F1F5F9; margin-bottom:4px;">' + (secObj.hi || '') + '</div><div style="color:#93C5FD; font-style:italic;">' + (secObj.desc || '') + '</div>';
     drawTacticalMap();
   }
   function narrateActiveSector() {
@@ -6170,8 +6258,8 @@
       if (body) body.innerText = state.lang === 'or' ? 'ରଘୁଙ୍କ ଦହିବରା ଷ୍ଟଲ୍ ପାଖକୁ ଚାଲିଯାଆନ୍ତୁ ଏବଂ [E] ଦବାଇ ସ୍ୱାଦିଷ୍ଟ ଦହିବରା-ଆଳୁଦମ୍ ଖାଆନ୍ତୁ!' : 'रघु के दहीबड़ा स्टॉल के पास जाएं और [E] दबाकर गरमा-गरम दहीबड़ा-आलूदम चखें!';
       wayMarker.group.position.set(POI.dahibaraBaramunda[0], 0, POI.dahibaraBaramunda[1]);
     } else if (state.tutorialStep === 2) {
-      if (tag) tag.innerText = state.lang === 'or' ? 'ପଦକ୍ଷେପ ୨ / ୩ • ଅଟୋ ଦରଦାମ୍' : 'STEP 2 / 3 • ऑटो मोलभाव';
-      if (body) body.innerText = state.lang === 'or' ? 'ସୁନେଲି GPS ତୀର ଚିହ୍ନକୁ ଅନୁସରଣ କରି ଅଟୋ ଷ୍ଟାଣ୍ଡରେ କାଳିଆ ଭାଇଙ୍କ ସହ ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଯିବାକୁ ଦରଦାମ୍ କରନ୍ତୁ!' : 'सुनहरे GPS तीर का पीछा करें और ऑटो स्टैंड पर कालिया भाई से मास्टर कैंटीन जाने का मोलभाव करें!';
+      if (tag) tag.innerText = 'STEP 2 / 3 • AUTO BARGAIN • ଅଟୋ ଦରଦାମ୍ • ऑटो मोलभाव';
+      if (body) body.innerHTML = '<div style="color:#FEF08A; font-weight:600; margin-bottom:2px;">ଅଟୋ ଷ୍ଟାଣ୍ଡରେ କାଳିଆ ଭାଇଙ୍କ ସହ ମାଷ୍ଟର କ୍ୟାଣ୍ଟିନ୍ ଯିବାକୁ ଦରଦାମ୍ କରନ୍ତୁ କିମ୍ବା ସ୍କୁଟି ନିଅନ୍ତୁ!</div><div style="color:#CBD5E1; font-size:12px; margin-bottom:2px;">ऑटो स्टैंड पर कालिया भाई से मास्टर कैंटीन का मोलभाव करें या स्कूटी चुनें!</div><div style="color:#93C5FD; font-size:11.5px; font-style:italic;">Negotiate auto fare with Kalia Bhai at the stand or choose the Honda Activa scooty!</div>';
       wayMarker.group.position.set(POI.driver[0], 0, POI.driver[1]);
     }
   }
@@ -6232,7 +6320,8 @@
     if (!ls) return;
 
     if (triv && ODISHA_TRIVIA && ODISHA_TRIVIA.length) {
-      triv.innerText = tr(ODISHA_TRIVIA[0]);
+      const t = ODISHA_TRIVIA[0];
+      triv.innerHTML = '<div style="color:#FEF08A; margin-bottom:6px; font-size:13.5px;">' + t.or + '</div><div style="color:#F8FAFC; margin-bottom:6px; font-size:13px;">' + t.hi + '</div><div style="color:#93C5FD; font-style:italic; font-size:12.5px;">' + t.en + '</div>';
     }
 
     let p = 0;
