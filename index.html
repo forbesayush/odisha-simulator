@@ -2780,6 +2780,7 @@
   }
   const box = (w, h, d) => new THREE.BoxGeometry(w, h, d);
   const cyl = (rt, rb, h, s = 14) => new THREE.CylinderGeometry(rt, rb, h, s);
+  const sphere = (r, s = 12) => new THREE.SphereGeometry(r, s, s);
 
   const mats = {
     autoGreen: M("#1f7a3c", 0.45, { metalness: 0.2 }),
@@ -2940,40 +2941,77 @@
     return { group: g, wheels: [wf, wr], handleGroup, headlight, spotLight: spot };
   }
 
-  // 3. SACRED COW 3D ANIMATED MODEL
+  // 3. SACRED COW 3D SCULPTED ZEBU MODEL
   function makeCow() {
     const g = new THREE.Group();
-    const cowSkin = M("#ececec", 0.85);
-    const cowMuzzle = M("#f0b8a4", 0.8);
-    const hornMat = M("#4b4b4b", 0.6);
+    const cowSkin = M("#f1f5f9", 0.85);
+    const cowMuzzle = M("#fbcfe8", 0.7);
+    const hornMat = M("#334155", 0.5, { roughness: 0.4 });
+    const hoofMat = M("#0f172a", 0.6);
+    const garlandMat = M("#ea580c", 0.7); // Orange marigold garland
 
-    // Body
-    addMesh(g, box(1.0, 0.95, 1.9), cowSkin, [0, 1.05, 0]);
-    // Hump (Zebu breed)
-    addMesh(g, new THREE.SphereGeometry(0.35, 10, 10), cowSkin, [0, 1.6, 0.45]);
-    // Neck & Head
-    addMesh(g, box(0.48, 0.6, 0.7), cowSkin, [0, 1.45, 0.95], [-0.35, 0, 0]);
-    const head = addMesh(g, box(0.45, 0.5, 0.6), cowSkin, [0, 1.3, 1.4]);
-    // Muzzle / Snout
-    addMesh(g, box(0.42, 0.35, 0.35), cowMuzzle, [0, 1.15, 1.65]);
-    // Horns
-    [-0.22, 0.22].forEach(x => {
-      addMesh(g, cyl(0.04, 0.08, 0.35, 8), hornMat, [x, 1.68, 1.35], [0.3, 0, x > 0 ? 0.3 : -0.3]);
+    // Contoured barrel body
+    addMesh(g, box(1.05, 1.0, 1.95), cowSkin, [0, 1.05, 0]);
+    // Sacred Indian Zebu Hump
+    addMesh(g, new THREE.SphereGeometry(0.38, 12, 12), cowSkin, [0, 1.65, 0.40], null, [1, 1.25, 1]);
+    
+    // Muscular Neck & Sagging Dewlap
+    addMesh(g, box(0.50, 0.65, 0.75), cowSkin, [0, 1.45, 0.95], [-0.32, 0, 0]);
+    addMesh(g, box(0.12, 0.45, 0.55), cowSkin, [0, 1.15, 0.85]); // Hanging dewlap fold
+
+    // Sculpted Head & Brow
+    const head = new THREE.Group();
+    head.position.set(0, 1.32, 1.45);
+    g.add(head);
+    addMesh(head, box(0.46, 0.48, 0.55), cowSkin, [0, 0, 0]);
+    // Pink Muzzle & Nostrils
+    addMesh(head, box(0.38, 0.32, 0.34), cowMuzzle, [0, -0.12, 0.32]);
+    [-0.08, 0.08].forEach(x => addMesh(head, box(0.04, 0.04, 0.02), hornMat, [x, -0.10, 0.49]));
+    // Eyes
+    [-0.24, 0.24].forEach(x => {
+      addMesh(head, box(0.04, 0.06, 0.08), hornMat, [x, 0.08, 0.10]);
     });
-    // Legs
+    // Drooping Ears
+    [-0.32, 0.32].forEach(x => {
+      addMesh(head, box(0.18, 0.08, 0.10), cowSkin, [x, 0.12, -0.05], [0, 0, x > 0 ? -0.4 : 0.4]);
+    });
+    // Curved Lyre Horns
+    [-0.20, 0.20].forEach(x => {
+      addMesh(head, cyl(0.03, 0.07, 0.42, 8), hornMat, [x, 0.34, -0.02], [0.25, 0, x > 0 ? 0.35 : -0.35]);
+    });
+    // Sacred Marigold Garland around neck
+    addMesh(g, cyl(0.38, 0.38, 0.08, 12), garlandMat, [0, 1.25, 0.85], [1.1, 0, 0]);
+
+    // Swishing Tail with hair tuft
+    const tailGroup = new THREE.Group();
+    tailGroup.position.set(0, 1.45, -0.98);
+    g.add(tailGroup);
+    addMesh(tailGroup, cyl(0.03, 0.02, 0.85, 6), cowSkin, [0, -0.42, 0]);
+    addMesh(tailGroup, box(0.08, 0.20, 0.08), hornMat, [0, -0.85, 0]);
+
+    // Four Separate Articulated Legs with Hooves
     const legs = [];
-    [-0.35, 0.35].forEach(x => {
-      [-0.65, 0.65].forEach(z => {
-        legs.push(addMesh(g, cyl(0.1, 0.08, 0.8, 8), cowSkin, [x, 0.4, z]));
-      });
+    [[-0.36, -0.70], [0.36, -0.70], [-0.36, 0.70], [0.36, 0.70]].forEach(([x, z]) => {
+      const legG = new THREE.Group();
+      legG.position.set(x, 0.85, z);
+      g.add(legG);
+      addMesh(legG, cyl(0.11, 0.09, 0.50, 8), cowSkin, [0, -0.22, 0]); // Upper leg
+      addMesh(legG, cyl(0.09, 0.08, 0.45, 8), cowSkin, [0, -0.60, 0]); // Lower leg
+      addMesh(legG, box(0.14, 0.08, 0.16), hoofMat, [0, -0.82, 0.02]); // Black Hoof
+      legs.push(legG);
     });
 
     return {
       group: g,
+      head,
+      tailGroup,
       update: (dt, sit = true) => {
         if (sit) {
           g.position.y = 0;
-          legs.forEach(l => { l.position.y = 0.25; l.rotation.x = Math.PI / 4; });
+          legs.forEach(l => { l.position.y = 0.32; l.rotation.x = Math.PI / 3.8; });
+        }
+        if (tailGroup) {
+          tailGroup.rotation.z = Math.sin(Date.now() * 0.004) * 0.25;
         }
       }
     };
@@ -3130,7 +3168,193 @@
     return g;
   }
 
-  // 7.5 FAMOUS CUTTACK-BHUBANESWAR DAHIBARA-ALOODUM PUSHCART
+
+  /* =========================================================================
+     HIGH-QUALITY 3D PROPORTIONED CHARACTER FIGURE GENERATOR
+     ========================================================================= */
+  function makeCharacterFigure(cfg = {}) {
+    const g = new THREE.Group();
+    
+    const skin = M(cfg.skinColor || "#d49b78", 0.6);
+    const shirt = M(cfg.shirtColor || "#10b981", 0.75);
+    const pants = M(cfg.pantsColor || "#1e293b", 0.8);
+    const shoe = M(cfg.shoeColor || "#0f172a", 0.5);
+    const hair = M(cfg.hairColor || "#1c1917", 0.9);
+    const white = M("#ffffff", 0.3);
+    const eye = M("#1c1917", 0.1);
+    const gold = M("#eab308", 0.3, { metalness: 0.6 });
+    const gamucha = M(cfg.gamuchaColor || "#b71c1c", 0.8);
+    const khaki = M("#b45309", 0.7);
+    const brown = M("#78350f", 0.7);
+
+    // Root Body Group (holds Torso, Neck, Head, Arms)
+    const root = new THREE.Group();
+    g.add(root);
+
+    // 1. PELVIS & BELT
+    addMesh(root, box(0.50, 0.22, 0.30), pants, [0, 0.88, 0]);
+    addMesh(root, box(0.52, 0.06, 0.32), hair, [0, 0.94, 0]);
+    addMesh(root, box(0.10, 0.08, 0.34), gold, [0, 0.94, 0]);
+
+    // 2. CONTOURED TORSO
+    if (cfg.isUncleTummy) {
+      addMesh(root, box(0.54, 0.38, 0.40), shirt, [0, 1.15, 0.04]);
+      addMesh(root, box(0.60, 0.36, 0.36), shirt, [0, 1.40, 0]);
+    } else {
+      addMesh(root, box(0.48, 0.36, 0.30), shirt, [0, 1.15, 0]);
+      addMesh(root, box(0.58, 0.38, 0.32), shirt, [0, 1.42, 0]);
+    }
+
+    // Shirt Collar & Neckline
+    addMesh(root, box(0.22, 0.08, 0.34), white, [0, 1.62, 0]);
+
+    // Character Attire
+    if (cfg.hasGamucha) {
+      addMesh(root, box(0.16, 0.72, 0.36), gamucha, [-0.20, 1.34, 0]);
+      addMesh(root, box(0.16, 0.45, 0.36), gamucha, [0.06, 1.25, 0.02], [0, 0, -0.4]);
+    }
+    if (cfg.isSaree) {
+      addMesh(root, box(0.22, 0.85, 0.36), shirt, [-0.18, 1.35, 0]);
+      addMesh(root, box(0.24, 0.70, 0.06), shirt, [-0.18, 1.10, -0.16]);
+      addMesh(root, box(0.50, 0.45, 0.32), shirt, [0, 0.70, 0]);
+    }
+    if (cfg.hasBackpack) {
+      const bpGroup = new THREE.Group();
+      bpGroup.position.set(0, 1.30, -0.20);
+      root.add(bpGroup);
+      addMesh(bpGroup, box(0.44, 0.56, 0.24), M(cfg.backpackColor || "#1e3a8a", 0.7), [0, 0, 0]);
+      addMesh(bpGroup, box(0.36, 0.32, 0.08), M(cfg.backpackColor || "#1e3a8a", 0.8), [0, -0.08, -0.15]);
+      addMesh(bpGroup, cyl(0.04, 0.04, 0.16, 6), hair, [0, 0.30, -0.02], [0, 0, Math.PI / 2]);
+      addMesh(bpGroup, cyl(0.05, 0.05, 0.22, 8), M("#38bdf8", 0.3), [-0.24, -0.05, 0]);
+      addMesh(root, box(0.08, 0.50, 0.36), hair, [-0.18, 1.38, 0]);
+      addMesh(root, box(0.08, 0.50, 0.36), hair, [0.18, 1.38, 0]);
+      addMesh(root, box(0.12, 0.04, 0.03), gold, [0, 1.45, 0.17]);
+    }
+    if (cfg.hasJaneu) {
+      addMesh(root, cyl(0.015, 0.015, 0.75, 6), white, [0, 1.32, 0.17], [0, 0, 0.65]);
+      addMesh(root, cyl(0.02, 0.02, 0.45, 8), brown, [0, 1.45, 0.18]);
+    }
+    if (cfg.hasEpaulettes) {
+      addMesh(root, box(0.18, 0.04, 0.12), khaki, [-0.25, 1.60, 0]);
+      addMesh(root, box(0.18, 0.04, 0.12), khaki, [0.25, 1.60, 0]);
+      addMesh(root, box(0.06, 0.06, 0.02), gold, [0.12, 1.48, 0.17]);
+    }
+
+    // 3. ANATOMICAL NECK & HEAD
+    addMesh(root, cyl(0.08, 0.09, 0.16, 10), skin, [0, 1.68, 0]);
+
+    const headGroup = new THREE.Group();
+    headGroup.position.set(0, 1.88, 0);
+    root.add(headGroup);
+
+    addMesh(headGroup, box(0.36, 0.40, 0.34), skin, [0, 0, 0]);
+    addMesh(headGroup, box(0.28, 0.12, 0.30), skin, [0, -0.18, 0.02]);
+
+    // Eyes
+    addMesh(headGroup, box(0.065, 0.045, 0.04), white, [-0.09, 0.04, 0.17]);
+    addMesh(headGroup, box(0.065, 0.045, 0.04), white, [0.09, 0.04, 0.17]);
+    addMesh(headGroup, box(0.032, 0.032, 0.045), eye, [-0.09, 0.04, 0.175]);
+    addMesh(headGroup, box(0.032, 0.032, 0.045), eye, [0.09, 0.04, 0.175]);
+
+    // Eyebrows
+    addMesh(headGroup, box(0.08, 0.022, 0.04), hair, [-0.09, 0.085, 0.172]);
+    addMesh(headGroup, box(0.08, 0.022, 0.04), hair, [0.09, 0.085, 0.172]);
+
+    // Nose
+    addMesh(headGroup, box(0.055, 0.09, 0.08), skin, [0, 0.0, 0.19]);
+
+    // Ears
+    addMesh(headGroup, box(0.045, 0.09, 0.07), skin, [-0.20, 0.01, 0]);
+    addMesh(headGroup, box(0.045, 0.09, 0.07), skin, [0.20, 0.01, 0]);
+
+    if (cfg.hasMustache) {
+      addMesh(headGroup, box(0.20, 0.045, 0.05), hair, [0, -0.075, 0.18]);
+    }
+
+    // Headwear
+    if (cfg.headwear === 'police_cap') {
+      addMesh(headGroup, cyl(0.23, 0.21, 0.14, 14), khaki, [0, 0.23, -0.02]);
+      addMesh(headGroup, box(0.30, 0.03, 0.15), hair, [0, 0.18, 0.15], [0.22, 0, 0]);
+      addMesh(headGroup, box(0.07, 0.07, 0.03), gold, [0, 0.23, 0.17]);
+    } else if (cfg.headwear === 'aunty_bun') {
+      addMesh(headGroup, box(0.40, 0.22, 0.38), hair, [0, 0.15, -0.02]);
+      addMesh(headGroup, sphere(0.14, 10), hair, [0, 0.06, -0.21]);
+      addMesh(headGroup, cyl(0.15, 0.15, 0.04, 12), white, [0, 0.06, -0.21], [Math.PI / 2, 0, 0]);
+      addMesh(headGroup, sphere(0.028, 6), gamucha, [0, 0.075, 0.18]);
+      addMesh(headGroup, sphere(0.035, 6), gold, [-0.21, -0.05, 0]);
+      addMesh(headGroup, sphere(0.035, 6), gold, [0.21, -0.05, 0]);
+    } else if (cfg.headwear === 'priest_tilak') {
+      addMesh(headGroup, sphere(0.06, 8), hair, [0, 0.12, -0.19]);
+      addMesh(headGroup, box(0.035, 0.11, 0.02), white, [0, 0.09, 0.18]);
+      addMesh(headGroup, sphere(0.02, 6), gamucha, [0, 0.09, 0.19]);
+    } else if (cfg.headwear === 'spectacles') {
+      addMesh(headGroup, box(0.40, 0.16, 0.36), hair, [0, 0.15, -0.04]);
+      addMesh(headGroup, box(0.09, 0.07, 0.04), gold, [-0.09, 0.04, 0.185]);
+      addMesh(headGroup, box(0.09, 0.07, 0.04), gold, [0.09, 0.04, 0.185]);
+      addMesh(headGroup, box(0.05, 0.02, 0.04), gold, [0, 0.04, 0.185]);
+    } else if (cfg.headwear === 'vendor_band') {
+      addMesh(headGroup, box(0.40, 0.18, 0.38), hair, [0, 0.14, -0.02]);
+      addMesh(headGroup, box(0.42, 0.07, 0.39), white, [0, 0.10, 0]);
+    } else {
+      addMesh(headGroup, box(0.40, 0.20, 0.38), hair, [0, 0.17, -0.02]);
+      addMesh(headGroup, box(0.36, 0.09, 0.13), hair, [0, 0.19, 0.13], [-0.3, 0, 0]);
+      addMesh(headGroup, box(0.09, 0.16, 0.40), hair, [-0.18, 0.07, -0.02]);
+      addMesh(headGroup, box(0.09, 0.16, 0.40), hair, [0.18, 0.07, -0.02]);
+    }
+
+    // 4. ARTICULATED ARMS (Shoulder Pivots)
+    const armL = new THREE.Group();
+    armL.position.set(-0.35, 1.48, 0);
+    root.add(armL);
+    addMesh(armL, box(0.15, 0.20, 0.16), shirt, [0, -0.08, 0]);
+    addMesh(armL, cyl(0.06, 0.05, 0.45, 8), skin, [0, -0.36, 0]);
+    addMesh(armL, box(0.075, 0.10, 0.05), skin, [0, -0.62, 0]);
+    addMesh(armL, box(0.025, 0.045, 0.035), skin, [0.035, -0.60, 0.02]);
+    if (cfg.hasWatch) {
+      addMesh(armL, box(0.09, 0.03, 0.09), gold, [0, -0.54, 0]);
+    }
+    if (cfg.hasClipboard) {
+      addMesh(armL, box(0.24, 0.34, 0.03), brown, [0, -0.55, 0.15], [0.6, 0, 0]);
+      addMesh(armL, box(0.20, 0.28, 0.01), white, [0, -0.55, 0.17], [0.6, 0, 0]);
+    }
+
+    const armR = new THREE.Group();
+    armR.position.set(0.35, 1.48, 0);
+    root.add(armR);
+    addMesh(armR, box(0.15, 0.20, 0.16), shirt, [0, -0.08, 0]);
+    addMesh(armR, cyl(0.06, 0.05, 0.45, 8), skin, [0, -0.36, 0]);
+    addMesh(armR, box(0.075, 0.10, 0.05), skin, [0, -0.62, 0]);
+    addMesh(armR, box(0.025, 0.045, 0.035), skin, [-0.035, -0.60, 0.02]);
+    if (cfg.hasLadle) {
+      addMesh(armR, cyl(0.015, 0.015, 0.45, 6), white, [0, -0.65, 0.15], [0.8, 0, 0]);
+      addMesh(armR, sphere(0.06, 8), white, [0, -0.50, 0.30]);
+    }
+    if (cfg.hasBaton) {
+      addMesh(armR, cyl(0.02, 0.02, 0.45, 8), white, [0, -0.62, 0.15], [0.7, 0, 0]);
+      addMesh(armR, box(0.03, 0.15, 0.03), gamucha, [0, -0.50, 0.25], [0.7, 0, 0]);
+    }
+
+    // 5. ARTICULATED TWO SEPARATE LEGS (Hip Pivots)
+    const legL = new THREE.Group();
+    legL.position.set(-0.15, 0.82, 0);
+    g.add(legL);
+    addMesh(legL, box(0.19, 0.44, 0.22), pants, [0, -0.22, 0]);
+    addMesh(legL, box(0.17, 0.42, 0.20), pants, [0, -0.54, 0]);
+    addMesh(legL, box(0.16, 0.10, 0.26), shoe, [0, -0.74, 0.03]);
+    addMesh(legL, box(0.16, 0.03, 0.28), white, [0, -0.79, 0.03]);
+
+    const legR = new THREE.Group();
+    legR.position.set(0.15, 0.82, 0);
+    g.add(legR);
+    addMesh(legR, box(0.19, 0.44, 0.22), pants, [0, -0.22, 0]);
+    addMesh(legR, box(0.17, 0.42, 0.20), pants, [0, -0.54, 0]);
+    addMesh(legR, box(0.16, 0.10, 0.26), shoe, [0, -0.74, 0.03]);
+    addMesh(legR, box(0.16, 0.03, 0.28), white, [0, -0.79, 0.03]);
+
+    return { group: g, root, headGroup, armL, armR, legL, legR };
+  }
+
+    // 7.5 FAMOUS CUTTACK-BHUBANESWAR DAHIBARA-ALOODUM PUSHCART
   function makeDahibaraCart() {
     const g = new THREE.Group();
     // Wooden pushcart deck
@@ -3160,6 +3384,18 @@
     addMesh(g, cyl(1.4, 0.1, 0.55, 14), mats.autoYellow, [0, 2.4, 0]);
     // Stall Signboard: "ଦହିବରା-ଆଳୁଦମ୍ • DAHIBARA ALOODUM"
     addMesh(g, new THREE.PlaneGeometry(2.2, 0.5), new THREE.MeshStandardMaterial({ map: signTex("ଦହିବରା-ଆଳୁଦମ୍", "DAHIBARA ALOODUM • ₹20", "#DC2626") }), [0, 2.05, 0.72]);
+    
+    // Dedicated Dahibara Vendor Figure standing behind pushcart
+    const vendor = makeCharacterFigure({
+      shirtColor: "#f8fafc",
+      pantsColor: "#1e3a8a",
+      skinColor: "#c68642",
+      headwear: "vendor_band",
+      hasLadle: true
+    }).group;
+    vendor.position.set(0, 0, -0.9);
+    g.add(vendor);
+
     return g;
   }
 
@@ -3870,6 +4106,88 @@
       dahibaraCarts.push({ ...sp, group: cart });
     });
 
+    // 12. STREET DRESSING: ELECTRIC UTILITY POLES & OVERHEAD WIRES
+    const poleMat = M("#475569", 0.7);
+    const wireMat = new THREE.LineBasicMaterial({ color: 0x1e293b, linewidth: 2 });
+    const polePositions = [
+      [24, 0, 15],
+      [24, 0, -45],
+      [24, 0, -105],
+      [24, 0, -165],
+      [24, 0, -225],
+      [24, 0, -285],
+      [24, 0, -345]
+    ];
+    polePositions.forEach(([px, py, pz], idx) => {
+      const pole = new THREE.Group();
+      pole.position.set(px, 0, pz);
+      addMesh(pole, cyl(0.18, 0.22, 11, 8), poleMat, [0, 5.5, 0]);
+      addMesh(pole, box(3.2, 0.14, 0.14), poleMat, [0, 9.8, 0]);
+      addMesh(pole, box(2.6, 0.14, 0.14), poleMat, [0, 10.6, 0]);
+      [-1.4, -0.7, 0.7, 1.4].forEach(ox => {
+        addMesh(pole, cyl(0.04, 0.05, 0.20, 6), M("#f8fafc", 0.3), [ox, 10.0, 0]);
+        addMesh(pole, cyl(0.04, 0.05, 0.20, 6), M("#f8fafc", 0.3), [ox * 0.8, 10.8, 0]);
+      });
+      addMesh(pole, box(1.6, 0.08, 0.08), poleMat, [1.0, 9.2, 0], [0, 0, -0.2]);
+      addMesh(pole, box(0.35, 0.15, 0.25), mats.light, [1.8, 8.8, 0]);
+      scene.add(pole);
+      collide(px, pz, 0.8, 0.8);
+
+      if (idx < polePositions.length - 1) {
+        const nextP = polePositions[idx + 1];
+        const points = [];
+        for (let t = 0; t <= 10; t++) {
+          const u = t / 10;
+          const wx = px + (nextP[0] - px) * u;
+          const wz = pz + (nextP[2] - pz) * u;
+          const wy = 10.7 - Math.sin(u * Math.PI) * 1.4;
+          points.push(new THREE.Vector3(wx, wy, wz));
+        }
+        const wireGeo = new THREE.BufferGeometry().setFromPoints(points);
+        scene.add(new THREE.Line(wireGeo, wireMat));
+      }
+    });
+
+    // 13. ROAD SURFACE MARKINGS & ZEBRA CROSSINGS
+    const zebraPositions = [
+      [22, 0.04, 8, 18, 5],
+      [40, 0.04, -135, 20, 5],
+      [40, 0.04, -315, 20, 5]
+    ];
+    zebraPositions.forEach(([zx, zy, zz, zw, zd]) => {
+      const zebra = new THREE.Group();
+      zebra.position.set(zx, zy, zz);
+      for (let s = -zw / 2 + 0.6; s < zw / 2; s += 1.4) {
+        addMesh(zebra, box(0.7, 0.01, zd), M("#ffffff", 0.4), [s, 0, 0]);
+      }
+      scene.add(zebra);
+    });
+
+    // 14. ROOFTOP CLUTTER: SINTEX BLACK WATER TANKS & TV SATELLITE DISHES
+    const rooftopClutterPos = [
+      [-10, 8.2, -5],
+      [105, 10.5, -315],
+      [-135, 9.5, 35],
+      [66, 8.0, -329]
+    ];
+    rooftopClutterPos.forEach(([rx, ry, rz]) => {
+      // Sintex water storage tank
+      const tank = new THREE.Group();
+      tank.position.set(rx + 2, ry, rz + 2);
+      addMesh(tank, cyl(0.65, 0.65, 1.2, 12), M("#0f172a", 0.8), [0, 0.6, 0]);
+      addMesh(tank, cyl(0.68, 0.68, 0.08, 12), M("#0f172a", 0.8), [0, 1.22, 0]); // Lid
+      addMesh(tank, box(0.6, 0.08, 0.1), M("#e2e8f0", 0.5), [0, 0.8, 0.62]); // Sintex brand logo strip
+      scene.add(tank);
+
+      // Satellite dish antenna
+      const dish = new THREE.Group();
+      dish.position.set(rx - 2, ry, rz - 2);
+      addMesh(dish, cyl(0.04, 0.04, 0.9, 6), mats.chrome, [0, 0.45, 0]);
+      addMesh(dish, cyl(0.45, 0.1, 0.18, 12), mats.white, [0, 0.85, 0.1], [0.6, 0, 0]); // Parabolic dish
+      addMesh(dish, cyl(0.015, 0.015, 0.35, 6), mats.chrome, [0, 0.95, 0.28], [0.6, 0, 0]); // LNB arm
+      scene.add(dish);
+    });
+
     return {
       colliders,
       bus: bus1,
@@ -3950,24 +4268,25 @@
   window.__camera = camera;
   window.__renderer = renderer;
 
-  // 1. BABU 3D ANIMATED MODEL (ON-FOOT AVATAR)
-  const babuGroup = new THREE.Group();
-  const babuShirt = M("#1d4e89", 0.7); // Blue check shirt
-  const babuSkin = M("#d49b78", 0.6);
-  const babuLungi = M("#f8fafc", 0.8);
-  const babuGamucha = M("#b71c1c", 0.8); // Saffron-red gamucha
-
-  addMesh(babuGroup, box(0.7, 0.95, 0.42), babuShirt, [0, 1.25, 0]);
-  addMesh(babuGroup, box(0.24, 0.8, 0.46), babuGamucha, [-0.28, 1.25, 0]);
-  addMesh(babuGroup, new THREE.SphereGeometry(0.28, 12, 12), babuSkin, [0, 1.9, 0]);
-  addMesh(babuGroup, new THREE.SphereGeometry(0.3, 10, 10, 0, Math.PI * 2, 0, Math.PI / 2), M("#1c1917"), [0, 1.94, 0]);
-  addMesh(babuGroup, box(0.68, 0.7, 0.4), babuLungi, [0, 0.5, 0]);
-
-  // Limbs for walking stride animation
-  const armL = addMesh(babuGroup, cyl(0.1, 0.1, 0.7, 8), babuSkin, [-0.48, 1.15, 0]);
-  const armR = addMesh(babuGroup, cyl(0.1, 0.1, 0.7, 8), babuSkin, [0.48, 1.15, 0]);
-  const legL = addMesh(babuGroup, cyl(0.12, 0.1, 0.65, 8), babuSkin, [-0.22, 0.25, 0]);
-  const legR = addMesh(babuGroup, cyl(0.12, 0.1, 0.65, 8), babuSkin, [0.22, 0.25, 0]);
+  // 1. BABU 3D ANIMATED ANATOMICAL MODEL (ON-FOOT TOURIST AVATAR)
+  const babuData = makeCharacterFigure({
+    shirtColor: "#10b981",    // Emerald green tourist shirt
+    pantsColor: "#334155",    // Slate cargo pants
+    skinColor: "#d49b78",     // Warm Indian skin tone
+    shoeColor: "#0f172a",     // Dark sneakers with crisp white soles
+    hasGamucha: true,         // Authentic saffron/red gamucha across shoulder
+    gamuchaColor: "#b71c1c",
+    hasBackpack: true,        // Deep blue college/tourist travel backpack with straps, pockets & water bottle
+    backpackColor: "#1e3a8a",
+    hasWatch: true,           // Wrist watch
+    headwear: "stylish_hair"  // Sculpted hairstyle with sideburns and bangs
+  });
+  const babuGroup = babuData.group;
+  const babuRoot = babuData.root;
+  const armL = babuData.armL;
+  const armR = babuData.armR;
+  const legL = babuData.legL;
+  const legR = babuData.legR;
 
   babuGroup.position.set(POI.babuSpawn[0], 0, POI.babuSpawn[1]);
   scene.add(babuGroup);
@@ -3986,19 +4305,91 @@
   playerScooty.group.visible = true;
   scene.add(playerScooty.group);
 
-  // Sitting Babu on Scooty
-  const scootyRider = new THREE.Group();
-  addMesh(scootyRider, box(0.6, 0.8, 0.38), babuShirt, [0, 1.1, -0.2], [0.15, 0, 0]);
-  addMesh(scootyRider, new THREE.SphereGeometry(0.26, 10, 10), babuSkin, [0, 1.65, -0.15]);
-  addMesh(scootyRider, new THREE.SphereGeometry(0.28, 8, 8, 0, Math.PI * 2, 0, Math.PI / 2), M("#1c1917"), [0, 1.7, -0.15]);
-  // Helmet
-  addMesh(scootyRider, new THREE.SphereGeometry(0.32, 12, 12), M("#dc2626", 0.4), [0, 1.72, -0.14]);
-  // Arms reaching handlebars
-  addMesh(scootyRider, cyl(0.08, 0.08, 0.6, 6), babuSkin, [-0.28, 1.1, 0.12], [-0.8, 0, 0.3]);
-  addMesh(scootyRider, cyl(0.08, 0.08, 0.6, 6), babuSkin, [0.28, 1.1, 0.12], [-0.8, 0, -0.3]);
-  // Legs bent resting on floorboard
-  addMesh(scootyRider, cyl(0.1, 0.09, 0.65, 6), babuLungi, [-0.2, 0.55, 0.15], [0.4, 0, 0]);
-  addMesh(scootyRider, cyl(0.1, 0.09, 0.65, 6), babuLungi, [0.2, 0.55, 0.15], [0.4, 0, 0]);
+  // Sitting Babu on Scooty with helmet, backpack, natural forward lean & floorboard footing
+  function makeScootyRider() {
+    const g = new THREE.Group();
+    const skin = M("#d49b78", 0.6);
+    const shirt = M("#10b981", 0.75);
+    const pants = M("#334155", 0.8);
+    const shoe = M("#0f172a", 0.5);
+    const white = M("#ffffff", 0.3);
+    const helmetRed = M("#dc2626", 0.35, { roughness: 0.2 });
+    const visorTint = M("#0f172a", 0.2, { transparent: true, opacity: 0.8, roughness: 0.1 });
+    const gold = M("#eab308", 0.3);
+    const gamucha = M("#b71c1c", 0.8);
+
+    // Torso leaned slightly forward into handlebars
+    const torso = new THREE.Group();
+    torso.position.set(0, 0.72, -0.20);
+    torso.rotation.x = 0.18;
+    g.add(torso);
+
+    addMesh(torso, box(0.48, 0.36, 0.30), pants, [0, 0.12, 0]); // Pelvis
+    addMesh(torso, box(0.48, 0.38, 0.32), shirt, [0, 0.42, 0]); // Mid torso
+    addMesh(torso, box(0.56, 0.38, 0.32), shirt, [0, 0.68, 0]); // Chest / shoulders
+    addMesh(torso, box(0.20, 0.08, 0.34), white, [0, 0.88, 0]); // Collar
+
+    // Gamucha over shoulder
+    addMesh(torso, box(0.14, 0.65, 0.34), gamucha, [-0.18, 0.60, 0]);
+
+    // Tourist Backpack on rider's back
+    const bp = new THREE.Group();
+    bp.position.set(0, 0.55, -0.22);
+    torso.add(bp);
+    addMesh(bp, box(0.42, 0.52, 0.22), M("#1e3a8a", 0.7), [0, 0, 0]);
+    addMesh(bp, box(0.34, 0.30, 0.08), M("#1e3a8a", 0.8), [0, -0.08, -0.14]);
+    addMesh(bp, cyl(0.045, 0.045, 0.20, 8), M("#38bdf8", 0.3), [-0.23, -0.04, 0]); // Water bottle
+    addMesh(torso, box(0.07, 0.46, 0.34), M("#1c1917", 0.8), [-0.18, 0.62, 0]); // Straps
+    addMesh(torso, box(0.07, 0.46, 0.34), M("#1c1917", 0.8), [0.18, 0.62, 0]);
+
+    // Head with Full-Face Red Helmet & Visor
+    const head = new THREE.Group();
+    head.position.set(0, 1.02, 0.04);
+    torso.add(head);
+
+    addMesh(head, cyl(0.10, 0.11, 0.14, 8), skin, [0, -0.04, 0]); // Neck
+    addMesh(head, sphere(0.26, 12), helmetRed, [0, 0.16, 0]);     // Helmet dome
+    addMesh(head, box(0.46, 0.18, 0.44), helmetRed, [0, 0.10, 0.04]); // Jaw protection
+    addMesh(head, box(0.34, 0.14, 0.22), visorTint, [0, 0.17, 0.16]); // Dark Glossy Visor
+    addMesh(head, box(0.06, 0.48, 0.46), white, [0, 0.16, 0]);        // Sport safety racing stripe
+
+    // Rider Arms reaching handlebars
+    const armL = new THREE.Group();
+    armL.position.set(-0.32, 0.76, 0.05);
+    torso.add(armL);
+    addMesh(armL, box(0.14, 0.18, 0.15), shirt, [0, -0.06, 0]);
+    addMesh(armL, cyl(0.055, 0.05, 0.38, 8), skin, [0.04, -0.25, 0.15], [-0.85, 0, 0.35]);
+    addMesh(armL, box(0.08, 0.07, 0.08), skin, [0.08, -0.42, 0.30]); // Hand gripping left handlebar
+    addMesh(armL, box(0.09, 0.03, 0.09), gold, [0.06, -0.36, 0.25]); // Watch
+
+    const armR = new THREE.Group();
+    armR.position.set(0.32, 0.76, 0.05);
+    torso.add(armR);
+    addMesh(armR, box(0.14, 0.18, 0.15), shirt, [0, -0.06, 0]);
+    addMesh(armR, cyl(0.055, 0.05, 0.38, 8), skin, [-0.04, -0.25, 0.15], [-0.85, 0, -0.35]);
+    addMesh(armR, box(0.08, 0.07, 0.08), skin, [-0.08, -0.42, 0.30]); // Hand gripping throttle
+
+    // Rider Legs bent sitting on seat with feet forward on floorboard
+    const legL = new THREE.Group();
+    legL.position.set(-0.18, 0.72, -0.18);
+    g.add(legL);
+    addMesh(legL, box(0.18, 0.20, 0.44), pants, [0, -0.06, 0.20], [0.35, 0, 0]); // Thigh
+    addMesh(legL, box(0.16, 0.38, 0.18), pants, [0, -0.32, 0.38], [-0.15, 0, 0]); // Shin
+    addMesh(legL, box(0.16, 0.10, 0.26), shoe, [0, -0.52, 0.42]);                 // Shoe
+    addMesh(legL, box(0.16, 0.03, 0.28), white, [0, -0.57, 0.42]);                // White sole
+
+    const legR = new THREE.Group();
+    legR.position.set(0.18, 0.72, -0.18);
+    g.add(legR);
+    addMesh(legR, box(0.18, 0.20, 0.44), pants, [0, -0.06, 0.20], [0.35, 0, 0]); // Thigh
+    addMesh(legR, box(0.16, 0.38, 0.18), pants, [0, -0.32, 0.38], [-0.15, 0, 0]); // Shin
+    addMesh(legR, box(0.16, 0.10, 0.26), shoe, [0, -0.52, 0.42]);                 // Shoe
+    addMesh(legR, box(0.16, 0.03, 0.28), white, [0, -0.57, 0.42]);                // White sole
+
+    return g;
+  }
+
+  const scootyRider = makeScootyRider();
   scootyRider.visible = false;
   playerScooty.group.add(scootyRider);
 
@@ -4166,32 +4557,165 @@
 
 
   /* =========================================================================
-     NPCS & PEDESTRIANS IN BHUBANESWAR
+     NPCS & PEDESTRIANS IN BHUBANESWAR (CULTURALLY AUTHENTIC ANATOMICAL FIGURES)
      ========================================================================= */
 
   function makePedestrian(shirtColor, skinColor = "#c68642") {
-    const g = new THREE.Group();
-    addMesh(g, box(0.65, 0.88, 0.38), M(shirtColor, 0.75), [0, 1.25, 0]);
-    addMesh(g, new THREE.SphereGeometry(0.26, 10, 10), M(skinColor, 0.6), [0, 1.85, 0]);
-    addMesh(g, box(0.62, 0.72, 0.36), M("#1e293b", 0.8), [0, 0.45, 0]); // Pants
-    return g;
+    return makeCharacterFigure({
+      shirtColor: shirtColor || "#0284c7",
+      skinColor: skinColor || "#c68642",
+      headwear: "stylish_hair"
+    }).group;
   }
 
   const npcs = {
-    driver: { group: makePedestrian("#15803d"), name: "Kalia Bhai" },
-    teaSeller: { group: makePedestrian("#d97706"), name: "Chaiwala" },
-    priest: { group: makePedestrian("#ea580c"), name: "Ram Mandir Priest" },
-    artisan: { group: makePedestrian("#854d0e"), name: "Silpi Mahapatra" },
-    guide: { group: makePedestrian("#0284c7"), name: "Dhauli Guide" },
-    broker: { group: makePedestrian("#dc2626"), name: "Dalal Raghu" },
-    neighbour: { group: makePedestrian("#22c55e"), name: "Padosan Mausi" },
-    owner: { group: makePedestrian("#eab308"), name: "Makan Malkin" },
-    police: { group: makePedestrian("#1e3a8a"), name: "Police SI" },
-    kantaAunty: { group: makePedestrian("#b91c1c", "#f3c698"), name: "Kanta Aunty" },
-    babuLalUncle: { group: makePedestrian("#c2410c", "#d49b78"), name: "Babu Lal Uncle" },
-    studentTushar: { group: makePedestrian("#0284c7", "#e0ac69"), name: "Student Tushar" },
-    policePanda: { group: makePedestrian("#b45309", "#c68642"), name: "Traffic SI Panda" },
-    khandagiriGuide: { group: makePedestrian("#059669", "#c68642"), name: "Khandagiri Guide" }
+    driver: { 
+      group: makeCharacterFigure({
+        shirtColor: "#d97706", // Khaki auto driver uniform
+        pantsColor: "#1e293b",
+        skinColor: "#c68642",
+        hasGamucha: true,
+        gamuchaColor: "#ea580c",
+        hasMustache: true,
+        headwear: "stylish_hair"
+      }).group, 
+      name: "Kalia Bhai" 
+    },
+    teaSeller: { 
+      group: makeCharacterFigure({
+        shirtColor: "#f8fafc", // White kurta / tea towel
+        pantsColor: "#475569",
+        skinColor: "#c68642",
+        headwear: "vendor_band",
+        hasGamucha: true,
+        gamuchaColor: "#dc2626"
+      }).group, 
+      name: "Chaiwala" 
+    },
+    priest: { 
+      group: makeCharacterFigure({
+        shirtColor: "#ea580c", // Saffron upper cloth
+        pantsColor: "#f97316", // Saffron dhoti
+        skinColor: "#d49b78",
+        hasJaneu: true,
+        headwear: "priest_tilak",
+        hasBeads: true
+      }).group, 
+      name: "Ram Mandir Priest" 
+    },
+    artisan: { 
+      group: makeCharacterFigure({
+        shirtColor: "#78350f", // Artisan brown kurta
+        pantsColor: "#f1f5f9",
+        skinColor: "#c68642",
+        headwear: "stylish_hair",
+        hasMustache: true
+      }).group, 
+      name: "Silpi Mahapatra" 
+    },
+    guide: { 
+      group: makeCharacterFigure({
+        shirtColor: "#0284c7", // Tourism blue polo
+        pantsColor: "#334155",
+        skinColor: "#d49b78",
+        headwear: "cool_shades",
+        hasBackpack: true,
+        backpackColor: "#0369a1"
+      }).group, 
+      name: "Dhauli Guide" 
+    },
+    broker: { 
+      group: makeCharacterFigure({
+        shirtColor: "#dc2626", // Loud red shirt
+        pantsColor: "#1e293b",
+        skinColor: "#c68642",
+        hasWatch: true,
+        hasMustache: true,
+        headwear: "stylish_hair"
+      }).group, 
+      name: "Dalal Raghu" 
+    },
+    neighbour: { 
+      group: makeCharacterFigure({
+        shirtColor: "#059669", // Green Sambalpuri saree
+        isSaree: true,
+        skinColor: "#d49b78",
+        headwear: "aunty_bun"
+      }).group, 
+      name: "Padosan Mausi" 
+    },
+    owner: { 
+      group: makeCharacterFigure({
+        shirtColor: "#7c3aed", // Regal purple saree
+        isSaree: true,
+        skinColor: "#d49b78",
+        headwear: "aunty_bun",
+        hasClipboard: true
+      }).group, 
+      name: "Makan Malkin" 
+    },
+    police: { 
+      group: makeCharacterFigure({
+        shirtColor: "#b45309", // Police khaki
+        pantsColor: "#78350f",
+        skinColor: "#c68642",
+        headwear: "police_cap",
+        hasBaton: true
+      }).group, 
+      name: "Police SI" 
+    },
+    kantaAunty: { 
+      group: makeCharacterFigure({
+        shirtColor: "#b91c1c", // Red & gold Sambalpuri saree
+        isSaree: true,
+        skinColor: "#f3c698",
+        headwear: "aunty_bun",
+        hasClipboard: true
+      }).group, 
+      name: "Kanta Aunty" 
+    },
+    babuLalUncle: { 
+      group: makeCharacterFigure({
+        shirtColor: "#ea580c", // Checked orange bush shirt
+        isUncleTummy: true,     // Big tummy bulge!
+        pantsColor: "#475569",
+        skinColor: "#d49b78",
+        headwear: "uncle_bald", // Bald with side hair & glasses
+        hasMustache: true
+      }).group, 
+      name: "Babu Lal Uncle" 
+    },
+    studentTushar: { 
+      group: makeCharacterFigure({
+        shirtColor: "#0284c7",
+        pantsColor: "#1e293b",
+        skinColor: "#e0ac69",
+        headwear: "stylish_hair",
+        hasBackpack: true,
+        backpackColor: "#4338ca"
+      }).group, 
+      name: "Student Tushar" 
+    },
+    policePanda: { 
+      group: makeCharacterFigure({
+        shirtColor: "#b45309",
+        pantsColor: "#78350f",
+        skinColor: "#c68642",
+        headwear: "police_cap",
+        hasBaton: true
+      }).group, 
+      name: "Traffic SI Panda" 
+    },
+    khandagiriGuide: { 
+      group: makeCharacterFigure({
+        shirtColor: "#047857",
+        pantsColor: "#334155",
+        skinColor: "#c68642",
+        headwear: "vendor_band",
+        hasGamucha: true
+      }).group, 
+      name: "Khandagiri Guide" 
+    }
   };
 
   npcs.driver.group.position.set(POI.driver[0], 0, POI.driver[1]);
@@ -4211,6 +4735,72 @@
 
   Object.values(npcs).forEach(n => scene.add(n.group));
 
+  // 8 WALKING PEDESTRIANS ACROSS BHUBANESWAR SIDEWALKS & BUSTLING HUBS
+  const pedestrians = [
+    { start: [-14, 18], end: [-34, 18], dir: 1, progress: 0.2, speed: 0.04, fig: makeCharacterFigure({ shirtColor: "#2563eb", pantsColor: "#334155", skinColor: "#c68642", headwear: "stylish_hair" }) },
+    { start: [10, 32], end: [42, 32], dir: 1, progress: 0.6, speed: 0.035, fig: makeCharacterFigure({ shirtColor: "#db2777", isSaree: true, skinColor: "#d49b78", headwear: "aunty_bun" }) },
+    { start: [47, -80], end: [47, -145], dir: 1, progress: 0.1, speed: 0.04, fig: makeCharacterFigure({ shirtColor: "#ea580c", pantsColor: "#f1f5f9", skinColor: "#d49b78", hasGamucha: true, headwear: "stylish_hair" }) },
+    { start: [33, -125], end: [33, -65], dir: 1, progress: 0.7, speed: 0.038, fig: makeCharacterFigure({ shirtColor: "#059669", pantsColor: "#1e293b", skinColor: "#e0ac69", hasBackpack: true, backpackColor: "#0284c7" }) },
+    { start: [47, -300], end: [47, -365], dir: 1, progress: 0.4, speed: 0.042, fig: makeCharacterFigure({ shirtColor: "#7c3aed", pantsColor: "#334155", skinColor: "#c68642", headwear: "cool_shades" }) },
+    { start: [33, -360], end: [33, -295], dir: 1, progress: 0.85, speed: 0.036, fig: makeCharacterFigure({ shirtColor: "#ca8a04", isSaree: true, skinColor: "#f3c698", headwear: "aunty_bun" }) },
+    { start: [-15, -260], end: [-55, -260], dir: 1, progress: 0.3, speed: 0.037, fig: makeCharacterFigure({ shirtColor: "#0891b2", pantsColor: "#1e293b", skinColor: "#d49b78", hasWatch: true, headwear: "stylish_hair" }) },
+    { start: [75, -85], end: [110, -85], dir: 1, progress: 0.5, speed: 0.035, fig: makeCharacterFigure({ shirtColor: "#16a34a", pantsColor: "#f8fafc", skinColor: "#c68642", headwear: "vendor_band" }) }
+  ];
+
+  pedestrians.forEach(p => scene.add(p.fig.group));
+
+  let pedPhase = 0;
+  function updatePedestrians(dt) {
+    pedPhase += dt * 6;
+    const playerPos = state.mode === 'walk' ? babuGroup.position : (state.mode === 'scooty' ? playerScooty.group.position : playerAuto.group.position);
+    
+    pedestrians.forEach(p => {
+      const distToPlayer = p.fig.group.position.distanceTo(playerPos);
+      
+      p.progress += p.speed * p.dir * dt * 1.5;
+      if (p.progress >= 1.0) { p.progress = 1.0; p.dir = -1; }
+      else if (p.progress <= 0.0) { p.progress = 0.0; p.dir = 1; }
+      
+      const curX = THREE.MathUtils.lerp(p.start[0], p.end[0], p.progress);
+      const curZ = THREE.MathUtils.lerp(p.start[1], p.end[1], p.progress);
+      p.fig.group.position.set(curX, 0, curZ);
+      
+      const dx = (p.end[0] - p.start[0]) * p.dir;
+      const dz = (p.end[1] - p.start[1]) * p.dir;
+      const targetAngle = Math.atan2(dx, dz);
+      p.fig.group.rotation.y = targetAngle;
+
+      // Pedestrians turn their heads towards player when passing!
+      if (distToPlayer < 6.0 && p.fig.headGroup) {
+        const toPlayerX = playerPos.x - curX;
+        const toPlayerZ = playerPos.z - curZ;
+        const lookAngle = Math.atan2(toPlayerX, toPlayerZ) - targetAngle;
+        p.fig.headGroup.rotation.y = THREE.MathUtils.clamp(lookAngle, -0.6, 0.6);
+      } else if (p.fig.headGroup) {
+        p.fig.headGroup.rotation.y = THREE.MathUtils.lerp(p.fig.headGroup.rotation.y, 0, 0.1);
+      }
+      
+      if (p.fig.armL && p.fig.armR && p.fig.legL && p.fig.legR) {
+        const swing = Math.sin(pedPhase + p.start[0]);
+        p.fig.armL.rotation.x = swing * 0.45;
+        p.fig.armR.rotation.x = -swing * 0.45;
+        p.fig.legL.rotation.x = -swing * 0.55;
+        p.fig.legR.rotation.x = swing * 0.55;
+        if (p.fig.root) p.fig.root.position.y = Math.abs(swing) * 0.04;
+      }
+    });
+
+    // Also make stationary NPCs turn to face player when approached!
+    Object.values(npcs).forEach(npc => {
+      const d = npc.group.position.distanceTo(playerPos);
+      if (d < 7.0) {
+        const dx = playerPos.x - npc.group.position.x;
+        const dz = playerPos.z - npc.group.position.z;
+        const targetRot = Math.atan2(dx, dz);
+        npc.group.rotation.y = THREE.MathUtils.lerp(npc.group.rotation.y, targetRot, 0.08);
+      }
+    });
+  }
 
   /* =========================================================================
      INPUT HANDLING & KINEMATICS ENGINE
@@ -4473,6 +5063,9 @@
       return;
     }
 
+    // Update lively sidewalk pedestrian crowd & NPC head turns
+    updatePedestrians(dt);
+
     // 1. ON-FOOT WALKING
     if (state.mode === 'walk') {
       engineSound(false);
@@ -4499,17 +5092,18 @@
 
       if (isMoving) {
         walkPhase += dt * 8;
-        armL.rotation.x = Math.sin(walkPhase) * 0.4;
-        armR.rotation.x = -Math.sin(walkPhase) * 0.4;
-        legL.rotation.x = -Math.sin(walkPhase) * 0.45;
-        legR.rotation.x = Math.sin(walkPhase) * 0.45;
-        babuGroup.position.y += Math.abs(Math.sin(walkPhase)) * 0.06;
+        armL.rotation.x = Math.sin(walkPhase) * 0.45;
+        armR.rotation.x = -Math.sin(walkPhase) * 0.45;
+        legL.rotation.x = -Math.sin(walkPhase) * 0.55;
+        legR.rotation.x = Math.sin(walkPhase) * 0.55;
+        if (babuRoot) babuRoot.position.y = Math.abs(Math.sin(walkPhase)) * 0.04;
         document.getElementById('speedo-val').innerText = keys['shift'] ? '8' : '4';
       } else {
         armL.rotation.x = THREE.MathUtils.lerp(armL.rotation.x, 0, 0.2);
         armR.rotation.x = THREE.MathUtils.lerp(armR.rotation.x, 0, 0.2);
         legL.rotation.x = THREE.MathUtils.lerp(legL.rotation.x, 0, 0.2);
         legR.rotation.x = THREE.MathUtils.lerp(legR.rotation.x, 0, 0.2);
+        if (babuRoot) babuRoot.position.y = THREE.MathUtils.lerp(babuRoot.position.y, 0, 0.2);
         document.getElementById('speedo-val').innerText = '0';
       }
       document.getElementById('speedo-lbl').innerText = 'KM/H • WALKING';
