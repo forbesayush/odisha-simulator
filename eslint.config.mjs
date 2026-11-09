@@ -28,7 +28,7 @@ export default [
     }
   },
   {
-    files: ['test/**/*.cjs', 'verify_*.js', 'vehicles-texture-v4.js'],
+    files: ['test/**/*.cjs', 'verify_*.js', 'vehicles-texture-v4.js', 'map-streaming.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'commonjs',

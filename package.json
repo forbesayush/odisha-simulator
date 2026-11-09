@@ -8,7 +8,8 @@
     "verify:models": "node verify_models_v2.js",
     "verify:textures": "node verify_texture_overhaul.js",
     "verify:vehicles": "node verify_vehicle_v4.js",
-    "verify:release": "node verify_models_v2.js && node verify_texture_overhaul.js && node verify_vehicle_v4.js && node verify_release.js"
+    "verify:streaming": "node verify_map_streaming.js",
+    "verify:release": "node verify_models_v2.js && node verify_texture_overhaul.js && node verify_vehicle_v4.js && node verify_map_streaming.js && node verify_release.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

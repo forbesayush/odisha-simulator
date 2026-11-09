@@ -6236,6 +6236,7 @@ let __weave=null;
     const g = new THREE.Mesh(new THREE.PlaneGeometry(1200, 1200), new THREE.MeshStandardMaterial({ map: ground(), roughness: 1 }));
     g.rotation.x = -Math.PI / 2;
     g.position.set(40, 0, -180);
+    g.userData.streamingIgnore = true;
     g.receiveShadow = true;
     scene.add(g);
 
@@ -6687,6 +6688,9 @@ let __weave=null;
   playerScooty.group.rotation.y = -Math.PI / 3;
   playerScooty.group.visible = true;
   scene.add(playerScooty.group);
+  window.__odPlayerPosition = () => state.mode === 'walk'
+    ? babuGroup.position
+    : state.mode === 'scooty' ? playerScooty.group.position : playerAuto.group.position;
 
   // Sitting Babu on Scooty with helmet, backpack, natural forward lean & floorboard footing
   function makeScootyRider() {
@@ -11292,5 +11296,6 @@ T(()=>{
   })();
 </script>
 <script src="vehicles-texture-v4.js"></script>
+<script src="map-streaming.js"></script>
 </body>
 </html>

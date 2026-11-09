@@ -12,7 +12,8 @@ const FILES = [
   'texture-urls.txt',
   'download-textures.sh',
   'download-textures.js',
-  'vehicles-texture-v4.js'
+  'vehicles-texture-v4.js',
+  'map-streaming.js'
 ];
 
 function sha256(filePath) {
