@@ -56,3 +56,7 @@ cd odisha-simulator
 start index.html
 ```
 Or view the live build at **[https://forbesayush.github.io/odisha-simulator/](https://forbesayush.github.io/odisha-simulator/)**.
+
+## v4.0 Upgrade Pack
+
+The repository includes integrated vehicle textures, 128m map streaming, a dynamic day/night cycle, and an adaptive FPS quality governor. See [UPGRADE-PACK-V4.md](UPGRADE-PACK-V4.md) for module purposes, runtime hooks, and verification commands.
