@@ -1,13 +1,13 @@
 {
-  "generated": "2026-11-09T19:04:58.682Z",
-  "version": "2.2.0-model-replacement",
+  "generated": "2026-11-09T19:14:06.627Z",
+  "version": "3.0.0-texture-overhaul",
   "deliverables": [
     {
       "file": "index.html",
-      "bytes": 1171197,
-      "size": "1.12 MB",
-      "sha256": "d4b300ae49c3bae6bac196d612ed08da75c951b2c08bcdda19a4e51189321227",
-      "modified": "2026-11-09T19:03:00.952Z"
+      "bytes": 1183728,
+      "size": "1.13 MB",
+      "sha256": "6137f6de5e5d46b993b71e56c533708175bee77f2bcfd69efc89d583b7afc6ea",
+      "modified": "2026-11-09T19:13:18.870Z"
     },
     {
       "file": "odisha-landing.html",

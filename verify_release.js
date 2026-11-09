@@ -26,7 +26,7 @@ function humanSize(bytes) {
 
 const manifest = {
   generated: new Date().toISOString(),
-  version: '2.2.0-model-replacement',
+  version: '3.0.0-texture-overhaul',
   deliverables: []
 };
 
@@ -62,4 +62,3 @@ if (!allPresent) {
   console.log(`\n✓ Manifest written: ${path.basename(manifestPath)}`);
   console.log(`  Build: ${manifest.version}`);
 }
-

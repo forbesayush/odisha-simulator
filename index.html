@@ -2358,6 +2358,7 @@
     fn(ctx, w, h);
     const tex = new THREE.CanvasTexture(cvs);
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    tex.anisotropy = 4;
     return tex;
   }
 
@@ -2841,6 +2842,295 @@
       // Top-edge sun-catch highlight
       ctx.fillStyle = "rgba(255,190,120,0.14)";
       for (let y = 0; y < h; y += courseH) ctx.fillRect(0, y + 1, w, 2);
+    });
+  }
+
+  /*
+   * AMARA ODISHA — TEXTURE OVERHAUL v3.0
+   * These definitions intentionally follow the legacy factories so the
+   * existing world-builder call sites receive the higher-resolution maps
+   * without changing their material contracts.
+   */
+  function _texRnd(a, b) { return a + Math.random() * (b - a); }
+  function _texRgb(base, spread) {
+    return base.map(channel => Math.max(0, Math.min(255, channel + _texRnd(-spread, spread))));
+  }
+  function _texSpeckles(ctx, w, h, count, palette, maxRadius = 2) {
+    for (let i = 0; i < count; i++) {
+      const color = palette[Math.floor(Math.random() * palette.length)];
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(_texRnd(0, w), _texRnd(0, h), _texRnd(0.35, maxRadius), 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  function _texVignette(ctx, w, h, inner, outer) {
+    const gradient = ctx.createRadialGradient(w / 2, h / 2, w * 0.18, w / 2, h / 2, w * 0.82);
+    gradient.addColorStop(0, inner);
+    gradient.addColorStop(1, outer);
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  function ground() {
+    return makeCanvas(1024, 1024, (ctx, w, h) => {
+      const base = ctx.createRadialGradient(w * 0.3, h * 0.32, 40, w * 0.5, h * 0.5, w * 0.9);
+      base.addColorStop(0, "#a95722");
+      base.addColorStop(0.55, "#873b12");
+      base.addColorStop(1, "#4e2108");
+      ctx.fillStyle = base;
+      ctx.fillRect(0, 0, w, h);
+      for (const cell of [64, 20, 6]) {
+        for (let x = 0; x < w; x += cell) {
+          for (let y = 0; y < h; y += cell) {
+            const c = _texRgb(Math.random() < 0.5 ? [125, 57, 18] : [166, 82, 30], 18);
+            ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${cell === 6 ? 0.16 : 0.11})`;
+            ctx.fillRect(x, y, cell, cell);
+          }
+        }
+      }
+      _texSpeckles(ctx, w, h, 1500, ["#b17a4b", "#81552d", "#603719", "rgba(30,12,3,.6)"], 3.2);
+      for (let i = 0; i < 180; i++) {
+        const x = _texRnd(0, w), y = _texRnd(0, h);
+        ctx.strokeStyle = "rgba(130,100,48,.48)";
+        ctx.lineWidth = _texRnd(0.5, 1.4);
+        for (let b = 0; b < 5; b++) {
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x + _texRnd(-8, 8), y - _texRnd(4, 13));
+          ctx.stroke();
+        }
+      }
+      _texVignette(ctx, w, h, "rgba(0,0,0,0)", "rgba(20,8,2,.34)");
+    });
+  }
+
+  function asphalt() {
+    return makeCanvas(1024, 1024, (ctx, w, h) => {
+      const base = ctx.createLinearGradient(0, 0, w, h);
+      base.addColorStop(0, "#303030");
+      base.addColorStop(0.5, "#1c1c1c");
+      base.addColorStop(1, "#292929");
+      ctx.fillStyle = base;
+      ctx.fillRect(0, 0, w, h);
+      _texSpeckles(ctx, w, h, 14000, ["rgba(12,12,12,.9)", "rgba(62,62,62,.8)", "rgba(120,120,120,.5)", "rgba(190,185,175,.4)"], 2.2);
+      for (let i = 0; i < 7; i++) {
+        const x = _texRnd(0, w), y = _texRnd(0, h), radius = _texRnd(45, 130);
+        ctx.fillStyle = "rgba(5,5,7,.55)";
+        ctx.beginPath();
+        for (let a = 0; a < Math.PI * 2; a += 0.18) {
+          const r = radius * _texRnd(0.7, 1.2);
+          const px = x + Math.cos(a) * r;
+          const py = y + Math.sin(a) * r;
+          a === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.fill();
+      }
+      const wet = ctx.createLinearGradient(w * 0.32, 0, w * 0.68, 0);
+      wet.addColorStop(0, "rgba(0,0,0,0)");
+      wet.addColorStop(0.5, "rgba(0,0,0,.32)");
+      wet.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = wet;
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = "rgba(242,196,24,.52)";
+      ctx.fillRect(w * 0.49, 0, 7, h);
+      for (let i = 0; i < 55; i++) {
+        ctx.fillStyle = "rgba(30,30,30,.7)";
+        ctx.fillRect(w * 0.49 + _texRnd(-7, 7), _texRnd(0, h), _texRnd(2, 6), _texRnd(3, 10));
+      }
+    });
+  }
+
+  function pavement() {
+    return makeCanvas(1024, 1024, (ctx, w, h) => {
+      const tile = 128;
+      ctx.fillStyle = "#9e8d73";
+      ctx.fillRect(0, 0, w, h);
+      for (let x = 0; x < w; x += tile) {
+        for (let y = 0; y < h; y += tile) {
+          const c = _texRgb([166, 146, 115], 22);
+          ctx.fillStyle = `rgb(${c[0]},${c[1]},${c[2]})`;
+          ctx.fillRect(x + 2, y + 2, tile - 4, tile - 4);
+          _texSpeckles(ctx, x + tile - 4, y + tile - 4, 300, ["rgba(60,45,30,.45)", "rgba(235,225,205,.38)", "rgba(130,110,85,.35)"], 1.2);
+          ctx.fillStyle = "rgba(255,240,210,.32)";
+          ctx.fillRect(x + 2, y + 2, tile - 4, 3);
+          ctx.fillStyle = "rgba(40,25,12,.36)";
+          ctx.fillRect(x + 2, y + tile - 5, tile - 4, 3);
+        }
+      }
+      ctx.strokeStyle = "rgba(60,45,25,.86)";
+      ctx.lineWidth = 3;
+      for (let p = 0; p <= w; p += tile) {
+        ctx.beginPath(); ctx.moveTo(p, 0); ctx.lineTo(p, h); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, p); ctx.lineTo(w, p); ctx.stroke();
+      }
+      _texVignette(ctx, w, h, "rgba(0,0,0,0)", "rgba(30,20,10,.2)");
+    });
+  }
+
+  function facade(baseColor = "#e8dfd3") {
+    return makeCanvas(1024, 1024, (ctx, w, h) => {
+      const base = ctx.createLinearGradient(0, 0, 0, h);
+      base.addColorStop(0, baseColor);
+      base.addColorStop(0.58, baseColor);
+      base.addColorStop(1, "#8a7d6a");
+      ctx.fillStyle = base;
+      ctx.fillRect(0, 0, w, h);
+      _texSpeckles(ctx, w, h, 7500, ["rgba(115,95,75,.1)", "rgba(245,235,215,.12)"], 3.5);
+      for (let i = 0; i < 30; i++) {
+        const x = _texRnd(0, w), start = _texRnd(h * .12, h * .5);
+        const stain = ctx.createLinearGradient(x, start, x, h);
+        stain.addColorStop(0, "rgba(55,40,25,0)");
+        stain.addColorStop(.7, "rgba(55,40,25,.2)");
+        stain.addColorStop(1, "rgba(40,25,12,.36)");
+        ctx.fillStyle = stain;
+        ctx.fillRect(x, start, _texRnd(3, 11), h - start);
+      }
+      const rows = 3, cols = 3, cellW = w / cols, cellH = h / rows;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = c * cellW + cellW * .17, y = r * cellH + cellH * .14;
+          const ww = cellW * .66, hh = cellH * .62;
+          ctx.fillStyle = "rgba(0,0,0,.38)"; ctx.fillRect(x - 7, y - 7, ww + 14, hh + 14);
+          const state = Math.random();
+          ctx.fillStyle = state < .3 ? "#fbbf24" : state < .55 ? "#0f172a" : state < .78 ? "#38bdf8" : "#8b3a3a";
+          ctx.fillRect(x, y, ww, hh);
+          ctx.fillStyle = "#4a3a28";
+          ctx.fillRect(x + ww * .47, y, ww * .06, hh);
+          ctx.fillRect(x, y + hh * .47, ww, hh * .06);
+          ctx.fillStyle = "rgba(255,255,255,.3)";
+          ctx.fillRect(x, y, ww * .5, hh * .5);
+          ctx.fillStyle = "#5c4a35";
+          ctx.fillRect(x - 8, y + hh, ww + 16, 8);
+        }
+      }
+      for (let i = 0; i < 6; i++) {
+        const x = _texRnd(0, w - 48), y = _texRnd(h * .35, h * .72);
+        ctx.fillStyle = "#cbd5e1"; ctx.fillRect(x, y, 44, 26);
+        ctx.fillStyle = "#64748b";
+        for (let g = 0; g < 5; g++) ctx.fillRect(x + 4, y + 3 + g * 4, 36, 1.5);
+        ctx.fillStyle = "rgba(50,40,25,.3)"; ctx.fillRect(x + 20, y + 26, 5, 120);
+      }
+    });
+  }
+
+  function roof() {
+    return makeCanvas(1024, 1024, (ctx, w, h) => {
+      ctx.fillStyle = "#63230f";
+      ctx.fillRect(0, 0, w, h);
+      const tileW = 72, tileH = 48;
+      for (let row = 0; row < h / tileH; row++) {
+        const offset = (row % 2) * tileW / 2;
+        for (let col = -1; col < w / tileW + 1; col++) {
+          const x = col * tileW + offset, y = row * tileH;
+          const c = _texRgb([150, 65, 30], 28);
+          ctx.fillStyle = `rgb(${c[0]},${c[1]},${c[2]})`;
+          ctx.beginPath(); ctx.ellipse(x + tileW / 2, y + tileH / 2, tileW * .48, tileH * .55, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = "rgba(255,190,130,.28)";
+          ctx.beginPath(); ctx.ellipse(x + tileW / 2, y + tileH * .34, tileW * .4, tileH * .14, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = "rgba(0,0,0,.32)";
+          ctx.beginPath(); ctx.ellipse(x + tileW / 2, y + tileH * .86, tileW * .42, tileH * .18, 0, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+      _texSpeckles(ctx, w, h, 120, ["rgba(35,55,25,.18)", "rgba(20,20,15,.15)"], 24);
+    });
+  }
+
+  function glassTex() {
+    return makeCanvas(1024, 1024, (ctx, w, h) => {
+      const sky = ctx.createLinearGradient(0, 0, 0, h);
+      sky.addColorStop(0, "#bde8ff");
+      sky.addColorStop(.48, "#398bc2");
+      sky.addColorStop(1, "#082f49");
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, w, h);
+      for (let x = 0; x <= w; x += 128) {
+        ctx.fillStyle = "rgba(8,47,73,.8)"; ctx.fillRect(x, 0, 8, h);
+      }
+      for (let y = 0; y <= h; y += 128) {
+        ctx.fillStyle = "rgba(8,47,73,.72)"; ctx.fillRect(0, y, w, 8);
+      }
+      for (let i = 0; i < 24; i++) {
+        ctx.fillStyle = i % 3 === 0 ? "rgba(253,230,138,.72)" : "rgba(255,255,255,.18)";
+        ctx.fillRect(_texRnd(12, w - 42), _texRnd(12, h - 42), _texRnd(14, 30), _texRnd(5, 12));
+      }
+      ctx.fillStyle = "rgba(255,255,255,.2)";
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(w, h * .55); ctx.lineTo(w, h * .72); ctx.lineTo(0, h * .17); ctx.fill();
+    });
+  }
+
+  function awningTex(col1 = "#dc2626", col2 = "#f8fafc") {
+    return makeCanvas(1024, 1024, (ctx, w, h) => {
+      ctx.fillStyle = col1; ctx.fillRect(0, 0, w, h);
+      const stripe = 128;
+      for (let x = 0; x < w; x += stripe * 2) {
+        ctx.fillStyle = col2; ctx.fillRect(x, 0, stripe, h);
+        ctx.fillStyle = "rgba(0,0,0,.12)"; ctx.fillRect(x + stripe - 8, 0, 8, h);
+      }
+      for (let y = 0; y < h; y += 48) {
+        ctx.fillStyle = "rgba(255,255,255,.08)"; ctx.fillRect(0, y, w, 3);
+      }
+      ctx.fillStyle = "rgba(0,0,0,.24)"; ctx.fillRect(0, h - 28, w, 28);
+      for (let x = 20; x < w; x += 42) {
+        ctx.strokeStyle = "rgba(245,245,220,.45)"; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(x, h - 30); ctx.lineTo(x + _texRnd(-8, 8), h); ctx.stroke();
+      }
+    });
+  }
+
+  function rccConcreteTex() {
+    return makeCanvas(1024, 1024, (ctx, w, h) => {
+      ctx.fillStyle = "#8d9291"; ctx.fillRect(0, 0, w, h);
+      _texSpeckles(ctx, w, h, 9000, ["rgba(35,40,40,.22)", "rgba(220,225,220,.2)", "rgba(110,115,112,.3)"], 2.2);
+      ctx.strokeStyle = "rgba(55,60,58,.28)"; ctx.lineWidth = 2;
+      for (let y = 96; y < h; y += 160) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y + _texRnd(-4, 4)); ctx.stroke(); }
+      _texVignette(ctx, w, h, "rgba(255,255,255,.05)", "rgba(20,20,20,.18)");
+    });
+  }
+
+  function odiaGraniteTex() {
+    return makeCanvas(1024, 1024, (ctx, w, h) => {
+      ctx.fillStyle = "#77746f"; ctx.fillRect(0, 0, w, h);
+      _texSpeckles(ctx, w, h, 12000, ["rgba(30,30,30,.45)", "rgba(220,215,205,.42)", "rgba(145,135,125,.35)"], 2);
+      ctx.strokeStyle = "rgba(35,30,25,.45)"; ctx.lineWidth = 5;
+      for (let p = 0; p <= w; p += 256) { ctx.beginPath(); ctx.moveTo(p, 0); ctx.lineTo(p, h); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0, p); ctx.lineTo(w, p); ctx.stroke(); }
+      ctx.fillStyle = "rgba(255,255,255,.16)"; ctx.fillRect(0, 0, w, 7);
+    });
+  }
+
+  function rustyTinTex() {
+    return makeCanvas(1024, 1024, (ctx, w, h) => {
+      const base = ctx.createLinearGradient(0, 0, w, 0);
+      base.addColorStop(0, "#64707a"); base.addColorStop(.5, "#a9b0ad"); base.addColorStop(1, "#4b5560");
+      ctx.fillStyle = base; ctx.fillRect(0, 0, w, h);
+      for (let x = 0; x < w; x += 48) {
+        ctx.fillStyle = "rgba(20,25,30,.28)"; ctx.fillRect(x, 0, 7, h);
+        ctx.fillStyle = "rgba(240,240,230,.18)"; ctx.fillRect(x + 8, 0, 4, h);
+      }
+      _texSpeckles(ctx, w, h, 1200, ["rgba(150,55,25,.45)", "rgba(95,40,20,.32)", "rgba(230,150,80,.22)"], 12);
+      ctx.fillStyle = "rgba(15,20,24,.2)"; ctx.fillRect(0, h * .82, w, h * .18);
+    });
+  }
+
+  function pattachitraTex() {
+    return makeCanvas(1024, 1024, (ctx, w, h) => {
+      ctx.fillStyle = "#a51d24"; ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = "#f5c453"; ctx.lineWidth = 14; ctx.strokeRect(20, 20, w - 40, h - 40);
+      ctx.strokeStyle = "#20140d"; ctx.lineWidth = 5; ctx.strokeRect(42, 42, w - 84, h - 84);
+      ctx.fillStyle = "#f6d36b";
+      for (let x = 80; x < w - 80; x += 110) {
+        ctx.beginPath(); ctx.arc(x, 88, 18, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(x, h - 88, 18, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.strokeStyle = "#f6d36b"; ctx.lineWidth = 5;
+      for (let i = 0; i < 8; i++) {
+        const cx = w * .5 + Math.cos(i * Math.PI / 4) * 180;
+        const cy = h * .52 + Math.sin(i * Math.PI / 4) * 180;
+        ctx.beginPath(); ctx.arc(cx, cy, 70, 0, Math.PI * 2); ctx.stroke();
+      }
+      ctx.fillStyle = "#f8ead0"; ctx.font = "bold 84px 'Noto Sans Oriya', sans-serif";
+      ctx.textAlign = "center"; ctx.fillText("ଜୟ ଜଗନ୍ନାଥ", w / 2, h / 2 + 28);
     });
   }
 
@@ -5307,23 +5597,23 @@ let __weave=null;
   const BM = {
     plasterOchre:   () => new THREE.MeshStandardMaterial({ map: texOrProc('plaster_ochre',     procPlasterOchre,     2, 2), roughness: 0.92, metalness: 0.02 }),
     plasterWhite:   () => new THREE.MeshStandardMaterial({ map: texOrProc('plaster_white',     procPlasterWhite,     2, 2), roughness: 0.90, metalness: 0.02 }),
-    sandstone:      () => new THREE.MeshStandardMaterial({ map: texOrProc('sandstone_red',     procSandstoneRed,     3, 2), roughness: 0.88, metalness: 0.03 }),
+    sandstone:      () => new THREE.MeshStandardMaterial({ map: odiaGraniteTex(), roughness: 0.88, metalness: 0.03 }),
     brick:          () => new THREE.MeshStandardMaterial({ map: texOrProc('brick_aged',         procBrickAged,        2, 2), roughness: 0.90, metalness: 0.02 }),
     woodTeak:       () => new THREE.MeshStandardMaterial({ map: texOrProc('wood_teak',          procBamboo,           1, 1), roughness: 0.82, metalness: 0.04 }),
     thatch:         () => new THREE.MeshStandardMaterial({ map: texOrProc('thatch',             procThatch,           2, 2), roughness: 0.95, metalness: 0 }),
-    tin:            () => new THREE.MeshStandardMaterial({ map: texOrProc('tin_corrugated',     procTinCorrugated,    3, 1), roughness: 0.55, metalness: 0.65 }),
+    tin:            () => new THREE.MeshStandardMaterial({ map: rustyTinTex(), roughness: 0.55, metalness: 0.65 }),
     bamboo:         () => new THREE.MeshStandardMaterial({ map: texOrProc('bamboo',             procBamboo,           1, 3), roughness: 0.85, metalness: 0.02 }),
-    fabricIkat:     () => new THREE.MeshStandardMaterial({ map: texOrProc('fabric_ikat',        procFabricIkat,       1, 1), roughness: 0.85, metalness: 0.02, side: THREE.DoubleSide }),
+    fabricIkat:     () => new THREE.MeshStandardMaterial({ map: pattachitraTex(), roughness: 0.85, metalness: 0.02, side: THREE.DoubleSide }),
     burlap:         () => new THREE.MeshStandardMaterial({ map: texOrProc('fabric_burlap',      procFabricBurlap,     1, 1), roughness: 0.92, metalness: 0 }),
-    concrete:       () => new THREE.MeshStandardMaterial({ map: texOrProc('concrete_raw',       procConcreteRaw,      2, 2), roughness: 0.90, metalness: 0.02 }),
-    asphalt:        () => new THREE.MeshStandardMaterial({ map: texOrProc('asphalt_worn',       procConcreteRaw,      4, 1), roughness: 0.92, metalness: 0.03 }),
-    terracottaRoof: () => new THREE.MeshStandardMaterial({ map: texOrProc('terracotta_roof',   procTerracottaRoof,   4, 4), roughness: 0.85, metalness: 0.02 }),
+    concrete:       () => new THREE.MeshStandardMaterial({ map: rccConcreteTex(), roughness: 0.90, metalness: 0.02 }),
+    asphalt:        () => new THREE.MeshStandardMaterial({ map: asphalt(), roughness: 0.92, metalness: 0.03 }),
+    terracottaRoof: () => new THREE.MeshStandardMaterial({ map: roof(), roughness: 0.85, metalness: 0.02 }),
     sauraMural:     () => new THREE.MeshStandardMaterial({ map: texOrProc('wattle_daub',        procSauraMural,       1, 1), roughness: 0.95, metalness: 0 }),
-    glassCurtain:   () => new THREE.MeshStandardMaterial({ map: texOrProc('glass_modern',       procGlassCurtain,     2, 4), roughness: 0.10, metalness: 0.85 }),
+    glassCurtain:   () => new THREE.MeshStandardMaterial({ map: glassTex(), roughness: 0.10, metalness: 0.85 }),
     floorTile:      () => new THREE.MeshStandardMaterial({ map: texOrProc('floor_tiles_02',     procFloorTiles,       3, 3), roughness: 0.70, metalness: 0.05 }),
     woodFloor:      () => new THREE.MeshStandardMaterial({ map: texOrProc('wood_floor_deck',    procWoodFloor,        2, 2), roughness: 0.75, metalness: 0.04 }),
     mudWall:        () => new THREE.MeshStandardMaterial({ map: texOrProc('mud_wall',           procSauraMural,       1, 1), roughness: 0.95, metalness: 0 }),
-    sandstoneCarved:() => new THREE.MeshStandardMaterial({ map: texOrProc('sandstone_carved',   procSandstoneRed,     2, 2), roughness: 0.88, metalness: 0.03 }),
+    sandstoneCarved:() => new THREE.MeshStandardMaterial({ map: odiaGraniteTex(), roughness: 0.88, metalness: 0.03 }),
     caveRock:       () => new THREE.MeshStandardMaterial({ map: texOrProc('cave_rock',          procSandstoneRed,     3, 3), roughness: 0.95, metalness: 0.01 }),
     concretePainted:() => new THREE.MeshStandardMaterial({ map: texOrProc('concrete_painted',   procPlasterWhite,     2, 2), roughness: 0.88, metalness: 0.02 }),
     whiteMarble:    () => new THREE.MeshStandardMaterial({ map: texOrProc('white_marble',       procPlasterWhite,     2, 2), roughness: 0.35, metalness: 0.10 })
