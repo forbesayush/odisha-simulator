@@ -2289,7 +2289,18 @@
     contractsCompleted: 0,
     modalActive: false,
     activeCutscene: null,
-    rainSoundActive: false
+    rainSoundActive: false,
+    autoHaggleTriggered: false,
+    rasagolaHeistTriggered: false,
+    cowJamTriggered: false,
+    pattachitraTriggered: false,
+    monkeyTriggered: false,
+    floodTriggered: false,
+    chaiGossipTriggered: false,
+    challanTriggered: false,
+    weddingTriggered: false,
+    ghostTriggered: false,
+    pgScamDone: false
   };
 
   /* =========================================================================
@@ -7317,6 +7328,7 @@ let __weave=null;
       document.getElementById('speedo-lbl').innerText = 'KM/H • WALKING';
 
       checkNpcInteraction(babuGroup.position);
+      updateDrivingScriptedEvents(babuGroup.position);
       return;
     }
 
@@ -7660,6 +7672,70 @@ let __weave=null;
       dropDone = true;
       triggerMasterCanteenDetour();
     }
+
+    // ══════════════════════════════════════════════════════════════
+    // LOCATION-TRIGGERED SCENES
+    // ══════════════════════════════════════════════════════════════
+
+    // Scene 17: Auto stand haggle war
+    if (!state.autoHaggleTriggered && p.distanceTo(new THREE.Vector3(32, 0, 11)) < 8) {
+      state.autoHaggleTriggered = true;
+      setTimeout(() => playCutscene('scene_auto_stand_haggle'), 500);
+    }
+
+    // Scene 18: Rasagola heist near Master Canteen
+    if (!state.rasagolaHeistTriggered && p.distanceTo(new THREE.Vector3(66, 0, -329)) < 12) {
+      state.rasagolaHeistTriggered = true;
+      setTimeout(() => playCutscene('scene_rasagola_heist'), 500);
+    }
+
+    // Scene 19: Cow chakra jam on Janpath
+    if (!state.cowJamTriggered && p.distanceTo(new THREE.Vector3(40, 0, -110)) < 15) {
+      state.cowJamTriggered = true;
+      setTimeout(() => playCutscene('scene_cow_jam'), 500);
+    }
+
+    // Scene 20: Pattachitra protest at Ekamra Haat
+    if (!state.pattachitraTriggered && p.distanceTo(new THREE.Vector3(-85, 0, -280)) < 20) {
+      state.pattachitraTriggered = true;
+      setTimeout(() => playCutscene('scene_pattachitra_protest'), 500);
+    }
+
+    // Scene 21: Monkey steals camera at Khandagiri
+    if (!state.monkeyTriggered && p.distanceTo(new THREE.Vector3(95, 0, 50)) < 20) {
+      state.monkeyTriggered = true;
+      setTimeout(() => playCutscene('scene_khandagiri_monkey'), 500);
+    }
+
+    // Scene 22: Flooded underpass (only during rain)
+    if (!state.floodTriggered && state.weather === 'rain' && p.distanceTo(new THREE.Vector3(40, 0, -250)) < 12) {
+      state.floodTriggered = true;
+      setTimeout(() => playCutscene('scene_flooded_underpass'), 500);
+    }
+
+    // Scene 23: Chai tapri gossip
+    if (!state.chaiGossipTriggered && p.distanceTo(new THREE.Vector3(52.5, 0, -135)) < 10) {
+      state.chaiGossipTriggered = true;
+      setTimeout(() => playCutscene('scene_chai_tapri_gossip'), 500);
+    }
+
+    // Scene 24: Traffic challan standoff
+    if (!state.challanTriggered && p.distanceTo(new THREE.Vector3(40, 0, -255)) < 10) {
+      state.challanTriggered = true;
+      setTimeout(() => playCutscene('scene_police_challan'), 500);
+    }
+
+    // Scene 25: Wedding sweets emergency
+    if (!state.weddingTriggered && p.distanceTo(new THREE.Vector3(15, 0, -150)) < 12) {
+      state.weddingTriggered = true;
+      setTimeout(() => playCutscene('scene_rasagola_wedding'), 500);
+    }
+
+    // Scene 26: Haunted haveli at Old Town
+    if (!state.ghostTriggered && p.distanceTo(new THREE.Vector3(120, 0, -300)) < 15) {
+      state.ghostTriggered = true;
+      setTimeout(() => playCutscene('scene_old_town_ghost'), 500);
+    }
   }
 
   /* =========================================================================
@@ -7852,12 +7928,113 @@ let __weave=null;
 
   // 1. NPC DIALOGUE INTERACTIONS
   function interactWithNpc(key) {
+    // ══════════════════════════════════════════════════════════════
+    // NEW SCENE INTERACTIONS
+    // ══════════════════════════════════════════════════════════════
+
+    // Scene 15: Meter Scam — playable choice
+    if (key === 'babuLalUncle') {
+      state.modalActive = true;
+      const m = document.getElementById('dialogue-modal');
+      m.style.display = 'block';
+      document.getElementById('dia-avatar').innerText = "👴";
+      document.getElementById('dia-name').innerText = "Babu Lal Uncle";
+      document.getElementById('dia-role').innerText = "PG Meter Scam";
+      document.getElementById('dia-text').innerText = tr(LINES.pg_uncle_meter);
+      playVoiceLine('pg_uncle_meter');
+
+      const grp = document.getElementById('dia-choices');
+      grp.innerHTML = '';
+
+      // Choice A: Call police
+      const bPolice = document.createElement('button');
+      bPolice.className = 'dia-opt-btn';
+      bPolice.style.background = 'var(--vivid-green)';
+      bPolice.innerHTML = '<span>🚨 ' + (state.lang === 'or' ? 'ପୋଲିସ୍କୁ ଡାକ!' : 'Call the police!') + '</span><span class="dia-tag-pill">+200 XP</span>';
+      bPolice.onclick = () => {
+        sfx.siren();
+        document.getElementById('dia-text').innerText = tr(LINES.pg_meter_uncle);
+        playVoiceLine('pg_meter_uncle').then(() => {
+          setTimeout(() => {
+            state.xp += 200;
+            state.coins += 150;
+            state.pgScamDone = true;
+            updateHudLabels();
+            closeDialogue();
+            popup('🏆 ' + (state.lang === 'or' ? 'ଚୁମ୍ବକ ସ୍କାମ୍ ପର୍ଦ୍ଦାଫାଶ! +200 XP' : 'मैग्नेट स्कैम भंडाफोड़! +200 XP'));
+          }, 1200);
+        });
+      };
+      grp.appendChild(bPolice);
+
+      // Choice B: Threaten to tell Aunty
+      const bAunty = document.createElement('button');
+      bAunty.className = 'dia-opt-btn';
+      bAunty.innerHTML = '<span>👵 ' + (state.lang === 'or' ? 'କାନ୍ତା ଆଣ୍ଟିଙ୍କୁ କହିବି!' : 'I\'ll tell Kanta Aunty!') + '</span><span class="dia-tag-pill">+100 XP</span>';
+      bAunty.onclick = () => {
+        sfx.memeDramatic();
+        document.getElementById('dia-text').innerText = tr(LINES.pg_meter_uncle);
+        playVoiceLine('pg_meter_uncle').then(() => {
+          closeDialogue();
+          state.xp += 100;
+          state.pgScamDone = true;
+          updateHudLabels();
+          popup('👵 ' + (state.lang === 'or' ? 'ଅଙ୍କଲ୍ ଭୟଭୀତ! +100 XP' : 'अंकल डर गए! +100 XP'));
+        });
+      };
+      grp.appendChild(bAunty);
+
+      // Choice C: Ignore the scam
+      const bIgnore = document.createElement('button');
+      bIgnore.className = 'dia-opt-btn';
+      bIgnore.innerHTML = '<span>😐 ' + (state.lang === 'or' ? 'ଏହା ମୋର ସମସ୍ୟା ନୁହେଁ' : 'Not my problem') + '</span>';
+      bIgnore.onclick = () => {
+        closeDialogue();
+        popup('😐 ' + (state.lang === 'or' ? 'ଆପଣ ଅଣଦେଖା କଲେ' : 'You ignored the scam'));
+      };
+      grp.appendChild(bIgnore);
+      return;
+    }
+
+    // Scene 16: Curfew Lockout
+    if (key === 'kantaAunty') {
+      // If player already did the rent scam, trigger curfew drama
+      if (state.pgScamDone) {
+        state.modalActive = true;
+        const m = document.getElementById('dialogue-modal');
+        m.style.display = 'block';
+        document.getElementById('dia-avatar').innerText = "👵";
+        document.getElementById('dia-name').innerText = "Kanta Aunty";
+        document.getElementById('dia-role').innerText = "9 PM Lockout";
+        document.getElementById('dia-text').innerText = tr(LINES.pg_curfew_aunty);
+        playVoiceLine('pg_curfew_aunty');
+
+        const grp = document.getElementById('dia-choices');
+        grp.innerHTML = '';
+        const bBeg = document.createElement('button');
+        bBeg.className = 'dia-opt-btn';
+        bBeg.style.background = 'var(--vivid-green)';
+        bBeg.innerHTML = '<span>🙏 ' + (state.lang === 'or' ? 'ଦୟାକରି ଆଣ୍ଟି! ୫ ମିନିଟ୍ ପାଇଁ ଖୋଲନ୍ତୁ!' : 'Please Aunty! Open for 5 minutes!') + '</span><span class="dia-tag-pill">+50 XP</span>';
+        bBeg.onclick = () => {
+          document.getElementById('dia-text').innerText = tr(LINES.pg_curfew_babu);
+          playVoiceLine('pg_curfew_babu').then(() => {
+            closeDialogue();
+            state.xp += 50;
+            updateHudLabels();
+            popup('🚪 ' + (state.lang === 'or' ? 'ଗେଟ୍ ଖୋଲିଲା! +50 XP' : 'गेट खुल गया! +50 XP'));
+          });
+        };
+        grp.appendChild(bBeg);
+        return;
+      }
+      startPGRentScam();
+      return;
+    }
+
     if (key === 'driver') {
       startAutoBargain();
     } else if (key === 'broker') {
       startRentHouseMystery();
-    } else if (key === 'kantaAunty' || key === 'babuLalUncle') {
-      startPGRentScam();
     } else if (key === 'studentTushar') {
       talkToTushar();
     } else if (key === 'policePanda') {
@@ -7952,6 +8129,7 @@ let __weave=null;
           popup('🏆 ' + (state.lang === 'or' ? 'ପିଜି ସ୍କାମ୍ ପର୍ଦ୍ଦାଫାଶ! +200 XP' : 'पीजी स्कैम भंडाफोड़! +200 XP'));
           state.xp += 200;
           state.coins += 100;
+          state.pgScamDone = true;
           updateHudLabels();
           closeDialogue();
         }, 1200);
@@ -8943,6 +9121,7 @@ let __weave=null;
   let cineTimer = null;
 
   function playCutscene(scId) {
+    if (scId === 'scene_wedding_madras') scId = 'scene_rasagola_wedding';
     const sc = CUTSCENES.find(c => c.id === scId) || CUTSCENES[0];
     currentCutscene = sc;
     state.screen = 'cinematic';
