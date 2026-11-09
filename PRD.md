@@ -165,10 +165,10 @@ window.TEX = {
 
 | Deliverable File Path | File Size | SHA-256 Checksum | Sync Status |
 |---|---|---|---|
-| `Downloads/index.html` | 1,162,716 bytes | `345fa727f57e2e46881298944d807d63cffc5eac968af2a82d4c07ff9de40213` | **PRIMARY (100%)** |
-| `odisha-simulator/index.html` | 1,162,716 bytes | `345fa727f57e2e46881298944d807d63cffc5eac968af2a82d4c07ff9de40213` | **SYNCED (Commit 6892ac5)** |
-| `Documents/study-bca-bhubaneswar-labs-hostels-2026.html` | 1,162,716 bytes | `345fa727f57e2e46881298944d807d63cffc5eac968af2a82d4c07ff9de40213` | **SYNCED (100%)** |
-| `Documents/amara-odisha-adventures.html` | 1,162,716 bytes | `345fa727f57e2e46881298944d807d63cffc5eac968af2a82d4c07ff9de40213` | **SYNCED (100%)** |
+| `Downloads/index.html` | 1,162,716 bytes | `ac983776c05a67f9dee936393c789ceeb8a61bde32f35e111c6241ba1ac66bfb` | **PRIMARY (100%)** |
+| `odisha-simulator/index.html` | 1,162,716 bytes | `ac983776c05a67f9dee936393c789ceeb8a61bde32f35e111c6241ba1ac66bfb` | **SYNCED (Commit 8188f8c)** |
+| `Documents/study-bca-bhubaneswar-labs-hostels-2026.html` | 1,162,716 bytes | `ac983776c05a67f9dee936393c789ceeb8a61bde32f35e111c6241ba1ac66bfb` | **SYNCED (100%)** |
+| `Documents/amara-odisha-adventures.html` | 1,162,716 bytes | `ac983776c05a67f9dee936393c789ceeb8a61bde32f35e111c6241ba1ac66bfb` | **SYNCED (100%)** |
 
 ### Test Suite Execution Matrix
 
@@ -182,4 +182,4 @@ window.TEX = {
 | `verify_courier.js` | Courier contracts, HUD cards, modal triggers | **PASS (100%)** |
 | `test_tex_system.js` | TEX materials, fallback maps, textures | **PASS (100%)** |
 | `download-textures.sh` | Bash one-click texture downloader | **PASS (76 / 76 maps, 44MB)** |
-| `sync_all_deliverables.js` | 4 deliverables byte-for-byte synchronization | **PASS (`345fa72...` identical)** |
+| `sync_all_deliverables.js` | 4 deliverables byte-for-byte synchronization | **PASS (`ac98377...` identical)** |
