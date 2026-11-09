@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ========================================================
-# Amara Odisha — Auto-download all CC0 textures from Poly Haven
+# Amara Odisha — Auto-download all CC0 textures from Poly Haven & ambientCG
 # Usage: bash download-textures.sh
 # ========================================================
 set -euo pipefail
@@ -47,7 +47,7 @@ fetch_set() {
 
 echo "════════════════════════════════════════"
 echo "  Downloading Amara Odisha Textures"
-echo "  (19 sets × 4 maps = 76 files)"
+echo "  (23 sets + vehicle and building textures)"
 echo "════════════════════════════════════════"
 echo ""
 
@@ -59,6 +59,8 @@ fetch_set "plaster_white"     "plastered_wall"
 fetch_set "brick_aged"        "brick_floor_003" "diffuse"
 fetch_set "concrete_raw"      "concrete_wall_008"
 fetch_set "wattle_daub"       "clay_plaster"
+fetch_set "cave_rock"         "cliff_side"
+fetch_set "white_marble"      "marble_01"
 
 echo ""
 echo "▸ Category 2 — Wood & Stalls"
@@ -86,6 +88,47 @@ echo ""
 echo "▸ Category 6 — Interior"
 fetch_set "floor_tiles_02"    "floor_tiles_02"
 fetch_set "wood_floor_deck"   "wood_floor_deck"
+
+echo ""
+echo "▸ Category 7 — Vehicles & Hardware"
+fetch_set "metal_chrome"      "metal_plate"
+fetch_set "leather_seat"      "leather_red_02" "coll1"
+
+echo ""
+echo "▸ Category 8 — Material Copies / Aliases"
+for map in albedo.jpg normal.jpg roughness.jpg ao.jpg; do
+  mkdir -p mud_wall && cp -u wattle_daub/"$map" mud_wall/"$map" 2>/dev/null || cp wattle_daub/"$map" mud_wall/"$map"
+  mkdir -p sandstone_carved && cp -u sandstone_red/"$map" sandstone_carved/"$map" 2>/dev/null || cp sandstone_red/"$map" sandstone_carved/"$map"
+  mkdir -p concrete_painted && cp -u concrete_raw/"$map" concrete_painted/"$map" 2>/dev/null || cp concrete_raw/"$map" concrete_painted/"$map"
+done
+
+echo ""
+echo "▸ Category 9 — AmbientCG Vehicle Packs (Rubber & Bus Body)"
+if [ ! -s "rubber_tyre/albedo.jpg" ]; then
+  mkdir -p rubber_tyre
+  TMPR=$(mktemp -d)
+  if curl -fLsS --retry 2 -o "$TMPR/Rubber004.zip" "https://ambientcg.com/get?file=Rubber004_1K-JPG.zip" 2>/dev/null; then
+    unzip -qo "$TMPR/Rubber004.zip" -d "$TMPR"
+    cp "$TMPR"/*_Color.jpg rubber_tyre/albedo.jpg 2>/dev/null || true
+    cp "$TMPR"/*_NormalGL.jpg rubber_tyre/normal.jpg 2>/dev/null || true
+    cp "$TMPR"/*_Roughness.jpg rubber_tyre/roughness.jpg 2>/dev/null || true
+    cp "$TMPR"/*_Roughness.jpg rubber_tyre/ao.jpg 2>/dev/null || true
+  fi
+  rm -rf "$TMPR"
+fi
+
+if [ ! -s "bus_body/albedo.jpg" ]; then
+  mkdir -p bus_body
+  TMPM=$(mktemp -d)
+  if curl -fLsS --retry 2 -o "$TMPM/Metal032.zip" "https://ambientcg.com/get?file=Metal032_1K-JPG.zip" 2>/dev/null; then
+    unzip -qo "$TMPM/Metal032.zip" -d "$TMPM"
+    cp "$TMPM"/*_Color.jpg bus_body/albedo.jpg 2>/dev/null || true
+    cp "$TMPM"/*_NormalGL.jpg bus_body/normal.jpg 2>/dev/null || true
+    cp "$TMPM"/*_Roughness.jpg bus_body/roughness.jpg 2>/dev/null || true
+    cp "$TMPM"/*_Roughness.jpg bus_body/ao.jpg 2>/dev/null || true
+  fi
+  rm -rf "$TMPM"
+fi
 
 echo ""
 echo "════════════════════════════════════════"

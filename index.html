@@ -3186,7 +3186,18 @@
         'floor_interior': 'floor_tiles_02',
         'painted_wood_white': 'wood_teak',
         'ground': 'laterite',
-        'plaster': 'plaster_ochre'
+        'plaster': 'plaster_ochre',
+        'mud_wall': 'mud_wall',
+        'sandstone_carved': 'sandstone_carved',
+        'cave_rock': 'cave_rock',
+        'caveRock': 'cave_rock',
+        'concrete_painted': 'concrete_painted',
+        'white_marble': 'white_marble',
+        'whiteMarble': 'white_marble',
+        'metal_chrome': 'metal_chrome',
+        'rubber_tyre': 'rubber_tyre',
+        'leather_seat': 'leather_seat',
+        'bus_body': 'bus_body'
       };
       const folder = ALIASES[name] || name;
       const base = './textures/' + folder + '/';
@@ -3369,378 +3380,19 @@
   }
 
   // 1. AUTO-RICKSHAW 3D MODEL
-  // =========================================================================
-  // AUTHENTIC INDIAN AUTO-RICKSHAW TEXTURES (BASED ON SKETCHFAB OYH6X / RSQUARE)
-  // =========================================================================
-
-  function autoFrontHoodTex() {
-    return makeCanvas(1024, 512, (ctx, w, h) => {
-      // === Base: glossy black canopy + yellow body (Mumbai/Bhubaneswar auto) ===
-      // Top half = BLACK canopy fairing
-      const blackGrad = ctx.createLinearGradient(0, 0, 0, h*0.45);
-      blackGrad.addColorStop(0, "#0a0a0a");
-      blackGrad.addColorStop(0.55, "#1c1c1c");
-      blackGrad.addColorStop(1, "#2a2a2a");
-      ctx.fillStyle = blackGrad;
-      ctx.fillRect(0, 0, w, h*0.45);
-
-      // Bottom half = YELLOW body
-      const yellowGrad = ctx.createLinearGradient(0, h*0.45, 0, h);
-      yellowGrad.addColorStop(0, "#facc15");
-      yellowGrad.addColorStop(0.7, "#eab308");
-      yellowGrad.addColorStop(1, "#ca8a04");
-      ctx.fillStyle = yellowGrad;
-      ctx.fillRect(0, h*0.45, w, h*0.55);
-
-      // === Metallic reflection streaks across top (glossy clear-coat) ===
-      const refl = ctx.createLinearGradient(0, 0, w, h*0.5);
-      refl.addColorStop(0, "rgba(255,255,255,0)");
-      refl.addColorStop(0.4, "rgba(255,255,255,0.14)");
-      refl.addColorStop(0.5, "rgba(255,255,255,0.28)");
-      refl.addColorStop(0.6, "rgba(255,255,255,0.14)");
-      refl.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = refl;
-      ctx.fillRect(0, 0, w, h*0.45);
-
-      // === Hand-painted panel seams ===
-      ctx.strokeStyle = "rgba(0,0,0,0.55)";
-      ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.moveTo(w*0.5, 0); ctx.lineTo(w*0.5, h*0.48); ctx.stroke();
-
-      // === Chrome trim strip where black meets yellow ===
-      ctx.fillStyle = "#c0c0c0";
-      ctx.fillRect(0, h*0.44, w, 8);
-      ctx.fillStyle = "#888888";
-      ctx.fillRect(0, h*0.44 + 8, w, 3);
-
-      // === BOLD red "FOR HIRE" lettering on the black canopy ===
-      ctx.fillStyle = "#dc2626";
-      ctx.font = "900 78px 'Impact', 'Arial Black', sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.shadowColor = "rgba(0,0,0,0.6)";
-      ctx.shadowBlur = 8;
-      ctx.shadowOffsetY = 4;
-      ctx.fillText("FOR  HIRE", w/2, h*0.20);
-      ctx.shadowColor = "transparent";
-      ctx.shadowBlur = 0;
-      ctx.shadowOffsetY = 0;
-
-      // === Central black rubber nose plate "R2 / OD-02" (with chrome screws) ===
-      const nw = 220, nh = 180, nx = (w-nw)/2, ny = h*0.52;
-      ctx.fillStyle = "#111111";
-      ctx.fillRect(nx, ny, nw, nh);
-      ctx.strokeStyle = "#e5e5e5";
-      ctx.lineWidth = 5;
-      ctx.strokeRect(nx+4, ny+4, nw-8, nh-8);
-      // Inner black bezel
-      ctx.strokeStyle = "#3f3f46";
-      ctx.lineWidth = 2;
-      ctx.strokeRect(nx+12, ny+12, nw-24, nh-24);
-      // "R₂" monogram
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "900 70px serif";
-      ctx.fillText("R₂", w/2, ny + 68);
-      // "OD-02" plate number
-      ctx.font = "bold 38px monospace";
-      ctx.fillStyle = "#eab308";
-      ctx.fillText("OD 02", w/2, ny + 125);
-      ctx.fillStyle = "#a1a1aa";
-      ctx.font = "bold 22px monospace";
-      ctx.fillText("KALIA BHAI", w/2, ny + 155);
-      // 4 chrome mounting screws
-      [[nx+20, ny+20],[nx+nw-20, ny+20],[nx+20, ny+nh-20],[nx+nw-20, ny+nh-20]].forEach(([sx, sy]) => {
-        ctx.fillStyle = "#d4d4d8"; ctx.beginPath(); ctx.arc(sx, sy, 8, 0, Math.PI*2); ctx.fill();
-        ctx.fillStyle = "#52525b"; ctx.beginPath(); ctx.arc(sx, sy, 4, 0, Math.PI*2); ctx.fill();
-      });
-
-      // === Lower-left LPG diamond sticker (bright green, safety-legal) ===
-      ctx.save();
-      const lx = 150, ly = h*0.78;
-      ctx.translate(lx, ly);
-      ctx.rotate(Math.PI/4);
-      ctx.fillStyle = "#15803d";
-      ctx.fillRect(-58, -58, 116, 116);
-      ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 6;
-      ctx.strokeRect(-52, -52, 104, 104);
-      ctx.restore();
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "900 36px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("LPG", lx, ly + 4);
-      ctx.font = "bold 14px sans-serif";
-      ctx.fillText("ECO-FUEL", lx, ly + 28);
-
-      // === Lower-right RTO permit plate ===
-      ctx.fillStyle = "#f8fafc";
-      ctx.fillRect(w - 320, h*0.70, 280, 90);
-      ctx.strokeStyle = "#111111";
-      ctx.lineWidth = 4;
-      ctx.strokeRect(w - 320, h*0.70, 280, 90);
-      ctx.fillStyle = "#111111";
-      ctx.font = "bold 20px monospace";
-      ctx.textAlign = "left";
-      ctx.fillText("PERMIT: OD-02-KLR-4040", w - 310, h*0.70 + 28);
-      ctx.fillText("VALID: 31-12-2026", w - 310, h*0.70 + 54);
-      ctx.fillText("SEATS: 3 + DRIVER", w - 310, h*0.70 + 80);
-
-      // === Small "Jay Jagannath" decal ===
-      ctx.fillStyle = "rgba(255,255,255,0.85)";
-      ctx.font = "bold 16px sans-serif";
-      ctx.textAlign = "left";
-      ctx.fillText("🕉  ଜୟ ଜଗନ୍ନାଥ • JAY JAGANNATH  🕉", 40, h - 28);
-    });
-  }
-
-  function autoSidePanelTex() {
-    return makeCanvas(1024, 256, (ctx, w, h) => {
-      // Split: black upper, yellow lower (classic Indian auto side panel)
-      const blackGrad = ctx.createLinearGradient(0, 0, 0, h*0.5);
-      blackGrad.addColorStop(0, "#0a0a0a");
-      blackGrad.addColorStop(1, "#1f1f1f");
-      ctx.fillStyle = blackGrad;
-      ctx.fillRect(0, 0, w, h*0.5);
-
-      const yellowGrad = ctx.createLinearGradient(0, h*0.5, 0, h);
-      yellowGrad.addColorStop(0, "#facc15");
-      yellowGrad.addColorStop(0.75, "#eab308");
-      yellowGrad.addColorStop(1, "#a16207");
-      ctx.fillStyle = yellowGrad;
-      ctx.fillRect(0, h*0.5, w, h*0.5);
-
-      // Chrome divider strip
-      ctx.fillStyle = "#d4d4d8";
-      ctx.fillRect(0, h*0.48, w, 6);
-      ctx.fillStyle = "#71717a";
-      ctx.fillRect(0, h*0.48 + 6, w, 2);
-
-      // White pinstripe along yellow panel
-      ctx.fillStyle = "#f8fafc";
-      ctx.fillRect(0, h*0.55, w, 3);
-
-      // === Odia-language livery text ===
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "900 34px sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("ଭୁବନେଶ୍ୱର • ଫାଷ୍ଟ ଏୟାର • ଯାତ୍ରୀ ସେବା", w/2, h*0.28);
-
-      // === English subtitle ===
-      ctx.fillStyle = "#fbbf24";
-      ctx.font = "bold 22px 'Cinzel', serif";
-      ctx.fillText("BHUBANESWAR  •  FAST  •  PASSENGER", w/2, h*0.40);
-
-      // === Safety "HELMET / SEATBELT" reminders painted on lower yellow ===
-      ctx.fillStyle = "#111111";
-      ctx.font = "bold 16px sans-serif";
-      ctx.textAlign = "left";
-      ctx.fillText("⚠  DRIVE SAFE  ⚠", 30, h*0.75);
-      ctx.fillText("♥  30–40 KM/H CITY LIMIT", 30, h*0.87);
-
-      // === Hand-painted rivets along lower skirt ===
-      ctx.fillStyle = "#52525b";
-      for (let x = 40; x < w; x += 60) {
-        ctx.beginPath(); ctx.arc(x, h - 18, 3.5, 0, Math.PI*2); ctx.fill();
-        ctx.fillStyle = "#a1a1aa";
-        ctx.beginPath(); ctx.arc(x-1, h - 19, 1.8, 0, Math.PI*2); ctx.fill();
-        ctx.fillStyle = "#52525b";
-      }
-
-      // === Subtle rain/road dirt wear near bottom ===
-      for (let d = 0; d < 220; d++) {
-        ctx.fillStyle = `rgba(50,35,15,${0.04 + Math.random()*0.08})`;
-        ctx.fillRect(Math.random()*w, h*0.85 + Math.random()*h*0.15, 3 + Math.random()*10, 2 + Math.random()*6);
-      }
-    });
-  }
-
-  function autoSeatBackTex() {
-    return makeCanvas(512, 512, (ctx, w, h) => {
-      // Base leatherette
-      const base = ctx.createLinearGradient(0, 0, w, h);
-      base.addColorStop(0, "#3f1d0b");
-      base.addColorStop(0.5, "#2a1208");
-      base.addColorStop(1, "#3f1d0b");
-      ctx.fillStyle = base;
-      ctx.fillRect(0, 0, w, h);
-
-      // Fine leather grain (per-pixel noise)
-      for (let i = 0; i < 4000; i++) {
-        const x = Math.random()*w, y = Math.random()*h;
-        ctx.fillStyle = Math.random() < 0.5
-          ? `rgba(15,6,2,${0.15 + Math.random()*0.25})`
-          : `rgba(100,55,25,${0.08 + Math.random()*0.15})`;
-        ctx.fillRect(x, y, 1.5, 1.5);
-      }
-
-      // Vertical upholstery creases (quilted pattern)
-      for (let x = 24; x < w; x += 56) {
-        ctx.strokeStyle = "rgba(0,0,0,0.5)";
-        ctx.lineWidth = 3;
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-        ctx.strokeStyle = "rgba(120,70,35,0.35)";
-        ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(x+3, 0); ctx.lineTo(x+3, h); ctx.stroke();
-      }
-
-      // Horizontal seams
-      for (let y = 40; y < h; y += 120) {
-        ctx.strokeStyle = "rgba(0,0,0,0.55)";
-        ctx.lineWidth = 3;
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-        ctx.strokeStyle = "rgba(120,70,35,0.35)";
-        ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(0, y+3); ctx.lineTo(w, y+3); ctx.stroke();
-      }
-
-      // Yellow embroidered wave accent
-      ctx.strokeStyle = "#facc15";
-      ctx.lineWidth = 5;
-      ctx.beginPath();
-      for (let x = 0; x <= w; x += 8) {
-        const y = h*0.55 + Math.sin(x*0.07)*20;
-        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-
-      // Central decorative gold/yellow 4-pointed star motif
-      const cx = w/2, cy = h*0.42;
-      ctx.fillStyle = "#fbbf24";
-      ctx.beginPath();
-      ctx.moveTo(cx, cy - 60);
-      ctx.quadraticCurveTo(cx + 10, cy - 10, cx + 60, cy);
-      ctx.quadraticCurveTo(cx + 10, cy + 10, cx, cy + 60);
-      ctx.quadraticCurveTo(cx - 10, cy + 10, cx - 60, cy);
-      ctx.quadraticCurveTo(cx - 10, cy - 10, cx, cy - 60);
-      ctx.fill();
-
-      // Dark red center pip
-      ctx.fillStyle = "#7f1d1d";
-      ctx.beginPath(); ctx.arc(cx, cy, 12, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = "#fbbf24";
-      ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI*2); ctx.fill();
-
-      // Worn patches (interior aging)
-      for (let w2 = 0; w2 < 8; w2++) {
-        ctx.fillStyle = `rgba(180,120,70,${0.05 + Math.random()*0.08})`;
-        ctx.beginPath();
-        ctx.ellipse(Math.random()*w, Math.random()*h, 20+Math.random()*40, 15+Math.random()*30, Math.random()*Math.PI, 0, Math.PI*2);
-        ctx.fill();
-      }
-    });
-  }
-
-  function autoRoofTex() {
-    return makeCanvas(256, 256, (ctx, w, h) => {
-      // Dark slate / vinyl black canvas roof
-      ctx.fillStyle = "#1e293b";
-      ctx.fillRect(0, 0, w, h);
-
-      // Subtle fabric texture & stitching seams
-      ctx.strokeStyle = "#0f172a";
-      ctx.lineWidth = 3;
-      ctx.strokeRect(12, 12, w - 24, h - 24);
-
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.07)";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(w / 2, 0);
-      ctx.lineTo(w / 2, h);
-      ctx.stroke();
-    });
-  }
-
-  function autoWheelTex() {
-    return makeCanvas(512, 512, (ctx, w, h) => {
-      const cx = w/2, cy = h/2;
-
-      // === 1. Tyre rubber base ===
-      ctx.fillStyle = "#0a0a0a";
-      ctx.beginPath(); ctx.arc(cx, cy, 250, 0, Math.PI*2); ctx.fill();
-
-      // Radial tread grooves
-      for (let a = 0; a < Math.PI*2; a += Math.PI / 24) {
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.rotate(a);
-        ctx.fillStyle = "#262626";
-        ctx.fillRect(190, -6, 60, 12);
-        ctx.fillStyle = "#3f3f46";
-        ctx.fillRect(200, -4, 40, 8);
-        ctx.fillStyle = "#1a1a1a";
-        ctx.fillRect(210, -2, 20, 4);
-        ctx.restore();
-      }
-
-      // Tyre sidewall lettering
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(Math.PI*0.5);
-      ctx.fillStyle = "rgba(230,230,230,0.55)";
-      ctx.font = "bold 12px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("MRF  NYLON  •  3.50-10", 0, -215);
-      ctx.restore();
-
-      // === 2. Chrome hub rim ===
-      const hubGrad = ctx.createRadialGradient(cx-60, cy-60, 20, cx, cy, 170);
-      hubGrad.addColorStop(0, "#f5f5f5");
-      hubGrad.addColorStop(0.4, "#d4d4d8");
-      hubGrad.addColorStop(0.7, "#a1a1aa");
-      hubGrad.addColorStop(1, "#52525b");
-      ctx.fillStyle = hubGrad;
-      ctx.beginPath(); ctx.arc(cx, cy, 170, 0, Math.PI*2); ctx.fill();
-
-      // === 3. Black & yellow painted accent ring ===
-      ctx.strokeStyle = "#facc15";
-      ctx.lineWidth = 8;
-      ctx.beginPath(); ctx.arc(cx, cy, 155, 0, Math.PI*2); ctx.stroke();
-      ctx.strokeStyle = "#111111";
-      ctx.lineWidth = 4;
-      ctx.beginPath(); ctx.arc(cx, cy, 143, 0, Math.PI*2); ctx.stroke();
-
-      // === 4. 6 bolt holes on chrome hub ===
-      for (let b = 0; b < 6; b++) {
-        const ang = (b/6) * Math.PI*2;
-        const bx = cx + Math.cos(ang) * 105;
-        const by = cy + Math.sin(ang) * 105;
-        ctx.fillStyle = "#27272a";
-        ctx.beginPath(); ctx.arc(bx, by, 16, 0, Math.PI*2); ctx.fill();
-        ctx.fillStyle = "#d4d4d8";
-        ctx.beginPath(); ctx.arc(bx, by, 11, 0, Math.PI*2); ctx.fill();
-        ctx.fillStyle = "#52525b";
-        ctx.beginPath(); ctx.arc(bx, by, 5, 0, Math.PI*2); ctx.fill();
-      }
-
-      // === 5. Center hub cap with "R2" logo ===
-      const capGrad = ctx.createRadialGradient(cx-15, cy-15, 5, cx, cy, 55);
-      capGrad.addColorStop(0, "#fafafa");
-      capGrad.addColorStop(0.7, "#71717a");
-      capGrad.addColorStop(1, "#27272a");
-      ctx.fillStyle = capGrad;
-      ctx.beginPath(); ctx.arc(cx, cy, 50, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = "#facc15";
-      ctx.font = "900 32px serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("R₂", cx, cy + 2);
-    });
-  }
-
   // 1. DETAILED 3D AUTO-RICKSHAW (AUTHENTIC SKETCHFAB OYH6X STYLING)
   function makeAuto() {
     const g = new THREE.Group();
 
-    const hoodMat = new THREE.MeshStandardMaterial({ map: autoFrontHoodTex(), roughness: 0.5 });
-    const sideMat = new THREE.MeshStandardMaterial({ map: autoSidePanelTex(), roughness: 0.5 });
-    const seatBackMat = new THREE.MeshStandardMaterial({ map: autoSeatBackTex(), roughness: 0.75 });
-    const roofMat = new THREE.MeshStandardMaterial({ map: autoRoofTex(), roughness: 0.85 });
+    const hoodMat = autoFrontHoodMat();
+    const sideMat = autoSidePanelMat();
+    const seatBackMat = autoSeatMat();
+    const roofMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.85 });
     const yellowMat = M("#facc15", 0.45, { metalness: 0.15 });
     const greenMat = M("#15803d", 0.45, { metalness: 0.2 });
     const darkRoofMat = M("#1e293b", 0.85);
     const blackMat = mats.black || M("#18181b", 0.7);
-    const chromeMat = mats.chrome || M("#e2e8f0", 0.2, { metalness: 0.85 });
+    const chromeMat = vehicleChromeMat();
     const glassMat = mats.glass || new THREE.MeshStandardMaterial({ color: "#a9c8d8", roughness: 0.1, transparent: true, opacity: 0.35 });
     const amberMat = mats.lampAmber || M("#f59e0b", 0.3, { emissive: "#d97706", emissiveIntensity: 1.2 });
     const redLightMat = M("#dc2626", 0.3, { emissive: "#991b1b", emissiveIntensity: 1.0 });
@@ -3845,7 +3497,7 @@
     });
 
     // 5. WHEELS WITH CYAN/TURQUOISE PAINTED HUBS & TYRES
-    const wheelMat = new THREE.MeshStandardMaterial({ map: autoWheelTex(), roughness: 0.6 });
+    const wheelMat = autoWheelMat();
     function makeAutoWheel(parent, pos) {
       const wg = new THREE.Group();
       wg.position.set(...pos);
@@ -3876,245 +3528,9 @@
     return '#' + [clamp(r*factor), clamp(g*factor), clamp(b*factor)].map(v => v.toString(16).padStart(2, '0')).join('');
   }
 
-  function scootyBodyTex(color = "#2563eb") {
-    return makeCanvas(512, 512, (ctx, w, h) => {
-      // Base gloss color
-      const grad = ctx.createLinearGradient(0, 0, w, h);
-      grad.addColorStop(0, color);
-      grad.addColorStop(0.5, shade(color, 0.85));
-      grad.addColorStop(1, shade(color, 0.65));
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, w, h);
-
-      // Clear-coat reflectivity streaks (top-left highlight)
-      const refl = ctx.createLinearGradient(0, 0, w*0.6, h*0.6);
-      refl.addColorStop(0, "rgba(255,255,255,0.35)");
-      refl.addColorStop(0.4, "rgba(255,255,255,0.05)");
-      refl.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = refl;
-      ctx.fillRect(0, 0, w, h);
-
-      // "HONDA" / "ACTIVA" chrome decal
-      ctx.fillStyle = "#e5e7eb";
-      ctx.font = "900 42px serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("ACTIVA", w/2, h*0.4);
-
-      // 6G emblem
-      ctx.fillStyle = "#ef4444";
-      ctx.font = "bold 22px sans-serif";
-      ctx.fillText("6G", w*0.55, h*0.52);
-
-      // Small RTO style reg tag
-      ctx.fillStyle = "#111111";
-      ctx.fillRect(w*0.75, h*0.82, 100, 30);
-      ctx.fillStyle = "#facc15";
-      ctx.font = "bold 14px monospace";
-      ctx.textAlign = "center";
-      ctx.fillText("OD-02-2026", w*0.75 + 50, h*0.82 + 20);
-    });
-  }
-
-  function cowHideTex() {
-    return makeCanvas(512, 512, (ctx, w, h) => {
-      // Warm sacred Zebu white/cream body
-      const bg = ctx.createLinearGradient(0, 0, 0, h);
-      bg.addColorStop(0, "#f8fafc");
-      bg.addColorStop(0.5, "#f1f5f9");
-      bg.addColorStop(1, "#e2e8f0");
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, w, h);
-
-      // Fine hair grain
-      for (let i = 0; i < 3500; i++) {
-        const x = Math.random()*w, y = Math.random()*h;
-        ctx.fillStyle = Math.random() < 0.5 ? "rgba(180,160,140,0.12)" : "rgba(255,255,255,0.25)";
-        ctx.fillRect(x, y, 1, 2);
-      }
-
-      // Soft natural taupe / warm gray markings (traditional Indian cow spots)
-      const spots = [
-        { x: w*0.25, y: h*0.35, rx: 75, ry: 55, a: 0.3 },
-        { x: w*0.70, y: h*0.60, rx: 90, ry: 65, a: -0.4 },
-        { x: w*0.50, y: h*0.25, rx: 45, ry: 35, a: 0.1 },
-        { x: w*0.82, y: h*0.28, rx: 50, ry: 40, a: 0.5 }
-      ];
-      spots.forEach(sp => {
-        const sg = ctx.createRadialGradient(sp.x, sp.y, 10, sp.x, sp.y, sp.rx);
-        sg.addColorStop(0, "rgba(100,80,65,0.75)");
-        sg.addColorStop(0.65, "rgba(140,115,95,0.5)");
-        sg.addColorStop(1, "rgba(200,185,170,0)");
-        ctx.fillStyle = sg;
-        ctx.beginPath();
-        ctx.ellipse(sp.x, sp.y, sp.rx, sp.ry, sp.a, 0, Math.PI*2);
-        ctx.fill();
-      });
-    });
-  }
-
-  function gamuchaFabricTex(baseColor = "#b71c1c") {
-    return makeCanvas(256, 256, (ctx, w, h) => {
-      ctx.fillStyle = baseColor;
-      ctx.fillRect(0, 0, w, h);
-      // Traditional Odisha / Sambalpuri woven check pattern
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.45)";
-      ctx.lineWidth = 2;
-      for (let x = 0; x < w; x += 16) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-      }
-      for (let y = 0; y < h; y += 16) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-      }
-      // Yellow accent pinstripe
-      ctx.strokeStyle = "rgba(250, 204, 21, 0.55)";
-      ctx.lineWidth = 1;
-      for (let x = 8; x < w; x += 32) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-      }
-      for (let y = 8; y < h; y += 32) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-      }
-    });
-  }
-
-  function makeFaceTexture(opts = {}) {
-    const { skinTone = "#d49b78", hasMustache = false, isFemale = false, hasBeard = false, spectacles = false } = opts;
-    return makeCanvas(512, 512, (ctx, w, h) => {
-      const cx = w/2, cy = h/2;
-
-      // Base skin gradient — forehead brighter, chin darker (subsurface warmth)
-      const skinGrad = ctx.createRadialGradient(cx, cy*0.75, 20, cx, cy, w*0.6);
-      skinGrad.addColorStop(0, shade(skinTone, 1.1));
-      skinGrad.addColorStop(0.6, skinTone);
-      skinGrad.addColorStop(1, shade(skinTone, 0.75));
-      ctx.fillStyle = skinGrad;
-      ctx.fillRect(0, 0, w, h);
-
-      // Pore / freckle micro-detail
-      for (let i = 0; i < 2400; i++) {
-        const x = Math.random()*w, y = Math.random()*h;
-        ctx.fillStyle = Math.random() < 0.5
-          ? `rgba(0,0,0,${0.04 + Math.random()*0.05})`
-          : `rgba(255,200,160,${0.05 + Math.random()*0.06})`;
-        ctx.fillRect(x, y, 1, 1);
-      }
-
-      // Cheek blush (natural redness)
-      [cx - 90, cx + 90].forEach(ex => {
-        const cheekGrad = ctx.createRadialGradient(ex, cy + 40, 5, ex, cy + 40, 60);
-        cheekGrad.addColorStop(0, "rgba(230, 90, 110, 0.28)");
-        cheekGrad.addColorStop(1, "rgba(230, 90, 110, 0)");
-        ctx.fillStyle = cheekGrad;
-        ctx.fillRect(ex - 60, cy - 20, 120, 120);
-      });
-
-      // Nose shadow under the bridge
-      ctx.fillStyle = "rgba(120, 60, 40, 0.22)";
-      ctx.beginPath();
-      ctx.ellipse(cx, cy + 55, 14, 8, 0, 0, Math.PI*2);
-      ctx.fill();
-
-      // Eyes
-      [cx - 100, cx + 100].forEach(ex => {
-        // Eye socket shadow
-        ctx.fillStyle = "rgba(60, 30, 20, 0.20)";
-        ctx.beginPath(); ctx.ellipse(ex, cy - 25, 40, 25, 0, 0, Math.PI*2); ctx.fill();
-        // White
-        ctx.fillStyle = "#f8f4ec";
-        ctx.beginPath(); ctx.ellipse(ex, cy - 25, 32, 20, 0, 0, Math.PI*2); ctx.fill();
-        // Iris
-        ctx.fillStyle = "#5a3a1e";
-        ctx.beginPath(); ctx.arc(ex, cy - 25, 13, 0, Math.PI*2); ctx.fill();
-        // Pupil
-        ctx.fillStyle = "#0a0505";
-        ctx.beginPath(); ctx.arc(ex, cy - 25, 7, 0, Math.PI*2); ctx.fill();
-        // Highlight
-        ctx.fillStyle = "rgba(255,255,255,0.85)";
-        ctx.beginPath(); ctx.arc(ex - 4, cy - 28, 3, 0, Math.PI*2); ctx.fill();
-        // Eyelids
-        ctx.strokeStyle = "#1c0d06";
-        ctx.lineWidth = 3;
-        ctx.beginPath(); ctx.arc(ex, cy - 25, 33, Math.PI*1.08, Math.PI*1.92); ctx.stroke();
-      });
-
-      // Eyebrows
-      [cx - 100, cx + 100].forEach(bx => {
-        ctx.strokeStyle = "#180a04";
-        ctx.lineWidth = isFemale ? 4 : 7;
-        ctx.beginPath();
-        const arch = isFemale ? 6 : 4;
-        ctx.moveTo(bx - 36, cy - 50);
-        ctx.quadraticCurveTo(bx, cy - 58 - arch, bx + 36, cy - 52);
-        ctx.stroke();
-      });
-
-      // Lips / Smile
-      ctx.fillStyle = isFemale ? "rgba(190, 60, 75, 0.75)" : "rgba(160, 75, 60, 0.65)";
-      ctx.beginPath();
-      ctx.ellipse(cx, cy + 95, 34, 10, 0, 0, Math.PI*2);
-      ctx.fill();
-      ctx.strokeStyle = "rgba(90, 30, 20, 0.7)";
-      ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(cx - 30, cy + 95); ctx.lineTo(cx + 30, cy + 95); ctx.stroke();
-
-      // Bindi (if female)
-      if (isFemale) {
-        ctx.fillStyle = "#b91c1c";
-        ctx.beginPath(); ctx.arc(cx, cy - 65, 8, 0, Math.PI*2); ctx.fill();
-        ctx.fillStyle = "#fbbf24";
-        ctx.beginPath(); ctx.arc(cx, cy - 65, 3, 0, Math.PI*2); ctx.fill();
-      }
-
-      // Tilak (if priest or traditional)
-      if (opts.hasTilak) {
-        ctx.fillStyle = "#facc15";
-        ctx.fillRect(cx - 4, cy - 85, 8, 32);
-        ctx.fillStyle = "#dc2626";
-        ctx.beginPath(); ctx.arc(cx, cy - 62, 5, 0, Math.PI*2); ctx.fill();
-      }
-
-      // Mustache
-      if (hasMustache || hasBeard) {
-        ctx.fillStyle = "#180a04";
-        ctx.beginPath();
-        ctx.moveTo(cx - 50, cy + 82);
-        ctx.quadraticCurveTo(cx - 20, cy + 68, cx, cy + 76);
-        ctx.quadraticCurveTo(cx + 20, cy + 68, cx + 50, cy + 82);
-        ctx.quadraticCurveTo(cx + 25, cy + 88, cx, cy + 80);
-        ctx.quadraticCurveTo(cx - 25, cy + 88, cx - 50, cy + 82);
-        ctx.fill();
-      }
-
-      // Beard
-      if (hasBeard) {
-        ctx.fillStyle = "#180a04";
-        ctx.beginPath();
-        ctx.ellipse(cx, cy + 130, 48, 28, 0, 0, Math.PI*2);
-        ctx.fill();
-      }
-
-      // Spectacles
-      if (spectacles) {
-        ctx.strokeStyle = "#eab308";
-        ctx.lineWidth = 4;
-        [cx - 100, cx + 100].forEach(gx => {
-          ctx.beginPath(); ctx.arc(gx, cy - 25, 36, 0, Math.PI*2); ctx.stroke();
-        });
-        ctx.beginPath(); ctx.moveTo(cx - 64, cy - 25); ctx.lineTo(cx + 64, cy - 25); ctx.stroke();
-      }
-    });
-  }
-
   function makeScooty(bodyColor = "#2563eb") {
     const g = new THREE.Group();
-    const bodyTex = scootyBodyTex(bodyColor);
-    const bodyMat = new THREE.MeshStandardMaterial({
-      map: bodyTex,
-      color: "#ffffff",
-      roughness: 0.28,
-      metalness: 0.45
-    });
+    const bodyMat = scootyBodyMat(bodyColor);
 
     // Lower chassis & rubber ribbed floorboard
     addMesh(g, box(0.52, 0.12, 1.6), mats.scootyDark, [0, 0.28, 0]);
@@ -4209,8 +3625,7 @@
   function makeCow() {
     const g = new THREE.Group();
     const cowSkin = new THREE.MeshStandardMaterial({
-      map: cowHideTex(),
-      color: "#ffffff",
+      color: 0xf8fafc,
       roughness: 0.85
     });
     const cowMuzzle = M("#fbcfe8", 0.7);
@@ -4386,8 +3801,8 @@
   // 6. MO BUS (BHUBANESWAR GREEN CITY BUS)
   function makeBus() {
     const g = new THREE.Group();
-    const busGreen = M("#15803d", 0.5);
-    const busSilver = M("#cbd5e1", 0.4, { metalness: 0.3 });
+    const busGreen = vehicleBusBodyMat(0x15803d);
+    const busSilver = new THREE.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.4, metalness: 0.3 });
 
     // Chassis & Lower Body
     addMesh(g, box(2.6, 1.2, 11), busGreen, [0, 0.9, 0]);
@@ -5162,7 +4577,18 @@ let __weave=null;
     'floor_interior': 'floor_tiles_02',
     'painted_wood_white': 'wood_teak',
     'ground': 'laterite',
-    'plaster': 'plaster_ochre'
+    'plaster': 'plaster_ochre',
+    'mud_wall': 'mud_wall',
+    'sandstone_carved': 'sandstone_carved',
+    'cave_rock': 'cave_rock',
+    'caveRock': 'cave_rock',
+    'concrete_painted': 'concrete_painted',
+    'white_marble': 'white_marble',
+    'whiteMarble': 'white_marble',
+    'metal_chrome': 'metal_chrome',
+    'rubber_tyre': 'rubber_tyre',
+    'leather_seat': 'leather_seat',
+    'bus_body': 'bus_body'
   };
 
   function texOrProc(name, procFn, repeatX = 1, repeatY = 1) {
@@ -5199,6 +4625,162 @@ let __weave=null;
     p.repeat.set(repeatX, repeatY);
     _texCache[key] = p;
     return p;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     VEHICLE TEXTURE FACTORY — real CC0 where possible, upgraded
+     procedural for auto livery (FOR HIRE / OD-02 / etc.)
+     ═══════════════════════════════════════════════════════════════ */
+
+  function vehicleChromeMat() {
+    const map = texOrProc('metal_chrome', () => makeCanvas(256, 256, (ctx, w, h) => {
+      const g = ctx.createLinearGradient(0, 0, w, h);
+      g.addColorStop(0, "#f0f0f0"); g.addColorStop(0.5, "#a0a0a0"); g.addColorStop(1, "#606060");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+    }), 1, 1);
+    return new THREE.MeshStandardMaterial({ map, roughness: 0.2, metalness: 0.85, color: 0xffffff });
+  }
+
+  function vehicleTyreMat() {
+    const map = texOrProc('rubber_tyre', () => makeCanvas(256, 256, (ctx, w, h) => {
+      ctx.fillStyle = "#0a0a0a"; ctx.fillRect(0, 0, w, h);
+      for (let i = 0; i < 2000; i++) {
+        ctx.fillStyle = Math.random() < 0.5 ? "#141414" : "#282828";
+        ctx.fillRect(Math.random()*w, Math.random()*h, 2, 2);
+      }
+    }), 3, 3);
+    return new THREE.MeshStandardMaterial({ map, roughness: 0.9, color: 0xffffff });
+  }
+
+  function vehicleLeatherMat(tintColor = 0x3f1d0b) {
+    const map = texOrProc('leather_seat', () => makeCanvas(256, 256, (ctx, w, h) => {
+      ctx.fillStyle = "#3f1d0b"; ctx.fillRect(0, 0, w, h);
+      for (let i = 0; i < 1500; i++) {
+        ctx.fillStyle = Math.random() < 0.5 ? "rgba(0,0,0,0.2)" : "rgba(120,70,30,0.15)";
+        ctx.fillRect(Math.random()*w, Math.random()*h, 2, 2);
+      }
+    }), 1, 1);
+    return new THREE.MeshStandardMaterial({ map, roughness: 0.75, color: tintColor });
+  }
+
+  function vehicleBusBodyMat(baseColor = 0x15803d) {
+    const map = texOrProc('bus_body', () => makeCanvas(256, 256, (ctx, w, h) => {
+      const g = ctx.createLinearGradient(0, 0, 0, h);
+      g.addColorStop(0, "#1a8a45"); g.addColorStop(1, "#0f5a28");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = "rgba(255,255,255,0.18)";
+      for (let i = 0; i < 40; i++) {
+        ctx.fillRect(0, Math.random()*h, w, 2);
+      }
+    }), 1, 1);
+    return new THREE.MeshStandardMaterial({ map, roughness: 0.35, metalness: 0.4, color: baseColor });
+  }
+
+  function autoFrontHoodMat() {
+    const canvas = makeCanvas(1024, 512, (ctx, w, h) => {
+      const blackGrad = ctx.createLinearGradient(0, 0, 0, h*0.45);
+      blackGrad.addColorStop(0, "#0a0a0a"); blackGrad.addColorStop(0.55, "#1c1c1c"); blackGrad.addColorStop(1, "#2a2a2a");
+      ctx.fillStyle = blackGrad; ctx.fillRect(0, 0, w, h*0.45);
+      const yellowGrad = ctx.createLinearGradient(0, h*0.45, 0, h);
+      yellowGrad.addColorStop(0, "#facc15"); yellowGrad.addColorStop(0.7, "#eab308"); yellowGrad.addColorStop(1, "#ca8a04");
+      ctx.fillStyle = yellowGrad; ctx.fillRect(0, h*0.45, w, h*0.55);
+      ctx.fillStyle = "#dc2626"; ctx.font = "900 78px 'Impact', sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText("FOR  HIRE", w/2, h*0.20);
+      ctx.fillStyle = "#c0c0c0"; ctx.fillRect(0, h*0.44, w, 8);
+      const nw = 220, nh = 180, nx = (w-nw)/2, ny = h*0.52;
+      ctx.fillStyle = "#111"; ctx.fillRect(nx, ny, nw, nh);
+      ctx.strokeStyle = "#e5e5e5"; ctx.lineWidth = 5; ctx.strokeRect(nx+4, ny+4, nw-8, nh-8);
+      ctx.fillStyle = "#fff"; ctx.font = "900 70px serif"; ctx.fillText("R₂", w/2, ny + 68);
+      ctx.font = "bold 38px monospace"; ctx.fillStyle = "#eab308"; ctx.fillText("OD 02", w/2, ny + 125);
+      ctx.fillStyle = "#a1a1aa"; ctx.font = "bold 22px monospace"; ctx.fillText("KALIA BHAI", w/2, ny + 155);
+      ctx.save(); ctx.translate(150, h*0.78); ctx.rotate(Math.PI/4);
+      ctx.fillStyle = "#15803d"; ctx.fillRect(-58, -58, 116, 116);
+      ctx.strokeStyle = "#fff"; ctx.lineWidth = 6; ctx.strokeRect(-52, -52, 104, 104);
+      ctx.restore();
+      ctx.fillStyle = "#fff"; ctx.font = "900 36px sans-serif"; ctx.textAlign = "center";
+      ctx.fillText("LPG", 150, h*0.78 + 4);
+    });
+    return new THREE.MeshStandardMaterial({ map: canvas, roughness: 0.5 });
+  }
+
+  function autoSidePanelMat() {
+    const canvas = makeCanvas(1024, 256, (ctx, w, h) => {
+      const blackGrad = ctx.createLinearGradient(0, 0, 0, h*0.5);
+      blackGrad.addColorStop(0, "#0a0a0a"); blackGrad.addColorStop(1, "#1f1f1f");
+      ctx.fillStyle = blackGrad; ctx.fillRect(0, 0, w, h*0.5);
+      const yellowGrad = ctx.createLinearGradient(0, h*0.5, 0, h);
+      yellowGrad.addColorStop(0, "#facc15"); yellowGrad.addColorStop(1, "#a16207");
+      ctx.fillStyle = yellowGrad; ctx.fillRect(0, h*0.5, w, h*0.5);
+      ctx.fillStyle = "#d4d4d8"; ctx.fillRect(0, h*0.48, w, 6);
+      ctx.fillStyle = "#fff"; ctx.font = "900 34px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText("ଭୁବନେଶ୍ୱର • ଫାଷ୍ଟ ଏୟାର", w/2, h*0.28);
+      ctx.fillStyle = "#fbbf24"; ctx.font = "bold 22px 'Cinzel', serif";
+      ctx.fillText("BHUBANESWAR  •  FAST  •  PASSENGER", w/2, h*0.40);
+    });
+    return new THREE.MeshStandardMaterial({ map: canvas, roughness: 0.5 });
+  }
+
+  function autoSeatMat() {
+    const canvas = makeCanvas(512, 512, (ctx, w, h) => {
+      const base = ctx.createLinearGradient(0, 0, w, h);
+      base.addColorStop(0, "#3f1d0b"); base.addColorStop(1, "#2a1208");
+      ctx.fillStyle = base; ctx.fillRect(0, 0, w, h);
+      for (let x = 24; x < w; x += 56) {
+        ctx.strokeStyle = "rgba(0,0,0,0.5)"; ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      const cx = w/2, cy = h*0.42;
+      ctx.fillStyle = "#fbbf24"; ctx.beginPath();
+      ctx.moveTo(cx, cy - 60);
+      ctx.quadraticCurveTo(cx + 10, cy - 10, cx + 60, cy);
+      ctx.quadraticCurveTo(cx + 10, cy + 10, cx, cy + 60);
+      ctx.quadraticCurveTo(cx - 10, cy + 10, cx - 60, cy);
+      ctx.quadraticCurveTo(cx - 10, cy - 10, cx, cy - 60);
+      ctx.fill();
+    });
+    return new THREE.MeshStandardMaterial({ map: canvas, roughness: 0.75 });
+  }
+
+  function autoWheelMat() {
+    const canvas = makeCanvas(512, 512, (ctx, w, h) => {
+      const cx = w/2, cy = h/2;
+      ctx.fillStyle = "#0a0a0a"; ctx.beginPath(); ctx.arc(cx, cy, 250, 0, Math.PI*2); ctx.fill();
+      for (let a = 0; a < Math.PI*2; a += Math.PI/24) {
+        ctx.save(); ctx.translate(cx, cy); ctx.rotate(a);
+        ctx.fillStyle = "#262626"; ctx.fillRect(190, -6, 60, 12);
+        ctx.restore();
+      }
+      const hubGrad = ctx.createRadialGradient(cx-60, cy-60, 20, cx, cy, 170);
+      hubGrad.addColorStop(0, "#f5f5f5"); hubGrad.addColorStop(0.4, "#d4d4d8");
+      hubGrad.addColorStop(0.7, "#a1a1aa"); hubGrad.addColorStop(1, "#52525b");
+      ctx.fillStyle = hubGrad; ctx.beginPath(); ctx.arc(cx, cy, 170, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = "#facc15"; ctx.lineWidth = 8; ctx.beginPath(); ctx.arc(cx, cy, 155, 0, Math.PI*2); ctx.stroke();
+      for (let b = 0; b < 6; b++) {
+        const ang = (b/6) * Math.PI*2;
+        ctx.fillStyle = "#27272a"; ctx.beginPath(); ctx.arc(cx + Math.cos(ang)*105, cy + Math.sin(ang)*105, 16, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.fillStyle = "#facc15"; ctx.font = "900 32px serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText("R₂", cx, cy + 2);
+    });
+    return new THREE.MeshStandardMaterial({ map: canvas, roughness: 0.6 });
+  }
+
+  function scootyBodyMat(colorHex = "#2563eb") {
+    const canvas = makeCanvas(512, 512, (ctx, w, h) => {
+      const grad = ctx.createLinearGradient(0, 0, w, h);
+      grad.addColorStop(0, colorHex); grad.addColorStop(0.5, shade(colorHex, 0.85)); grad.addColorStop(1, shade(colorHex, 0.65));
+      ctx.fillStyle = grad; ctx.fillRect(0, 0, w, h);
+      const refl = ctx.createLinearGradient(0, 0, w*0.6, h*0.6);
+      refl.addColorStop(0, "rgba(255,255,255,0.35)"); refl.addColorStop(0.4, "rgba(255,255,255,0.05)"); refl.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = refl; ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = "#e5e7eb"; ctx.font = "900 42px serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText("ACTIVA", w/2, h*0.4);
+      ctx.fillStyle = "#ef4444"; ctx.font = "bold 22px sans-serif"; ctx.fillText("6G", w*0.55, h*0.52);
+      ctx.fillStyle = "#111"; ctx.fillRect(w*0.75, h*0.82, 100, 30);
+      ctx.fillStyle = "#facc15"; ctx.font = "bold 14px monospace"; ctx.textAlign = "center";
+      ctx.fillText("OD-02-2026", w*0.75 + 50, h*0.82 + 20);
+    });
+    return new THREE.MeshStandardMaterial({ map: canvas, roughness: 0.28, metalness: 0.45 });
   }
 
   // === Procedural Fallbacks ===
@@ -5408,23 +4990,28 @@ let __weave=null;
 
   /* ===== BUILDING MATERIAL FACTORIES (fallback-safe) ===== */
   const BM = {
-    plasterOchre: () => new THREE.MeshStandardMaterial({ map: texOrProc('plaster_ochre', procPlasterOchre, 2, 2), roughness: 0.92, metalness: 0.02 }),
-    plasterWhite: () => new THREE.MeshStandardMaterial({ map: texOrProc('plaster_white', procPlasterWhite, 2, 2), roughness: 0.9, metalness: 0.02 }),
-    sandstone: () => new THREE.MeshStandardMaterial({ map: texOrProc('sandstone_red', procSandstoneRed, 3, 2), roughness: 0.88, metalness: 0.03 }),
-    brick: () => new THREE.MeshStandardMaterial({ map: texOrProc('brick_aged', procBrickAged, 2, 2), roughness: 0.9, metalness: 0.02 }),
-    woodTeak: () => new THREE.MeshStandardMaterial({ map: texOrProc('wood_teak', procBamboo, 1, 1), roughness: 0.82, metalness: 0.04 }),
-    thatch: () => new THREE.MeshStandardMaterial({ map: texOrProc('thatch', procThatch, 2, 2), roughness: 0.95, metalness: 0 }),
-    tin: () => new THREE.MeshStandardMaterial({ map: texOrProc('tin_corrugated', procTinCorrugated, 3, 1), roughness: 0.55, metalness: 0.65 }),
-    bamboo: () => new THREE.MeshStandardMaterial({ map: texOrProc('bamboo', procBamboo, 1, 3), roughness: 0.85, metalness: 0.02 }),
-    fabricIkat: () => new THREE.MeshStandardMaterial({ map: texOrProc('fabric_ikat', procFabricIkat, 1, 1), roughness: 0.85, metalness: 0.02, side: THREE.DoubleSide }),
-    burlap: () => new THREE.MeshStandardMaterial({ map: texOrProc('fabric_burlap', procFabricBurlap, 1, 1), roughness: 0.92, metalness: 0 }),
-    concrete: () => new THREE.MeshStandardMaterial({ map: texOrProc('concrete_raw', procConcreteRaw, 2, 2), roughness: 0.9, metalness: 0.02 }),
-    asphalt: () => new THREE.MeshStandardMaterial({ map: texOrProc('asphalt_worn', procConcreteRaw, 4, 1), roughness: 0.92, metalness: 0.03 }),
-    terracottaRoof: () => new THREE.MeshStandardMaterial({ map: texOrProc('terracotta_roof', procTerracottaRoof, 4, 4), roughness: 0.85, metalness: 0.02 }),
-    sauraMural: () => new THREE.MeshStandardMaterial({ map: texOrProc('wattle_daub', procSauraMural, 1, 1), roughness: 0.95, metalness: 0 }),
-    glassCurtain: () => new THREE.MeshStandardMaterial({ map: texOrProc('glass_modern', procGlassCurtain, 2, 4), roughness: 0.1, metalness: 0.85 }),
-    floorTile: () => new THREE.MeshStandardMaterial({ map: texOrProc('floor_tiles_02', procFloorTiles, 3, 3), roughness: 0.7, metalness: 0.05 }),
-    woodFloor: () => new THREE.MeshStandardMaterial({ map: texOrProc('wood_floor_deck', procWoodFloor, 2, 2), roughness: 0.75, metalness: 0.04 })
+    plasterOchre:   () => new THREE.MeshStandardMaterial({ map: texOrProc('plaster_ochre',     procPlasterOchre,     2, 2), roughness: 0.92, metalness: 0.02 }),
+    plasterWhite:   () => new THREE.MeshStandardMaterial({ map: texOrProc('plaster_white',     procPlasterWhite,     2, 2), roughness: 0.90, metalness: 0.02 }),
+    sandstone:      () => new THREE.MeshStandardMaterial({ map: texOrProc('sandstone_red',     procSandstoneRed,     3, 2), roughness: 0.88, metalness: 0.03 }),
+    brick:          () => new THREE.MeshStandardMaterial({ map: texOrProc('brick_aged',         procBrickAged,        2, 2), roughness: 0.90, metalness: 0.02 }),
+    woodTeak:       () => new THREE.MeshStandardMaterial({ map: texOrProc('wood_teak',          procBamboo,           1, 1), roughness: 0.82, metalness: 0.04 }),
+    thatch:         () => new THREE.MeshStandardMaterial({ map: texOrProc('thatch',             procThatch,           2, 2), roughness: 0.95, metalness: 0 }),
+    tin:            () => new THREE.MeshStandardMaterial({ map: texOrProc('tin_corrugated',     procTinCorrugated,    3, 1), roughness: 0.55, metalness: 0.65 }),
+    bamboo:         () => new THREE.MeshStandardMaterial({ map: texOrProc('bamboo',             procBamboo,           1, 3), roughness: 0.85, metalness: 0.02 }),
+    fabricIkat:     () => new THREE.MeshStandardMaterial({ map: texOrProc('fabric_ikat',        procFabricIkat,       1, 1), roughness: 0.85, metalness: 0.02, side: THREE.DoubleSide }),
+    burlap:         () => new THREE.MeshStandardMaterial({ map: texOrProc('fabric_burlap',      procFabricBurlap,     1, 1), roughness: 0.92, metalness: 0 }),
+    concrete:       () => new THREE.MeshStandardMaterial({ map: texOrProc('concrete_raw',       procConcreteRaw,      2, 2), roughness: 0.90, metalness: 0.02 }),
+    asphalt:        () => new THREE.MeshStandardMaterial({ map: texOrProc('asphalt_worn',       procConcreteRaw,      4, 1), roughness: 0.92, metalness: 0.03 }),
+    terracottaRoof: () => new THREE.MeshStandardMaterial({ map: texOrProc('terracotta_roof',   procTerracottaRoof,   4, 4), roughness: 0.85, metalness: 0.02 }),
+    sauraMural:     () => new THREE.MeshStandardMaterial({ map: texOrProc('wattle_daub',        procSauraMural,       1, 1), roughness: 0.95, metalness: 0 }),
+    glassCurtain:   () => new THREE.MeshStandardMaterial({ map: texOrProc('glass_modern',       procGlassCurtain,     2, 4), roughness: 0.10, metalness: 0.85 }),
+    floorTile:      () => new THREE.MeshStandardMaterial({ map: texOrProc('floor_tiles_02',     procFloorTiles,       3, 3), roughness: 0.70, metalness: 0.05 }),
+    woodFloor:      () => new THREE.MeshStandardMaterial({ map: texOrProc('wood_floor_deck',    procWoodFloor,        2, 2), roughness: 0.75, metalness: 0.04 }),
+    mudWall:        () => new THREE.MeshStandardMaterial({ map: texOrProc('mud_wall',           procSauraMural,       1, 1), roughness: 0.95, metalness: 0 }),
+    sandstoneCarved:() => new THREE.MeshStandardMaterial({ map: texOrProc('sandstone_carved',   procSandstoneRed,     2, 2), roughness: 0.88, metalness: 0.03 }),
+    caveRock:       () => new THREE.MeshStandardMaterial({ map: texOrProc('cave_rock',          procSandstoneRed,     3, 3), roughness: 0.95, metalness: 0.01 }),
+    concretePainted:() => new THREE.MeshStandardMaterial({ map: texOrProc('concrete_painted',   procPlasterWhite,     2, 2), roughness: 0.88, metalness: 0.02 }),
+    whiteMarble:    () => new THREE.MeshStandardMaterial({ map: texOrProc('white_marble',       procPlasterWhite,     2, 2), roughness: 0.35, metalness: 0.10 })
   };
 
   /* ===== ODIA BANNER & SIGNAGE LIBRARY ===== */

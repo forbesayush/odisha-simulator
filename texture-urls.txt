@@ -103,6 +103,34 @@ https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/clay_plaster/clay_plaste
   dir=textures/wattle_daub
   out=ao.jpg
 
+# Set: cave_rock
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/cliff_side/cliff_side_diff_1k.jpg
+  dir=textures/cave_rock
+  out=albedo.jpg
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/cliff_side/cliff_side_nor_gl_1k.jpg
+  dir=textures/cave_rock
+  out=normal.jpg
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/cliff_side/cliff_side_rough_1k.jpg
+  dir=textures/cave_rock
+  out=roughness.jpg
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/cliff_side/cliff_side_ao_1k.jpg
+  dir=textures/cave_rock
+  out=ao.jpg
+
+# Set: white_marble
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_01/marble_01_diff_1k.jpg
+  dir=textures/white_marble
+  out=albedo.jpg
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_01/marble_01_nor_gl_1k.jpg
+  dir=textures/white_marble
+  out=normal.jpg
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_01/marble_01_rough_1k.jpg
+  dir=textures/white_marble
+  out=roughness.jpg
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/marble_01/marble_01_ao_1k.jpg
+  dir=textures/white_marble
+  out=ao.jpg
+
 # Set: wood_teak
 https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_planks/wood_planks_diff_1k.jpg
   dir=textures/wood_teak
@@ -269,4 +297,32 @@ https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_floor_deck/wood_flo
   out=roughness.jpg
 https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/wood_floor_deck/wood_floor_deck_ao_1k.jpg
   dir=textures/wood_floor_deck
+  out=ao.jpg
+
+# Set: metal_chrome
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/metal_plate/metal_plate_diff_1k.jpg
+  dir=textures/metal_chrome
+  out=albedo.jpg
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/metal_plate/metal_plate_nor_gl_1k.jpg
+  dir=textures/metal_chrome
+  out=normal.jpg
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/metal_plate/metal_plate_rough_1k.jpg
+  dir=textures/metal_chrome
+  out=roughness.jpg
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/metal_plate/metal_plate_ao_1k.jpg
+  dir=textures/metal_chrome
+  out=ao.jpg
+
+# Set: leather_seat
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leather_red_02/leather_red_02_coll1_1k.jpg
+  dir=textures/leather_seat
+  out=albedo.jpg
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leather_red_02/leather_red_02_nor_gl_1k.jpg
+  dir=textures/leather_seat
+  out=normal.jpg
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leather_red_02/leather_red_02_rough_1k.jpg
+  dir=textures/leather_seat
+  out=roughness.jpg
+https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/leather_red_02/leather_red_02_ao_1k.jpg
+  dir=textures/leather_seat
   out=ao.jpg
