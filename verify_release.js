@@ -14,7 +14,8 @@ const FILES = [
   'download-textures.js',
   'vehicles-texture-v4.js',
   'map-streaming.js',
-  'daynight-weather.js'
+  'daynight-weather.js',
+  'perf-governor.js'
 ];
 
 function sha256(filePath) {

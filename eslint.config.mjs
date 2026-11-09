@@ -28,7 +28,7 @@ export default [
     }
   },
   {
-    files: ['test/**/*.cjs', 'verify_*.js', 'vehicles-texture-v4.js', 'map-streaming.js', 'daynight-weather.js'],
+    files: ['test/**/*.cjs', 'verify_*.js', 'vehicles-texture-v4.js', 'map-streaming.js', 'daynight-weather.js', 'perf-governor.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'commonjs',
