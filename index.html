@@ -3173,7 +3173,23 @@
       if (cache[key]) return cache[key];
       if (isFile) { cache[key] = null; return null; }
 
-      const base = './textures/' + name + '/';
+      const ALIASES = {
+        'concrete': 'concrete_raw',
+        'cream_wall': 'plaster_white',
+        'sandstone': 'sandstone_red',
+        'glass': 'glass_modern',
+        'wood': 'wood_teak',
+        'terracotta': 'terracotta_roof',
+        'fabric_red': 'fabric_ikat',
+        'fabric_white': 'fabric_burlap',
+        'fabric_blue': 'fabric_ikat',
+        'floor_interior': 'floor_tiles_02',
+        'painted_wood_white': 'wood_teak',
+        'ground': 'laterite',
+        'plaster': 'plaster_ochre'
+      };
+      const folder = ALIASES[name] || name;
+      const base = './textures/' + folder + '/';
       const mk = (baseName, colorSpace) => {
         const t = loader.load(base + baseName + '.jpg', undefined, undefined, () => {
           loader.load(base + baseName + '.webp', (loaded) => {
@@ -5134,14 +5150,31 @@ let __weave=null;
   const _texCache = {};
   const _isFile = typeof location !== 'undefined' && location.protocol === 'file:';
 
+  const _ALIASES2 = {
+    'concrete': 'concrete_raw',
+    'cream_wall': 'plaster_white',
+    'sandstone': 'sandstone_red',
+    'glass': 'glass_modern',
+    'wood': 'wood_teak',
+    'terracotta': 'terracotta_roof',
+    'fabric_red': 'fabric_ikat',
+    'fabric_white': 'fabric_burlap',
+    'fabric_blue': 'fabric_ikat',
+    'floor_interior': 'floor_tiles_02',
+    'painted_wood_white': 'wood_teak',
+    'ground': 'laterite',
+    'plaster': 'plaster_ochre'
+  };
+
   function texOrProc(name, procFn, repeatX = 1, repeatY = 1) {
     const key = name + '_' + repeatX + 'x' + repeatY;
     if (_texCache[key]) return _texCache[key];
 
+    const folder = _ALIASES2[name] || name;
     // Try loading real texture (.jpg or .webp); fall back to procedural canvas
     if (!_isFile) {
       try {
-        const t = _texLoader2.load('./textures/' + name + '/albedo.jpg',
+        const t = _texLoader2.load('./textures/' + folder + '/albedo.jpg',
           undefined,
           undefined,
           () => {
