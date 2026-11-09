@@ -146,7 +146,10 @@ window.TEX = {
   1. **Scene 15: Babu Lal Uncle's Meter Scam (`meterScam`)** — Call police (+200 XP, +₹150, +8 REP) / Inform Kanta Aunty / Accept bribe (-10 REP) / Ignore.
   2. **Scene 16: Kanta Aunty's 9 PM Curfew Lockout (`curfew`)** — Plead for 5 minutes (+50 XP, +2 REP) / Scale the wall (risky, -5 REP) / Scooty night ride / Sleep outside.
   3. **Scene 17: Auto Stand 4-Way Fare Bidding War (`haggle`)** — Pick modern auto (+120 XP) / Ride with Kalia Bhai (+150 XP, +5 REP) / Walk away / Counter ₹40.
-  4. **Scene 18: Pahala Rasagola Box Heist (`heist`)** — Call temple priest (+200 XP, +8 REP) / Tackle thief (+160 XP) / Negotiate return / Walk away.
+  4. **Scene 18: Pahala Rasagola Box Heist (`rasagolaHeist` / `heist`)** — 3 Branching Choices:
+     - *Choice 1 (Heroic):* 🪔 Call temple priest (+200 XP, +8 REP) — alerts the priest to reclaim consecrated temple prasad.
+     - *Choice 2 (Action):* 🥊 Chase & tackle thief (+160 XP, +₹50, -10 HP, +5 REP) — sprint and physically intercept the thief.
+     - *Choice 3 (Diplomatic):* 🤝 Buy sweets & negotiate (+120 XP, -₹100, +6 REP) — purchase a fresh sweet box to resolve conflict with empathy.
   5. **Scene 19: Three Sacred Cows Chakra Jam (`cowJam`)** — Pranam all three (+150 XP, +6 REP) / Honk (-5 REP) / Off-road detour (+60 XP) / Wait patiently.
   6. **Scene 20: Ekamra Haat Artisan Strike (`pattachitra`)** — Build online storefront (+250 XP, +10 REP) / Buy ₹5,000 art (+150 XP) / Join strike / Walk away.
   7. **Scene 21: Khandagiri Monkey Camera Heist (`monkey`)** — Offer banana (+120 XP, +3 REP) / Scale cliff (+80 XP) / Guide's help (+150 XP) / Forfeit camera (-₹800).
@@ -162,10 +165,10 @@ window.TEX = {
 
 | Deliverable File Path | File Size | SHA-256 Checksum | Sync Status |
 |---|---|---|---|
-| `Downloads/index.html` | 1,159,944 bytes | `64c297ba28600a07aa1cb654d8ad579cbb2a61fb08ed37fdb7ab2630182207fc` | **PRIMARY (100%)** |
-| `odisha-simulator/index.html` | 1,159,944 bytes | `64c297ba28600a07aa1cb654d8ad579cbb2a61fb08ed37fdb7ab2630182207fc` | **SYNCED (Commit 7d51422)** |
-| `Documents/study-bca-bhubaneswar-labs-hostels-2026.html` | 1,159,944 bytes | `64c297ba28600a07aa1cb654d8ad579cbb2a61fb08ed37fdb7ab2630182207fc` | **SYNCED (100%)** |
-| `Documents/amara-odisha-adventures.html` | 1,159,944 bytes | `64c297ba28600a07aa1cb654d8ad579cbb2a61fb08ed37fdb7ab2630182207fc` | **SYNCED (100%)** |
+| `Downloads/index.html` | 1,162,716 bytes | `345fa727f57e2e46881298944d807d63cffc5eac968af2a82d4c07ff9de40213` | **PRIMARY (100%)** |
+| `odisha-simulator/index.html` | 1,162,716 bytes | `345fa727f57e2e46881298944d807d63cffc5eac968af2a82d4c07ff9de40213` | **SYNCED (Commit 6892ac5)** |
+| `Documents/study-bca-bhubaneswar-labs-hostels-2026.html` | 1,162,716 bytes | `345fa727f57e2e46881298944d807d63cffc5eac968af2a82d4c07ff9de40213` | **SYNCED (100%)** |
+| `Documents/amara-odisha-adventures.html` | 1,162,716 bytes | `345fa727f57e2e46881298944d807d63cffc5eac968af2a82d4c07ff9de40213` | **SYNCED (100%)** |
 
 ### Test Suite Execution Matrix
 
@@ -173,9 +176,10 @@ window.TEX = {
 |---|---|---|
 | `verify_dl_ids.js` | All 62 required DOM Element IDs | **PASS (62 / 62, 100%)** |
 | `test_dl_runtime.js` | Headless Three.js Node VM simulation (372 scene objects) | **PASS (0 errors, 100%)** |
+| `test_scenes_interactive_full.js` | Scenes 15–26 choice trees (Rasagola Heist 3-choices) & triggers | **PASS (100%)** |
 | `verify_step3_step4_full.js` | Scenes 15–26 choice trees, proximity triggers & 32 outcome lines | **PASS (100%)** |
 | `verify_checklist.js` | 8 historical bugfix checklist assertions | **PASS (8 / 8, 100%)** |
 | `verify_courier.js` | Courier contracts, HUD cards, modal triggers | **PASS (100%)** |
 | `test_tex_system.js` | TEX materials, fallback maps, textures | **PASS (100%)** |
 | `download-textures.sh` | Bash one-click texture downloader | **PASS (76 / 76 maps, 44MB)** |
-| `sync_all_deliverables.js` | 4 deliverables byte-for-byte synchronization | **PASS (`64c297b...` identical)** |
+| `sync_all_deliverables.js` | 4 deliverables byte-for-byte synchronization | **PASS (`345fa72...` identical)** |
