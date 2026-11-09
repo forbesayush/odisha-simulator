@@ -6649,6 +6649,7 @@ let __weave=null;
   window.__scene = scene;
   window.__camera = camera;
   window.__renderer = renderer;
+  window.__odClockRefs = { scene, sun: sunLight, hemi: hemiLight };
 
   // 1. BABU 3D ANIMATED ANATOMICAL MODEL (ON-FOOT TOURIST AVATAR)
   const babuData = makeCharacterFigure({
@@ -11297,5 +11298,6 @@ T(()=>{
 </script>
 <script src="vehicles-texture-v4.js"></script>
 <script src="map-streaming.js"></script>
+<script src="daynight-weather.js"></script>
 </body>
 </html>
