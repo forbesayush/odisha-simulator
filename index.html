@@ -6285,6 +6285,7 @@ let __weave=null;
     // Mo Buses
     const bus1 = makeBus(); bus1.group.position.set(POI.bus[0], 0, POI.bus[1]); bus1.group.rotation.y = -Math.PI / 2; scene.add(bus1.group); collide(POI.bus[0], POI.bus[1], 11, 2.6);
     const bus2 = makeBus(); bus2.group.position.set(POI.bus[0] - 16, 0, POI.bus[1]); bus2.group.rotation.y = -Math.PI / 2; scene.add(bus2.group); collide(POI.bus[0] - 16, POI.bus[1], 11, 2.6);
+    window.__odVehicleGroups = { buses: [bus1.group, bus2.group] };
 
     // 4. Tea Stalls
     const tea1 = makeTeaStall(); tea1.position.set(POI.tea1[0], 0, POI.tea1[1]); scene.add(tea1); collide(POI.tea1[0], POI.tea1[1], 3.5, 1.6);
@@ -6677,6 +6678,8 @@ let __weave=null;
   playerAuto.group.rotation.y = Math.PI;
   playerAuto.group.visible = false;
   scene.add(playerAuto.group);
+  window.__odVehicleGroups = window.__odVehicleGroups || { buses: [] };
+  window.__odVehicleGroups.auto = playerAuto.group;
 
   // 3. PLAYER RIDABLE SCOOTY (HONDA ACTIVA / TVS JUPITER BIKE)
   const playerScooty = makeScooty("#2563eb");
@@ -11288,5 +11291,6 @@ T(()=>{
     }, 5000);
   })();
 </script>
+<script src="vehicles-texture-v4.js"></script>
 </body>
 </html>

@@ -11,7 +11,8 @@ const FILES = [
   'namma-metro.html',
   'texture-urls.txt',
   'download-textures.sh',
-  'download-textures.js'
+  'download-textures.js',
+  'vehicles-texture-v4.js'
 ];
 
 function sha256(filePath) {
@@ -26,7 +27,7 @@ function humanSize(bytes) {
 
 const manifest = {
   generated: new Date().toISOString(),
-  version: '3.0.0-texture-overhaul',
+  version: '4.0.0-vehicle-texture-upgrade',
   deliverables: []
 };
 

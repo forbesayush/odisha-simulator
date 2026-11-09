@@ -28,7 +28,7 @@ export default [
     }
   },
   {
-    files: ['test/**/*.cjs', 'verify_*.js'],
+    files: ['test/**/*.cjs', 'verify_*.js', 'vehicles-texture-v4.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'commonjs',
@@ -37,7 +37,11 @@ export default [
         __dirname: 'readonly',
         process: 'readonly',
         console: 'readonly',
-        setTimeout: 'readonly'
+        setTimeout: 'readonly',
+        window: 'readonly',
+        document: 'readonly',
+        THREE: 'readonly',
+        renderer: 'readonly'
       }
     }
   }
