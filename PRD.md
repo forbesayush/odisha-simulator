@@ -133,14 +133,49 @@ window.TEX = {
 
 ---
 
-## 5. Verification Suite
+## 5. Universal Interactive Scene Runner & Expansion Cutscenes (Scenes 15–26)
+
+- **Universal Interactive Scene Runner (`runInteractiveScene`, `showSceneChoices`, `executeSceneChoice`):**
+  - Dramatic dynamic cinematic camera swoops (`camStart`, `camLook`, `camEnd`) with trilingual voice playback.
+  - Multi-choice decision modals displaying dynamic reward tags (`+XP`, `±₹`, `±REP`).
+  - Highest-XP choice dynamically highlighted with Emerald Green background (`var(--vivid-green)`).
+  - Outcome voice audio playback, SFX cues (hero chime, coin sound, or error buzz), subtitle cards, and persistent state tracking via `state.sceneChoices`.
+  - Non-intrusive proximity detection in `checkNpcInteraction(pos)` with floating `[E]` interaction bubbles.
+
+- **The 12 Interactive Expansion Scenarios:**
+  1. **Scene 15: Babu Lal Uncle's Meter Scam (`meterScam`)** — Call police (+200 XP, +₹150, +8 REP) / Inform Kanta Aunty / Accept bribe (-10 REP) / Ignore.
+  2. **Scene 16: Kanta Aunty's 9 PM Curfew Lockout (`curfew`)** — Plead for 5 minutes (+50 XP, +2 REP) / Scale the wall (risky, -5 REP) / Scooty night ride / Sleep outside.
+  3. **Scene 17: Auto Stand 4-Way Fare Bidding War (`haggle`)** — Pick modern auto (+120 XP) / Ride with Kalia Bhai (+150 XP, +5 REP) / Walk away / Counter ₹40.
+  4. **Scene 18: Pahala Rasagola Box Heist (`heist`)** — Call temple priest (+200 XP, +8 REP) / Tackle thief (+160 XP) / Negotiate return / Walk away.
+  5. **Scene 19: Three Sacred Cows Chakra Jam (`cowJam`)** — Pranam all three (+150 XP, +6 REP) / Honk (-5 REP) / Off-road detour (+60 XP) / Wait patiently.
+  6. **Scene 20: Ekamra Haat Artisan Strike (`pattachitra`)** — Build online storefront (+250 XP, +10 REP) / Buy ₹5,000 art (+150 XP) / Join strike / Walk away.
+  7. **Scene 21: Khandagiri Monkey Camera Heist (`monkey`)** — Offer banana (+120 XP, +3 REP) / Scale cliff (+80 XP) / Guide's help (+150 XP) / Forfeit camera (-₹800).
+  8. **Scene 22: Monsoon Flooded Underpass (`flood`)** — Push auto (+180 XP, +6 REP) / Tow truck (+40 XP) / Swim across (+200 XP) / Wait.
+  9. **Scene 23: Chai Tapri Gossip Standoff (`chaiGossip`)** — Promote Dhabaleswar chai (+150 XP, +5 REP) / Boycott café (+80 XP) / Try ₹200 latte / Skip.
+  10. **Scene 24: Raj Mahal Challan Standoff (`challan`)** — Volunteer 30 min traffic duty (+250 XP, +10 REP) / Pay ₹500 fine / Bribe (-15 REP) / Flee (-25 REP).
+  11. **Scene 25: Pahala Wedding Sweets Emergency (`wedding`)** — High-speed sprint (+180 XP) / Old Cuttack bypass (+220 XP, +8 REP) / Odia brother's oath (+150 XP) / Decline (-20 REP).
+  12. **Scene 26: Old Town Haunted Haveli (`ghost`)** — Torchlight vigil (+300 XP, +12 REP) / Call SI Panda (+60 XP) / Temple priest sanctification (+180 XP) / Flee (-10 REP).
+
+---
+
+## 6. Verification Suite & Release Manifest
+
+| Deliverable File Path | File Size | SHA-256 Checksum | Sync Status |
+|---|---|---|---|
+| `Downloads/index.html` | 1,159,944 bytes | `64c297ba28600a07aa1cb654d8ad579cbb2a61fb08ed37fdb7ab2630182207fc` | **PRIMARY (100%)** |
+| `odisha-simulator/index.html` | 1,159,944 bytes | `64c297ba28600a07aa1cb654d8ad579cbb2a61fb08ed37fdb7ab2630182207fc` | **SYNCED (Commit 7d51422)** |
+| `Documents/study-bca-bhubaneswar-labs-hostels-2026.html` | 1,159,944 bytes | `64c297ba28600a07aa1cb654d8ad579cbb2a61fb08ed37fdb7ab2630182207fc` | **SYNCED (100%)** |
+| `Documents/amara-odisha-adventures.html` | 1,159,944 bytes | `64c297ba28600a07aa1cb654d8ad579cbb2a61fb08ed37fdb7ab2630182207fc` | **SYNCED (100%)** |
+
+### Test Suite Execution Matrix
 
 | Test Suite | Target | Status |
 |---|---|---|
 | `verify_dl_ids.js` | All 62 required DOM Element IDs | **PASS (62 / 62, 100%)** |
-| `test_dl_runtime.js` | Headless Three.js Node VM simulation | **PASS (0 errors)** |
+| `test_dl_runtime.js` | Headless Three.js Node VM simulation (372 scene objects) | **PASS (0 errors, 100%)** |
+| `verify_step3_step4_full.js` | Scenes 15–26 choice trees, proximity triggers & 32 outcome lines | **PASS (100%)** |
 | `verify_checklist.js` | 8 historical bugfix checklist assertions | **PASS (8 / 8, 100%)** |
 | `verify_courier.js` | Courier contracts, HUD cards, modal triggers | **PASS (100%)** |
 | `test_tex_system.js` | TEX materials, fallback maps, textures | **PASS (100%)** |
 | `download-textures.sh` | Bash one-click texture downloader | **PASS (76 / 76 maps, 44MB)** |
-| `sync_all_deliverables.js` | 4 deliverables byte-for-byte synchronization | **PASS (c825a78... identical)** |
+| `sync_all_deliverables.js` | 4 deliverables byte-for-byte synchronization | **PASS (`64c297b...` identical)** |
