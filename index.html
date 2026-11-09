@@ -3490,9 +3490,10 @@
   function makeAuto() {
     const g = new THREE.Group();
 
-    const hoodMat = autoFrontHoodMat();
-    const sideMat = autoSidePanelMat();
+    const hoodMat = new THREE.MeshStandardMaterial({ map: bajajAutoHoodTex(), roughness: 0.55, metalness: 0.15 });
+    const sideMat = new THREE.MeshStandardMaterial({ map: bajajAutoSideTex(), roughness: 0.55, metalness: 0.15 });
     const seatBackMat = autoSeatMat();
+    const roofInteriorMat = new THREE.MeshStandardMaterial({ map: bajajAutoRoofInteriorTex(), roughness: 0.8 });
     const roofMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.85 });
     const yellowMat = M("#facc15", 0.45, { metalness: 0.15 });
     const greenMat = M("#15803d", 0.45, { metalness: 0.2 });
@@ -3558,9 +3559,14 @@
     g.add(frontFork);
     addMesh(frontFork, box(0.24, 0.14, 0.52), yellowMat, [0, 0.12, 0], [0.12, 0, 0]);
 
-    // Prominent Conical Headlight
-    addMesh(g, cyl(0.13, 0.08, 0.14, 14), blackMat, [0, 0.64, 1.38], [Math.PI / 2, 0, 0]);
-    const headlight = addMesh(g, cyl(0.11, 0.11, 0.04, 14), mats.light || M("#fffbeb", 0.1, { emissive: "#fef08a", emissiveIntensity: 1.5 }), [0, 0.64, 1.45], [Math.PI / 2, 0, 0]);
+    // Twin headlamps and center chrome hood ornament
+    [-0.18, 0.18].forEach(x => {
+      addMesh(g, cyl(0.11, 0.08, 0.14, 14), chromeMat, [x, 0.64, 1.38], [Math.PI / 2, 0, 0]);
+    });
+    const headlight = addMesh(g, cyl(0.10, 0.10, 0.04, 14), mats.light || M("#fffbeb", 0.1, { emissive: "#fef08a", emissiveIntensity: 1.5 }), [-0.18, 0.64, 1.45], [Math.PI / 2, 0, 0]);
+    addMesh(g, cyl(0.10, 0.10, 0.04, 14), mats.light || M("#fffbeb", 0.1, { emissive: "#fef08a", emissiveIntensity: 1.5 }), [0.18, 0.64, 1.45], [Math.PI / 2, 0, 0]);
+    addMesh(g, cyl(0.05, 0.02, 0.20, 8), chromeMat, [0, 0.88, 1.25], [Math.PI / 2, 0, 0]);
+    addMesh(g, sphere(0.04, 8), chromeMat, [0, 0.88, 1.36]);
 
     // Left & Right Amber Turn Indicators
     addMesh(g, box(0.08, 0.06, 0.04), amberMat, [-0.34, 0.65, 1.20]);
@@ -3578,6 +3584,7 @@
     });
 
     // Dark Vinyl Curved Roof (Sketchfab Silhouette)
+    addMesh(g, box(1.28, 0.04, 2.20), roofInteriorMat, [0, 1.78, -0.08]);
     addMesh(g, box(1.36, 0.14, 2.25), darkRoofMat, [0, 1.86, -0.08]);
     addMesh(g, box(1.30, 0.18, 1.25), darkRoofMat, [0, 1.82, -0.55]);
 
@@ -3907,11 +3914,12 @@
   // 6. MO BUS (BHUBANESWAR GREEN CITY BUS)
   function makeBus() {
     const g = new THREE.Group();
-    const busGreen = vehicleBusBodyMat(0x15803d);
-    const busSilver = new THREE.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.4, metalness: 0.3 });
+    const busBody = new THREE.MeshStandardMaterial({ map: moBusBodyTex(), roughness: 0.35, metalness: 0.25 });
+    const busSide = new THREE.MeshStandardMaterial({ map: moBusSidePanelTex(), roughness: 0.35, metalness: 0.2 });
+    const busSilver = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.4, metalness: 0.25 });
 
     // Chassis & Lower Body
-    addMesh(g, box(2.6, 1.2, 11), busGreen, [0, 0.9, 0]);
+    addMesh(g, box(2.6, 1.2, 11), busBody, [0, 0.9, 0]);
     // Upper Cabin
     addMesh(g, box(2.58, 1.6, 10.9), busSilver, [0, 2.2, 0]);
     // Windshield & Side Windows
@@ -3919,9 +3927,11 @@
     addMesh(g, box(2.5, 0.9, 0.06), mats.glass, [0, 2.2, -5.46]);
     addMesh(g, box(0.06, 0.9, 9.5), mats.glass, [-1.3, 2.2, 0]);
     addMesh(g, box(0.06, 0.9, 9.5), mats.glass, [1.3, 2.2, 0]);
+    addMesh(g, new THREE.PlaneGeometry(10.2, 1.35), busSide, [-1.31, 1.65, 0], [0, Math.PI / 2, 0]);
+    addMesh(g, new THREE.PlaneGeometry(10.2, 1.35), busSide, [1.31, 1.65, 0], [0, -Math.PI / 2, 0]);
 
     // Electronic LED Destination Board
-    addMesh(g, new THREE.PlaneGeometry(2.1, 0.45), new THREE.MeshBasicMaterial({ color: "#eab308" }), [0, 2.9, 5.48]);
+    addMesh(g, new THREE.PlaneGeometry(2.1, 0.45), new THREE.MeshBasicMaterial({ map: moBusLedTex(), toneMapped: false }), [0, 2.9, 5.48]);
 
     // Roof AC unit
     addMesh(g, box(1.8, 0.35, 3.2), mats.tin, [0, 3.18, 0]);
@@ -4869,6 +4879,205 @@ let __weave=null;
       ctx.fillText("R₂", cx, cy + 2);
     });
     return new THREE.MeshStandardMaterial({ map: canvas, roughness: 0.6 });
+  }
+
+  function moBusBodyTex(baseColor = "#0ea5e9") {
+    return makeCanvas(1024, 512, (ctx, w, h) => {
+      const bg = ctx.createLinearGradient(0, 0, 0, h);
+      bg.addColorStop(0, "#38bdf8");
+      bg.addColorStop(0.35, baseColor);
+      bg.addColorStop(0.7, "#0369a1");
+      bg.addColorStop(1, "#0c4a6e");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = "rgba(255,255,255,0.95)";
+      ctx.beginPath();
+      ctx.moveTo(0, h * 0.42);
+      ctx.lineTo(w * 0.55, h * 0.05);
+      ctx.lineTo(w * 0.62, h * 0.05);
+      ctx.lineTo(w, h * 0.52);
+      ctx.lineTo(w, h * 0.62);
+      ctx.lineTo(w * 0.58, h * 0.14);
+      ctx.lineTo(w * 0.52, h * 0.14);
+      ctx.lineTo(0, h * 0.52);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = "#10b981";
+      ctx.fillRect(0, h * 0.86, w, h * 0.14);
+      ctx.fillStyle = "#fff";
+      ctx.font = "900 78px 'Inter', sans-serif";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.fillText("MO BUS", 60, h * 0.22);
+      ctx.fillStyle = "#fde047";
+      ctx.font = "bold 22px monospace";
+      ctx.fillText("CAPITAL REGION URBAN TRANSPORT", 62, h * 0.33);
+      ctx.fillStyle = "#fff";
+      ctx.beginPath();
+      ctx.roundRect(w - 190, h * 0.72, 150, 80, 12);
+      ctx.fill();
+      ctx.fillStyle = "#0369a1";
+      ctx.font = "900 62px 'Inter', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("10", w - 115, h * 0.79);
+      ctx.font = "bold 14px sans-serif";
+      ctx.fillText("ROUTE", w - 115, h * 0.855);
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 40px 'Noto Sans Oriya', sans-serif";
+      ctx.fillText("ମୋ ବସ୍ • ଯାତ୍ରୀ ସେବା", w / 2, h * 0.72);
+    });
+  }
+
+  function moBusSidePanelTex(baseColor = "#0ea5e9") {
+    return makeCanvas(2048, 512, (ctx, w, h) => {
+      const bg = ctx.createLinearGradient(0, 0, 0, h);
+      bg.addColorStop(0, "#38bdf8");
+      bg.addColorStop(0.5, baseColor);
+      bg.addColorStop(1, "#0369a1");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = "rgba(255,255,255,0.92)";
+      ctx.beginPath();
+      ctx.moveTo(0, h * 0.46);
+      ctx.lineTo(w * 0.34, h * 0.06);
+      ctx.lineTo(w * 0.42, h * 0.06);
+      ctx.lineTo(w * 0.76, h * 0.46);
+      ctx.lineTo(w * 0.76, h * 0.55);
+      ctx.lineTo(w * 0.4, h * 0.15);
+      ctx.lineTo(w * 0.34, h * 0.15);
+      ctx.lineTo(0, h * 0.55);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = "#10b981";
+      ctx.fillRect(0, h * 0.88, w, h * 0.12);
+      ctx.fillStyle = "#fff";
+      ctx.font = "900 130px 'Inter', sans-serif";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.fillText("MO BUS", 80, h * 0.28);
+      ctx.fillStyle = "#fde047";
+      ctx.font = "bold 56px 'Noto Sans Oriya', sans-serif";
+      ctx.fillText("ଭୁବନେଶ୍ୱର", 82, h * 0.68);
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 38px 'Inter', sans-serif";
+      ctx.fillText("BHUBANESWAR CITY SERVICE", 82, h * 0.78);
+      ctx.fillStyle = "#0c4a6e";
+      ctx.font = "bold 24px 'Inter', sans-serif";
+      ctx.fillText("SMART CITY • SMART BUS • ODISHA", 82, h * 0.94);
+    });
+  }
+
+  function moBusLedTex() {
+    return makeCanvas(1024, 128, (ctx, w, h) => {
+      ctx.fillStyle = "#0c0a09";
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = "#f59e0b";
+      ctx.font = "900 64px monospace";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("BARAMUNDA → MASTER CANTEEN → KIIT", w / 2, h / 2);
+    });
+  }
+
+  function bajajAutoHoodTex() {
+    return makeCanvas(1024, 512, (ctx, w, h) => {
+      const yellow = ctx.createLinearGradient(0, 0, 0, h * 0.55);
+      yellow.addColorStop(0, "#fcd34d");
+      yellow.addColorStop(0.6, "#facc15");
+      yellow.addColorStop(1, "#ca8a04");
+      ctx.fillStyle = yellow;
+      ctx.fillRect(0, 0, w, h * 0.55);
+      const green = ctx.createLinearGradient(0, h * 0.55, 0, h);
+      green.addColorStop(0, "#15803d");
+      green.addColorStop(1, "#052e16");
+      ctx.fillStyle = green;
+      ctx.fillRect(0, h * 0.55, w, h * 0.45);
+      ctx.fillStyle = "#e5e7eb";
+      ctx.fillRect(0, h * 0.53, w, 8);
+      ctx.fillStyle = "#b91c1c";
+      ctx.font = "900 90px Impact, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("FOR HIRE", w / 2, h * 0.15);
+      ctx.fillStyle = "#f8fafc";
+      ctx.fillRect((w - 320) / 2, h * 0.24, 320, 130);
+      ctx.fillStyle = "#0c0a09";
+      ctx.font = "900 82px monospace";
+      ctx.fillText("OD 02", w / 2, h * 0.35);
+      ctx.font = "bold 44px monospace";
+      ctx.fillStyle = "#dc2626";
+      ctx.fillText("AB 1234", w / 2, h * 0.44);
+      ctx.fillStyle = "#fde047";
+      ctx.font = "bold 34px 'Inter', sans-serif";
+      ctx.fillText("KALIA BHAI • BARAMUNDA", w / 2, h * 0.65);
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 22px 'Noto Sans Oriya', sans-serif";
+      ctx.fillText("କାଳିଆ ଭାଇ • ବାରମୁଣ୍ଡା", w / 2, h * 0.73);
+      ctx.fillStyle = "#10b981";
+      ctx.fillRect(w - 190, h * 0.29, 110, 110);
+      ctx.fillStyle = "#fff";
+      ctx.font = "900 34px sans-serif";
+      ctx.fillText("LPG", w - 135, h * 0.4);
+    });
+  }
+
+  function bajajAutoSideTex() {
+    return makeCanvas(2048, 512, (ctx, w, h) => {
+      const yellow = ctx.createLinearGradient(0, 0, 0, h * 0.4);
+      yellow.addColorStop(0, "#fcd34d");
+      yellow.addColorStop(1, "#ca8a04");
+      ctx.fillStyle = yellow;
+      ctx.fillRect(0, 0, w, h * 0.4);
+      const green = ctx.createLinearGradient(0, h * 0.4, 0, h);
+      green.addColorStop(0, "#15803d");
+      green.addColorStop(1, "#052e16");
+      ctx.fillStyle = green;
+      ctx.fillRect(0, h * 0.4, w, h * 0.6);
+      ctx.fillStyle = "#e5e7eb";
+      ctx.fillRect(0, h * 0.385, w, 6);
+      ctx.fillStyle = "#fff";
+      ctx.font = "900 130px 'Noto Sans Oriya', sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("ଭୁବନେଶ୍ୱର", w / 2, h * 0.2);
+      ctx.fillStyle = "#fde047";
+      ctx.font = "900 54px 'Cinzel', sans-serif";
+      ctx.fillText("BHUBANESWAR • FAST • AIR", w / 2, h * 0.31);
+      ctx.font = "900 200px 'Inter', sans-serif";
+      ctx.fillText("02", w * 0.15, h * 0.72);
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 34px 'Inter', sans-serif";
+      ctx.fillText("AUTO RICKSHAW", w * 0.15, h * 0.87);
+      ctx.fillStyle = "#10b981";
+      ctx.beginPath();
+      ctx.arc(w * 0.72, h * 0.82, 45, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#fff";
+      ctx.font = "900 28px 'Inter', sans-serif";
+      ctx.fillText("ECO", w * 0.72, h * 0.82);
+    });
+  }
+
+  function bajajAutoRoofInteriorTex() {
+    return makeCanvas(512, 512, (ctx, w, h) => {
+      ctx.fillStyle = "#fef3c7";
+      ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = "rgba(120,53,15,0.25)";
+      ctx.lineWidth = 2;
+      for (let y = 0; y < h; y += 64) {
+        for (let x = 0; x < w; x += 64) {
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x + 32, y + 32);
+          ctx.lineTo(x + 64, y);
+          ctx.stroke();
+        }
+      }
+      ctx.fillStyle = "rgba(180,83,9,0.55)";
+      ctx.font = "bold 28px 'Noto Sans Oriya', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("ଜୟ ଜଗନ୍ନାଥ", w / 2, h / 2);
+    });
   }
 
   function scootyBodyMat(colorHex = "#2563eb") {
@@ -9336,12 +9545,11 @@ let __weave=null;
     sfx.chime();
   }
   function setWeatherMode(mode) {
-    // Map settings buttons → setWeather's accepted modes
-    const mapped = (mode === 'sunset' || mode === 'night') ? 'dusk'
-                 : (mode === 'rain') ? 'rain'
-                 : 'sunny';
-    setWeather(mapped);
-    state.weather = mode;
+    const norm = (mode === 'sunset' || mode === 'night') ? 'dusk'
+               : (mode === 'rain') ? 'rain'
+               : 'sunny';
+    setWeather(norm);
+    state.weather = norm;
     updateHudLabels();
     popup('🌦️ Weather: ' + mode.toUpperCase());
     sfx.chime();
