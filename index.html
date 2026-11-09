@@ -2003,6 +2003,9 @@
     // Scene 18: Rasagola Heist
     "rasagola_heist_thief": { speaker: "auto", or: "ଏ ରସଗୋଲା ବକ୍ସ ମୋର! ମୁଁ ଆଗେ ଧରିଥିଲି!", hi: "ये रसगुल्ला का डिब्बा मेरा है! मैंने पहले पकड़ा था!", en: "This rasagola box is mine! I grabbed it first!" },
     "rasagola_heist_babu": { speaker: "babu", or: "ଆରେ! ଏହା ପାହାଳ ମନ୍ଦିରର ପ୍ରସାଦ! ଚୋରି କରୁଛ କି?!", hi: "अरे! ये पाहाला मंदिर का प्रसाद है! चोरी कर रहे हो?!", en: "Hey! This is Pahala temple prasad! Are you stealing it?!" },
+    "heist_call_priest": { speaker: "babu", or: "ପୂଜକ ମହାଶୟ! ଏ ଚୋର ପାହାଳ ମନ୍ଦିରର ପବିତ୍ର ରସଗୋଲା ଡବା ଲୁଟି ନେଉଛି!", hi: "पुजारी जी! यह चोर पाहाला मंदिर का पवित्र रसगुल्ला का डिब्बा लूट रहा है!", en: "Revered Priest! This thief is snatching the sacred Pahala rasagola offering!" },
+    "heist_tackle_thief": { speaker: "babu", or: "ଅଟକ! ମୋ ସାମ୍ନାରେ ପାହାଳ ରସଗୋଲା ଚୋରି?! ଏଇ ନିଅ ଡବା, ଆଉ କେବେ ଏଠିକି ଆସିବନି!", hi: "रुको! मेरे सामने पाहाला रसगुल्ला चोरी?! ये लो डिब्बा, अब दोबारा यहाँ मत दिखना!", en: "Halt! Stealing Pahala rasagolas right in front of me?! Drop the box and surrender!" },
+    "heist_buy_peace": { speaker: "babu", or: "ଭୋକ ଲାଗିଛି ତ ମାଗି ନିଅ ଭାଇ! ମୁଁ ₹୧୦୦ ଦେଇ ତୁମ ପାଇଁ ଗୋଟିଏ ଡବା କିଣି ଦେଉଛି, ଚୋରି କରନି!", hi: "भूख लगी है तो माँग लो भाई! मैं ₹100 देकर तुम्हारे लिए डिब्बा खरीद देता हूँ, चोरी मत करो!", en: "If you're hungry just ask, brother! I'll pay ₹100 for your box—don't resort to theft!" },
 
     // Scene 19: Cow Chakra Jam
     "cow_jam_driver": { speaker: "auto", or: "ଆରେ! ତିନି ଗୋମାତା ଏକାଠି ବସିଛନ୍ତି! ଆଜି ଅଫିସ୍ ଯିବା ବନ୍ଦ!", hi: "अरे! तीन गोमाता एक साथ बैठी हैं! आज ऑफिस जाना बंद!", en: "Hey! Three sacred cows sitting together! No office today!" },
@@ -7609,6 +7612,24 @@ let __weave=null;
       ]
     },
 
+    rasagolaHeist: {
+      id: "scene_rasagola_heist",
+      title: { or: "୧୮. ପାହାଳ ରସଗୋଲା ଚୋରି", hi: "18. पाहाला रसगुल्ला चोरी", en: "18. Pahala Rasagola Box Heist" },
+      camStart: [60, 3.5, -325], camLook: [66, 1.5, -330], camEnd: [55, 2.8, -320],
+      intro: "rasagola_heist_thief",
+      choices: [
+        { text: { or: "🪔 ପୂଜକଙ୍କୁ ଡାକ", hi: "🪔 पुजारी को बुलाओ", en: "🪔 Call temple priest" },
+          tag: "+200 XP (hero)", xp: 200, coins: 0, rep: 8,
+          voice: "heist_call_priest", outcome: "priest" },
+        { text: { or: "🥊 ଚୋରକୁ ଗୋଡ଼ାଇ ଧର", hi: "🥊 चोर को पकड़ो", en: "🥊 Chase & tackle thief" },
+          tag: "+160 XP, -10 HP", xp: 160, coins: 50, rep: 5,
+          voice: "heist_tackle_thief", outcome: "tackle" },
+        { text: { or: "🤝 ₹୧୦୦ ଦେଇ ମିଠା କିଣି ବୁଝାଅ", hi: "🤝 ₹100 देकर मिठाई खरीदो", en: "🤝 Buy sweets & negotiate" },
+          tag: "+120 XP, -₹100", xp: 120, coins: -100, rep: 6,
+          voice: "heist_buy_peace", outcome: "negotiate" }
+      ]
+    },
+
     heist: {
       id: "scene_rasagola_heist",
       title: { or: "୧୮. ପାହାଳ ରସଗୋଲା ଚୋରି", hi: "18. पाहाला रसगुल्ला चोरी", en: "18. Pahala Rasagola Box Heist" },
@@ -7617,16 +7638,13 @@ let __weave=null;
       choices: [
         { text: { or: "🪔 ପୂଜକଙ୍କୁ ଡାକ", hi: "🪔 पुजारी को बुलाओ", en: "🪔 Call temple priest" },
           tag: "+200 XP (hero)", xp: 200, coins: 0, rep: 8,
-          voice: "rasagola_heist_babu", outcome: "priest" },
-        { text: { or: "🥊 ଚୋରକୁ ଧର", hi: "🥊 चोर को पकड़ो", en: "🥊 Catch the thief yourself" },
-          tag: "+150 XP, -10 HP", xp: 150, coins: 50, rep: 5,
-          voice: "rasagola_heist_babu", outcome: "catch" },
-        { text: { or: "🍬 ମିଠା ବାଣ୍ଟି ଦିଅ", hi: "🍬 मिठाई बाँट दो", en: "🍬 Share the sweets" },
-          tag: "+100 XP, +2 REP", xp: 100, coins: 0, rep: 2,
-          voice: "rasagola_heist_thief", outcome: "share" },
-        { text: { or: "🚶 ଚାଲିଯାଅ", hi: "🚶 चले जाओ", en: "🚶 Walk away" },
-          tag: "0 XP", xp: 0, coins: 0, rep: 0,
-          voice: "rasagola_heist_babu", outcome: "ignore" }
+          voice: "heist_call_priest", outcome: "priest" },
+        { text: { or: "🥊 ଚୋରକୁ ଗୋଡ଼ାଇ ଧର", hi: "🥊 चोर को पकड़ो", en: "🥊 Chase & tackle thief" },
+          tag: "+160 XP, -10 HP", xp: 160, coins: 50, rep: 5,
+          voice: "heist_tackle_thief", outcome: "tackle" },
+        { text: { or: "🤝 ₹୧୦୦ ଦେଇ ମିଠା କିଣି ବୁଝାଅ", hi: "🤝 ₹100 देकर मिठाई खरीदो", en: "🤝 Buy sweets & negotiate" },
+          tag: "+120 XP, -₹100", xp: 120, coins: -100, rep: 6,
+          voice: "heist_buy_peace", outcome: "negotiate" }
       ]
     },
 
@@ -7968,9 +7986,9 @@ let __weave=null;
     return;
   }
 
-  // Scene 18: Rasagola heist — Master Canteen
-  if (!state.sceneChoices.heist && pos.distanceTo(new THREE.Vector3(66, 0, -329)) < 10) {
-    showInteractBubble('🍬 ' + (state.lang === 'or' ? 'ମିଠା ଚୋରି' : 'Sweet heist') + ' [E]', () => runInteractiveScene('heist'));
+  // Scene 18: Rasagola heist — Master Canteen (3 branching choices)
+  if (!state.sceneChoices.rasagolaHeist && !state.sceneChoices.heist && pos.distanceTo(new THREE.Vector3(66, 0, -329)) < 10) {
+    showInteractBubble('🍬 ' + (state.lang === 'or' ? 'ରସଗୋଲା ଚୋରି' : 'Rasagola Heist') + ' [E]', () => runInteractiveScene('rasagolaHeist'));
     foundTarget = true;
     if (keys['e']) { keys['e'] = false; triggerActiveInteraction(); }
     return;
