@@ -37,7 +37,7 @@
   - Interior room system: Checkered terracotta floor tiles (`TEX.floorInterior`), whitewashed walls, rotating 3-blade ceiling fan (`interiorFan`), student cot with Sambalpuri Ikat bedsheet, teak agreement desk with non-judicial stamp paper, and dubious sub-meter box.
 - **Live Deployment:** [https://forbesayush.github.io/odisha-simulator/](https://forbesayush.github.io/odisha-simulator/)
 - **Live Landing Page:** [https://forbesayush.github.io/odisha-simulator/odisha-landing.html](https://forbesayush.github.io/odisha-simulator/odisha-landing.html)
-- **Source Repository:** [github.com/forbesayush/odisha-simulator](https://github.com/forbesayush/odisha-simulator) (Branch `main`, Commit `bc0b382`)
+- **Source Repository:** [github.com/forbesayush/odisha-simulator](https://github.com/forbesayush/odisha-simulator) (Branch `main`, Commit `6a10f74`)
 - **Single-File Deliverables (Synchronized Byte-for-Byte):**
   - [index.html](file:///C:/Users/Ayush%20Chatterjee/Downloads/index.html) (1,109,996 bytes, 100% offline self-contained)
   - [odisha-landing.html](file:///C:/Users/Ayush%20Chatterjee/Downloads/odisha-landing.html) (38,842 bytes, responsive Tailwind showcase portal)
