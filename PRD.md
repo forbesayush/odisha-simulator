@@ -39,7 +39,7 @@
 - **Live Landing Page:** [https://forbesayush.github.io/odisha-simulator/odisha-landing.html](https://forbesayush.github.io/odisha-simulator/odisha-landing.html)
 - **Source Repository:** [github.com/forbesayush/odisha-simulator](https://github.com/forbesayush/odisha-simulator) (Branch `main`, Commit `bc0b382`)
 - **Single-File Deliverables (Synchronized Byte-for-Byte):**
-  - [index.html](file:///C:/Users/Ayush%20Chatterjee/Downloads/index.html) (1,111,684 bytes, 100% offline self-contained)
+  - [index.html](file:///C:/Users/Ayush%20Chatterjee/Downloads/index.html) (1,109,996 bytes, 100% offline self-contained)
   - [odisha-landing.html](file:///C:/Users/Ayush%20Chatterjee/Downloads/odisha-landing.html) (38,842 bytes, responsive Tailwind showcase portal)
   - [namma-metro.html](file:///C:/Users/Ayush%20Chatterjee/Downloads/namma-metro.html) (27,458 bytes, 100% offline self-contained)
   - [odisha-simulator/index.html](file:///C:/Users/Ayush%20Chatterjee/.gemini/antigravity/scratch/odisha-simulator/index.html)
@@ -48,7 +48,7 @@
   - [odisha-simulator/texture-urls.txt](file:///C:/Users/Ayush%20Chatterjee/.gemini/antigravity/scratch/odisha-simulator/texture-urls.txt)
   - [odisha-simulator/download-textures.sh](file:///C:/Users/Ayush%20Chatterjee/.gemini/antigravity/scratch/odisha-simulator/download-textures.sh)
   - [odisha-simulator/download-textures.js](file:///C:/Users/Ayush%20Chatterjee/.gemini/antigravity/scratch/odisha-simulator/download-textures.js)
-  - **SHA-256 Hash (`index.html`):** `e8355bdca6a473fc9371ab3197ad330d322cf44a835b568e0434b3ee0569807c`
+  - **SHA-256 Hash (`index.html`):** `9daf8d0c584e0c6429a636f646ddaa314e45df92b0f00a8c6e1d2861f7457e39`
 
 ---
 
