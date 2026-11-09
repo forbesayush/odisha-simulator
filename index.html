@@ -4613,7 +4613,6 @@
     addMesh(legR, box(0.16, 0.03, 0.28), white, [0, -0.79, 0.03]);
 
     return { group: g, root, headGroup, armL, armR, legL, legR, gamuchaTail };
-  };
   }
 
   /* ===== LAYER 2: TEXTURED FIGURES (fabric weave + painted faces) ===== */
@@ -6365,7 +6364,16 @@ let __weave=null;
       scene.add(dish);
     });
 
-    const extras = buildOdishaExtras(scene, colliders);
+    let extras = { interiorFan: null };
+    try {
+      if (typeof buildOdishaExtras === 'function') {
+        extras = buildOdishaExtras(scene, colliders) || { interiorFan: null };
+      } else {
+        console.warn('[SKIP] buildOdishaExtras not defined — Odia extras disabled');
+      }
+    } catch (e) {
+      console.warn('[SKIP] buildOdishaExtras threw:', e.message, '— Odia extras disabled');
+    }
 
     return {
       colliders,
@@ -9691,7 +9699,7 @@ let __weave=null;
       wayMarker.ring.scale.setScalar(1 + Math.sin(Date.now() * 0.005) * 0.1);
     }
 
-    if (window.__tick) __tick(dt);
+    if (window.__tick) window.__tick(dt);
     drawMinimap();
     renderer.render(scene, camera);
   }
@@ -10024,7 +10032,7 @@ T(()=>{
  /* loading percent */
  const lp=document.createElement('div');lp.id='load-pct';document.body.appendChild(lp);
  const li=setInterval(()=>{const f=document.getElementById('load-bar-fill'),l=document.getElementById('loading-screen');if(!f||!l)return;
-  lp.textContent=(parseInt(f.style.width)||0)+'%';if(getComputedStyle(l).display==='none'){lp.remove();clearInterval(li);}},150);
+  lp.textContent=(parseInt(f.style.width)||0)+'%';if((typeof getComputedStyle!=='undefined'&&getComputedStyle(l).display==='none')||(l.classList&&l.classList.contains('hidden'))){lp.remove();clearInterval(li);}},150);
  /* wallet, key chip, phone (decluttered) */
  const w=document.createElement('div');w.id='wallet-card';w.innerHTML='<b id="wc-v">₹ 0</b>';document.body.appendChild(w);
  const kc=document.createElement('div');kc.id='key-chip';kc.style.display='none';document.body.appendChild(kc);
@@ -10228,6 +10236,62 @@ T(()=>{
         else if (el.parentNode) el.parentNode.removeChild(el);
       }, 1400);
     }, 3200);
+  })();
+
+  /* ═══════════════════════════════════════════════════════════════
+     RESILIENCE LAYER — keeps the game running even if individual
+     features fail. Logs each failure so you can fix one at a time.
+     ═══════════════════════════════════════════════════════════════ */
+  (function resilientBoot() {
+    const failed = [];
+    const origError = console.error;
+
+    console.error = function(...args) {
+      failed.push(args.map(String).join(' '));
+      origError.apply(console, args);
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('error', e => {
+        failed.push('CRASH: ' + (e.message || e) + ' @ line ' + (e.lineno || 'unknown'));
+      });
+    }
+
+    // If nothing rendered within 5 seconds, force-show diagnostics
+    setTimeout(() => {
+      if (typeof document === 'undefined') return;
+      const canvas = document.getElementById('webgl-canvas');
+      const title = document.getElementById('title-screen');
+      const hasRenderer = typeof renderer !== 'undefined' && renderer && renderer.info;
+      const hasWorld = typeof worldData !== 'undefined' && worldData;
+      const hasScene = typeof scene !== 'undefined' && scene;
+      const sceneChildren = hasScene ? scene.children.length : 0;
+
+      const diag = {
+        'Renderer initialized': hasRenderer,
+        'World built': !!hasWorld,
+        'Scene exists': !!hasScene,
+        'Objects in scene': sceneChildren,
+        'Canvas element': !!canvas,
+        'Canvas size': canvas ? canvas.width + 'x' + canvas.height : 'n/a',
+        'Title screen visible': title ? !title.classList.contains('hidden') : 'n/a',
+        'Errors caught': failed.length
+      };
+      console.log('%c[BOOT DIAGNOSTICS]', 'color:#f59e0b;font-weight:bold;font-size:14px', diag);
+
+      if (failed.length > 0) {
+        console.log('%c[ERRORS]', 'color:#ef4444;font-weight:bold', failed);
+      }
+
+      // If scene has 0 objects, we know buildWorld failed — force-hide intro to expose the title
+      if (sceneChildren === 0) {
+        const loading = document.getElementById('loading-screen');
+        const intro = document.getElementById('intro-reveal');
+        if (loading) loading.classList.add('hidden');
+        if (intro) intro.classList.add('hidden');
+        console.log('%c⚠️ Scene is empty — buildWorld() likely crashed. Check errors above.', 'color:#f59e0b;font-weight:bold');
+      }
+    }, 5000);
   })();
 </script>
 </body>
