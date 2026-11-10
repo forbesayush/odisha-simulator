@@ -8,7 +8,10 @@
   const key = (x, z) => `${Math.floor(x / CHUNK)},${Math.floor(z / CHUNK)}`;
 
   OS.register = function (obj) {
-    if (!obj || obj.userData && obj.userData.streamingIgnore) return null;
+    if (!obj || obj.userData && (
+      obj.userData.streamingIgnore ||
+      obj.userData.dynamic
+    )) return null;
     const position = obj.getWorldPosition
       ? obj.getWorldPosition(new THREE.Vector3())
       : obj.position;
@@ -100,8 +103,11 @@
 
   const scene = window.__scene;
   if (scene) {
+    const dynamicObjects = new Set(window.__odDynamicObjects || []);
     scene.children.forEach(object => {
-      if (object.isMesh || object.isGroup) OS.register(object);
+      if ((object.isMesh || object.isGroup) && !dynamicObjects.has(object)) {
+        OS.register(object);
+      }
     });
   }
 

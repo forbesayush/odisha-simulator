@@ -6673,6 +6673,7 @@ let __weave=null;
   const legR = babuData.legR;
 
   babuGroup.position.set(POI.babuSpawn[0], 0, POI.babuSpawn[1]);
+  babuGroup.userData.dynamic = true;
   scene.add(babuGroup);
 
   // 2. PLAYER AUTO-RICKSHAW
@@ -6680,6 +6681,7 @@ let __weave=null;
   playerAuto.group.position.set(POI.autoStart[0], 0, POI.autoStart[1]);
   playerAuto.group.rotation.y = Math.PI;
   playerAuto.group.visible = false;
+  playerAuto.group.userData.dynamic = true;
   scene.add(playerAuto.group);
   window.__odVehicleGroups = window.__odVehicleGroups || { buses: [] };
   window.__odVehicleGroups.auto = playerAuto.group;
@@ -6689,6 +6691,7 @@ let __weave=null;
   playerScooty.group.position.set(POI.scootyBaramunda[0], 0, POI.scootyBaramunda[1]);
   playerScooty.group.rotation.y = -Math.PI / 3;
   playerScooty.group.visible = true;
+  playerScooty.group.userData.dynamic = true;
   scene.add(playerScooty.group);
   window.__odPlayerPosition = () => state.mode === 'walk'
     ? babuGroup.position
@@ -6786,17 +6789,20 @@ let __weave=null;
   const sacredCow = makeCow();
   sacredCow.group.position.set(POI.cow[0], 0, POI.cow[1]);
   sacredCow.group.rotation.y = Math.PI / 2;
+  sacredCow.group.userData.dynamic = true;
   scene.add(sacredCow.group);
 
   // 5. RACING BIKE OVERTAKE (SCRIPTED TRAFFIC EVENT)
   const redBike = makeScooty("#dc2626");
   redBike.group.position.set(43, 0, -12);
   redBike.group.visible = false;
+  redBike.group.userData.dynamic = true;
   scene.add(redBike.group);
 
   // 6. OBJECTIVE WAYPOINT MARKER
   const wayMarker = makeMarker();
   wayMarker.group.position.set(POI.driver[0], 0, POI.driver[1]);
+  wayMarker.group.userData.dynamic = true;
   scene.add(wayMarker.group);
 
 
@@ -6823,6 +6829,7 @@ let __weave=null;
   });
   const rainSystem = new THREE.Points(rainGeo, rainMat);
   rainSystem.visible = false;
+  rainSystem.userData.dynamic = true;
   scene.add(rainSystem);
 
   function setWeather(weatherMode) {
@@ -7122,7 +7129,10 @@ let __weave=null;
   npcs.policePanda.group.position.set(POI.policePanda[0], 0, POI.policePanda[1]);
   npcs.khandagiriGuide.group.position.set(POI.khandagiriGuide[0], 0, POI.khandagiriGuide[1]);
 
-  Object.values(npcs).forEach(n => scene.add(n.group));
+  Object.values(npcs).forEach(n => {
+    n.group.userData.dynamic = true;
+    scene.add(n.group);
+  });
 
   // 8 WALKING PEDESTRIANS ACROSS BHUBANESWAR SIDEWALKS & BUSTLING HUBS
   const pedestrians = [
@@ -7136,7 +7146,10 @@ let __weave=null;
     { start: [75, -85], end: [110, -85], dir: 1, progress: 0.5, speed: 0.035, fig: makeCharacterFigure({ shirtColor: "#16a34a", pantsColor: "#f8fafc", skinColor: "#c68642", headwear: "vendor_band" }) }
   ];
 
-  pedestrians.forEach(p => scene.add(p.fig.group));
+  pedestrians.forEach(p => {
+    p.fig.group.userData.dynamic = true;
+    scene.add(p.fig.group);
+  });
 
   let pedPhase = 0;
   function updatePedestrians(dt) {
@@ -10908,7 +10921,8 @@ T(()=>{
  for(let i=0;i<n;i++){
   const r=rs[i%rs.length],L=Math.hypot(r.x2-r.x1,r.z2-r.z1),k=i%4;
   const m=k===0?makeAuto():k===1?makeBus():makeScooty(cols[i%cols.length]),g=m.group||m;
-  scene.add(g);
+ g.userData.dynamic = true;
+ scene.add(g);
   cars.push({g,r,L,dx:(r.x2-r.x1)/L,dz:(r.z2-r.z1)/L,s:Math.random()*L,sign:Math.random()<.5?1:-1,v:k===1?6+Math.random()*2:8+Math.random()*4,cur:0,hold:0,wait:0});
  }
  let nt=0;const _t=window.__tick;

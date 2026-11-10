@@ -13,6 +13,8 @@ const checks = [
   ['instancing helper exists', /OS\.instanced/.test(moduleSource)],
   ['LOD helper exists', /OS\.makeLOD/.test(moduleSource)],
   ['terrain is excluded from culling', /streamingIgnore/.test(html)],
+  ['dynamic objects are excluded from culling', /userData\.dynamic/.test(moduleSource)],
+  ['dynamic object registry is supported', /__odDynamicObjects/.test(moduleSource)],
   ['player position callback exists', /__odPlayerPosition/.test(html)],
   ['streaming tick is wired', /OS\.update\(window\.__odPlayerPosition\(\)\)/.test(moduleSource)]
 ];

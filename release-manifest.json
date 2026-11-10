@@ -1,13 +1,13 @@
 {
-  "generated": "2026-11-09T19:32:46.692Z",
+  "generated": "2026-11-10T06:14:27.241Z",
   "version": "4.0.0-vehicle-texture-upgrade",
   "deliverables": [
     {
       "file": "index.html",
-      "bytes": 1184425,
+      "bytes": 1184844,
       "size": "1.13 MB",
-      "sha256": "751fe13f53dbde30e32e0f480aa375c1d513f05996afde601033e9226aabe7f6",
-      "modified": "2026-11-09T19:32:28.872Z"
+      "sha256": "13518c5922b0c48384ac4b04453860ca13b676380879542a58e3423054d635ce",
+      "modified": "2026-11-10T06:14:14.607Z"
     },
     {
       "file": "odisha-landing.html",
@@ -53,10 +53,10 @@
     },
     {
       "file": "map-streaming.js",
-      "bytes": 4025,
-      "size": "3.9 KB",
-      "sha256": "9ed433b16064d5fc4ea684915cb2594c2dc0f1e1044a3af900b4858d0aecb959",
-      "modified": "2026-11-09T19:27:41.355Z"
+      "bytes": 4189,
+      "size": "4.1 KB",
+      "sha256": "e6986732e49d6363659f7c507c61b5700cb5a5172fcbfc52ceeae3617b39cae0",
+      "modified": "2026-11-10T06:14:03.619Z"
     },
     {
       "file": "daynight-weather.js",
