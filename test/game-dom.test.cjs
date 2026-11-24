@@ -84,6 +84,61 @@ function waitForGameScripts() {
   return new Promise(resolve => setTimeout(resolve, 50));
 }
 
+test('parcel run completes on dry and rainy routes with a checkpoint retry', async () => {
+  const dom = createDom();
+  try {
+    await waitForGameScripts();
+    for (const weather of ['sunny', 'rain']) {
+      const result = dom.window.eval(`(() => {
+        state.screen = 'game';
+        state.weather = '${weather}';
+        const before = state.coins;
+        startPipiliRun();
+        let routeLength;
+        for (let i = 0; parcelRun && i < 8; i++) {
+          const [x, z] = parcelRun.route[parcelRun.step];
+          playerScooty.group.position.set(x, 0, z);
+          updatePipiliRun();
+          if (i === 1) {
+            routeLength = parcelRun.route.length;
+            retryPipiliRun();
+          }
+        }
+        return JSON.stringify([routeLength, state.coins - before, state.screen]);
+      })()`);
+      assert.deepEqual(JSON.parse(result), [weather === 'rain' ? 6 : 4, 120, 'cinematic']);
+    }
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('joystick follows its own finger and releases movement on cancellation', async () => {
+  const dom = createDom();
+  try {
+    await waitForGameScripts();
+    const { window } = dom;
+    const zone = window.document.getElementById('touch-joystick-zone');
+    const finger = { identifier: 2, clientX: 64, clientY: 100 };
+    const other = { identifier: 1, clientX: 200, clientY: 90 };
+    function input(type, changedTouches) {
+      const event = new window.Event(type, { bubbles: true, cancelable: true });
+      Object.defineProperty(event, 'changedTouches', { value: changedTouches });
+      Object.defineProperty(event, 'touches', { value: [other, finger] });
+      zone.dispatchEvent(event);
+    }
+    input('touchstart', [finger]);
+    input('touchmove', [{ ...finger, clientY: 65 }]);
+    assert.equal(window.eval('keys.w'), true);
+    input('touchend', [other]);
+    assert.equal(window.eval('keys.w'), true);
+    input('touchcancel', [finger]);
+    assert.equal(window.eval('keys.w'), false);
+  } finally {
+    dom.window.close();
+  }
+});
+
 test('all required game DOM IDs exist', async () => {
   const dom = createDom();
   try {
