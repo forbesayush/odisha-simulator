@@ -1,76 +1,76 @@
 {
-  "generated": "2026-11-12T16:53:31.970Z",
+  "generated": "2026-11-24T08:36:06.184Z",
   "version": "4.0.0-vehicle-texture-upgrade",
   "deliverables": [
     {
       "file": "index.html",
-      "bytes": 1196163,
-      "size": "1.14 MB",
-      "sha256": "af0b877e968ad74918eef4892750fbc65b01760ac592bb47091a25b3c9103d37",
-      "modified": "2026-11-12T16:52:26.740Z"
+      "bytes": 1187852,
+      "size": "1.13 MB",
+      "sha256": "ce96ed36a8d7917d38e33fa6651937b99df3931f1b2aca4bde8b04e70a8e79b8",
+      "modified": "2026-11-24T08:35:29.200Z"
     },
     {
       "file": "odisha-landing.html",
-      "bytes": 63551,
-      "size": "62.1 KB",
-      "sha256": "eb857991ad4502ae9c74248d54186d824683b5f183872499c45fe4f1aa31babb",
-      "modified": "2026-11-08T18:37:13.312Z"
+      "bytes": 64713,
+      "size": "63.2 KB",
+      "sha256": "ea13444002487c8ea213c94ef1eb0e109b6bb9714a1dbc654c885f4e82a19e0d",
+      "modified": "2026-11-24T02:48:16.568Z"
     },
     {
       "file": "namma-metro.html",
-      "bytes": 26338,
-      "size": "25.7 KB",
-      "sha256": "8a95ff30ddea3808f995109096d6f8beca62e721a86099c8a61c80a1d9426fb5",
-      "modified": "2026-11-08T18:29:47.172Z"
+      "bytes": 27121,
+      "size": "26.5 KB",
+      "sha256": "1e4fb636986c43053a56d6bebf477ba199ab840508dbc54c3deaa5c546f38b37",
+      "modified": "2026-11-24T02:48:16.568Z"
     },
     {
       "file": "texture-urls.txt",
-      "bytes": 13872,
-      "size": "13.5 KB",
-      "sha256": "87e5c378edb37b7f90ce8d9db72ca67c19ccae245ecd47bd037f4ea5ddd550be",
-      "modified": "2026-11-09T04:57:00.270Z"
+      "bytes": 14200,
+      "size": "13.9 KB",
+      "sha256": "b2e8438dd2b6528e55d7db6c843e74a2fe8c61eae4de76b9e7de95381fd33333",
+      "modified": "2026-11-24T02:48:16.582Z"
     },
     {
       "file": "download-textures.sh",
-      "bytes": 6022,
-      "size": "5.9 KB",
-      "sha256": "f194ff3e91fecc1578dadc6beb7c7cdb846113ada60e8a388d9b75cfb03f8c44",
-      "modified": "2026-11-09T04:57:00.270Z"
+      "bytes": 6168,
+      "size": "6.0 KB",
+      "sha256": "d00d4440d52462f2d5dd4ff4a22b5e80b0a579ee8720d10ea41c8f051d975cb3",
+      "modified": "2026-11-24T02:48:16.556Z"
     },
     {
       "file": "download-textures.js",
-      "bytes": 5601,
-      "size": "5.5 KB",
-      "sha256": "0ef1f693fd5fd62e7b542a1c79b1cd3c4244168550031e55318f205412930063",
-      "modified": "2026-11-08T19:30:18.444Z"
+      "bytes": 5734,
+      "size": "5.6 KB",
+      "sha256": "2de38f8f8b82ebd8fce93aac1508bc382680a87848a8dedb467fcf107c86f406",
+      "modified": "2026-11-24T02:48:16.556Z"
     },
     {
       "file": "vehicles-texture-v4.js",
       "bytes": 5640,
       "size": "5.5 KB",
       "sha256": "2beeb338593c3d8a47f4989c3e9c6852901d9cb7021b56b4739639fb8c47300c",
-      "modified": "2026-11-12T16:52:26.747Z"
+      "modified": "2026-11-24T02:48:17.328Z"
     },
     {
       "file": "map-streaming.js",
       "bytes": 4308,
       "size": "4.2 KB",
       "sha256": "3e05b9d8733d65ccdd3b23b3d7954402575be8a3acbd59fca0c5c46c76f62dc6",
-      "modified": "2026-11-12T16:52:26.741Z"
+      "modified": "2026-11-24T02:48:16.566Z"
     },
     {
       "file": "daynight-weather.js",
       "bytes": 3100,
       "size": "3.0 KB",
       "sha256": "4773d85873a3e3aba172436d66fb71970fd2dfee5217c44a8181d73f70e26105",
-      "modified": "2026-11-12T16:52:26.734Z"
+      "modified": "2026-11-24T02:48:16.556Z"
     },
     {
       "file": "perf-governor.js",
       "bytes": 2217,
       "size": "2.2 KB",
       "sha256": "cffc080cde7aca1817851b1d1db852f8040f07f08ddbd8eb099b8a193f0fc12d",
-      "modified": "2026-11-12T16:52:26.742Z"
+      "modified": "2026-11-24T02:48:16.572Z"
     }
   ]
 }
