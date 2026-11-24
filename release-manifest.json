@@ -1,13 +1,13 @@
 {
-  "generated": "2026-11-24T08:36:06.184Z",
+  "generated": "2026-11-24T08:39:47.387Z",
   "version": "4.0.0-vehicle-texture-upgrade",
   "deliverables": [
     {
       "file": "index.html",
-      "bytes": 1187852,
+      "bytes": 1189647,
       "size": "1.13 MB",
-      "sha256": "ce96ed36a8d7917d38e33fa6651937b99df3931f1b2aca4bde8b04e70a8e79b8",
-      "modified": "2026-11-24T08:35:29.200Z"
+      "sha256": "4f675956e50355dda8fa464e92229dcd51fa6904701292790a32aea81616500c",
+      "modified": "2026-11-24T08:39:29.640Z"
     },
     {
       "file": "odisha-landing.html",
