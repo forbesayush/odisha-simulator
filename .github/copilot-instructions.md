@@ -2,11 +2,8 @@
 
 ## Architecture
 
-- Use ES modules for code under `src/`.
-- Keep shared game data and initial state in `src/config/GameConfig.js`.
-- Engine setup belongs in `src/core/Engine.js`; world construction belongs in `src/world/WorldBuilder.js`.
-- World builders return `{ colliders, worldData }`.
-- Keep the legacy `index.html` runtime behavior stable while extracting modules incrementally.
+- `index.html` is the simulator entry point and owns the active engine, game state and world builder.
+- `redesign-v5.js` and `redesign-v5.css` provide the redesigned interface.
 
 ## Code style
 
