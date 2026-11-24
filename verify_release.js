@@ -15,7 +15,9 @@ const FILES = [
   'vehicles-texture-v4.js',
   'map-streaming.js',
   'daynight-weather.js',
-  'perf-governor.js'
+  'perf-governor.js',
+  'redesign-v5.css',
+  'redesign-v5.js'
 ];
 
 function sha256(filePath) {
@@ -30,17 +32,17 @@ function humanSize(bytes) {
 
 const manifest = {
   generated: new Date().toISOString(),
-  version: '4.0.0-vehicle-texture-upgrade',
+  version: '5.0.0-cinematic-redesign',
   deliverables: []
 };
 
-console.log('AMARA ODISHA — RELEASE MANIFEST GENERATOR\n');
+console.log('AMARA ODISHA - RELEASE MANIFEST GENERATOR\n');
 
 let allPresent = true;
 for (const file of FILES) {
   const fullPath = path.join(__dirname, file);
   if (!fs.existsSync(fullPath)) {
-    console.log(`✗ MISSING: ${file}`);
+    console.log(`? MISSING: ${file}`);
     allPresent = false;
     continue;
   }
@@ -54,7 +56,7 @@ for (const file of FILES) {
     modified: stat.mtime.toISOString()
   };
   manifest.deliverables.push(entry);
-  console.log(`✓ ${file.padEnd(28)} ${entry.size.padStart(10)}  ${entry.sha256}`);
+  console.log(`� ${file.padEnd(28)} ${entry.size.padStart(10)}  ${entry.sha256}`);
 }
 
 if (!allPresent) {
@@ -63,6 +65,6 @@ if (!allPresent) {
 } else {
   const manifestPath = path.join(__dirname, 'release-manifest.json');
   fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
-  console.log(`\n✓ Manifest written: ${path.basename(manifestPath)}`);
+  console.log(`\n� Manifest written: ${path.basename(manifestPath)}`);
   console.log(`  Build: ${manifest.version}`);
 }
