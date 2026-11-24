@@ -1,13 +1,13 @@
 {
-  "generated": "2026-11-24T08:46:46.087Z",
+  "generated": "2026-11-24T09:22:31.069Z",
   "version": "5.0.0-cinematic-redesign",
   "deliverables": [
     {
       "file": "index.html",
-      "bytes": 1189757,
-      "size": "1.13 MB",
-      "sha256": "2cb1bb576e33d2ef87540ec90bb7ca95e2e0c14b0ad8cc20cdb3447c1543fa8e",
-      "modified": "2026-11-24T08:45:02.126Z"
+      "bytes": 1196252,
+      "size": "1.14 MB",
+      "sha256": "92730d7e679e5b3b99924bf314d301d4e78c07895166bef30c949ac301dd57fa",
+      "modified": "2026-11-24T09:22:18.448Z"
     },
     {
       "file": "odisha-landing.html",
@@ -81,10 +81,10 @@
     },
     {
       "file": "redesign-v5.js",
-      "bytes": 6960,
-      "size": "6.8 KB",
-      "sha256": "61c85ee7e87c14b59bb80c4df49df5b74b336aa97b0ac8d2ab967660a7cbc3a7",
-      "modified": "2026-11-24T08:46:30.553Z"
+      "bytes": 7257,
+      "size": "7.1 KB",
+      "sha256": "04918571e57e7510ae7189520ca76fcc4640620d3046c0104cf91d9caa7c8810",
+      "modified": "2026-11-24T09:22:19.517Z"
     }
   ]
 }

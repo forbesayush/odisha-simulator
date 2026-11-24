@@ -1,4 +1,4 @@
-/* global window, document, console, matchMedia, innerWidth, innerHeight, clearTimeout, setTimeout, speechSynthesis, SpeechSynthesisUtterance, state, I18N, playerScooty, playerAuto, babuGroup, ROADS, CHAPTERS, POI, renderer, scene, THREE */
+/* global window, document, console, matchMedia, innerWidth, innerHeight, clearTimeout, setTimeout, speechSynthesis, SpeechSynthesisUtterance, state, playerScooty, playerAuto, babuGroup, ROADS, CHAPTERS, POI, renderer, scene, THREE */
 (function () {
   'use strict';
 
@@ -24,7 +24,9 @@
   let subtitleTimer = 0;
   function showSubtitle(actor, text, duration) {
     clearTimeout(subtitleTimer);
-    subtitle.innerHTML = '<b>' + actor + '</b>' + text;
+    const speaker = document.createElement('b');
+    speaker.textContent = actor;
+    subtitle.replaceChildren(speaker, document.createTextNode(text));
     subtitle.classList.add('show');
     subtitleTimer = setTimeout(() => subtitle.classList.remove('show'), duration || 4200);
   }
@@ -33,13 +35,21 @@
     return state && state.lang === 'or' ? 'or-IN' : state && state.lang === 'hi' ? 'hi-IN' : 'en-IN';
   }
 
+  let finishSpeech;
   const VoiceDirector = {
     muted: false,
+    stop() {
+      if (finishSpeech) finishSpeech();
+      clearTimeout(subtitleTimer);
+      subtitle.classList.remove('show');
+      if ('speechSynthesis' in window) speechSynthesis.cancel();
+    },
     speak(text, actor) {
+      this.stop();
       const profile = profiles[actor] || profiles.narrator;
-      showSubtitle(profile.label, text);
-      if (this.muted || !('speechSynthesis' in window) || !text) return Promise.resolve();
-      speechSynthesis.cancel();
+      const duration = Math.max(2600, Math.min(12000, text.length * 75));
+      showSubtitle(profile.label, text, duration);
+      if (this.muted || !window.speechSynthesis || typeof window.SpeechSynthesisUtterance !== 'function' || !text) return Promise.resolve();
       return new Promise(resolve => {
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = languageCode();
@@ -48,26 +58,27 @@
         utterance.volume = .92;
         const voices = speechSynthesis.getVoices();
         const locale = utterance.lang.slice(0, 2).toLowerCase();
-        utterance.voice = voices.find(v => v.lang.toLowerCase().startsWith(locale)) || voices.find(v => /india|indian/i.test(v.name)) || null;
-        utterance.onend = resolve;
-        utterance.onerror = resolve;
+        const voice = voices.find(v => v.lang.toLowerCase() === utterance.lang.toLowerCase())
+          || voices.find(v => v.lang.toLowerCase().split('-')[0] === locale);
+        if (!voice && locale !== 'en') { resolve(); return; }
+        if (voice) utterance.voice = voice;
+        const timer = setTimeout(() => {
+          finish();
+          speechSynthesis.cancel();
+        }, duration + 4000);
+        function finish() {
+          clearTimeout(timer);
+          if (finishSpeech === finish) finishSpeech = undefined;
+          resolve();
+        }
+        finishSpeech = finish;
+        utterance.onend = finish;
+        utterance.onerror = finish;
         speechSynthesis.speak(utterance);
       });
     }
   };
   window.VoiceDirector = VoiceDirector;
-
-  // Upgrade legacy dialogue calls while retaining their current fallback.
-  try {
-    if (typeof window.playVoiceLine === 'function' && typeof I18N !== 'undefined') {
-      window.playVoiceLine = function (key) {
-        const line = I18N[key];
-        if (!line) return Promise.resolve();
-        const text = state.lang === 'or' ? line.or : state.lang === 'hi' ? line.hi : line.en;
-        return VoiceDirector.speak(text || line.en || '', line.speaker || 'narrator');
-      };
-    }
-  } catch (error) { console.warn('[V5 voice]', error); }
 
   function playerPosition() {
     if (state.mode === 'scooty') return playerScooty.group.position;
@@ -126,7 +137,7 @@
   try {
     const signMat = new THREE.MeshStandardMaterial({ color: 0x0e5a83, roughness: .52, metalness: .18 });
     const postMat = new THREE.MeshStandardMaterial({ color: 0x3d4650, roughness: .7, metalness: .55 });
-    [[40,-430,'PURI'], [210,-330,'CUTTACK'], [180,100,'PATIA']].forEach(([x,z,label]) => {
+    [[50,-430,'PURI'], [210,-342,'CUTTACK'], [180,115,'PATIA']].forEach(([x,z,label]) => {
       const group = new THREE.Group();
       const board = new THREE.Mesh(new THREE.BoxGeometry(7, 1.7, .22), signMat);
       board.position.y = 5.2;
@@ -140,6 +151,6 @@
   } catch (error) { console.warn('[V5 landmarks]', error); }
 
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden && 'speechSynthesis' in window) speechSynthesis.cancel();
+    if (document.hidden) VoiceDirector.stop();
   });
 })();
